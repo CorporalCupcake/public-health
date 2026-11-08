@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>1.10 Economic evaluation · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-1">Block 1</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 1.10</p>
+  <h1>Economic evaluation: costs, perspectives, discounting, ICERs and thresholds</h1>
+  <div class="lecture-meta">
+    <span class="tier tier-master">Master</span>
+    <span>Block 1 · Foundations, burden of disease and health economics</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>An economic evaluation asks whether an intervention buys enough health for what it costs, compared with the next best option. You need five decisions to answer that: <strong>what to measure</strong>, <strong>whose costs count</strong>, <strong>how to value the future</strong>, <strong>how to compare options</strong> (the ICER) and <strong>what counts as worth it</strong> (the threshold). Project 1 makes every one of these decisions for Saudi salt policy, and a reviewer will check each against CHEERS 2022.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#types">Four types of evaluation</a></li>
+      <li><a href="#perspective">Perspective: whose costs count</a></li>
+      <li><a href="#discounting">Discounting</a></li>
+      <li><a href="#icer">The ICER and the cost-effectiveness plane</a></li>
+      <li><a href="#thresholds">Thresholds: what counts as worth it</a></li>
+      <li><a href="#nmb">Net monetary benefit</a></li>
+      <li><a href="#cheers">Reporting: CHEERS 2022</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="types">
+    <h2>1. Four types of evaluation</h2>
+    <p class="point">All economic evaluations compare costs with consequences; they differ in how they measure the consequences.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Type</th><th>Health measured as</th><th>Answers</th><th>Use when</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Cost-effectiveness (CEA)</strong></td><td>A natural unit: strokes averted, mmHg lowered, lives saved</td><td>Cost per stroke averted</td><td>Options share one outcome</td></tr>
+          <tr><td><strong>Cost-utility (CUA)</strong></td><td>QALYs gained or DALYs averted (Lecture 1.6)</td><td>Cost per QALY or DALY</td><td>Comparing across diseases; the default for policy</td></tr>
+          <tr><td><strong>Cost-benefit (CBA)</strong></td><td>Money, e.g. willingness to pay</td><td>Do benefits exceed costs?</td><td>Comparing health with non-health spending (roads, schools)</td></tr>
+          <tr><td><strong>Cost-minimisation</strong></td><td>Assumed equal</td><td>Which is cheapest?</td><td>Only when outcomes are shown to be the same</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <dl class="facets">
+      <dt>Why it matters</dt>
+      <dd>The type decides what you can compare. Cost per stroke averted can only be compared with other stroke interventions. Cost per DALY averted can be compared with a vaccine, a cancer drug or a road safety law, which is what a ministry needs.</dd>
+      <dt>How to tell</dt>
+      <dd>Look at the denominator. A disease-specific unit means CEA. QALYs or DALYs mean CUA. Money on both sides means CBA. Many papers call a CUA a “CEA”; the label is loose, the denominator is not.</dd>
+      <dt>The best outcome</dt>
+      <dd><strong>Cost-saving</strong>: the intervention improves health <em>and</em> costs less overall, because treatment costs avoided exceed what it costs to run. No threshold is needed; you adopt it. Population salt reduction is often found to be cost-saving in models.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Treating “cost-effective” as meaning “saves money”. Cost-effective means the health gained is worth the extra money spent, judged against a threshold. Most cost-effective interventions add cost. Only a cost-saving one pays for itself.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">Example · Project 1</div>
+      <p>Project 1 is a cost-utility analysis. It reports DALYs averted (to match WHO-CHOICE and GBD) and net costs, so a Saudi decision-maker can set salt policy beside any other WHO “best buy”, such as tobacco taxes. Reporting only “strokes averted” would hide the heart attacks and kidney disease that salt also drives.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="perspective">
+    <h2>2. Perspective: whose costs count</h2>
+    <p class="point">The perspective is the point of view of the analysis, and it decides which costs go into the sum.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Perspective</th><th>Counts</th><th>Salt policy example</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Health system (payer)</strong></td><td>Costs falling on the health budget</td><td>Running the regulator’s salt programme; hospital and drug costs of strokes avoided</td></tr>
+          <tr><td><strong>Societal</strong></td><td>All costs, whoever bears them</td><td>Adds industry reformulation, patients’ time and travel, and productivity lost to illness and early death</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <dl class="facets">
+      <dt>Why it matters</dt>
+      <dd>The same policy can look different under each. Prevention that keeps working-age adults healthy gains a lot from the societal view, because productivity counts. A health ministry with a fixed budget cares about the health system view, because that is the money it controls.</dd>
+      <dt>How to read it</dt>
+      <dd>Find the stated perspective, then check the cost list matches it. The US Second Panel on Cost-Effectiveness recommends reporting <strong>both</strong>; NICE uses the health system view (NHS and personal social services).</dd>
+      <dt>What a change means</dt>
+      <dd>Moving from health system to societal usually makes prevention look better (more savings counted) and can turn a cost-effective policy into a cost-saving one. If the conclusion flips, say so: the answer depends on who pays.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Mixing perspectives: counting productivity gains (societal) but leaving out industry’s reformulation costs (also societal). Every cost and benefit in the stated perspective goes in, or the result is biased towards the policy.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>A family buying solar panels. From the household’s view, the question is the electricity bill. From the town’s view, it also includes the grid, the installer’s jobs and cleaner air. Same panels, different sums.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="discounting">
+    <h2>3. Discounting</h2>
+    <p class="point">Discounting gives costs and health that arrive in the future less weight than those that arrive now.</p>
+
+    <dl class="facets">
+      <dt>What it does</dt>
+      <dd>Each year’s costs and health gains are shrunk by a fixed percentage per year into the future, then added up. At 3% a year, a QALY gained 25 years from now counts as about half a QALY today, and one gained 50 years from now as under a quarter.</dd>
+      <dt>Why it’s done</dt>
+      <dd>People prefer good things sooner, and money spent now could be invested and grow. Health is discounted too, usually at the same rate as costs; otherwise you could always improve a result by delaying the programme.</dd>
+      <dt>How to read it</dt>
+      <dd>Typical rates are 3% a year (WHO-CHOICE, US Second Panel) and 3.5% (NICE), for both costs and health. Results should state the rate and show 0% as a sensitivity analysis.</dd>
+      <dt>What a change means</dt>
+      <dd>Raising the rate hurts interventions whose benefits come late. Prevention pays up front and gains decades later, so a higher rate makes it look worse. Going from 3% to 0% can make a salt policy look much better.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Mixing discounted and undiscounted numbers. GBD reports DALYs <em>without</em> discounting; WHO-CHOICE and most economic evaluations discount at 3%. If you take DALYs straight from GBD and costs from a discounted model, the ratio is wrong. In Project 1, report undiscounted health for comparison with GBD, and discount both costs and DALYs for the economic results.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example</div>
+      <p>A smoking cessation programme in teenagers costs money this year; the lung cancers it prevents happen 40 years later. Discounted at 3.5%, those future gains shrink to about a quarter of their face value. A drug that treats lung cancer now faces no such shrinkage. This is why prevention often looks worse in economic evaluation than in burden-of-disease studies.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Would you take 100 riyals today or 100 riyals in ten years? Almost everyone takes it today. Discounting writes that preference into the arithmetic.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="icer">
+    <h2>4. The ICER and the cost-effectiveness plane</h2>
+    <p class="point">The incremental cost-effectiveness ratio (ICER) is the extra cost of each extra unit of health you get by choosing one option over the next best.</p>
+
+    \[ \text{ICER} = \frac{\text{Cost}_{\text{new}} - \text{Cost}_{\text{comparator}}}{\text{Health}_{\text{new}} - \text{Health}_{\text{comparator}}} \]
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Extra cost divided by extra health, e.g. “SAR 20,000 per DALY averted”. <em>Incremental</em> is the key word: it is always against an alternative, never on its own.</dd>
+      <dt>Why it matters</dt>
+      <dd>It is the number that goes to the decision-maker and is compared with the threshold (next section). Lower is better: you buy health more cheaply.</dd>
+      <dt>How to read it</dt>
+      <dd>Place the result on the <strong>cost-effectiveness plane</strong>: extra health on the horizontal axis, extra cost on the vertical. The quadrant tells you more than the number.</dd>
+      <dt>What a change means</dt>
+      <dd>An ICER going from 10,000 to 40,000 per DALY means each unit of health now costs four times as much. Whether that matters depends only on where the threshold sits.</dd>
+    </dl>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Quadrant</th><th>New option is</th><th>Decision</th></tr></thead>
+        <tbody>
+          <tr><td><strong>South-east</strong></td><td>More health, less cost</td><td><strong>Dominant</strong> (cost-saving): adopt</td></tr>
+          <tr><td><strong>North-west</strong></td><td>Less health, more cost</td><td><strong>Dominated</strong>: reject</td></tr>
+          <tr><td><strong>North-east</strong></td><td>More health, more cost</td><td>Trade-off: compare the ICER with the threshold</td></tr>
+          <tr><td><strong>South-west</strong></td><td>Less health, less cost</td><td>Trade-off: are the savings worth the health lost?</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>With several options, sort them by cost, drop any that are dominated, and also drop any that are <strong>extendedly dominated</strong>: options beaten by a mix of their neighbours, which shows up as an ICER higher than the next, more effective option’s. What remains is the efficiency frontier, where each step up costs more per unit of health than the last.</p>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Two classic errors. First, comparing every option with “do nothing” (an average ratio) instead of with the next best option; this hides an expensive add-on behind a cheap first step. Second, ranking negative ICERs: −5,000 can mean dominant (south-east) or dominated (north-west). Never read the sign without the quadrant.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">Example · Project 1 (illustrative)</div>
+      <p>Three options: no policy, the 2019 bread limit alone, and bread plus the 2025 voluntary limits. The ICER for “bread plus voluntary” must be calculated against “bread alone”, not against “no policy”. If the bread limit is cost-saving, it sits in the south-east quadrant, and the question becomes whether the extra step is still worth it.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>The efficiency frontier is a Pareto front over two objectives, cost and health. Dominated options are off the front. The threshold then picks one point on it, the way a fixed trade-off weight picks one point on a precision–recall curve.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="thresholds">
+    <h2>5. Thresholds: what counts as worth it</h2>
+    <p class="point">The threshold is the most a health system should pay for one unit of health, and it turns an ICER into a yes or no.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Approach</th><th>What it says</th><th>Problem</th></tr></thead>
+        <tbody>
+          <tr><td><strong>GDP per capita</strong> (WHO Commission on Macroeconomics and Health, 2001; long used by WHO-CHOICE)</td><td>Below 1× GDP per capita per DALY averted: highly cost-effective. 1–3×: cost-effective.</td><td>Not tied to any budget, so nearly everything passes</td></tr>
+          <tr><td><strong>Opportunity cost</strong> (supply side)</td><td>What the health system actually gives up: the health lost when money is moved from existing services</td><td>Hard to estimate; few countries have estimates</td></tr>
+          <tr><td><strong>Set by an agency</strong></td><td>A stated range, e.g. NICE’s £25,000–35,000 per QALY (raised from £20,000–30,000 in 2026)</td><td>Partly a political choice</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <dl class="facets">
+      <dt>Why it matters</dt>
+      <dd>The same ICER is “worth it” under one threshold and not under another. Choosing the threshold is often the decision in disguise.</dd>
+      <dt>Why GDP thresholds were dropped</dt>
+      <dd>They ask what a life-year is worth to the economy, not what the budget can buy elsewhere. In a fixed budget, paying for a new programme means stopping something else, and the health lost there is the real cost. WHO’s own authors advised against relying on GDP thresholds alone as a decision rule (Bertram et al., 2016), and WHO has since moved away from recommending them.</dd>
+      <dt>How to read it</dt>
+      <dd>Opportunity-cost estimates are usually well <em>below</em> GDP per capita. For the English NHS, Claxton and colleagues estimated about £13,000 per QALY, below NICE’s own range. Country estimates by Woods and colleagues often fall well below 1× GDP per capita.</dd>
+      <dt>What a change means</dt>
+      <dd>Lowering the threshold from 3× to 0.5× GDP per capita turns many “cost-effective” interventions into poor value. Cost-saving ones pass under any threshold.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reading “below the threshold” as “affordable”. The threshold judges value per unit of health, not total spending. A cheap-per-DALY programme for the whole population can still cost more than the budget allows. That is the job of a budget impact analysis, reported alongside.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">Example · Saudi Arabia</div>
+      <p>Saudi Arabia is a high-income country, so a 1–3× GDP rule sets a very high bar that almost any programme clears. Project 1 should not lean on it. Instead, report the ICER, show results across a range of thresholds (Lecture 1.12 turns this into a curve), and note where opportunity-cost estimates would place the line.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>The opportunity-cost threshold is a shadow price: the value of relaxing the budget constraint by one riyal, in units of health. It plays the role of a Lagrange multiplier in a budget-constrained optimisation.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="nmb">
+    <h2>6. Net monetary benefit</h2>
+    <p class="point">Net monetary benefit (NMB) turns health into money at the threshold, then subtracts the cost, giving one number where bigger is better.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>\( \text{NMB} = \lambda \times \text{health} - \text{cost} \), where \( \lambda \) is the threshold. Each DALY averted is valued at the threshold price, then costs are taken away.</dd>
+      <dt>Why it matters</dt>
+      <dd>Ratios misbehave: when the health difference is near zero, the ICER jumps to huge or negative values, and you cannot average ratios. NMB is a plain difference, so it averages cleanly, works for any number of options, and is what probabilistic analysis and value of information use (Lecture 1.12).</dd>
+      <dt>How to read it</dt>
+      <dd>Choose the option with the highest NMB. Incremental NMB above zero means the new option is cost-effective at that threshold; it is the same decision as ICER below threshold, without the ratio.</dd>
+      <dt>What a change means</dt>
+      <dd>NMB depends on the threshold you chose. Raising \( \lambda \) gives health more weight, so the more effective option gains. This is why results are shown across a range of thresholds.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reporting NMB without the threshold used. An NMB of SAR 50 million means nothing unless you know what each DALY was priced at.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example (illustrative numbers)</div>
+      <p>Option A averts 100 DALYs for 2 million more than option B. At a threshold of 30,000 per DALY, the health is worth 3 million, so incremental NMB is +1 million: choose A. At 15,000 per DALY, it is −0.5 million: choose B. Same data, different threshold, different answer.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>NMB is a scalarised objective: two goals collapsed into one with a fixed exchange rate, like adding a weighted penalty to a loss function. The decision rule is then argmax of expected NMB.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="cheers">
+    <h2>7. Reporting: CHEERS 2022</h2>
+    <p class="point">CHEERS 2022 (Consolidated Health Economic Evaluation Reporting Standards) is the 28-item checklist journals expect any economic evaluation to follow.</p>
+
+    <dl class="facets">
+      <dt>What it covers</dt>
+      <dd>Each decision in this lecture must be stated: comparators, perspective, time horizon, discount rate, outcome measure, costing methods, currency and price year, and how uncertainty was handled. The 2022 update added items on a health economic analysis plan, engagement with patients and others affected, and distributional effects (who gains).</dd>
+      <dt>Why it matters</dt>
+      <dd>Reviewers check it item by item, and most journals require the completed checklist on submission. Fill it in while designing the model, not after.</dd>
+      <dt>How to tell a good report</dt>
+      <dd>You could rebuild the model from the paper and its appendix. Every input has a source, a value and a distribution.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Treating CHEERS as a quality score. It checks that you <em>reported</em> your choices, not that they were good. A model can tick all 28 items and still use the wrong comparator.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">Example · Project 1 costs</div>
+      <p>WHO-CHOICE publishes country-specific unit costs for health service delivery, such as an inpatient bed-day or an outpatient visit. They cover the “hotel” costs of care, not drugs or tests, and come in a past price year. CHEERS requires you to state the price year, how you inflated to current prices, and how you converted currencies, so record each step as you go.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>A paper reports a salt reformulation policy at “SAR 4,000 per stroke averted” and calls it highly cost-effective. What is missing before you can agree?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>It is a CEA in a disease-specific unit, so there is no threshold to compare it with, and it ignores the heart and kidney disease salt also causes. You need a cost per DALY or QALY, the comparator, the perspective and the discount rate. Only then can you judge it against a threshold or against other uses of the money.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>An analysis finds a programme is cost-saving from the societal perspective but costs the health ministry money. Is that a contradiction?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>No. The societal view counts savings that fall outside the health budget, such as productivity and patients’ own costs. The ministry pays the bill but doesn’t receive those savings. Report both, and say plainly who pays and who gains, because that decides who will fund it.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Why does raising the discount rate from 3% to 5% usually hurt salt reduction more than it hurts stroke thrombolysis?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Salt reduction pays now and gains health over decades, so its gains are shrunk the most. Thrombolysis costs and benefits arrive at almost the same time, so discounting barely touches it. The higher rate shifts value from prevention towards treatment.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Option C has an ICER of −8,000 per DALY against current practice. A colleague says, “Negative, so it saves money. Adopt it.” What do you check?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The quadrant. A negative ICER arises both when C gains health and saves money (dominant, adopt) and when C loses health and costs more (dominated, reject). Look at the signs of the cost and health differences separately, not the ratio.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Using the 1–3× GDP-per-capita rule, nearly every intervention in a Saudi model is cost-effective. Why should that worry you, and what would you report instead?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>A rule almost everything passes doesn’t help choose between options, and it isn’t based on what the budget gives up. Report ICERs and NMB across a range of thresholds, show where opportunity-cost estimates (usually well below GDP per capita) would put the line, and add a budget impact analysis.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Why do probabilistic analyses and value-of-information methods work with net monetary benefit rather than the ICER?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The ICER is a ratio: it explodes when the health difference is near zero, flips sign across quadrants, and cannot be averaged sensibly. NMB is a linear difference at a fixed threshold, so you can take means across thousands of simulations and pick the option with the highest expected value.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Drummond, Sculpher, Claxton, Stoddart &amp; Torrance, <em>Methods for the Economic Evaluation of Health Care Programmes</em>, 4th ed. (2015): types of evaluation, perspective, costing and discounting.</li>
+      <li>Briggs, Claxton &amp; Sculpher, <em>Decision Modelling for Health Economic Evaluation</em> (2006), early chapters: why economic evaluation needs a decision model, and the incremental decision rules.</li>
+      <li>Sanders et al., “Recommendations for conduct, methodological practices, and reporting of cost-effectiveness analyses: Second Panel on Cost-Effectiveness in Health and Medicine”, <em>JAMA</em> 2016: the two reference-case perspectives and the 3% discount rate.</li>
+      <li>Bertram et al., “Cost-effectiveness thresholds: pros and cons”, <em>Bulletin of the WHO</em> 2016; Woods, Revill, Sculpher &amp; Claxton, “Country-level cost-effectiveness thresholds: initial estimates and the need for further research”, <em>Value in Health</em> 2016; Claxton et al., <em>Health Technology Assessment</em> 2015;19(14): thresholds and opportunity cost.</li>
+      <li>Husereau et al., “Consolidated Health Economic Evaluation Reporting Standards 2022 (CHEERS 2022) statement”, published in <em>BMJ</em>, <em>Value in Health</em> and other journals, 2022.</li>
+      <li>Stenberg et al., “Econometric estimation of WHO-CHOICE country-specific costs for inpatient and outpatient health service delivery”, <em>Cost Effectiveness and Resource Allocation</em> 2018: the unit costs Project 1 uses.</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="1-09-salt-evidence.html"><small>Previous</small>1.9 The salt evidence</a>
+    <a class="next" href="1-11-decision-models.html"><small>Next</small>1.11 Decision models</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>1.6 Summary measures: YLL, YLD, DALYs, QALYs · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-1">Block 1</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 1.6</p>
+  <h1>Summary measures: YLL, YLD, DALYs, QALYs</h1>
+  <div class="lecture-meta">
+    <span class="tier tier-master">Master</span>
+    <span>Block 1 · Foundations, burden of disease and health economics</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>Deaths and illness are different kinds of harm. Summary measures put both into one currency, <strong>years of healthy life</strong>, so a stroke death and ten years of disability after a stroke can be added and compared. DALYs count healthy years <strong>lost</strong> and are the language of burden of disease; QALYs count healthy years <strong>lived</strong> and are the language of health technology assessment. Project 1 reports its health gains in this currency.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#currency">One currency for death and illness</a></li>
+      <li><a href="#yll">YLL: years of life lost</a></li>
+      <li><a href="#yld">YLD and disability weights</a></li>
+      <li><a href="#daly">DALYs</a></li>
+      <li><a href="#qaly">QALYs</a></li>
+      <li><a href="#compare">QALYs and DALYs side by side</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="currency">
+    <h2>1. One currency for death and illness</h2>
+    <p class="point">A summary measure counts time, weighting each year by how healthy it is, so that dying early and living ill can be put on one scale.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>There are two families. <strong>Gap measures</strong> count healthy years lost against an ideal (DALYs). <strong>Health expectancies</strong> count healthy years lived: <strong>HALE</strong> (health-adjusted life expectancy) is life expectancy with each year shrunk by the average illness at that age. QALYs, used to judge treatments, belong with the second family. The umbrella term for all of them is HALY (health-adjusted life year).</dd>
+      <dt>Why it matters</dt>
+      <dd>Deaths alone ignore conditions that disable but rarely kill, such as back pain, depression and hearing loss. Illness alone ignores death. Priority setting needs both in one number, so that a programme preventing blindness can be compared with one preventing heart attacks.</dd>
+      <dt>How to tell</dt>
+      <dd>Ask which way the number points. If more is worse, it counts loss (DALYs, YLL, YLD). If more is better, it counts health (HALE, QALYs).</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Thinking summary measures are neutral facts. Each one builds in choices: what counts as an ideal lifespan, how bad each condition is, whether future years count less. Know the choices behind a number before comparing it with another.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Converting currencies. Riyals, pounds and dollars can be compared only after you fix an exchange rate. Disability weights and utilities are the exchange rates between a year of illness and a year of full health.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="yll">
+    <h2>2. YLL: years of life lost</h2>
+    <p class="point">YLL counts each death by how many more years the person could have lived, using an ideal life table rather than the local one.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>For each death, YLL takes the remaining life expectancy at that age from a <strong>reference life table</strong> and adds these up across all deaths. GBD’s reference table is built from the lowest death rates observed at each age among large populations, giving a life expectancy at birth in the high 80s. It is the same for every country, sex and year.</dd>
+      <dt>Why it matters</dt>
+      <dd>It weights early deaths more than late ones, which matches most people’s intuition that a death at 30 is a greater loss than a death at 90. Using one reference table means a death at a given age counts the same everywhere.</dd>
+      <dt>How to read it</dt>
+      <dd>YLL is driven by both the number of deaths and how young they are. Injuries and conditions of infancy produce many YLL per death; diseases of old age produce few. Cardiovascular disease produces many in total because it causes so many deaths, including in middle age.</dd>
+      <dt>What a change means</dt>
+      <dd>YLL can fall even when the number of deaths is unchanged, if deaths move to older ages. Delaying a heart attack death from 55 to 75 cuts YLL without saving anyone from a heart attack.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Using the country’s own life expectancy to compute YLL. A death at 50 would then count for less in a country with poor survival, valuing lives less where health is worst. Burden studies use the reference table for this reason. (Economic models of a single country sometimes use national life tables instead, because they want realistic gains, not a standard. Say which you used.)</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Road injuries</div>
+      <p>Road traffic deaths are a smaller share of all deaths than cardiovascular deaths in most countries, but they mostly kill young people. Measured in YLL rather than deaths, their rank rises sharply. Ranking causes by deaths and by YLL often gives different priority lists.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="yld">
+    <h2>3. YLD and disability weights</h2>
+    <p class="point">YLD counts time lived with illness, scaled by a disability weight that says how much health is lost while in that state.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>In modern GBD, YLD for a year is the number of people living with each condition (its prevalence) multiplied by that condition’s <strong>disability weight</strong>. A disability weight runs from 0 (full health) to 1 (a loss equivalent to death). GBD estimated them by asking members of the public in several countries to compare short descriptions of health states.</dd>
+      <dt>Why it matters</dt>
+      <dd>YLD is how non-fatal conditions enter the burden. Mental disorders, musculoskeletal pain and sense loss kill few people but cause a large share of all DALYs through YLD.</dd>
+      <dt>How to read it</dt>
+      <dd>Weights describe a health state, not a disease: stroke has several (mild, moderate, severe sequelae), each with its own weight. Roughly, mild states carry weights of a few hundredths, and severe states around 0.5 or more (rough orders of magnitude, not exact values). A weight of 0.2 means a year in that state counts as losing a fifth of a healthy year.</dd>
+      <dt>What a change means</dt>
+      <dd>YLD rises if more people live with a condition or if they move to more severe states. A treatment that keeps people alive with disability lowers YLL and raises YLD at the same time.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reading a disability weight as the value of a person’s life or their quality of life. It measures loss of <em>health</em> in a described state, judged by the general public, not wellbeing, not how patients feel about their own condition, and not anyone’s worth. A person with a weight of 0.5 is not “half a person”.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Stroke</div>
+      <p>A stroke causes YLL for those who die and YLD for survivors, weighted by how disabled they are. A survivor with severe disability loses a large fraction of a healthy year for every year they live with it, often for many years. That is why stroke prevention, not just stroke survival, matters for the burden.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>GBD 2010 got its weights mainly from pairwise comparisons (“which of these two people is healthier?”), fitted with a model that turns choices into a latent scale, the same idea as a Bradley–Terry model or a reward model trained on preference pairs. A second type of question anchored the scale between 0 and 1.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="daly">
+    <h2>4. DALYs</h2>
+    <p class="point">One DALY (disability-adjusted life year) is one lost year of healthy life, from dying early or from living in less than full health.</p>
+
+    \[ \text{DALY} = \text{YLL} + \text{YLD} \]
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The sum of the two losses. Burden studies report DALYs by cause, risk factor, age, sex, country and year, as counts, crude rates and age-standardised rates (Lecture 1.4).</dd>
+      <dt>Why it matters</dt>
+      <dd>DALYs are the common currency of GBD, WHO and WHO-CHOICE cost-effectiveness analyses. Interventions in low- and middle-income settings are usually judged by cost per DALY averted.</dd>
+      <dt>How to read it</dt>
+      <dd>Lower is better. The split matters: a cause dominated by YLL needs prevention of death; one dominated by YLD needs prevention or better management of illness. Compare countries with age-standardised DALY rates, and plan with counts.</dd>
+      <dt>What a change means</dt>
+      <dd>“DALYs averted” is the health gain of an intervention: DALYs without it minus DALYs with it. A fall in age-standardised DALY rates means healthier lives at a given age; a rise in DALY counts can be pure population growth and ageing.</dd>
+    </dl>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Choice</th><th>Original DALY (1990s)</th><th>Modern GBD (2010 onwards)</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Discounting</strong> (future years count less)</td><td>3% a year</td><td>None</td></tr>
+          <tr><td><strong>Age weighting</strong></td><td>Years in young adulthood counted more than years in childhood or old age</td><td>None: every year counts equally</td></tr>
+          <tr><td><strong>YLD basis</strong></td><td>Incidence: the future lifetime of illness counted in the year it starts</td><td>Prevalence: illness counted in the year it is lived</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Comparing DALY figures across GBD rounds or across studies. Each GBD round re-estimates the whole history with new data and methods, so the 2015 figure from GBD 2019 can differ from the 2015 figure from GBD 2021. Compare years within one round. Also check whether a study discounted DALYs: cost-effectiveness studies usually do (Lecture 1.10), burden studies don’t.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">Example · Saudi Arabia</div>
+      <p>The GBD Results Tool gives Saudi DALYs by cause, split into YLL and YLD. For cardiovascular disease, the main target of salt policy, YLL dominates: the burden is mostly early death. For diabetes, YLD makes up a larger share. Look at the split before deciding what a policy needs to change. (Pull the current figures yourself from the tool; they change with each GBD round.)</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>Choosing DALY rules is choosing a loss function. Discounting and age weighting were dropped because they encoded value judgements that changed which diseases and ages looked important. Like any loss, the choice decides what the optimum looks like, so it has to be stated.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="qaly">
+    <h2>5. QALYs</h2>
+    <p class="point">A QALY (quality-adjusted life year) is a year of life multiplied by a utility score for its health, where 1 is full health and 0 is dead.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Two years at a utility of 0.5 count as one QALY, the same as one year in full health. Utilities come from preference-based questionnaires such as the EQ-5D, scored with a country’s <strong>value set</strong>: weights obtained by asking that country’s public which health states they would trade years of life to avoid.</dd>
+      <dt>Why it matters</dt>
+      <dd>QALYs are the standard outcome in health technology assessment (for example by NICE in England). Cost per QALY gained decides whether many drugs and devices are funded.</dd>
+      <dt>How to read it</dt>
+      <dd>Higher is better. Utilities can go below 0: some states are judged worse than death. A QALY gain means little on its own: it is judged against the extra cost of getting it (Lecture 1.10).</dd>
+      <dt>What a change means</dt>
+      <dd>QALYs rise if people live longer or live better. A drug that improves quality of life without extending it can gain as many QALYs as one that extends life without improving quality.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Borrowing a value set without saying so. Utilities depend on whose preferences scored them. Where a country has no value set of its own, analysts borrow one from another country. That is an assumption, and a reviewer will ask about it.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Your cardiac background</div>
+      <p>A trial of a heart failure drug collects EQ-5D every few months. Patients on the drug live slightly longer and report fewer limitations. QALYs combine both into one number per arm; the difference, set against the drug’s extra cost, is what an HTA body judges.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="compare">
+    <h2>6. QALYs and DALYs side by side</h2>
+    <p class="point">QALYs and DALYs are mirror images in spirit but not in numbers: one counts health gained, the other health lost, and they use different weights.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th></th><th>DALY</th><th>QALY</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Counts</strong></td><td>Healthy years lost (bad)</td><td>Healthy years lived (good)</td></tr>
+          <tr><td><strong>Weight</strong></td><td>Disability weight: 0 = full health, 1 = death</td><td>Utility: 1 = full health, 0 = death, can be negative</td></tr>
+          <tr><td><strong>Where weights come from</strong></td><td>One global set from GBD surveys of the public</td><td>Questionnaires such as EQ-5D, scored with a national value set</td></tr>
+          <tr><td><strong>Typical use</strong></td><td>Burden of disease; cost-effectiveness in WHO-CHOICE and many LMIC settings</td><td>Health technology assessment in high-income countries</td></tr>
+          <tr><td><strong>Result of a good intervention</strong></td><td>DALYs averted</td><td>QALYs gained</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <dl class="facets">
+      <dt>Which Project 1 uses</dt>
+      <dd>DALYs. The multistate life table counts every year lived and shrinks it by the average illness at that age, using GBD rates and disability weights; the gain in these health-adjusted life years is read as DALYs averted (approximately: the model uses Saudi life expectancy, not GBD’s reference table). That lets you set cost per DALY averted beside WHO-CHOICE results and other salt models.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Treating “1 minus a disability weight” as a utility, or a QALY gain as equal to a DALY gain. The weights come from different questions asked of different people, so the same intervention can produce different numbers of QALYs gained and DALYs averted. Compare cost-per-QALY results only with cost-per-QALY thresholds, and cost-per-DALY with cost-per-DALY.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Two thermometers, one in Celsius and one in Fahrenheit, but each calibrated by a different lab. They track the same thing and usually agree on which day was hotter, but you can’t swap the readings.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>Low back pain ranks low by deaths but near the top by DALYs in many countries. How?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>It causes almost no deaths, so almost no YLL. But it is very common and lasts, so prevalence times a moderate disability weight gives a large YLD total. DALYs bring non-fatal conditions into view in a way death counts can’t.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Better stroke care means more people survive, many with disability. What happens to stroke YLL, YLD and DALYs?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>YLL falls (fewer early deaths), YLD rises (more survivors living with disability), and DALYs usually fall overall, because a year with disability carries a weight below 1. The rise in YLD is a sign of survival, not of failure, as with rising prevalence in Lecture 1.4.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Why does GBD use the same reference life table for every country instead of each country’s own life expectancy?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>So that a death at a given age counts as the same loss everywhere. With national tables, deaths in countries with worse survival would count as fewer years lost, making the burden look smaller exactly where it is greatest.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A paper reports a salt policy costs less per DALY averted than the NICE cost-per-QALY threshold, and concludes it is cost-effective. What is wrong with the comparison?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>It mixes currencies: DALYs averted and QALYs gained use different weights and need not be equal. It also borrows a threshold set for a different country and health system. Compare against a threshold defined for the same measure and the same setting (Lecture 1.10).</p></div>
+        </details>
+      </li>
+      <li>
+        <p>The original DALY gave less weight to years lived by children and older people. Why was this dropped, and who did it disadvantage?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>It encoded a judgement that years in young adulthood are worth more, mainly because of economic productivity and caring roles. Critics argued that health years should count equally regardless of age. It disadvantaged conditions of childhood and old age, including much cardiovascular disease, in priority setting.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>You download Saudi cardiovascular DALYs from GBD 2019 for 2015 and from GBD 2021 for 2020, and see a large change. What should you check before reporting a trend?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>That both years come from the same GBD round. Each round revises the whole series, so a change between rounds can be a change in data and methods, not in health. Download both years from GBD 2021 and compare age-standardised rates as well as counts.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Murray, “Quantifying the burden of disease: the technical basis for disability-adjusted life-years”, <em>Bulletin of the World Health Organization</em> (1994): the original DALY, with discounting and age weighting.</li>
+      <li>Salomon et al., “Common values in assessing health outcomes from disease and injury: disability weights measurement study for the Global Burden of Disease Study 2010”, <em>The Lancet</em> (2012); updated in <em>Lancet Global Health</em> (2015): how disability weights are estimated.</li>
+      <li>GBD 2021 Diseases and Injuries Collaborators, <em>The Lancet</em> (2024), and its methods appendix: modern YLL, YLD, DALY and HALE definitions and the reference life table.</li>
+      <li>Gold, Stevenson &amp; Fryback, “HALYS and QALYS and DALYS, oh my: similarities and differences in summary measures of population health”, <em>Annual Review of Public Health</em> (2002): QALYs versus DALYs.</li>
+      <li>Drummond et al., <em>Methods for the Economic Evaluation of Health Care Programmes</em>, 4th ed. (2015), chapter on measuring and valuing health effects: QALYs, EQ-5D and value sets.</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="1-05-life-tables.html"><small>Previous</small>1.5 Life tables and life expectancy</a>
+    <a class="next" href="1-07-comparative-risk-assessment.html"><small>Next</small>1.7 Comparative risk assessment</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

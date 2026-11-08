@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>1.11 Decision models · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-1">Block 1</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 1.11</p>
+  <h1>Decision models: Markov and multistate life tables</h1>
+  <div class="lecture-meta">
+    <span class="tier tier-master">Master</span>
+    <span>Block 1 · Foundations, burden of disease and health economics</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>No trial follows a whole country for 50 years, so policy decisions rest on <strong>decision models</strong>: structured simulations that join evidence from many sources and project it forward. This lecture covers the three shapes you will meet, <strong>decision trees</strong>, <strong>Markov models</strong> and <strong>multistate life tables</strong>, the assumptions each makes, and how to check a model deserves trust. Project 1 is a proportional multistate life table, the standard design for salt-policy models.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#why">Why model at all</a></li>
+      <li><a href="#trees">Decision trees</a></li>
+      <li><a href="#markov">Markov cohort models</a></li>
+      <li><a href="#memory">The memoryless assumption</a></li>
+      <li><a href="#pmslt">Multistate life tables</a></li>
+      <li><a href="#validation">Validating a model</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="why">
+    <h2>1. Why model at all</h2>
+    <p class="point">A decision model links what we know (intake, blood pressure effects, disease rates, costs) to what we want to know (deaths, DALYs and costs averted over a lifetime) when no single study can measure it.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A simplified map of how people move between health states, with costs and health values attached to each state. You run the population through it twice, with and without the intervention, and take the difference.</dd>
+      <dt>Why it matters</dt>
+      <dd>Trials are short, small and in selected people. Policy needs lifetime outcomes, the whole population, every relevant comparator and all the evidence at once. A model is the only place those come together.</dd>
+      <dt>How to tell a good one</dt>
+      <dd>It is as simple as the decision allows, every input has a source, and the structure follows the disease rather than whichever data were easy to find.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Treating model output as an observation. A model that says “12,000 deaths averted” has measured nothing. It has projected the consequences of its inputs and assumptions. Its numbers are only as good as the evidence and structure behind them, which is why Lecture 1.12 exists.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>This is a mechanistic simulator, not a fitted predictor. Its structure comes from disease biology and its parameters from the literature, not from minimising a loss on one dataset. When you do tune parameters to match observed data (calibration), it is closer to fitting a simulator than training a model.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="trees">
+    <h2>2. Decision trees</h2>
+    <p class="point">A decision tree lays out each option, the chance events that follow it and the final outcome of each path, then averages the paths by their probabilities.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Three kinds of node: a <strong>decision</strong> (which option), <strong>chance</strong> (what happens, with probabilities) and <strong>terminal</strong> (the cost and health at the end). The expected value of each option is the probability-weighted average of its paths.</dd>
+      <dt>Why it matters</dt>
+      <dd>It is transparent and fast. It suits short horizons and one-off events, such as whether to test, how accurate the test is, and what treatment follows.</dd>
+      <dt>Where it breaks</dt>
+      <dd>Time and repeated events. A chronic disease where people can have a stroke, recover, have another and die, year after year, makes the tree branch without end.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Using a tree for a chronic, recurring process. Either the tree becomes unreadable or, more often, the modeller cuts it short and silently drops the long-term consequences. If events recur over time, use a Markov model or life table.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example</div>
+      <p>Screening newborns for a congenital heart defect with pulse oximetry: screen or don’t; test positive or negative; defect present or absent; early or late surgery. Every path ends in weeks, so a tree works well.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="markov">
+    <h2>3. Markov cohort models</h2>
+    <p class="point">A Markov model divides a cohort among a few health states and moves fractions of it between states once per time step until everyone has died.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Part</th><th>Plain meaning</th><th>Stroke example</th></tr></thead>
+        <tbody>
+          <tr><td><strong>States</strong></td><td>Mutually exclusive conditions a person can be in</td><td>Well, post-stroke, dead</td></tr>
+          <tr><td><strong>Transitions</strong></td><td>The probability of moving between states in one step</td><td>Chance a well person has a stroke this year</td></tr>
+          <tr><td><strong>Cycle</strong></td><td>The length of one step</td><td>One year, typical for chronic disease</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Each cycle, a share of the cohort moves along each arrow. Each state carries a cost and a health weight per cycle. Adding these up over all cycles, and discounting (Lecture 1.10), gives lifetime costs and QALYs or DALYs.</dd>
+      <dt>Why it matters</dt>
+      <dd>It handles time, ageing and repeated events with a small, readable structure. It is the workhorse of health technology assessment.</dd>
+      <dt>How to read it</dt>
+      <dd>Draw the state diagram first; a reviewer should be able to follow every arrow. Transition probabilities usually depend on age, so the model reads from a table as the cohort gets older.</dd>
+      <dt>What a change means</dt>
+      <dd>An intervention works by changing an arrow. Lowering the well-to-stroke probability by 10% keeps more of the cohort in “well”, where costs are low and health is high, for every remaining cycle.</dd>
+    </dl>
+
+    <p>One detail: people move between states at any time during a cycle, not exactly at its start or end, so models apply a <strong>half-cycle correction</strong> that counts them as spending half the cycle in each state.</p>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Treating probabilities like rates. A 5-year risk of 20% is not a 1-year risk of 4%. Probabilities over different periods don’t scale by simple division, because people who have already had the event can’t have it again. Convert through a rate (assume a constant hazard), and make sure the cycle length matches your probabilities.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Students in a school. Each year some move up a grade, some repeat, some leave. Track the share in each grade year by year and you know how many will graduate, without following any one student.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>It is a discrete-time Markov chain with an age-varying transition matrix, with a reward (cost and health) attached to each state. A cohort model propagates the distribution over states; a microsimulation samples individual trajectories from the same chain.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="memory">
+    <h2>4. The memoryless assumption</h2>
+    <p class="point">A Markov model assumes that where you go next depends only on which state you are in now, not on how you got there or how long you have been there.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Everyone in “post-stroke” is treated alike, whether their stroke was last month or ten years ago, or was their first or third. The model has no memory of history.</dd>
+      <dt>Why it matters</dt>
+      <dd>Many risks depend on history. The risk of death or a repeat event is highest soon after a stroke or heart attack and falls with time. A memoryless model averages this out and gets timing wrong.</dd>
+      <dt>How to fix it</dt>
+      <dd>Three standard fixes. <strong>Tunnel states</strong>: split “post-stroke” into “first year after stroke” and “later years”. <strong>Time-varying transitions</strong>: let probabilities depend on age or model time. <strong>Microsimulation</strong>: simulate individuals, who can carry their history.</dd>
+      <dt>What a change means</dt>
+      <dd>Adding a tunnel state for the high-risk first year usually moves deaths earlier. That changes discounted results, even if total deaths barely change.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Thinking that ageing breaks the Markov property. Age-dependent probabilities are fine, because everyone in the cohort is the same age at a given cycle. What breaks it is dependence on <em>individual</em> history, such as time since a stroke or number of previous strokes.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · from your ECG work</div>
+      <p>After a myocardial infarction, the risk of sudden cardiac death is highest in the first weeks and months, then falls. A single “post-MI” state with one annual death probability spreads that early peak across all later years. A tunnel state for the first year captures it.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>A board game: your next move depends only on the square you are on, not on the route you took there. Real patients are not board pieces.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="pmslt">
+    <h2>5. Multistate life tables</h2>
+    <p class="point">A proportional multistate life table (PMSLT) runs a life table for the whole population alongside small Markov models for each disease, and feeds changes in disease back into population deaths and health.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A <strong>main life table</strong> (Lecture 1.5) follows each sex and age cohort to death, tracking all-cause mortality and illness. Beside it run <strong>disease life tables</strong>, one per disease (stroke, heart disease and so on), each a three-state Markov model: well, diseased, dead from the disease. An intervention lowers disease incidence through a potential impact fraction (Lecture 1.7). Fewer cases mean fewer disease deaths and less illness, and these changes flow into the main table.</dd>
+      <dt>Why it matters</dt>
+      <dd>It models a whole population and many diseases at once, from the inputs GBD already provides (incidence, prevalence, case fatality, disability weights). That fits risk-factor policies like salt, which shift a whole distribution and affect several diseases. Salt-policy models from New Zealand (the BODE3 programme) and Australia (ACE-Prevention) use this design.</dd>
+      <dt>Why “proportional”</dt>
+      <dd>Diseases are treated as independent: the chance of having stroke doesn’t change your chance of having heart disease, beyond what both share through age. This lets each disease be modelled separately and keeps the model small.</dd>
+      <dt>How to read the output</dt>
+      <dd>Differences between the intervention and business-as-usual runs: deaths averted, life-years and health-adjusted life-years (HALYs, a QALY-like measure from disability weights) gained, and health care costs averted, by sex, age and year.</dd>
+    </dl>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Model</th><th>Best for</th><th>Weak at</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Decision tree</strong></td><td>Short horizons, one-off events</td><td>Time and recurring events</td></tr>
+          <tr><td><strong>Markov cohort</strong></td><td>One disease, a defined patient group, a treatment</td><td>Individual history; many diseases at once</td></tr>
+          <tr><td><strong>Multistate life table</strong></td><td>Whole populations, risk factors that affect several diseases</td><td>Comorbidity, individual risk profiles</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Feeding the model inconsistent disease inputs. Incidence, prevalence and case fatality must agree with each other, or the disease tables drift away from reality. Take them from one internally consistent source (GBD’s estimates are produced together for this reason), rather than mixing one study’s incidence with another’s case fatality.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">Example · Project 1</div>
+      <p>Project 1 runs Saudi sex-and-age cohorts through a main life table, with a disease table for each blood-pressure-related disease (Lecture 1.9), such as stroke and ischaemic heart disease. The bread limit and 2025 voluntary limits lower salt intake, which lowers blood pressure, which lowers incidence in each disease table. Running “measured compliance” and “full compliance” as two scenarios is just two different potential impact fractions.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="validation">
+    <h2>6. Validating a model</h2>
+    <p class="point">Validation asks whether the model is built correctly and whether its outputs match the world it claims to represent.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Type</th><th>Question</th><th>How</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Face validity</strong></td><td>Does the structure make sense to experts?</td><td>Show the state diagram and key inputs to clinicians and modellers</td></tr>
+          <tr><td><strong>Verification</strong></td><td>Does the code do what the design says?</td><td>Extreme-value tests: set mortality to zero, everyone should survive; set intervention effect to zero, gains should be zero</td></tr>
+          <tr><td><strong>Cross-validation</strong></td><td>Do other models give similar answers?</td><td>Compare with published models of the same question</td></tr>
+          <tr><td><strong>External validation</strong></td><td>Does it reproduce real data it wasn’t built from?</td><td>Compare projected deaths or life expectancy with observed figures</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <dl class="facets">
+      <dt>Why it matters</dt>
+      <dd>Reviewers and decision-makers trust a model only as far as its validation goes. Good practice guidance (ISPOR–SMDM) expects you to report what was done.</dd>
+      <dt>How to read it</dt>
+      <dd>Business-as-usual should reproduce the baseline: the model’s life expectancy and cardiovascular deaths for Saudi Arabia should match the official or GBD figures it started from. Large gaps mean a bug or inconsistent inputs.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Calling it external validation when the model is compared with the data it was built from. Matching GBD deaths when GBD deaths were an input only shows the code runs, not that the projections are right. True external validation uses data the model never saw.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>The same idea as train–test leakage. Fitting to GBD and then “validating” against GBD is reporting training accuracy. Verification with extreme values is unit testing.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>A colleague models a national salt policy with a decision tree over a one-year horizon. What will the model miss?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Almost all the benefit. Lower blood pressure prevents strokes and heart attacks over decades, and each prevented event saves years of life and treatment costs. A one-year tree captures the policy’s costs but few of its gains, so it makes the policy look poor value. A lifetime Markov model or life table is needed.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Your Markov model has a single “post-MI” state with one annual death probability. Why might this bias the discounted results, and how would you fix it?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Death risk after an MI is concentrated in the first year. One averaged probability pushes deaths later than they really occur. Discounting values late events less, so the timing error changes the results. Add a tunnel state for the first year after MI with its own, higher death probability.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Why is a multistate life table a better fit than a single-disease Markov model for Saudi salt policy?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Salt acts through blood pressure on several diseases at once, and the policy reaches the whole population, not a patient group. A PMSLT runs every sex and age cohort and several disease tables together, using GBD inputs that already exist for Saudi Arabia. A single-disease model would miss the other diseases and would need its own population structure.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>The “proportional” multistate life table treats diseases as independent. When would that assumption mislead you?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>When diseases cluster in the same people beyond what age explains, as stroke, heart disease and kidney disease do through shared risk factors. Counting them independently can double-count gains or misstate how much illness overlaps. For population salt policy the error is usually modest, but it should be named as a limitation.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Your model’s baseline run reproduces GBD’s Saudi cardiovascular deaths almost exactly. A reviewer calls this external validation. Do you agree?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>No. GBD rates were inputs, so matching them shows the model is internally consistent (verification), not that its projections hold. External validation would compare with data the model never used, such as Saudi vital registration, or test whether it reproduces a trend in a later period.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Briggs, Claxton &amp; Sculpher, <em>Decision Modelling for Health Economic Evaluation</em> (2006), chapters 2 and 3: decision trees, Markov models, relaxing the memoryless assumption.</li>
+      <li>Barendregt, van Oortmarssen, van Hout, van den Bosch &amp; Bonneux, “Coping with multiple morbidity in a life table”, <em>Mathematical Population Studies</em> 1998: the origin of the multistate life table.</li>
+      <li>Blakely et al., “Proportional multistate lifetable modelling of preventive interventions: concepts, code and worked examples”, <em>International Journal of Epidemiology</em> 2020: the PMSLT step by step, with code.</li>
+      <li>Nghiem, Blakely, Cobiac, Pearson &amp; Wilson, “Health and economic impacts of eight different dietary salt reduction interventions”, <em>PLoS ONE</em> 2015; Cobiac, Vos &amp; Veerman, “Cost-effectiveness of interventions to reduce dietary salt intake”, <em>Heart</em> 2010: salt-policy PMSLTs from New Zealand and Australia.</li>
+      <li>Eddy et al., “Model transparency and validation: a report of the ISPOR-SMDM Modeling Good Research Practices Task Force-7”, <em>Medical Decision Making</em> and <em>Value in Health</em> 2012: types of validation.</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="1-10-economic-evaluation.html"><small>Previous</small>1.10 Economic evaluation</a>
+    <a class="next" href="1-12-uncertainty-and-voi.html"><small>Next</small>1.12 Uncertainty and value of information</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

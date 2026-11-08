@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>1.8 Nutrition epidemiology · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-1">Block 1</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 1.8</p>
+  <h1>Nutrition epidemiology: dietary assessment and measurement error</h1>
+  <div class="lecture-meta">
+    <span class="tier tier-use">Use</span>
+    <span>Block 1 · Foundations, burden of disease and health economics</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>Diet is one of the hardest exposures to measure, and the errors are not harmless noise. This lecture shows what each method measures, why <strong>24-hour urine</strong> is the reference for sodium, and how <strong>measurement error</strong> distorts both intake estimates and diet–disease associations. It is the reasoning behind Project 2’s rule to include only 24-hour urine studies, and behind how Project 1 treats intake distributions.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#usual">The target: usual intake</a></li>
+      <li><a href="#selfreport">Self-report methods</a></li>
+      <li><a href="#urine">Biomarkers and 24-hour urine</a></li>
+      <li><a href="#spot">Spot urine and estimating equations</a></li>
+      <li><a href="#error">Random vs systematic error</a></li>
+      <li><a href="#dilution">Regression dilution</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="usual">
+    <h2>1. The target: usual intake</h2>
+    <p class="point">What matters for chronic disease is a person’s <em>usual</em> intake (their long-run average), but every method observes only a few days.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Each person’s intake swings from day to day around their own average. Usual intake is that average. One day’s measurement is the usual intake plus a large day-specific deviation.</dd>
+      <dt>Why it matters</dt>
+      <dd>Blood pressure and heart disease respond to years of exposure, not to Tuesday’s lunch. Any method that captures a single day mixes the signal (differences between people) with noise (differences between days).</dd>
+      <dt>How to read it</dt>
+      <dd>For sodium, day-to-day variation within a person is large compared with differences between people. A single day ranks people poorly, though the average of many people’s single days still estimates the population mean well.</dd>
+      <dt>What a change means</dt>
+      <dd>Adding repeat days per person shrinks the day-to-day part and sharpens the picture of each person’s usual intake. Adding more people only sharpens the population mean.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reading the spread of single-day values as the spread of usual intake. Day-to-day noise widens the distribution, so the tails look fatter than they are. If most people eat well over 5 g, the share who appear to eat under 5 g is exaggerated. Correcting this needs repeat measures on at least some people.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">Example · Gulf</div>
+      <p>Diet in the Gulf changes sharply during Ramadan, at weekends, and at gatherings with large shared meals. A survey run in one season, or only on weekdays, measures that period, not the year. Check when a study collected its data before you treat it as usual intake.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="selfreport">
+    <h2>2. Self-report methods</h2>
+    <p class="point">The three self-report tools trade detail against burden, and all three measure sodium badly.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Method</th><th>What it captures</th><th>Strength</th><th>Weakness</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Food frequency questionnaire (FFQ)</strong></td><td>How often a fixed list of foods was eaten over months</td><td>Cheap; aims at usual intake; ranks people</td><td>Poor absolute amounts; list may miss local foods</td></tr>
+          <tr><td><strong>24-hour recall</strong></td><td>Everything eaten yesterday, by interview</td><td>Detailed; little burden; good population means</td><td>One day only; relies on memory</td></tr>
+          <tr><td><strong>Food record (diary)</strong></td><td>Everything eaten, written down as it happens, over several days</td><td>No reliance on memory</td><td>Heavy burden; people eat differently when recording</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <dl class="facets">
+      <dt>Why it matters</dt>
+      <dd>Most diet–disease cohorts use FFQs. Knowing what an FFQ can do (rank people) and can’t do (give accurate grams) tells you which conclusions from those cohorts to trust.</dd>
+      <dt>Why sodium is hard</dt>
+      <dd>Salt added in cooking and at the table is rarely reported, and the salt in a dish varies with the recipe and the bakery. Food composition tables seldom match local recipes. Self-report usually underestimates sodium.</dd>
+      <dt>How to judge one</dt>
+      <dd>Ask whether it was validated against a recovery biomarker (next section) in a similar population. Validation against another self-report method shares the same errors and proves little.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Assuming errors in self-report are random. They are not: people with obesity, and people who know they “should” eat less, tend to under-report more. That error is linked to the person, so it can bias associations in either direction.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example</div>
+      <p>The US OPEN study compared FFQs and 24-hour recalls with recovery biomarkers: doubly labelled water for energy and urinary nitrogen for protein. Both self-report methods under-reported energy, the FFQ more so, and the FFQ’s errors were large enough to substantially weaken diet–disease associations.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="urine">
+    <h2>3. Biomarkers and 24-hour urine</h2>
+    <p class="point">For sodium, collecting all urine for 24 hours is the reference method, because the body excretes most of what it eats through urine.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A <em>recovery biomarker</em> is one where a known, stable share of intake comes out of the body, so output tracks intake directly. In normal conditions about 90% of ingested sodium appears in 24-hour urine. Few nutrients have such a marker: energy (doubly labelled water), protein (urinary nitrogen), potassium and sodium (24-hour urine).</dd>
+      <dt>Why it matters</dt>
+      <dd>It is the only sodium measure free of the reporting biases above. It is why WHO and PAHO publish a protocol for population sodium surveys based on it, and why Project 2 includes only 24-hour urine studies.</dd>
+      <dt>How to read it</dt>
+      <dd>Values are reported as mmol or mg of sodium per day. To get salt, multiply grams of sodium by about 2.5. A single collection is a good estimate of a <em>group’s</em> mean but a noisy estimate of one person’s usual intake.</dd>
+      <dt>Two weaknesses</dt>
+      <dd><strong>Day-to-day variation</strong>: one collection is one day, so several are needed per person to rank people. <strong>Incomplete collection</strong>: a missed void makes intake look lower. Studies check completeness with collection time, total volume, creatinine excretion relative to body size, or a tracer tablet (PABA, para-aminobenzoic acid) whose recovery confirms that all urine was collected.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Calling 24-hour urine “perfect”. It is the best available method, not error-free. A study that reports no completeness criteria, or excludes a large share of collections without saying why, may be biased low. In Project 2’s risk-of-bias assessment, completeness checks and response rate are the items to read first.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">Example · Gulf</div>
+      <p>Urine misses sodium lost in sweat. In normal conditions that share is small, but heat and heavy outdoor work raise it. For outdoor workers in a Gulf summer, 24-hour urine may understate intake more than usual. This is worth noting as a limitation for any Gulf study measured in the hot season.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Self-report is asking someone what they spent this month. 24-hour urine is reading their bank statement for one day. The statement is honest, but one day may be untypical, and a missing page makes the total look small.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="spot">
+    <h2>4. Spot urine and estimating equations</h2>
+    <p class="point">A single urine sample plus a prediction equation is cheap, but it pulls estimates towards the middle and can create associations that aren’t real.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A <em>spot urine</em> is one sample taken at one moment. Equations (the best known are Kawasaki, Tanaka and INTERSALT) predict 24-hour sodium from the sample’s sodium and creatinine plus age, sex and body size.</dd>
+      <dt>Why it matters</dt>
+      <dd>Spot urine is far easier to collect, so large cohorts and many national surveys use it. Some of the most cited and most disputed salt findings rest on it (Lecture 1.9).</dd>
+      <dt>How to read the bias</dt>
+      <dd>Compared with measured 24-hour urine, spot equations overestimate intake in low-intake groups and underestimate it in high-intake groups. The population mean can come out close, but the distribution is squashed towards the middle and individual values are unreliable.</dd>
+      <dt>What it does to associations</dt>
+      <dd>The equations use age, body size and creatinine, which are themselves linked to mortality. So the “estimated sodium” carries information that has nothing to do with sodium. In the TOHP cohort, estimated sodium showed a J-shaped link with mortality while measured 24-hour sodium did not.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Assuming that “validated against 24-hour urine” means interchangeable. An equation can match 24-hour urine on the population mean and still fail badly at ranking individuals or at the tails, which is what you need for distributions (Project 1) and for risk curves (Project 3).</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>A spot equation is a regression prediction, and predictions regress to the mean: the predicted values have less spread than the true ones. Using a model’s prediction as a feature in a second model also carries over the first model’s inputs. Here those inputs (age, body size, creatinine) are confounders, so the second model learns their effect and labels it “sodium”.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="error">
+    <h2>5. Random vs systematic error</h2>
+    <p class="point">Random error adds noise around the truth; systematic error shifts the answer in one direction; they damage different things.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th></th><th>Random error</th><th>Systematic error</th></tr></thead>
+        <tbody>
+          <tr><td><strong>What it is</strong></td><td>Scatter that averages out over many measurements</td><td>A consistent push in one direction</td></tr>
+          <tr><td><strong>Sodium example</strong></td><td>Day-to-day variation in single 24-hour urines</td><td>Missed voids; under-reported table salt</td></tr>
+          <tr><td><strong>Effect on a mean</strong></td><td>None (just less precise)</td><td>Biased; more data doesn’t help</td></tr>
+          <tr><td><strong>Effect on a distribution</strong></td><td>Too wide</td><td>Shifted</td></tr>
+          <tr><td><strong>Effect on an association</strong></td><td>Weakened towards no effect (next section)</td><td>Unpredictable; can go either way</td></tr>
+          <tr><td><strong>Fix</strong></td><td>Repeat measures; statistical correction</td><td>A better method</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <dl class="facets">
+      <dt>Why it matters</dt>
+      <dd>You need to know which kind dominates before you can say which way a result is wrong. A survey with random error gives an honest mean and an exaggerated spread. A survey with systematic error gives a wrong mean, however large it is.</dd>
+      <dt>How to tell</dt>
+      <dd>Ask whether the error would cancel if you repeated the measurement many times on the same person. If yes, it is random. If it would persist (the person always forgets the salt they add), it is systematic.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Thinking a large sample fixes measurement error. It fixes random error in a mean. It does nothing for systematic error, and nothing for the weakening of associations caused by random error in the exposure.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>A shaky hand on a dartboard scatters darts around the bullseye (random). A bent sight sends every dart to the same wrong spot (systematic). Throwing more darts helps the first, not the second.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="dilution">
+    <h2>6. Regression dilution</h2>
+    <p class="point">Random error in the exposure makes a real association look weaker than it is.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>When a single noisy measurement stands in for usual exposure, some people look high or low just by chance. Their outcomes don’t follow, so the slope of outcome on exposure flattens towards zero. This is <em>regression dilution</em> (also called attenuation).</dd>
+      <dt>Why it matters</dt>
+      <dd>Risk curves from single baseline measurements understate the true effect of usual exposure. MacMahon and colleagues showed that correcting blood pressure–disease associations for this made them substantially steeper. Single-collection sodium cohorts face the same problem.</dd>
+      <dt>How to read it</dt>
+      <dd>The flattening depends on the share of total variation that is true between-person difference. If day-to-day noise is as large as the real differences between people, the observed slope is roughly halved. Studies estimate this share from repeat measurements on a subset and use it to correct the slope.</dd>
+      <dt>What a change means</dt>
+      <dd>More collections per person reduce the noise and bring the observed slope closer to the true one. A study with several 24-hour urines per person should show a steeper sodium–disease slope than one with a single collection, if the effect is real.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Treating dilution as a safe, conservative bias. It only flattens the slope when the error is purely random and in the exposure alone. Error linked to the outcome, or to confounders (as with spot equations), can bend the curve or invent a shape, such as a J-curve.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>This is errors-in-variables. Noise in a feature shrinks its fitted coefficient; noise in the label does not (it only widens the uncertainty). The correction factor is the feature’s reliability: true-signal variance divided by total variance.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">Example · Projects 1, 2 and 3</div>
+      <p>Project 2 includes only 24-hour urine studies so that systematic error is minimised and the pooled mean is trustworthy. Project 1 then uses that mean, but should treat the single-collection spread as wider than the usual-intake spread. Project 3 has about one urine sample per person in NHANES, so its sodium and potassium risk estimates will be diluted; say so, and correct if repeat data allow. Check whether the samples are spot or 24-hour: if spot, section 4 applies too.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>A national survey collects one 24-hour urine per person from 1,500 adults and reports that 85% exceed 5 g of salt a day. Which number do you trust more: the mean or the 85%?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The mean. Day-to-day variation averages out across 1,500 people, so the mean is sound if collections were complete. But that same variation widens the distribution, so the share above any cut-off is distorted. If the mean is above 5 g, the true share above 5 g is probably higher than reported, not lower; if the mean is below, the reverse. Correcting it needs repeat collections on a subsample.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A study estimates salt intake from an FFQ and reports it lower than 24-hour urine studies in the same country. Which is more likely to be right, and why?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The 24-hour urine studies. FFQs miss salt added in cooking and at the table, use composition tables that may not match local recipes, and are designed to rank people rather than measure amounts. Self-report usually underestimates sodium.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Why does Project 2 exclude spot-urine studies even though some match 24-hour urine on the population mean?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Because agreement on average depends on the population and the equation, and the bias runs in opposite directions at low and high intakes. Mixing spot and 24-hour studies would add unknown bias to the pooled estimate and to differences between countries and sexes. Keeping to 24-hour urine gives one consistent, defensible measure.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A 24-hour urine study excludes 30% of collections as incomplete, and the excluded group was mostly younger men. What could this do to the reported mean?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>It could bias it. If younger men eat more salt than average, losing them pushes the mean down. Exclusion for completeness improves measurement but can create selection bias. Check whether results were reported by sex and age, or weighted back to the population.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Cohort A, with one 24-hour urine per person, finds a weak sodium–stroke association. Cohort B, with five per person, finds a stronger one. Does B contradict A?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>No. This is what regression dilution predicts. A’s single collection is noisier, so its slope is flattened towards zero. B measures usual intake better and recovers more of the true slope. Both are consistent with a real effect.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A cohort using spot urine with the Kawasaki equation finds that low estimated sodium is linked to higher mortality. Give two reasons, other than a real harm of low salt, why this could happen.</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>First, the equation uses creatinine, age and body size, which are linked to mortality themselves, so “estimated sodium” partly measures frailty. Second, people who are already ill often eat less, so low intake can be a result of disease rather than a cause (reverse causation). Section 4 and Lecture 1.9 cover both.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Willett, <em>Nutritional Epidemiology</em> (3rd edition, 2013): chapters on 24-hour recalls and food records, food frequency methods, biochemical indicators, and correcting for measurement error.</li>
+      <li>WHO/PAHO Regional Expert Group, <em>Protocol for population level sodium determination in 24-hour urine samples</em> (2010): collection and completeness criteria.</li>
+      <li>Huang, Crino, Wu et al., “Mean population salt intake estimated from 24-h urine samples and spot urine samples: a systematic review and meta-analysis”, <em>International Journal of Epidemiology</em> (2016): the direction of spot-urine bias.</li>
+      <li>He, Ma, Campbell, MacGregor, Cogswell &amp; Cook, “Formulas to estimate dietary sodium intake from spot urine alter sodium-mortality relationship”, <em>Hypertension</em> (2019): the TOHP comparison.</li>
+      <li>MacMahon, Peto, Cutler et al., “Blood pressure, stroke, and coronary heart disease. Part 1”, <em>The Lancet</em> (1990): regression dilution and its correction. Kipnis et al., OPEN study, <em>American Journal of Epidemiology</em> (2003): self-report against recovery biomarkers.</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="1-07-comparative-risk-assessment.html"><small>Previous</small>1.7 Comparative risk assessment</a>
+    <a class="next" href="1-09-salt-evidence.html"><small>Next</small>1.9 The salt evidence</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>1.12 Uncertainty and value of information · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-1">Block 1</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 1.12</p>
+  <h1>Uncertainty: probabilistic sensitivity analysis and value of information</h1>
+  <div class="lecture-meta">
+    <span class="tier tier-master">Master</span>
+    <span>Block 1 · Foundations, burden of disease and health economics</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>Every model input is uncertain, so every model answer is uncertain. This lecture shows how to <strong>carry input uncertainty through to the decision</strong> (probabilistic sensitivity analysis), <strong>show how sure the decision is</strong> (acceptability curves), and <strong>put a price on resolving the uncertainty</strong> (value of information). The last step is where Project 1 uses an ML metamodel: it tells Saudi decision-makers which missing data, such as true compliance, would be most worth collecting.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#kinds">Three kinds of uncertainty</a></li>
+      <li><a href="#dsa">One-way and tornado analysis</a></li>
+      <li><a href="#psa">Probabilistic sensitivity analysis</a></li>
+      <li><a href="#ceac">Acceptability curves</a></li>
+      <li><a href="#evpi">Value of perfect information</a></li>
+      <li><a href="#evppi">Which uncertainty matters: EVPPI</a></li>
+      <li><a href="#metamodels">Metamodels for EVPPI</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="kinds">
+    <h2>1. Three kinds of uncertainty</h2>
+    <p class="point">Uncertainty comes from the numbers you put in, the shape of the model, and the analytic rules you chose, and each needs a different tool.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Kind</th><th>Plain meaning</th><th>Salt example</th><th>Handled by</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Parameter</strong></td><td>We don’t know the true value of an input</td><td>How much does 1 g less salt lower blood pressure?</td><td>Probabilistic sensitivity analysis</td></tr>
+          <tr><td><strong>Structural</strong></td><td>We don’t know the right model shape</td><td>Does the effect of salt on blood pressure differ by age? Are diseases independent?</td><td>Scenario analyses with alternative structures</td></tr>
+          <tr><td><strong>Methodological</strong></td><td>Analysts disagree on the rules</td><td>Discount rate, perspective, threshold</td><td>A reference case, plus scenarios</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <dl class="facets">
+      <dt>Why it matters</dt>
+      <dd>A model that reports one number hides how fragile it is. Decision-makers need to know whether the answer would change if the inputs were a bit different.</dd>
+      <dt>How to tell</dt>
+      <dd>Ask whether more data on an input would settle it (parameter), whether it is about how the model is built (structural), or whether it is a value choice no data can settle (methodological).</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Confusing uncertainty with variability and heterogeneity. Variability is chance differences between identical people (one has a stroke, one doesn’t). Heterogeneity is explained differences between groups (men and women have different stroke rates). Neither is uncertainty. Handle heterogeneity by running subgroups separately, not by widening the input distributions.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">Example · Project 1</div>
+      <p>Compliance with the 2025 voluntary limits is a parameter uncertainty: a measurement would settle it. Whether to model industry reformulation costs is methodological (it depends on perspective). Whether salt affects non-nationals and nationals the same way is structural, and becomes a heterogeneity question in Project 8.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="dsa">
+    <h2>2. One-way and tornado analysis</h2>
+    <p class="point">Deterministic sensitivity analysis changes one input at a time to its plausible low and high values and records how much the result moves.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>One-way</strong>: vary one input, hold the rest at their best estimates. A <strong>tornado diagram</strong> shows a horizontal bar per input, its width the range of results, sorted widest at the top. <strong>Threshold analysis</strong> asks how far an input must move before the decision flips.</dd>
+      <dt>Why it matters</dt>
+      <dd>It is quick and easy to explain. It shows which inputs the result leans on, which guides where to look harder.</dd>
+      <dt>How to read it</dt>
+      <dd>A wide bar that crosses the threshold (or zero net benefit) means that input can change the decision. A wide bar that stays on one side changes the size of the answer but not the decision.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Treating a tornado diagram as the full picture of uncertainty. It moves inputs one at a time, so it misses what happens when several are unfavourable together, and its ranges are often chosen arbitrarily. It ranks inputs; it doesn’t tell you how likely the decision is to be wrong. That needs PSA.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">Example · Project 1 (illustrative)</div>
+      <p>A threshold analysis might ask: how low can compliance with the bread limit fall before the policy is no longer cost-saving? If the answer is “below 10%”, the conclusion is robust. If it is “below 70%” and measured compliance is near that, the decision hinges on enforcement.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="psa">
+    <h2>3. Probabilistic sensitivity analysis</h2>
+    <p class="point">Probabilistic sensitivity analysis (PSA) gives every uncertain input a probability distribution, draws all inputs at once, runs the model, and repeats thousands of times.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Each run uses one plausible set of inputs and gives one cost and one health result per option. Thousands of runs give a cloud of results that reflects all the input uncertainty together. Distributions are chosen to fit the kind of input: <strong>beta</strong> for probabilities (bounded 0–1), <strong>gamma or lognormal</strong> for costs (positive, skewed), <strong>lognormal</strong> for relative risks.</dd>
+      <dt>Why it matters</dt>
+      <dd>It answers the question one-way analysis can’t: given everything we don’t know, how likely is this option to be the best? Most guidelines and journals expect it, and it is the input for value of information.</dd>
+      <dt>How to read it</dt>
+      <dd>Plot the runs on the cost-effectiveness plane (Lecture 1.10). A tight cloud in one quadrant means a confident answer. A cloud spread across quadrants, or straddling the threshold line, means the decision is uncertain. Report the mean across runs as the main result.</dd>
+      <dt>What a change means</dt>
+      <dd>Narrowing one input’s distribution (say, after a new meta-analysis) shrinks the cloud only as far as that input drove the spread.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Drawing linked inputs independently. Baseline risk and a relative risk from the same regression, or the probabilities of leaving one state, are correlated or must add up to one. Drawing them separately produces impossible combinations. Draw them jointly (for example from a multivariate normal or a Dirichlet distribution).</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example</div>
+      <p>In a statin model, the relative risk of heart attack might come from a meta-analysis as 0.75 (95% CI 0.70–0.80). Rather than plugging in 0.75, PSA draws a new value each run from a lognormal distribution matching that interval, so the uncertainty in the trial evidence flows into the final result.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>PSA is Monte Carlo forward propagation of parameter uncertainty, the same idea as sampling from a posterior and pushing each draw through a model to get a predictive distribution. Input distributions play the role of priors or posteriors; outputs are a sample, not a point estimate.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="ceac">
+    <h2>4. Acceptability curves</h2>
+    <p class="point">A cost-effectiveness acceptability curve (CEAC) shows, for each possible threshold, the probability that each option is the most cost-effective.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>For a given threshold, compute net monetary benefit (Lecture 1.10) for each option in every PSA run, and count the share of runs in which each option wins. Repeat across a range of thresholds and plot.</dd>
+      <dt>Why it matters</dt>
+      <dd>It answers the decision-maker’s question without forcing one threshold, which suits countries like Saudi Arabia with no single agreed threshold.</dd>
+      <dt>How to read it</dt>
+      <dd>A curve near 1 means the option is almost surely best at that threshold. A curve near 0.5 between two options means it is close to a coin toss. At very low thresholds the cheapest option tends to win; at high thresholds, the most effective.</dd>
+      <dt>What a change means</dt>
+      <dd>A rise from 0.6 to 0.9 as the threshold increases means the option becomes clearly worth it once each DALY is valued more. A flat curve means the decision barely depends on the threshold.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Choosing the option with the highest probability of being cost-effective. The right choice is the one with the highest <em>expected</em> net benefit. When results are skewed, an option can win in 60% of runs by a little but lose in 40% by a lot. The cost-effectiveness acceptability <em>frontier</em> marks the option with the highest expected net benefit at each threshold.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>A bet that wins 60% of the time and pays 1 riyal, but loses 10 riyals the rest of the time. It usually wins, and it is still a bad bet.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="evpi">
+    <h2>5. Value of perfect information</h2>
+    <p class="point">The expected value of perfect information (EVPI) is the most it would be worth paying to remove all uncertainty before deciding.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>In each PSA run, imagine you knew that run’s inputs were true and picked the best option for them. Average those best outcomes. Then compare with what you get by picking the one option that is best on average today. The gap, in net benefit, is EVPI: the expected loss from deciding under uncertainty.</dd>
+      <dt>Why it matters</dt>
+      <dd>It sets an upper bound on the value of more research. Multiply the per-person EVPI by the number of people the decision affects over its lifetime to get the population EVPI. If that is below the cost of any feasible study, decide now; more research can’t pay off.</dd>
+      <dt>How to read it</dt>
+      <dd>EVPI is zero when the same option wins in every run: there is nothing to learn that would change the decision. It is highest when the decision is close (the ICER is near the threshold) and uncertainty is large.</dd>
+      <dt>What a change means</dt>
+      <dd>A large population EVPI says research could be worth it, not which research. That is the next section.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reading high uncertainty as high EVPI. Inputs can be very uncertain and EVPI still near zero, if every plausible value leads to the same decision. A cost-saving policy that stays cost-saving across the whole PSA has no value of information, however wide its confidence intervals.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>The most you would pay for a perfect weather forecast before a wedding. Worth a lot if the venue is outdoors and the season is unsettled. Worth nothing if you are indoors anyway.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="evppi">
+    <h2>6. Which uncertainty matters: EVPPI</h2>
+    <p class="point">The expected value of partial perfect information (EVPPI) is the value of learning one input, or a group of inputs, exactly, with everything else still uncertain.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The same logic as EVPI, applied to a subset of inputs. It is what you would gain from a study that measured, say, compliance perfectly while leaving the other inputs as they are.</dd>
+      <dt>Why it matters</dt>
+      <dd>It ranks research priorities by their effect on the decision, not by how uncertain the inputs look. Groups of inputs that would be measured in the same study (e.g. all costs) should be assessed together.</dd>
+      <dt>How to read it</dt>
+      <dd>Compare EVPPIs across inputs. The input with the largest EVPPI is where research would pay most. The <strong>expected value of sample information</strong> (EVSI) goes one step further: the value of a real study of a given size, which can be set against what the study costs.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Adding EVPPIs. The EVPPIs of separate inputs don’t add up to the EVPI, or to the EVPPI of the group. Uncertainties interact through the decision. Compute the group directly.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">Example · Project 1 (illustrative)</div>
+      <p>Suppose EVPPI is high for compliance with the voluntary limits and near zero for stroke treatment costs. The message to SFDA is: measuring how much salt manufacturers actually removed is worth more than a new costing study. That is a concrete, decision-linked reason to collect the data Project 9 explains.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="metamodels">
+    <h2>7. Metamodels for EVPPI</h2>
+    <p class="point">Regression-based EVPPI fits a fast statistical model (a metamodel) to the PSA output, so you can estimate EVPPI from the PSA you already ran instead of running the model millions more times.</p>
+
+    <dl class="facets">
+      <dt>What it does</dt>
+      <dd>EVPPI needs, for each value of the input of interest, the expected net benefit averaged over all other inputs. The direct way nests a second simulation inside each draw, which is very slow. Strong, Oakley &amp; Brennan (2014) showed you can regress each option’s net benefit on the input of interest across the PSA runs. The fitted values estimate that average; the leftover noise is the other inputs, which is exactly what you want to average out.</dd>
+      <dt>Which metamodel</dt>
+      <dd>For one to a few inputs, a generalised additive model (GAM: flexible smooth curves). For larger groups, a Gaussian process. Other flexible learners work in principle. The SAVI web tool and the <code>voi</code> and <code>BCEA</code> R packages implement the standard methods.</dd>
+      <dt>How to read it</dt>
+      <dd>Check the metamodel fit as you would any regression: residual plots, and the standard error of the EVPPI estimate. Then read the EVPPI as in section 6.</dd>
+      <dt>What a change means</dt>
+      <dd>More PSA runs give a more precise EVPPI. If adding runs moves your EVPPI ranking, you didn’t have enough.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>An overfitted metamodel inflates EVPPI. If the fitted values chase noise from the other inputs, they vary more than the true average does, and the method reads that spurious variation as decision-relevant information. Underfitting does the opposite. Choose flexibility by cross-validation or the model’s own smoothing, not by maximising fit.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>The metamodel is estimating a conditional expectation, the expected net benefit given the input of interest, which is exactly what squared-error regression targets. So any well-regularised learner fits the framework. The ML-specific risk is the one above: on this task variance doesn’t average away, it adds bias upwards, because the method takes a maximum over the fitted values.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">Second use: emulators</div>
+      <p>A metamodel can also stand in for a slow simulator, so you can run PSA or calibration on the fast surrogate. Gaussian process emulators are the classic tool. A PMSLT like Project 1 usually runs fast enough that you won’t need this, but large microsimulations do.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>A tornado diagram shows the salt–blood pressure effect has the widest bar, but the bar never crosses zero net benefit. What does this tell you, and what does it not tell you?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>That input moves the size of the benefit most, but on its own it can’t flip the decision. It doesn’t tell you what happens when several inputs are unfavourable together, or how likely the decision is to be wrong. PSA answers those.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Why should men and women be run as separate subgroups rather than having sex folded into a wider input distribution in the PSA?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Sex differences are heterogeneity: known, explained differences, not uncertainty about a value. Folding them into the PSA makes the result look more uncertain than it is and hides that the answer may differ by group. Run subgroups separately, each with its own PSA.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>At a given threshold, option A is cost-effective in 65% of PSA runs and option B in 35%, but B has the higher expected net benefit. Which do you recommend?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>B. The decision rule is highest expected net benefit. A wins more often by small margins, while B wins by large margins when it wins. The acceptability frontier would mark B at that threshold.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Your salt policy is cost-saving in 99% of PSA runs, yet the confidence interval on blood-pressure effects is wide. A colleague wants to fund a new trial to narrow it. What does value of information say?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>EVPI and the EVPPI for that effect will be close to zero, because almost every plausible value leads to the same decision. A new trial would sharpen the size of the benefit but would almost never change the choice, so on decision grounds it isn’t worth funding. It might still have scientific value.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>You fit a deep neural network to estimate EVPPI from 2,000 PSA runs, and it gives a much higher EVPPI for compliance than a GAM does. Which do you trust, and why?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Be suspicious of the network. With 2,000 runs, a very flexible model can overfit, and overfitting inflates EVPPI. Check both with held-out data or cross-validation and look at the residuals. If the GAM fits as well out of sample, prefer it; if the network genuinely fits better, more PSA runs should confirm the higher figure.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>What would make population EVPI for Project 1 large, and what would you do with that finding?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>A decision close to the threshold, wide uncertainty in inputs that drive it, and a large population affected for many years. A large EVPI justifies further research, and EVPPI then points to which input to study, for example measuring compliance or baseline salt intake. Project 2’s pooled intake estimate is one way to reduce that uncertainty.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Briggs, Claxton &amp; Sculpher, <em>Decision Modelling for Health Economic Evaluation</em> (2006), chapters 4–7: choosing distributions, presenting PSA output and CEACs, value of information, research design.</li>
+      <li>Briggs et al., “Model parameter estimation and uncertainty analysis: a report of the ISPOR-SMDM Modeling Good Research Practices Task Force-6”, <em>Medical Decision Making</em> and <em>Value in Health</em> 2012: kinds of uncertainty and good practice.</li>
+      <li>Fenwick, Claxton &amp; Sculpher, “Representing uncertainty: the role of cost-effectiveness acceptability curves”, <em>Health Economics</em> 2001: CEACs and the acceptability frontier.</li>
+      <li>Strong, Oakley &amp; Brennan, “Estimating multiparameter partial expected value of perfect information from a probabilistic sensitivity analysis sample: a nonparametric regression approach”, <em>Medical Decision Making</em> 2014: regression-based EVPPI with GAMs and Gaussian processes.</li>
+      <li>Fenwick et al. and Rothery et al., ISPOR Value of Information Analysis Emerging Good Practices Task Force reports 1 and 2, <em>Value in Health</em> 2020: when and how to use EVPI, EVPPI and EVSI.</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="1-11-decision-models.html"><small>Previous</small>1.11 Decision models</a>
+    <a class="next" href="../../index.html#block-2"><small>Next</small>Block 2 · Epidemiology</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

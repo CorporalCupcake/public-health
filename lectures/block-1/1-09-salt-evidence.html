@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>1.9 The salt evidence · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-1">Block 1</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 1.9</p>
+  <h1>The salt evidence: salt → blood pressure → cardiovascular disease</h1>
+  <div class="lecture-meta">
+    <span class="tier tier-master">Master</span>
+    <span>Block 1 · Foundations, burden of disease and health economics</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>The case against salt rests on a chain: less sodium lowers blood pressure (shown in trials), and lower blood pressure prevents heart disease and stroke (shown in trials and huge cohorts). Direct outcome evidence now supports the whole chain. This lecture lets you defend each link, explain the J-curve dispute, and see where potassium fits. Project 1’s model is this chain, link by link.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#chain">The causal chain</a></li>
+      <li><a href="#salt-bp">Link 1: salt → blood pressure</a></li>
+      <li><a href="#bp-cvd">Link 2: blood pressure → cardiovascular disease</a></li>
+      <li><a href="#direct">Direct evidence on outcomes</a></li>
+      <li><a href="#jcurve">The J-curve controversy</a></li>
+      <li><a href="#potassium">Potassium and the sodium-to-potassium ratio</a></li>
+      <li><a href="#targets">Targets and units</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="chain">
+    <h2>1. The causal chain</h2>
+    <p class="point">Salt harms mainly by raising blood pressure, so the evidence can be built one link at a time, each with the best design for that link.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Sodium intake → systolic blood pressure → stroke, heart disease, heart failure and kidney disease. Blood pressure is the <em>mediator</em>: the step through which most of the effect passes. GBD has also included a direct link from sodium to stomach cancer.</dd>
+      <dt>Why it matters</dt>
+      <dd>A trial of salt reduction with stroke as the outcome needs tens of thousands of people kept on a changed diet for years. A trial with blood pressure as the outcome needs a few hundred for a few weeks. The chain lets short trials and long cohorts each answer the part they are good at.</dd>
+      <dt>How to judge it</dt>
+      <dd>A chain is only as strong as its weakest link, and only valid if the mediator carries the effect. Ask of each link: what design supports it, and is the effect consistent across studies?</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Assuming a blood pressure fall from salt reduction protects exactly as much as the same fall from a drug. That is the key assumption of most salt models, including Project 1. It is reasonable, and direct outcome evidence (section 4) supports it, but state it as an assumption.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Proving a bridge is safe by testing each span separately. You trust the bridge if every span holds and the joints connect. You don’t need to drive a million cars across first.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="salt-bp">
+    <h2>2. Link 1: salt → blood pressure</h2>
+    <p class="point">Randomised trials show that eating less salt lowers blood pressure, in proportion to the size of the cut, in people with and without hypertension.</p>
+
+    <dl class="facets">
+      <dt>What the trials show</dt>
+      <dd>The Cochrane review by He, Li and MacGregor (34 trials, at least 4 weeks long) found that an average cut of about 4.4 g of salt a day lowered systolic pressure by about 4 mmHg overall: about 5 mmHg in people with hypertension and about 2.4 mmHg in people without. The fall was roughly proportional to the cut.</dd>
+      <dt>Why it matters</dt>
+      <dd>This is the first conversion in Project 1: from grams of salt to mmHg. The review’s dose-response (about 5.8 mmHg systolic for a 6 g/day cut, adjusted for age, ethnicity and blood pressure status) works out at roughly 1 mmHg per gram of salt per day, on average.</dd>
+      <dt>How to read a value</dt>
+      <dd>2–5 mmHg sounds trivial for one patient, whose readings vary more than that between visits. Across a whole population it shifts the entire distribution, and that is a large public health effect (Lecture 1.2).</dd>
+      <dt>What a change means</dt>
+      <dd>Bigger cuts give bigger falls. The effect is larger in older people, people with hypertension and people of Black African ancestry, so the same policy lowers blood pressure more in some groups than others (Project 8).</dd>
+    </dl>
+
+    <div class="callout example">
+      <div class="callout-title">Example</div>
+      <p>DASH-Sodium (Sacks et al., 2001) fed 412 adults controlled diets at three sodium levels, each for 30 days. Each step down in sodium lowered blood pressure, with or without the healthy DASH diet. The DASH diet at the lowest sodium level gave systolic pressures about 7 mmHg lower in people without hypertension, and about 11.5 mmHg lower in people with it, than a typical diet at high sodium.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Citing short, very large salt cuts to argue that salt reduction is harmful. Trials that cut salt drastically for a few days show rises in renin and other hormones, which some read as harm. Those are short-term adjustments to an extreme change. The relevant evidence for policy is modest cuts sustained for weeks or longer, which is why the Cochrane review required at least 4 weeks.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="bp-cvd">
+    <h2>3. Link 2: blood pressure → cardiovascular disease</h2>
+    <p class="point">Cardiovascular risk rises steadily with blood pressure from well within the “normal” range, and lowering it in trials prevents events.</p>
+
+    <dl class="facets">
+      <dt>What the cohorts show</dt>
+      <dd>The Prospective Studies Collaboration pooled about a million adults. At ages 40–69, each 20 mmHg higher usual systolic pressure was linked to more than twice the death rate from stroke and twice the death rate from heart disease. The relationship held down to at least 115 mmHg, with no threshold.</dd>
+      <dt>What the trials show</dt>
+      <dd>The Blood Pressure Lowering Treatment Trialists’ Collaboration (48 drug trials, about 345,000 people) found that each 5 mmHg fall in systolic pressure cut major cardiovascular events by about 10%. This held with or without existing heart disease and across starting blood pressures, including normal ones.</dd>
+      <dt>How to read it</dt>
+      <dd>The relationship is <em>log-linear</em>: each extra mmHg multiplies risk by about the same factor, so the relative benefit of a fall is similar at any starting level. The absolute benefit is larger in people at higher absolute risk, such as older people.</dd>
+      <dt>What a change means</dt>
+      <dd>Put the two links together: a 5 g/day salt cut gives roughly 5 mmHg, which gives roughly 10% fewer major cardiovascular events at steady state. This is a rough chain for intuition; Project 1 does it properly by age, sex and disease.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Using a single baseline blood pressure reading to build the risk curve. One reading is noisy, so the curve is flattened by regression dilution (Lecture 1.8). The Prospective Studies Collaboration corrected to “usual” blood pressure for this reason. Use risk estimates on the usual-pressure scale.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>Log-linear means blood pressure enters a log-link model linearly. In a Cox or Poisson model, the hazard ratio per 10 mmHg is constant across the range within an age group, which is why a single “per 10 mmHg” number travels well between populations, while the absolute effect depends on each population’s baseline rate.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="direct">
+    <h2>4. Direct evidence on outcomes</h2>
+    <p class="point">A large trial and the best-measured cohorts now link lower sodium directly to fewer cardiovascular events, closing the chain.</p>
+
+    <dl class="facets">
+      <dt>The trial</dt>
+      <dd>SSaSS (Salt Substitute and Stroke Study) randomised about 21,000 people in 600 rural Chinese villages, all with past stroke or aged 60 and over with high blood pressure. Villages switched to a salt substitute (75% sodium chloride, 25% potassium chloride) or kept regular salt. Over about 4.7 years, stroke fell by 14% (rate ratio 0.86), major cardiovascular events by 13%, and deaths also fell. No excess of serious high-potassium events was detected.</dd>
+      <dt>The cohorts</dt>
+      <dd>Ma and colleagues pooled six cohorts with at least two 24-hour urine collections per person. Each extra 1,000 mg of sodium a day was linked to 18% higher cardiovascular risk, each extra 1,000 mg of potassium to 18% lower risk, and the relationship was a steady dose-response, with no J-curve.</dd>
+      <dt>Why it matters</dt>
+      <dd>These answer the critic who says “blood pressure is only a surrogate”. A reviewer of Project 1 will ask for outcome evidence; these are the studies to cite.</dd>
+      <dt>How to read it</dt>
+      <dd>SSaSS tests a substitute, which lowers sodium <em>and</em> raises potassium at once. It shows the swap works; it cannot say how much came from each.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Generalising SSaSS to everyone. Its participants were high-risk, ate a lot of salt, and added most of it themselves while cooking. Where a large share of salt comes from bread and processed food, a table-salt swap reaches less of the intake and reformulating foods is the more relevant lever. Find out where a population’s salt comes from before transposing SSaSS.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">Example · Saudi Arabia</div>
+      <p>The 2019 bread limit and the 2025 voluntary limits (GSO 2612:2025) work on the food supply, not the salt shaker. Their evidence base is therefore the chain (trials on blood pressure, then blood pressure on events), backed by the cohort dose-response, rather than SSaSS directly. Project 1 makes that reasoning explicit.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="jcurve">
+    <h2>5. The J-curve controversy</h2>
+    <p class="point">Some large cohorts report higher risk at low as well as high sodium intake, but the J-shape is best explained by how sodium was measured and who eats little.</p>
+
+    <dl class="facets">
+      <dt>The claim</dt>
+      <dd>The PURE study (about 100,000 people in 17 countries) estimated sodium from one morning spot urine using the Kawasaki equation. The lowest risk was at an estimated 3–6 g of sodium a day, with higher risk both below 3 g and above about 7 g. That would put WHO’s target of under 2 g in the “risky” zone.</dd>
+      <dt>Three critiques</dt>
+      <dd><strong>Measurement</strong>: spot-urine equations distort individual intake and build in age, body size and creatinine, which predict death on their own. In TOHP, the same people showed a J-curve with estimated sodium and a linear relationship with measured 24-hour sodium. <strong>Reverse causation</strong>: people who are ill or frail eat less, so low intake marks illness rather than causing it. <strong>Single measure</strong>: one sample ranks people poorly, so the shape at the extremes is fragile.</dd>
+      <dt>How to judge it</dt>
+      <dd>Rank evidence by measurement quality. Trials and cohorts with repeated 24-hour urine show benefit continuing at lower intakes. Cohorts with single spot urines produce the J. When better measurement removes a finding, the finding was probably an artefact.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Treating the J-curve as a reason to stop at today’s intake. Even taken at face value, PURE found higher risk above about 7 g of sodium (roughly 17–18 g of salt), and most populations sit well above WHO’s target. The policy question is whether to bring intake down from where it is, not whether to push it below 2 g.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · How to critique a paper</div>
+      <p>When you appraise any sodium–outcome cohort (and in Project 3, your own), ask in order: how was sodium measured (24-hour or spot, how many times)? Were people with existing disease excluded, and were early deaths dropped? Was the curve corrected for regression dilution? These three questions resolve most sodium disputes.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>People in hospital spend less on petrol than healthy people. That doesn’t mean driving less makes you ill. The low spending is a sign of illness, not its cause.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="potassium">
+    <h2>6. Potassium and the sodium-to-potassium ratio</h2>
+    <p class="point">Potassium pushes blood pressure the other way, so sodium and potassium together predict risk better than sodium alone.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Higher potassium intake (fruit, vegetables, pulses) lowers blood pressure, most clearly in people eating a lot of sodium. The urinary sodium-to-potassium ratio captures both in one number, and it is measured in the same 24-hour urine.</dd>
+      <dt>Why it matters</dt>
+      <dd>It explains part of SSaSS’s benefit and why the DASH diet adds to salt reduction. It is Project 3’s exposure: in NHANES you will test whether the ratio predicts cardiovascular death better than sodium alone.</dd>
+      <dt>How to read a value</dt>
+      <dd>A higher ratio is worse. WHO’s two targets (under 2 g sodium, at least 3.5 g potassium a day) correspond to a molar ratio below about 1. Most populations are well above that.</dd>
+      <dt>What a change means</dt>
+      <dd>The ratio can fall because sodium went down, potassium went up, or both. Two people with the same ratio can have very different diets, so report sodium and potassium alongside the ratio.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Assuming potassium is safe for everyone. People with kidney disease, or on drugs that retain potassium (such as some heart failure and blood pressure medicines), can develop dangerously high blood potassium. WHO’s 2025 guideline recommends potassium-containing salt substitutes for the general adult population, conditionally, and not for people with kidney impairment.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">Example · Gulf</div>
+      <p>Diabetes is common in the Gulf, and diabetes is a leading cause of kidney disease. A Gulf salt-substitute policy would need to weigh the stroke benefit against hyperkalaemia risk in people with undiagnosed kidney disease. Food reformulation, which removes sodium without adding potassium, avoids that trade-off.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="targets">
+    <h2>7. Targets and units</h2>
+    <p class="point">WHO recommends adults eat less than 5 g of salt (2 g of sodium) a day, and mixing up salt and sodium is the commonest error in this field.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Quantity</th><th>Equals</th></tr></thead>
+        <tbody>
+          <tr><td>1 g sodium</td><td>About 2.5 g salt</td></tr>
+          <tr><td>1 g salt</td><td>About 0.4 g (400 mg) sodium</td></tr>
+          <tr><td>100 mmol sodium (typical lab unit)</td><td>2.3 g sodium, about 5.8 g salt</td></tr>
+          <tr><td>WHO target: &lt;5 g salt</td><td>&lt;2 g sodium, about 87 mmol</td></tr>
+          <tr><td>WHO potassium: ≥3.5 g</td><td>About 90 mmol</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <dl class="facets">
+      <dt>Why it matters</dt>
+      <dd>Papers report salt, sodium, mg, g and mmol interchangeably. A factor-of-2.5 error turns a policy that meets the WHO target into one that misses it. Convert everything to one unit before you compare or pool.</dd>
+      <dt>How to read a value</dt>
+      <dd>Below 5 g salt meets the WHO target. WHO members also agreed a 30% relative cut in mean population salt intake by 2025. Project 1 benchmarks Saudi policies against both.</dd>
+      <dt>What a change means</dt>
+      <dd>Each gram of salt a day removed from the average lowers average systolic pressure by roughly 1 mmHg (section 2). That is the number to keep in your head when you read any salt policy.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reading a food label’s sodium figure as salt, or the reverse. A bread with 0.4 g sodium per 100 g contains 1 g salt per 100 g. Always check which one a regulation or a study uses.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>A critic says: “Salt-reduction trials only show small blood pressure changes. No trial has shown that cutting salt in food prevents strokes.” How do you answer?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The case doesn’t need a single trial. Trials show salt reduction lowers blood pressure; trials of over 300,000 people show lowering blood pressure prevents cardiovascular events; and cohorts show risk rises steadily with blood pressure. Direct evidence supports the chain: SSaSS cut strokes with a sodium-reduced salt, and cohorts with repeated 24-hour urines show a steady sodium–risk gradient. A small blood pressure fall across a whole population is a large effect.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A new cohort using one spot urine per person finds a J-shaped sodium–mortality curve. What three questions do you ask before believing it?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>How was sodium measured (a spot equation builds in age, body size and creatinine)? Could illness have lowered intake (reverse causation; were sick people and early deaths excluded)? How noisy is one sample (regression dilution and fragile tails)? Then compare with studies using repeated 24-hour urine, which do not show the J.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Your Project 1 model applies the drug-trial benefit per mmHg to blood pressure lowered by salt reduction. What assumption is that, and what supports it?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>That blood pressure fully mediates salt’s effect, and that a mmHg lowered by diet protects as much as one lowered by drugs. It is supported by the log-linear cohort relationship, which doesn’t depend on why pressure differs, and by direct outcome evidence (SSaSS and the 24-hour urine cohorts) that points the same way. State it as an assumption, and test it in sensitivity analysis.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Would you expect the Saudi bread limit to lower blood pressure equally in all adults?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>No. The intake cut depends on how much bread each person eats, and the blood pressure response per gram is larger in older people and people with hypertension. Benefit therefore differs by age, sex, nationality and diet, which is the question Project 8 asks.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A ministry proposes a nationwide switch to potassium-enriched salt to replace a stalled food-reformulation programme. What would you want to know first?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Where people’s salt comes from: a substitute only reaches salt added at home, so if most comes from bread and processed food, the effect is small. Second, how common kidney disease and potassium-retaining drugs are, since hyperkalaemia is the main risk (WHO excludes people with kidney impairment). The two levers are complements, not substitutes.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Project 3 finds the sodium-to-potassium ratio predicts cardiovascular death better than sodium alone. Does that mean sodium matters less than people thought?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>No. It means potassium carries extra information. The ratio combines a harmful exposure and a protective one, so it can outperform either alone even when sodium’s own effect is unchanged. Report both components so readers can see which drives the result.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>He, Li &amp; MacGregor, “Effect of longer term modest salt reduction on blood pressure: Cochrane systematic review and meta-analysis of randomised trials”, <em>BMJ</em> (2013): link 1 and its dose-response. Sacks et al., DASH-Sodium, <em>New England Journal of Medicine</em> (2001).</li>
+      <li>Prospective Studies Collaboration (Lewington et al.), <em>The Lancet</em> (2002); Blood Pressure Lowering Treatment Trialists’ Collaboration, <em>The Lancet</em> (2021): link 2 from cohorts and trials.</li>
+      <li>Neal et al., “Effect of salt substitution on cardiovascular events and death” (SSaSS), <em>New England Journal of Medicine</em> (2021); Ma et al., “24-hour urinary sodium and potassium excretion and cardiovascular risk”, <em>New England Journal of Medicine</em> (2022): direct outcome evidence.</li>
+      <li>O’Donnell et al., PURE, <em>New England Journal of Medicine</em> (2014); He, Ma, Campbell et al., <em>Hypertension</em> (2019): the J-curve and the spot-urine critique.</li>
+      <li>WHO, <em>Guideline: Sodium intake for adults and children</em> and <em>Guideline: Potassium intake for adults and children</em> (2012); WHO guideline on lower-sodium salt substitutes (2025): targets and the kidney caveat.</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="1-08-nutrition-epidemiology.html"><small>Previous</small>1.8 Nutrition epidemiology</a>
+    <a class="next" href="1-10-economic-evaluation.html"><small>Next</small>1.10 Economic evaluation</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>1.4 Measuring population health · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-1">Block 1</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 1.4</p>
+  <h1>Measuring population health: counts, rates, age standardisation</h1>
+  <div class="lecture-meta">
+    <span class="tier tier-master">Master</span>
+    <span>Block 1 · Foundations, burden of disease and health economics</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>A population’s health is described with a few plain measures: <strong>how many</strong> (counts), <strong>how often</strong> (rates), <strong>new versus existing</strong> cases (incidence and prevalence), and rates <strong>made comparable</strong> across populations with different ages (age standardisation). Getting these right matters more in the GCC than almost anywhere, because the population is unusually young and male. Every input and output of Project 1 is one of these measures.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#counts-rates">Counts and rates answer different questions</a></li>
+      <li><a href="#incidence-prevalence">Incidence and prevalence</a></li>
+      <li><a href="#crude">Crude rates mix risk with age</a></li>
+      <li><a href="#standardisation">Age standardisation</a></li>
+      <li><a href="#project">These measures in Project 1</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="counts-rates">
+    <h2>1. Counts and rates answer different questions</h2>
+    <p class="point">A count tells you the size of the problem; a rate tells you the risk each person faces.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A <strong>count</strong> is a number of events: 12,000 strokes this year. A <strong>rate</strong> divides the count by the population at risk and a period of time: 150 strokes per 100,000 people per year. A rate needs three parts: a numerator (events), a denominator (people, or person-time) and a time window.</dd>
+      <dt>Why it matters</dt>
+      <dd>Counts drive planning: beds, drugs, budgets. Rates drive comparison and cause: is risk higher here than there, now than then? Using one where you need the other is the most common error in health reporting.</dd>
+      <dt>How to read it</dt>
+      <dd>Always ask “per what, over what period?” A rate without a denominator and a time window can’t be read. Rates are usually given per 100,000 per year for deaths and diseases, and per 1,000 live births for infant deaths.</dd>
+      <dt>What a change means</dt>
+      <dd>A rising count with a flat rate means the population grew or aged, not that each person’s risk rose. A falling rate with a rising count is common and not a contradiction: individual risk is falling, but there are more people (or more old people) to have the event.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reading a rise in deaths as a rise in risk. “Heart attack deaths up 20% in a decade” may simply reflect a bigger, older population. Check the rate, and then the age-standardised rate, before saying anything about risk.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Global cardiovascular disease</div>
+      <p>The Global Burden of Disease (GBD) study reports that the global <em>number</em> of cardiovascular deaths has risen for decades, while the global <em>age-standardised death rate</em> has fallen. Both are true. Prevention and treatment have cut each person’s risk at a given age, but population growth and ageing add more people at risk faster than risk falls.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap · rate versus risk</div>
+      <p>In everyday writing “rate” is used loosely. Strictly, a <strong>risk</strong> is a proportion of people who get the disease over a period (no units, between 0 and 1), while a <strong>rate</strong> has person-time in the denominator (events per person-year). For rare events over a year they are nearly equal. Lecture 2.1 treats the difference properly.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="incidence-prevalence">
+    <h2>2. Incidence and prevalence</h2>
+    <p class="point">Incidence counts new cases arriving; prevalence counts everyone who has the disease at a point in time.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>Incidence</strong> is the rate at which new cases appear (new strokes per 100,000 per year). <strong>Prevalence</strong> is the proportion of the population living with the condition right now (stroke survivors as a share of all adults). Prevalence depends on how many people get the disease <em>and</em> how long they keep it.</dd>
+      <dt>Why it matters</dt>
+      <dd>Incidence answers causal questions: prevention works by stopping new cases, so it shows up first in incidence. Prevalence answers planning questions: how many people need care, drugs or rehabilitation now.</dd>
+      <dt>How to read it</dt>
+      <dd>In a stable population, prevalence is roughly incidence multiplied by the average duration of the disease. Long-lasting, rarely fatal conditions (hypertension, diabetes) have high prevalence from modest incidence. Short or quickly fatal ones (most acute infections) have low prevalence even when incidence is high.</dd>
+      <dt>What a change means</dt>
+      <dd>Prevalence rises if incidence rises <em>or</em> if people survive longer with the disease. Falling incidence is good news. Rising prevalence can be good or bad news, and you need incidence and survival to tell which.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reading rising prevalence as failure. Better treatment raises prevalence, because people who used to die now live with the disease. Improved survival after heart attack enlarges the pool of people with heart disease, even when fewer new heart attacks happen.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · HIV</div>
+      <p>When antiretroviral therapy arrived, HIV prevalence rose in many countries while incidence fell. Fewer people were being infected, and those infected were no longer dying. The rise in prevalence was a sign of success.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>A bath. Incidence is the tap, prevalence is the water in the tub, and death and cure are the drain. The level rises if you open the tap or block the drain.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>Prevalence is the base rate, the class prior. As with any classifier, the positive predictive value of a screening test or an ECG algorithm depends on it: the same sensitivity and specificity give many more false positives in a low-prevalence population. A model validated in a cardiology clinic will look worse in general practice for this reason alone.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="crude">
+    <h2>3. Crude rates mix risk with age</h2>
+    <p class="point">A crude rate is an average of age-specific rates, weighted by how many people are in each age group, so it changes when the age structure changes even if no one’s risk does.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The <strong>crude rate</strong> is total events divided by total population. An <strong>age-specific rate</strong> is the same thing within one age band (deaths per 100,000 among 60–64-year-olds). The crude rate is what you get by averaging the age-specific rates, with each age band weighted by its share of the population.</dd>
+      <dt>Why it matters</dt>
+      <dd>Almost every chronic disease rises steeply with age. So a population with more old people has a higher crude rate even if, age for age, its people are healthier. The crude rate answers “how much disease is there?” but not “are people here at higher risk?”</dd>
+      <dt>How to read it</dt>
+      <dd>Trust the age-specific rates first: they are the real comparison. Use the crude rate only for burden in that population, never to compare populations with different age structures.</dd>
+      <dt>What a change means</dt>
+      <dd>A crude death rate rising as a country ages is expected and says nothing about health getting worse. A crude rate falling while age-specific rates are flat means the population got younger, for example through an inflow of young workers.</dd>
+    </dl>
+
+    <div class="table-wrap">
+      <table>
+        <caption>Illustrative numbers: two towns with identical risk at every age</caption>
+        <thead><tr><th>Age group</th><th class="num">Death rate (both towns)</th><th class="num">Town A share</th><th class="num">Town B share</th></tr></thead>
+        <tbody>
+          <tr><td>Under 50</td><td class="num">1 per 1,000</td><td class="num">90%</td><td class="num">60%</td></tr>
+          <tr><td>50 and over</td><td class="num">20 per 1,000</td><td class="num">10%</td><td class="num">40%</td></tr>
+          <tr><td><strong>Crude rate</strong></td><td></td><td class="num">about 3 per 1,000</td><td class="num">about 9 per 1,000</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Town B’s crude death rate is three times Town A’s, yet a person of any age faces exactly the same risk in both towns. The whole difference is age structure.</p>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Concluding that a young country is healthy because its crude death rate is low. An older, wealthy country such as Japan can have a higher crude death rate than a young, poorer country whose people face higher risk at every age.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">Example · GCC</div>
+      <p>GCC populations are young and male-heavy, largely because of large numbers of working-age male migrant workers. Crude cardiovascular death rates therefore look low, which can suggest that heart disease is a small problem. It isn’t: the low crude rate mainly reflects how few old people there are. Only age-specific or age-standardised rates show the real risk, and comparisons between Saudi nationals and non-nationals need the same care, because the two groups have very different age and sex structures.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>This is Simpson’s paradox, with age as the lurking variable. The crude comparison reverses or exaggerates what happens inside every stratum because the strata are mixed in different proportions.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="standardisation">
+    <h2>4. Age standardisation</h2>
+    <p class="point">Age standardisation asks: what would each population’s rate be if both had the same age structure?</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>Direct standardisation</strong> takes each population’s age-specific rates and averages them using one shared set of weights, a <strong>standard population</strong> (common ones: the WHO World Standard, the European Standard, and GBD’s own world standard). The result is the <strong>age-standardised rate</strong>. <strong>Indirect standardisation</strong> goes the other way: it applies reference rates to the study population’s ages to get the number of deaths “expected”, then compares observed with expected. That ratio is the <strong>standardised mortality ratio (SMR)</strong>.</dd>
+      <dt>Why it matters</dt>
+      <dd>It is the only fair way to compare risk across countries, regions, sexes or years when age structures differ. GBD and WHO report age-standardised rates for exactly this reason.</dd>
+      <dt>How to read it</dt>
+      <dd>An age-standardised rate is an artificial number: no real population has it. It is meaningful only next to another rate standardised to the <em>same</em> standard. An SMR of 1 means deaths are as expected for the population’s ages; 1.3 means 30% more than expected; 0.8 means 20% fewer.</dd>
+      <dt>What a change means</dt>
+      <dd>A falling age-standardised rate means risk at a given age is falling, whatever the ageing of the population is doing. If the crude rate rises while the age-standardised rate falls, ageing is outrunning the improvement in risk.</dd>
+    </dl>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Method</th><th>Needs</th><th>Use when</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Direct</strong></td><td>Age-specific rates in each population</td><td>Populations are large enough for stable age-specific rates (countries, regions)</td></tr>
+          <tr><td><strong>Indirect (SMR)</strong></td><td>Only the age breakdown and total deaths in the study group, plus reference rates</td><td>The group is small, so its age-specific rates are noisy (an occupation, a small town)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Comparing age-standardised rates built on different standards. A GBD age-standardised rate and a WHO one for the same country and year can differ partly because they use different standard populations. A related trap: two SMRs should not be compared with each other, because each is weighted by its own group’s age structure. Compare each SMR only with its reference.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Occupational mortality</div>
+      <p>A study of a few thousand miners finds 130 deaths where the national rates predict 100: an SMR of 1.3. There are too few deaths in each age band to estimate the miners’ own age-specific rates well, so indirect standardisation is the right tool. Note a common bias in such studies, the healthy worker effect: people fit enough to work tend to have lower mortality than the general population, which pulls SMRs below 1.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Comparing two hospitals’ death rates without adjusting for how sick their patients are. The specialist hospital looks worse because it takes the hardest cases. Age standardisation is case-mix adjustment where the “case mix” is age.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>Direct standardisation is reweighting to a common covariate distribution, the same idea as importance weighting under covariate shift. You keep each population’s conditional risk (rate given age) and swap in a shared marginal distribution of age.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="project">
+    <h2>5. These measures in Project 1</h2>
+    <p class="point">Project 1 runs on age-specific rates, reports counts for Saudi Arabia, and uses age-standardised rates only to compare with other countries.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Stage</th><th>Measure</th><th>Why that one</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Inputs</strong></td><td>Age- and sex-specific incidence, prevalence and death rates (GBD Results Tool); population counts by age and sex (UN World Population Prospects)</td><td>The model ages people year by year, so it needs risk at each age, not an average</td></tr>
+          <tr><td><strong>Main outputs</strong></td><td>Counts: deaths, cases and DALYs averted; costs saved</td><td>Policy makers plan and budget in counts</td></tr>
+          <tr><td><strong>Comparison</strong></td><td>Age-standardised rates</td><td>To set Saudi results beside other countries’ salt models or WHO benchmarks fairly</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <dl class="facets">
+      <dt>What to check</dt>
+      <dd>Incidence, prevalence and death rates must agree with each other: the incidence and survival you feed in should reproduce the prevalence you observe. GBD makes its estimates consistent with a tool called DisMod-MR, which is one reason to take all three from the same GBD round.</dd>
+      <dt>A real choice</dt>
+      <dd>Whose population do you model: all residents, or Saudi nationals? Many migrant workers leave before the ages when cardiovascular disease peaks, so a model that treats all residents as staying for life would overstate future events in Saudi Arabia. State the choice and test it.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Treating GBD figures as measurements. For Saudi Arabia most GBD rates are modelled estimates, borrowed partly from similar countries where local data are thin. They come with 95% uncertainty intervals. Carry those intervals into the model (Lecture 1.12) rather than using the central value as if it were known.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>A newspaper reports that stroke deaths in a country rose 40% over 20 years and calls it a “stroke epidemic”. What would you want to see before agreeing?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The rate, then the age-standardised rate. A 40% rise in deaths can come entirely from a larger and older population. If the age-standardised stroke death rate fell over the period, each person’s risk at a given age went down, and “epidemic” is wrong. The count still matters for planning: more stroke deaths means more stroke care is needed.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Diabetes prevalence in a country has risen steadily. Give two very different explanations, and say what data would separate them.</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Either more people are developing diabetes (incidence rising), or people with diabetes are living longer (survival improving). Ageing of the population and more screening (finding cases that were always there) can also raise it. To separate them, look at incidence, at mortality among people with diabetes, and at age-standardised rather than crude prevalence.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Qatar’s crude death rate is far lower than Germany’s. Does this tell you Qataris are healthier? What comparison would you make instead?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>No. Qatar’s population is dominated by young working-age adults, so few people are at the ages where most deaths happen. Germany is much older. Compare age-specific death rates, or age-standardised rates computed with the same standard population. Ideally also separate nationals from non-nationals, whose age structures differ.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>You find a GBD age-standardised ischaemic heart disease death rate for Saudi Arabia and a WHO one for the same year. They differ. Name one reason that has nothing to do with real health.</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>They use different standard populations, so the weights differ. They also use different data and models. Never put age-standardised rates from different sources side by side without checking the standard.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Workers at one Saudi petrochemical plant have an SMR for cardiovascular death of 0.85 compared with national rates. Is the plant protecting its workers’ hearts?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Not necessarily. The healthy worker effect means employed people are fitter than the general population, which includes people too ill to work. Migrant workers are also selected for health before arriving and may leave when ill. A better comparison is with another working population with similar selection.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A salt policy starts working. Which do you expect to change first, and why: stroke incidence, stroke prevalence, or the crude stroke death rate?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Incidence first (after blood pressure falls), because prevention works by stopping new cases. Prevalence moves slowly, because it is a stock of existing survivors that drains only over years. The crude death rate is the worst signal: population ageing can push it up even while the policy is cutting age-specific risk.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Bonita, Beaglehole &amp; Kjellström, <em>Basic Epidemiology</em>, 2nd ed. (WHO, 2006), chapter 2, “Measuring health and disease”: incidence, prevalence, crude and standardised rates.</li>
+      <li>Ahmad et al., <em>Age Standardization of Rates: A New WHO Standard</em>, GPE Discussion Paper No. 31 (WHO, 2001): the WHO World Standard Population and why the choice of standard matters.</li>
+      <li>Rothman, Greenland &amp; Lash, <em>Modern Epidemiology</em>, 3rd ed., chapters 3–4: measures of occurrence, standardisation and SMRs, at more depth than needed here.</li>
+      <li>GBD 2021 methods appendices (published with the GBD 2021 Lancet papers): the GBD standard population, DisMod-MR and uncertainty intervals.</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="1-03-determinants-of-health.html"><small>Previous</small>1.3 Determinants of health</a>
+    <a class="next" href="1-05-life-tables.html"><small>Next</small>1.5 Life tables and life expectancy</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

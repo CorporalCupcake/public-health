@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>1.2 Rose’s prevention paradox · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-1">Block 1</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 1.2</p>
+  <h1>Rose’s prevention paradox: population vs high-risk strategies</h1>
+  <div class="lecture-meta">
+    <span class="tier tier-master">Master</span>
+    <span>Block 1 · Foundations, burden of disease and health economics</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>Most cases of a common disease come from the many people at modest risk, not the few at high risk. So you can prevent a disease in two ways: find and treat the high-risk tail (<strong>high-risk strategy</strong>), or move the whole population a little (<strong>population strategy</strong>). This lecture is the argument behind Project 1: a salt limit in bread is the textbook population strategy, and the model you build there puts a number on Rose’s idea.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#paradox">The prevention paradox</a></li>
+      <li><a href="#where-cases">Where the cases come from</a></li>
+      <li><a href="#sick-populations">Sick individuals and sick populations</a></li>
+      <li><a href="#distribution">The whole distribution moves</a></li>
+      <li><a href="#strategies">Two strategies compared</a></li>
+      <li><a href="#in-practice">Making the population strategy work</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="paradox">
+    <h2>1. The prevention paradox</h2>
+    <p class="point">A measure that prevents many cases across a population usually gives each person who takes part almost no benefit.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Rose’s observation that population benefit and individual benefit pull apart. When a small change is applied to millions of people, each one’s risk falls by a tiny amount. Multiplied across millions, those tiny amounts add up to many cases prevented.</dd>
+      <dt>Why it matters</dt>
+      <dd>It explains why the most effective prevention is often unpopular and hard to sell. People feel no gain, doctors see no patient helped, and politicians see a cost now for a benefit nobody can point to. You have to make the benefit visible with a model, which is Project 1’s job.</dd>
+      <dt>How to read it</dt>
+      <dd>Hold two numbers side by side: the <em>absolute risk reduction</em> for one person (how many percentage points their risk falls) and the <em>cases prevented</em> in the population. A paradox is in play when the first is tiny and the second is large.</dd>
+      <dt>What a change means</dt>
+      <dd>Covering more people raises the total in proportion while each person’s gain stays the same: doubling the population covered roughly doubles the cases prevented, and nobody feels any different. A larger shift (say, cutting more salt) raises both, but the individual gain usually stays too small to notice.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reading “each person gains almost nothing” as “the measure is weak”. Judge a population measure by the total it prevents and what it costs, not by what one person gains. The reverse also holds: a treatment that helps each patient a lot can still prevent few cases overall if few people get it.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · seatbelts</div>
+      <p>A classic illustration of the paradox. A driver can wear a seatbelt every day for a lifetime and never be in a crash where it matters. Each driver’s benefit is close to zero. Across a whole country of drivers, seatbelt laws save many lives every year.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>A one-riyal rounding-up donation at a supermarket till. Nobody notices it in their own budget. Across a million shoppers, it funds a hospital wing.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="where-cases">
+    <h2>2. Where the cases come from</h2>
+    <p class="point">A large number of people at small risk produces more cases than a small number of people at high risk.</p>
+
+    <p>Take a town of 100,000 adults, split by blood pressure (illustrative numbers):</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Group</th><th class="num">People</th><th class="num">10-year stroke risk</th><th class="num">Strokes</th><th class="num">Share of all strokes</th></tr></thead>
+        <tbody>
+          <tr><td>High blood pressure</td><td class="num">10,000</td><td class="num">6%</td><td class="num">600</td><td class="num">29%</td></tr>
+          <tr><td>Upper-normal</td><td class="num">40,000</td><td class="num">3%</td><td class="num">1,200</td><td class="num">57%</td></tr>
+          <tr><td>Low</td><td class="num">50,000</td><td class="num">0.6%</td><td class="num">300</td><td class="num">14%</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The number of cases from a group is its size times its risk. A high-risk group has a big risk but is small. The middle of the distribution has a modest risk but is huge, so it usually wins.</dd>
+      <dt>Why it matters</dt>
+      <dd>A strategy that only treats the high-risk group can, at best, prevent the cases from that group. In the table that is under a third of strokes, even if treatment worked perfectly.</dd>
+      <dt>How to read it</dt>
+      <dd>Look at the share of cases, not the risk, in each group. If most cases come from people who look “normal”, the disease is a population problem and a high-risk strategy alone cannot solve it.</dd>
+      <dt>What a change means</dt>
+      <dd>The more the risk is spread across the whole range (a continuous risk factor like blood pressure, salt or cholesterol), the bigger the share from the middle. When risk is concentrated in a rare, sharply defined group (a single-gene disorder), the high-risk group holds most cases and targeting works well.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Thinking that a strong relative risk in the top group means most cases are there. Relative risk tells you how much riskier one person is. The share of cases also depends on how many people are in each group. A rare exposure with a big relative risk can cause fewer cases than a common one with a small relative risk.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Down syndrome</div>
+      <p>A classic example used by Rose. The risk of a baby with Down syndrome rises steeply with the mother’s age. Yet in his day most affected babies were born to younger mothers, because younger mothers had far more babies. Screening only older mothers missed most cases.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>A risk factor with a strong association is usually a weak classifier. Blood pressure predicts stroke clearly in a cohort, yet the score distributions of future cases and non-cases overlap heavily, so any cut-off misses most cases or flags most of the population. Wald and colleagues made this point formally: an association strong enough to matter for causation is rarely strong enough to work as a screening test. That overlap is why a high-risk strategy leaks cases.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="sick-populations">
+    <h2>3. Sick individuals and sick populations</h2>
+    <p class="point">“Why did this person get the disease?” and “why does this population have so much of it?” are different questions, and they can have different answers.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Rose separated <em>causes of cases</em> (why one person in a population is affected and another isn’t) from <em>causes of incidence</em> (why the rate is high in one population and low in another). The first is about position within a distribution. The second is about where the whole distribution sits.</dd>
+      <dt>Why it matters</dt>
+      <dd>A study within one population can only find factors that vary within it. If an exposure is high for nearly everyone, it barely varies, so it looks harmless, even if it is the main reason the disease is common. Comparing populations, or changing the exposure for everyone, is how you see it.</dd>
+      <dt>How to tell</dt>
+      <dd>Ask whether the comparison is between people in one setting or between settings. Within a setting you learn who is susceptible. Between settings you learn what makes the disease common.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Concluding that a factor “doesn’t matter” because a cohort study within one country found little effect. Rose’s thought experiment: if every person smoked 20 cigarettes a day, lung cancer would look like a genetic disease, because genes would be the only thing that differed between those who got it and those who didn’t. A within-population null can hide a population-wide cause.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · blood pressure</div>
+      <p>Rose compared the blood pressure distributions of Kenyan nomads and London civil servants. In London, “hypertension” was common and its causes looked individual. Among the nomads it was almost absent, because the whole distribution sat lower. The real question for London was not “which people are hypertensive?” but “why is the whole curve so high?” Salt intake is one of the leading answers.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Exam results in two schools. Within one school, the top and bottom students differ in effort and ability. Between the schools, the gap may come from the teaching. Ranking students inside one school will never reveal that.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="distribution">
+    <h2>4. The whole distribution moves</h2>
+    <p class="point">Populations shift as a whole: when the average goes down, the number of people in the high-risk tail goes down with it.</p>
+
+    <figure>
+      <svg viewBox="0 0 560 200" role="img" aria-label="Two bell curves of blood pressure. The second is shifted slightly to the left. The shaded area above a cut-off line is much smaller for the shifted curve.">
+        <path d="M384,170 L384,112 L392,119 L400,126 L407,132 L415,138 L423,143 L431,147 L439,151 L446,154 L454,157 L462,160 L470,162 L478,163 L485,165 L493,166 L501,167 L509,168 L517,168 L524,169 L532,169 L540,169 L540,170 Z" style="fill: var(--pitfall); opacity: 0.18"/>
+        <path d="M384,170 L384,144 L392,148 L400,152 L407,155 L415,158 L423,160 L431,162 L439,164 L446,165 L454,166 L462,167 L470,168 L478,168 L485,169 L493,169 L501,169 L509,169 L517,170 L524,170 L532,170 L540,170 L540,170 Z" style="fill: var(--accent); opacity: 0.45"/>
+        <path d="M20,168 L33,167 L46,166 L59,164 L72,161 L85,157 L98,152 L111,146 L124,138 L137,128 L150,117 L163,104 L176,90 L189,76 L202,62 L215,49 L228,38 L241,29 L254,23 L267,20 L280,21 L293,26 L306,34 L319,44 L332,57 L345,71 L358,85 L371,99 L384,112 L397,124 L410,134 L423,143 L436,150 L449,155 L462,160 L475,163 L488,165 L501,167 L514,168 L527,169 L540,169" style="fill: none; stroke: var(--pitfall); stroke-width: 2; stroke-dasharray: 6 4"/>
+        <path d="M20,163 L33,160 L46,156 L59,151 L72,144 L85,136 L98,126 L111,114 L124,101 L137,88 L150,73 L163,59 L176,47 L189,36 L202,27 L215,22 L228,20 L241,22 L254,27 L267,36 L280,47 L293,59 L306,73 L319,88 L332,101 L345,114 L358,126 L371,136 L384,144 L397,151 L410,156 L423,160 L436,163 L449,166 L462,167 L475,168 L488,169 L501,169 L514,170 L527,170 L540,170" style="fill: none; stroke: var(--accent); stroke-width: 2.5"/>
+        <line x1="20" y1="170" x2="540" y2="170" style="stroke: var(--muted); stroke-width: 1"/>
+        <line x1="384" y1="12" x2="384" y2="170" style="stroke: var(--muted); stroke-width: 1; stroke-dasharray: 3 3"/>
+        <text x="390" y="22" style="fill: var(--muted); font-size: 13px">“High” cut-off</text>
+        <text x="280" y="192" text-anchor="middle" style="fill: var(--muted); font-size: 13px">Blood pressure →</text>
+        <text x="300" y="45" style="fill: var(--pitfall); font-size: 13px">Before</text>
+        <text x="120" y="45" style="fill: var(--accent); font-size: 13px">After shift</text>
+      </svg>
+      <figcaption>Illustrative. Moving the whole curve left by half a standard deviation cuts the share above the cut-off from about 9% to about 3%. Nobody was “treated”; the tail shrank because the curve moved.</figcaption>
+    </figure>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Rose and Day used data from Intersalt, a study of 52 populations in 32 countries. Populations with a higher mean blood pressure, body weight, alcohol or salt intake had more people at the extreme, and the link was very close. The tail is not a separate group; it is the end of one curve.</dd>
+      <dt>Why it matters</dt>
+      <dd>It means you can shrink the high-risk group without identifying anyone. It also means the “normal” majority and the “sick” minority share a cause: whatever sets the population mean.</dd>
+      <dt>How to read it</dt>
+      <dd>Because the tail is thin, a small shift in the mean changes the count above a cut-off by a much larger percentage than the shift itself. A drop in average blood pressure of a few mmHg sounds trivial; the fall in the number of people above the treatment threshold is not.</dd>
+      <dt>What a change means</dt>
+      <dd>A population mean moving the wrong way, even slightly, signals a disproportionate rise in the number of people who will need treatment. A mean moving the right way does the opposite, at no screening cost.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Treating “normal” and “abnormal” as natural categories. For blood pressure, salt or cholesterol, risk rises smoothly across the range; the cut-off is a decision about whom to treat, not a line drawn by biology. People just under the cut-off are at nearly the same risk as those just over it, and there are many more of them.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">Example · Saudi Arabia</div>
+      <p>The 2019 bread salt limit does not target anyone with hypertension. It lowers the salt in a staple that almost everyone eats, which pulls the population’s salt intake curve left, and with it the blood pressure curve. Project 1 models exactly this: a shift in mean intake, run through blood pressure to cardiovascular events.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>It is the difference between changing the data-generating process and moving a decision threshold. The high-risk strategy works at the threshold on a fixed distribution. The population strategy changes the distribution, so every downstream count (prevalence above any cut-off) changes at once.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="strategies">
+    <h2>5. Two strategies compared</h2>
+    <p class="point">The high-risk strategy gives big benefits to a few people; the population strategy gives small benefits to everyone, and attacks the reason the disease is common.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th></th><th>High-risk strategy</th><th>Population strategy</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Acts on</strong></td><td>The tail: people found by screening</td><td>The whole distribution</td></tr>
+          <tr><td><strong>Main strengths</strong></td><td>Fits the person; patient and doctor are motivated; good benefit-to-harm ratio for each person treated</td><td>Large potential for the population; tackles the cause of high incidence; doesn’t ask anyone to behave differently from those around them</td></tr>
+          <tr><td><strong>Main weaknesses</strong></td><td>Misses most cases; screening costs and must continue for ever; leaves the cause in place, so new high-risk people keep appearing</td><td>Small benefit to each person (the paradox); little motivation for public or doctors; any harm, however small, is applied to everyone</td></tr>
+          <tr><td><strong>Salt example</strong></td><td>Advise patients with hypertension to cut salt; prescribe antihypertensives</td><td>Salt limits in bread and processed food</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <dl class="facets">
+      <dt>Radical vs palliative</dt>
+      <dd>Rose called the population strategy <em>radical</em>: it goes at the root, the condition that makes the disease common. The high-risk strategy is <em>palliative</em> in his sense: it protects susceptible people from a cause that stays in place. Treating today’s hypertensive patients does nothing to stop next year’s.</dd>
+      <dt>Why it matters</dt>
+      <dd>The two are complements, not rivals. In practice you combine them: shift the curve to shrink the tail, then treat whoever is still in it. The policy question is the balance of effort and money between the two.</dd>
+      <dt>The safety rule</dt>
+      <dd>Because a population measure reaches everyone, even a rare harm adds up. Rose’s test: removing an unnatural excess (too much salt, tobacco smoke) can be presumed safe; adding something new to everyone (a drug for the whole population) must be proven safe first.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Assuming the population strategy is always better because it prevents more cases in theory. It depends on the size of the shift you can actually achieve, the cost, and whether the low end of the range is safe. For salt, a debate over whether very low intakes carry risk is exactly such a question; Lecture 1.9 covers it.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · cardiovascular prevention</div>
+      <p>Modern practice uses both. Risk calculators pick out people at high absolute risk for statins and blood pressure drugs (high-risk). Tobacco taxes, smoke-free laws and salt reduction move the whole population (population). Neither alone matches what the two achieve together.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>A leaky roof. You can keep putting buckets under the worst drips (high-risk), or fix the roof (population). Buckets help tonight. Only the roof stops new drips.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="in-practice">
+    <h2>6. Making the population strategy work</h2>
+    <p class="point">Population measures that change the environment work better, and more fairly, than ones that rely on each person choosing to change.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>There are two ways to shift a population. <em>Agency-based</em> measures ask people to act: campaigns, labels, advice. <em>Structural</em> measures change what people are exposed to by default: reformulating food, taxes, bans. Both are population strategies, but they behave differently.</dd>
+      <dt>Why it matters</dt>
+      <dd>Agency-based measures need time, money, literacy and attention, which better-off people have more of. They can lower the average while widening the gap between rich and poor, sometimes called the <em>inequality paradox</em>. Structural measures need nothing from the individual, so they tend to reach everyone equally or help the worse-off most.</dd>
+      <dt>How to tell</dt>
+      <dd>Ask: “Does this work if nobody notices it?” If yes (salt quietly lowered in bread), it is structural. If people must read, decide and act, it is agency-based.</dd>
+      <dt>What a change means</dt>
+      <dd>Moving a policy from voluntary to mandatory, or from labelling to reformulation, usually moves it towards the structural end: larger and more even effects, more industry resistance.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Assuming any population-wide measure is fair because it applies to everyone. Equal exposure to a campaign is not equal benefit. Always ask who is able to respond.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · UK salt reduction</div>
+      <p>From 2003 the UK set voluntary salt targets for processed food and ran public campaigns. Average salt intake, measured by 24-hour urine, fell by about 15% between the early 2000s and 2011. The programme’s evaluators attribute most of the fall to reformulation, which works whether or not shoppers pay attention.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">Example · Saudi Arabia</div>
+      <p>Saudi salt policy shows both ends. The 2019 bread limit is structural: it changes a staple at source. The 2025 limits for other foods are voluntary, so their effect depends on how many manufacturers comply. That is why Project 1 runs every scenario at measured and at full compliance: the gap between them is the cost of relying on voluntary action.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>A health official says: “Our bread salt limit lowers each person’s stroke risk by a fraction of a percentage point. That’s negligible. Let’s spend the money on screening instead.” What is wrong with this argument?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>It judges a population measure by individual benefit, which is the prevention paradox in action. The right comparison is total strokes prevented and cost, for each option. A tiny risk reduction across millions can prevent more strokes than screening, which reaches fewer people and misses the many cases that arise below any cut-off. The two are also not exclusive: shifting the curve shrinks the group that screening then has to find.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A cohort study within one Saudi city finds only a weak link between salt intake and blood pressure. Does this show that salt is not an important cause of high blood pressure in Saudi Arabia?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>No. If almost everyone eats a lot of salt, intake varies little within the city, so a within-population study has little contrast to work with. That answers “why this person and not that one”, not “why is the whole population’s blood pressure high”. Salt intake is also hard to measure well (Lecture 1.8), which weakens associations further. Evidence across populations and from trials that lower salt for everyone is what answers the population question.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>For which kind of disease would you expect the high-risk strategy to do most of the work, and why?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>One where risk is concentrated in a small, identifiable group that holds most of the cases, such as a single-gene disorder or a disease confined to a defined exposure (an occupational chemical). Then targeting reaches most cases and the cause of the disease is not spread through the whole population. For continuous risk factors like blood pressure, most cases come from the middle and targeting alone leaks.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Someone proposes adding a low-dose blood pressure drug to the water supply. Using Rose’s ideas, why should this face a much higher bar than lowering salt in bread?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Both are population strategies, so any harm reaches everyone, and most people gain little. Lowering salt removes an excess exposure, moving people towards a more natural level, so it can be presumed broadly safe. A drug adds something new to everyone, including people who gain nothing and may be harmed, so it needs direct proof of safety. Consent is also an issue: people can’t opt out of tap water as easily as they can choose a different food.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A salt awareness campaign lowers average intake slightly, but a follow-up shows the fall happened almost entirely in high-income, highly educated groups. What happened, and what would you recommend?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>An agency-based measure worked best for those with the resources to respond, so the average improved while the gap widened: the inequality paradox. Recommend structural measures that need no action from the individual, such as mandatory reformulation of the foods that supply most salt. These shift everyone and tend to narrow, not widen, the gap.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A report says the share of adults with hypertension rose “only slightly” while average systolic blood pressure rose by 2 mmHg. Why might the 2 mmHg deserve more attention than it gets?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The mean is the lead indicator. Because the whole curve moves together, a small rise in the mean pushes many people towards and over the cut-off, and raises risk for everyone below it too, since risk rises smoothly across the range. A shift of a few mmHg across millions of people translates into a substantial number of extra strokes and heart attacks, most of them in people never labelled hypertensive.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Rose, <em>Rose’s Strategy of Preventive Medicine</em> (Oxford University Press, 1992; reissued 2008 with commentary by Khaw &amp; Marmot), chapters on the prevention paradox and the population strategy. The primary text for this lecture.</li>
+      <li>Rose, “Sick individuals and sick populations”, <em>International Journal of Epidemiology</em> 1985;14:32–38: causes of cases vs causes of incidence, the Kenyan nomads comparison, and the strengths and weaknesses of each strategy.</li>
+      <li>Rose, “Strategy of prevention: lessons from cardiovascular disease”, <em>BMJ</em> 1981;282:1847–51: the original statement of the prevention paradox.</li>
+      <li>Rose &amp; Day, “The population mean predicts the number of deviant individuals”, <em>BMJ</em> 1990;301:1031–34: the Intersalt analysis in section 4.</li>
+      <li>Wald, Hackshaw &amp; Frost, “When can a risk factor be used as a worthwhile screening test?”, <em>BMJ</em> 1999;319:1562–65: why strong associations make weak classifiers.</li>
+      <li>Frohlich &amp; Potvin, “The inequality paradox”, <em>American Journal of Public Health</em> 2008;98:216–21; Adams et al., “Why are some population interventions for diet and obesity more equitable and effective than others? The role of individual agency”, <em>PLoS Medicine</em> 2016;13:e1001990: section 6.</li>
+      <li>He, Brinsden &amp; MacGregor, “Salt reduction in the United Kingdom: a successful experiment in public health”, <em>Journal of Human Hypertension</em> 2014;28:345–52: the UK example.</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="1-01-what-is-public-health.html"><small>Previous</small>1.1 What public health is</a>
+    <a class="next" href="1-03-determinants-of-health.html"><small>Next</small>1.3 Determinants of health</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

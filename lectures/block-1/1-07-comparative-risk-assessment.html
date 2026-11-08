@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>1.7 Comparative risk assessment · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-1">Block 1</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 1.7</p>
+  <h1>Comparative risk assessment: PAF, PIF, TMREL, and how GBD works</h1>
+  <div class="lecture-meta">
+    <span class="tier tier-master">Master</span>
+    <span>Block 1 · Foundations, burden of disease and health economics</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>Comparative risk assessment asks: how much disease would disappear if a risk factor’s distribution were different? The <strong>PAF</strong> answers it for an ideal world, the <strong>PIF</strong> answers it for a realistic policy, and the <strong>TMREL</strong> defines what “ideal” means. Project 1 is a PIF calculation: a salt policy shifts the intake distribution, and you turn that shift into deaths and DALYs averted.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#counterfactual">Counterfactual thinking</a></li>
+      <li><a href="#paf">Population attributable fraction (PAF)</a></li>
+      <li><a href="#tmrel">TMREL: the reference world</a></li>
+      <li><a href="#pif">Potential impact fraction (PIF)</a></li>
+      <li><a href="#gbd">How GBD does it</a></li>
+      <li><a href="#multiple">Many risks, one death</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="counterfactual">
+    <h2>1. Counterfactual thinking</h2>
+    <p class="point">Burden “attributable” to a risk is the difference between the disease we see and the disease we would see in a world where exposure was different.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Every attributable-burden number compares two worlds: the observed one and a <em>counterfactual</em> (a stated alternative) in which the exposure distribution has been changed. Everything else (age structure, other risks) stays the same.</dd>
+      <dt>Why it matters</dt>
+      <dd>The answer depends entirely on which alternative world you choose. “Deaths due to salt” means nothing until you say “compared with what intake”.</dd>
+      <dt>Four choices</dt>
+      <dd>Murray and colleagues name four counterfactuals, from most to least ambitious: <strong>theoretical minimum</strong> (lowest possible risk), <strong>plausible minimum</strong> (achievable somewhere), <strong>feasible minimum</strong> (achieved somewhere already) and <strong>cost-effective minimum</strong> (worth paying for). GBD uses the first. Policy work, including Project 1, uses the others.</dd>
+      <dt>What a change means</dt>
+      <dd>Moving the counterfactual closer to today’s exposure shrinks the attributable burden. Nothing about the disease has changed, only the question.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reading “attributable” as “avoidable”. Attributable burden is what a different exposure history would have prevented. What a policy can avoid starting today is smaller: exposure can’t be pushed all the way to the counterfactual, and risk falls only over years.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>It is an intervention on an input distribution, not a prediction. You hold the outcome model fixed, replace the exposure distribution with a counterfactual one, and compare expected outcomes. That is only valid if the exposure–outcome curve is causal, which is why GBD insists on causal evidence before a risk enters the analysis.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="paf">
+    <h2>2. Population attributable fraction (PAF)</h2>
+    <p class="point">The PAF is the share of cases that would not occur if the whole population had the lowest-risk level of exposure.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A proportion between 0 and 1. It depends on two things: how common the exposure is (<em>prevalence</em>, \(p\)) and how strongly it raises risk (the relative risk, RR). For a yes/no exposure, Levin’s formula combines them:</dd>
+    </dl>
+
+    \[ \text{PAF} = \frac{p\,(RR-1)}{1 + p\,(RR-1)} \]
+
+    <dl class="facets">
+      <dt>Why it matters</dt>
+      <dd>Multiply the PAF by the total burden (deaths, DALYs) and you get attributable burden. It is how GBD ranks risk factors and how a ministry decides which risk to tackle first.</dd>
+      <dt>How to read a value</dt>
+      <dd>A PAF of 0.25 means a quarter of cases would not occur in the counterfactual world. Above about 0.3 for a single risk is large. Values of a few percent are typical for one dietary risk and one disease.</dd>
+      <dt>What a change means</dt>
+      <dd>A common weak risk can beat a rare strong one. With 30% exposed, an RR going from 1.2 to 2 lifts the PAF from about 6% to about 23%. With 3% exposed, even RR = 5 gives only about 11%. This is Rose’s prevention paradox (Lecture 1.2) in numbers (illustrative numbers).</dd>
+    </dl>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Prevalence</th><th>RR</th><th>PAF (approx.)</th><th>Read it as</th></tr></thead>
+        <tbody>
+          <tr><td>30%</td><td>1.2</td><td>6%</td><td>Common, weak risk: modest share</td></tr>
+          <tr><td>30%</td><td>2.0</td><td>23%</td><td>Common, moderate risk: big share</td></tr>
+          <tr><td>3%</td><td>5.0</td><td>11%</td><td>Rare, strong risk: smaller share than you’d guess</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Plugging an <strong>adjusted</strong> RR into Levin’s formula. Levin’s formula assumes the RR is the crude one for the same population; with confounding, mixing an adjusted RR with population prevalence gives a biased PAF. Two fixes: use the case-based version (the proportion of <em>cases</em> exposed times \((RR-1)/RR\)), which works with an adjusted RR, or compute the PAF by standardisation from a fitted model. Using an <strong>unadjusted</strong> RR is the opposite error: it counts confounding as causal effect.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example</div>
+      <p>Smoking and lung cancer: RR is very large and, historically, prevalence was high, so the PAF in many countries exceeds 80%. Smoking and heart disease: RR is much smaller, but heart disease is far more common, so smoking still causes more cardiovascular deaths than lung cancer deaths in many settings. A big PAF and a big absolute burden are different things.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>A shop’s losses from theft. A few professional thieves steal a lot each; many customers each pocket a little. Which group causes more loss depends on both the rate and how many there are.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="tmrel">
+    <h2>3. TMREL: the reference world</h2>
+    <p class="point">The theoretical minimum risk exposure level (TMREL) is the exposure at which population risk is lowest; GBD measures all attributable burden against it.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The counterfactual exposure in GBD. For smoking it is zero. For continuous risks it is a range, set from where the risk curve bottoms out in cohort and trial evidence. For systolic blood pressure, GBD uses 110–115 mmHg.</dd>
+      <dt>Why it matters</dt>
+      <dd>Burden is counted from the TMREL upwards, so everyone above it contributes, not just people labelled “high”. Most blood-pressure burden comes from the many people between 115 and 140 mmHg, not only from diagnosed hypertension.</dd>
+      <dt>How to read a value</dt>
+      <dd>A TMREL is a reference point, not a recommendation. It has nothing to do with clinical thresholds such as 140 mmHg, or with dietary guidelines such as WHO’s 5 g of salt a day.</dd>
+      <dt>What a change means</dt>
+      <dd>Lowering the TMREL raises attributable burden, because more of the population is counted as exposed. GBD’s sodium methods (the TMREL and the risk curve) have been revised between rounds, and the published sodium burden moved with them. Always read the TMREL from the current GBD methods appendix before you quote a GBD figure.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Comparing attributable burden across sources or GBD rounds without checking the TMREL. Two studies can agree on every relative risk and still disagree several-fold on “deaths due to salt”, purely because they chose different reference intakes.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example</div>
+      <p>Blood pressure risk rises steadily from about 115 mmHg upwards, with no threshold at 140 (Prospective Studies Collaboration, Lecture 1.9). Setting the TMREL at 110–115 rather than 140 is why high systolic blood pressure ranks at or near the top of GBD’s global risk factors.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="pif">
+    <h2>4. Potential impact fraction (PIF)</h2>
+    <p class="point">The PIF is the share of cases avoided if the exposure distribution moves to any realistic alternative, not just to the ideal; it is the quantity Project 1 needs.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The generalised PAF. Take the expected disease risk across the current exposure distribution. Do the same across the post-policy distribution. The PIF is the drop, as a share of the current risk. The PAF is the special case where the post-policy distribution sits entirely at the TMREL.</dd>
+      <dt>Why it matters</dt>
+      <dd>Policies <em>shift</em> exposure; they rarely eliminate it. A bread salt limit lowers everyone’s intake by an amount that depends on how much bread they eat. The PIF turns that shift into a fraction of strokes and heart attacks avoided.</dd>
+      <dt>How to read a value</dt>
+      <dd>A PIF of 0.04 for stroke means 4% of strokes would be avoided once the full effect has arrived, if the risk curve is causal and the shift really happens. Single-policy PIFs of a few percent are normal, and in a large population they are many thousands of events.</dd>
+      <dt>What a change means</dt>
+      <dd>For small shifts, doubling the shift roughly doubles the PIF. The shape of the shift matters too: moving the whole distribution down (population strategy) and trimming only the top tail (high-risk strategy) give different PIFs for the same average change.</dd>
+    </dl>
+
+    <div class="callout gulf">
+      <div class="callout-title">Example · Project 1</div>
+      <p>The chain you will build: (1) the 2019 bread limit and the 2025 voluntary limits lower salt intake by an amount that depends on compliance; (2) trial evidence converts the salt change into a systolic blood pressure change (Lecture 1.9); (3) the blood pressure risk curve converts that into a PIF for each disease, age and sex; (4) the PIF times the GBD disease rates gives events averted. The multistate life table (Lecture 1.11) then spreads these over time. Running it at measured and at full compliance gives two PIFs, and the gap between them is the cost of the compliance shortfall.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Treating the PIF as an immediate effect. It describes the new steady state. Blood pressure falls within weeks of a salt change, but the drop in heart disease and stroke builds over years. Applying the full PIF in year one overstates early benefit and distorts discounted costs (Lecture 1.10).</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>The PAF asks how much traffic would disappear if everyone worked from home. The PIF asks how much would disappear if one day a week became optional. The second is the question a city can actually act on.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="gbd">
+    <h2>5. How GBD does it</h2>
+    <p class="point">The Global Burden of Disease (GBD) study runs one comparative risk assessment for every risk, outcome, age, sex, place and year, using the same five steps each time.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Step</th><th>Plain meaning</th><th>Salt example</th></tr></thead>
+        <tbody>
+          <tr><td><strong>1. Pick pairs</strong></td><td>Include risk–outcome pairs only with convincing causal evidence</td><td>Sodium → blood pressure → heart disease and stroke</td></tr>
+          <tr><td><strong>2. Risk curves</strong></td><td>Meta-analyse cohorts and trials into a relative risk at each exposure level</td><td>RR of stroke per mmHg of systolic pressure, by age</td></tr>
+          <tr><td><strong>3. Exposure</strong></td><td>Model the full exposure distribution for each population, from surveys</td><td>Sodium intake distribution by age and sex in Saudi Arabia</td></tr>
+          <tr><td><strong>4. TMREL and PAF</strong></td><td>Compare the risk across that distribution with the risk at the TMREL</td><td>Share of strokes attributable to high sodium</td></tr>
+          <tr><td><strong>5. Burden</strong></td><td>Multiply the PAF by the deaths and DALYs for that cause</td><td>Stroke DALYs attributable to sodium</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <dl class="facets">
+      <dt>Why it matters</dt>
+      <dd>GBD supplies Project 1’s disease rates and is the benchmark reviewers will compare your results with. Knowing its steps tells you where your model can legitimately differ from it.</dd>
+      <dt>How to read its output</dt>
+      <dd>Each attributable estimate carries an uncertainty interval built from all five steps. Wide intervals in the Gulf usually come from step 3: few measured surveys, so exposure is borrowed from modelled neighbours. GBD 2021 also rates each risk–outcome pair for strength of evidence, so check the rating before leaning on a pair.</dd>
+      <dt>What a change means</dt>
+      <dd>When a GBD round changes a risk’s burden sharply, look first at step 2 (new risk curve) and step 4 (new TMREL), not at the disease rates.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Treating GBD country estimates as measurements. For a risk like sodium in the GCC, few national 24-hour urine surveys exist, so the exposure is largely model output. That is exactly why Project 2’s pooled, measured estimate is worth publishing and feeding back into Project 1.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">Example · Saudi Arabia</div>
+      <p>In the GBD Results Tool you can select Saudi Arabia, the risk “diet high in sodium” or “high systolic blood pressure”, and see attributable deaths and DALYs by cause, age and sex. These are PAF-based (TMREL counterfactual). Project 1’s numbers will be smaller, because a bread limit is a PIF, not a move to the TMREL. Say so explicitly when you compare them.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="multiple">
+    <h2>6. Many risks, one death</h2>
+    <p class="point">PAFs for different risks overlap, so they can add to more than 100%, and the joint effect of several risks is less than their sum.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A heart attack can be caused by blood pressure, cholesterol, smoking and diet together. Removing any one of them would have prevented it, so it is attributable to each. GBD combines risks by multiplying their “not attributable” shares, rather than adding PAFs, and adjusts for <em>mediation</em> (one risk acting through another).</dd>
+      <dt>Why it matters</dt>
+      <dd>Sodium acts largely through blood pressure. Counting “sodium” burden and “blood pressure” burden and adding them double-counts. In Project 1, sodium’s effect flows through blood pressure, so model it once, along that path.</dd>
+      <dt>How to tell</dt>
+      <dd>If a list of risk-factor PAFs for one disease sums past 100%, nothing is wrong. If someone adds them to get “total preventable”, something is.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Expecting attributable fractions to partition the burden like a pie chart. They don’t, because causes interact. Each PAF answers its own counterfactual question. To ask “how much if we removed several risks?”, compute a joint PAF.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>Shapley values force feature attributions to add up to the prediction by averaging over every ordering of features. PAFs make no such promise: each one is a separate “remove this, keep the rest” counterfactual, closer to a leave-one-feature-out ablation. With interactions, ablation effects don’t sum to the total, and PAFs don’t either.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>A fire needs fuel, oxygen and a spark. Remove any one and there is no fire, so 100% of the fire is attributable to each. That is not a contradiction; it is three different questions.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>A news story says “salt causes X deaths a year in Saudi Arabia”, quoting GBD. Your Project 1 model says the bread limit averts far fewer. Is your model wrong?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Not necessarily. GBD’s figure is a PAF: it compares today with a world where everyone is at the TMREL. Your figure is a PIF for one realistic shift in intake, at a given compliance, and it builds up over time. The two answer different counterfactual questions. Report both and say which is which.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Risk A affects 2% of people with RR 4. Risk B affects 40% with RR 1.3. Without calculating, which probably has the larger PAF, and what does that imply for policy?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Probably B: a weak risk spread across a large share of the population often accounts for more cases than a strong but rare one. It implies a population-wide policy aimed at B may prevent more disease than a targeted programme for A, which is Rose’s prevention paradox.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A colleague takes an RR adjusted for age, sex and smoking from a cohort paper and plugs it into Levin’s formula with national prevalence. What is the problem and how would you fix it?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Levin’s formula assumes the RR is unconfounded in the population whose prevalence you use. Mixing an adjusted RR with crude prevalence gives a biased PAF when confounding is present. Use the case-based formula (proportion of cases exposed times \((RR-1)/RR\)), or compute the PAF by standardisation from the fitted model.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>The PAFs for blood pressure, cholesterol, smoking and diabetes for heart disease add to 130%. Is there an error?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>No. Many heart attacks have several causes, and each would have been prevented by removing any one of them. Each PAF answers a separate counterfactual question. To find the share preventable by removing all four, compute a joint PAF, which will be below 100%.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Two policies cut average salt intake by the same amount. One lowers everyone’s intake a little; the other cuts only the top 10% of consumers. Will their PIFs be the same?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Not in general. The PIF depends on how the whole distribution moves, combined with the shape of the risk curve. If risk rises steadily with intake, as it does for blood pressure, a broad shift and a tail cut give different answers, and you must model the distribution, not just the mean. This is why Project 1 needs intake distributions, not only averages.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A later GBD round reports much less burden from sodium than the previous round. Where do you look first?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>At the TMREL and the risk curve in the methods appendix, not at the disease rates. A higher TMREL or a flatter curve shrinks attributable burden even if intake and disease are unchanged. Check also whether exposure data changed, especially for countries with few measured surveys.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Murray, Ezzati, Lopez, Rodgers &amp; Vander Hoorn, “Comparative quantification of health risks: conceptual framework and methodological issues”, <em>Population Health Metrics</em> (2003): counterfactuals and the four minimum-risk choices.</li>
+      <li>GBD 2021 Risk Factors Collaborators, “Global burden and strength of evidence for 88 risk factors in 204 countries and 811 subnational locations, 1990–2021”, <em>The Lancet</em> (2024), and its methods appendix: the five steps, TMRELs, mediation and evidence ratings.</li>
+      <li>Rockhill, Newman &amp; Weinberg, “Use and misuse of population attributable fractions”, <em>American Journal of Public Health</em> (1998): Levin’s formula, the adjusted-RR trap, and why PAFs don’t add.</li>
+      <li>Morgenstern &amp; Bursic, “A method for using epidemiologic data to estimate the potential impact of an intervention on the health status of a defined population”, <em>Journal of Community Health</em> (1982): the potential impact fraction.</li>
+      <li>Rose, <em>The Strategy of Preventive Medicine</em>: why common small risks dominate population burden.</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="1-06-summary-measures.html"><small>Previous</small>1.6 Summary measures</a>
+    <a class="next" href="1-08-nutrition-epidemiology.html"><small>Next</small>1.8 Nutrition epidemiology</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

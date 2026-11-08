@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>1.5 Life tables and life expectancy · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-1">Block 1</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 1.5</p>
+  <h1>Life tables and life expectancy</h1>
+  <div class="lecture-meta">
+    <span class="tier tier-master">Master</span>
+    <span>Block 1 · Foundations, burden of disease and health economics</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>A life table turns a set of age-specific death rates into a survival curve and one headline number, <strong>life expectancy</strong>. The number is easy to quote and easy to misread: it is a summary of current death rates, not a forecast and not the age at which most people die. Project 1 is built on a life table, so you need to read one fluently.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#life-table">What a life table does</a></li>
+      <li><a href="#reading-le">Reading life expectancy</a></li>
+      <li><a href="#period-cohort">Period and cohort life expectancy</a></li>
+      <li><a href="#competing">Competing risks: why gains look small</a></li>
+      <li><a href="#project">Life tables in Project 1</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="life-table">
+    <h2>1. What a life table does</h2>
+    <p class="point">A life table follows an imaginary group of 100,000 newborns through life, letting them die at each age at the rate observed today, and records how many are left and how long they live.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The input is one column: death rates by age (and usually sex). Each rate is turned into a probability of dying before the next birthday or age band. Applying those probabilities in turn to the shrinking group gives the number still alive at each age. Adding up all the years the group lives, and dividing by the starting number, gives life expectancy.</dd>
+      <dt>Why it matters</dt>
+      <dd>Life expectancy is the most widely used single summary of a population’s mortality. Because it is built from age-specific rates, it is already free of the population’s age structure: no standardisation is needed to compare countries (Lecture 1.4). Life tables also supply the “years of life lost” behind every DALY (Lecture 1.6).</dd>
+      <dt>How to read it</dt>
+      <dd>Three columns carry the meaning; the rest are bookkeeping.</dd>
+    </dl>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Column</th><th>Plain meaning</th><th>Read it as</th></tr></thead>
+        <tbody>
+          <tr><td><strong>q<sub>x</sub></strong></td><td>Probability that someone alive at age x dies before the next age</td><td>The risk of dying at that age; tiny in childhood in rich countries, rising roughly exponentially after about 30</td></tr>
+          <tr><td><strong>l<sub>x</sub></strong></td><td>Number of the original 100,000 still alive at age x</td><td>The survival curve; l<sub>70</sub> = 80,000 means 80% of newborns would reach 70 at today’s rates</td></tr>
+          <tr><td><strong>e<sub>x</sub></strong></td><td>Average further years of life for someone who has reached age x</td><td>Life expectancy at age x; e<sub>0</sub> is life expectancy at birth</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Thinking the 100,000 are real people. They are a thought experiment: a group who experience <em>this year’s</em> death rates at every age for their whole lives. No one actually lives through that schedule (see section 3).</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Where the tables come from</div>
+      <p>You rarely build a national life table from raw deaths. The UN World Population Prospects, the WHO Global Health Observatory and GBD all publish life tables by country, sex and age. For Saudi Arabia they differ somewhat, because each source models incomplete death registration differently. Pick one source and use it consistently.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>A life table is a discrete-time survival model. q<sub>x</sub> is the hazard in each interval, l<sub>x</sub> is the survival function, and life expectancy at birth is the area under the survival curve, the same quantity as the restricted mean survival time you may know from trials.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="reading-le">
+    <h2>2. Reading life expectancy</h2>
+    <p class="point">Life expectancy at birth is an average that deaths in early life pull down hard, so it is not the age at which most people die.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>Life expectancy at birth</strong> (e<sub>0</sub>) is the mean age at death in the imaginary group. <strong>Life expectancy at age x</strong> (e<sub>x</sub>) is the mean number of further years for those who reach x. Once you have survived to x, all the deaths before x no longer count against you.</dd>
+      <dt>Why it matters</dt>
+      <dd>The two answer different questions. e<sub>0</sub> is dominated by infant, child and young-adult deaths. e<sub>65</sub> reflects only deaths in old age, which is where cardiovascular disease acts. To judge an adult chronic disease policy, look at adult life expectancy or adult mortality, not just e<sub>0</sub>.</dd>
+      <dt>How to read it</dt>
+      <dd>Today e<sub>0</sub> ranges from the 50s in the poorest countries to the mid-80s in the longest-lived. Age at death plus remaining life expectancy always rises with age: a 65-year-old can expect to live past the e<sub>0</sub> figure, because they have already escaped the early deaths.</dd>
+      <dt>What a change means</dt>
+      <dd>A one-year rise in e<sub>0</sub> means the whole schedule of death rates fell enough to add a year to the average lifetime. Where it came from matters. Saving one infant adds a whole lifetime; delaying one death at 80 adds a few years. So e<sub>0</sub> moves a lot when child deaths fall and little when old-age deaths fall.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>“Life expectancy used to be 35, so people died at 35.” In populations with very high infant and child mortality, most adults who survived childhood lived into their 50s, 60s and beyond. The low average came from the many deaths in the first years of life. The most common age at death among adults was always far above e<sub>0</sub>.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">Example · GCC</div>
+      <p>Child mortality across the GCC is now low by global standards. That changes where future gains in life expectancy can come from: no longer mainly from saving children, but from delaying adult deaths, above all from cardiovascular disease, diabetes and injuries. This is why non-communicable disease policy, including salt, now drives the life expectancy agenda in Saudi Arabia.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · WHO benchmark</div>
+      <p>Sustainable Development Goal indicator 3.4.1 is the probability of dying between exact ages 30 and 70 from cardiovascular disease, cancer, diabetes or chronic respiratory disease. It is a life-table measure that counts only deaths in the ages where these diseases are most preventable. It is one of the benchmarks Project 1’s results can be set against.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="period-cohort">
+    <h2>3. Period and cohort life expectancy</h2>
+    <p class="point">Period life expectancy is a snapshot of this year’s death rates; cohort life expectancy is how long a real birth cohort actually lives.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>Period</strong> life expectancy applies one calendar year’s death rates at every age. <strong>Cohort</strong> life expectancy follows people born in the same year through the death rates they actually meet as the years pass. A cohort figure for anyone still alive needs forecasts of future death rates.</dd>
+      <dt>Why it matters</dt>
+      <dd>Almost every published “life expectancy” is a period figure. It is the right tool for comparing mortality between countries or years. It is the wrong tool for asking how long today’s babies will live, or how long pensions must be paid.</dd>
+      <dt>How to read it</dt>
+      <dd>When death rates are falling, cohort life expectancy is higher than period, because each cohort meets lower rates at older ages than today’s old people did. Period life expectancy is closer to a speed reading than a prediction.</dd>
+      <dt>What a change means</dt>
+      <dd>A sharp one-year drop in period life expectancy means that year had unusually high death rates. It does not mean babies born that year will live shorter lives, unless the high rates persist.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reading period life expectancy as a forecast. “A girl born today will live to 84” misreads a period figure. If mortality keeps improving, she will probably live longer; if it worsens, shorter. Statistical offices such as the UK’s ONS publish both figures because they answer different questions.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · COVID-19</div>
+      <p>Period life expectancy fell sharply in 2020 and 2021 in many countries, including the United States. The figures were correct, but headlines that people “will now live years less” were not. Period life expectancy reported what would happen if pandemic death rates lasted a whole lifetime. As death rates fell back, period life expectancy rose again.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>A sat-nav arrival time. It assumes you will drive at current speeds for the rest of the trip. Useful, but a snapshot: if traffic clears, you arrive earlier.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="competing">
+    <h2>4. Competing risks: why gains look small</h2>
+    <p class="point">Removing a cause of death adds fewer years of life expectancy than people expect, because those saved go on to die of something else.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A <strong>cause-deleted life table</strong> recalculates life expectancy with one cause of death removed or reduced. The people saved stay exposed to every other cause, and most are already old. So the gain is the extra years they live before another cause takes them, not a full lifetime each.</dd>
+      <dt>Why it matters</dt>
+      <dd>It sets realistic expectations. A policy that cuts cardiovascular deaths will raise population life expectancy by weeks or months, not years. Across millions of people, those weeks add up to a very large number of life years, which is Rose’s prevention paradox in life-table form (Lecture 1.2).</dd>
+      <dt>How to read it</dt>
+      <dd>Report both the change per person (small, often days to months) and the total life years gained across the population (large). Neither alone tells the story.</dd>
+      <dt>What a change means</dt>
+      <dd>Halving deaths from one cause roughly halves the gain from eliminating it, but not exactly: removing more of one cause leaves people longer to die of others.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Adding up deaths averted cause by cause as if each saved person lives forever, or summing the life-expectancy gains of separate causes. Both overstate the benefit because they ignore competing risks. A life table handles this automatically; spreadsheets of “deaths × remaining years” often don’t.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Your cardiac background</div>
+      <p>A patient spared a fatal heart attack at 75 is not given back the rest of an average lifetime. They carry the same atherosclerosis, the same raised risk of stroke and heart failure, and the ordinary risks of being 75. A life table that removes one heart attack keeps all of that risk in place, which is why the years gained look modest.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="project">
+    <h2>5. Life tables in Project 1</h2>
+    <p class="point">Project 1 runs two life tables side by side, one with today’s disease rates and one with the rates the salt policy would produce, and the difference between them is the policy’s effect.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A <strong>multistate life table</strong> (Lecture 1.11) is an ordinary life table with extra columns for disease states. The Saudi population, by single year of age and sex, is followed as closed cohorts (no one joins or leaves) until death or age 100. Lower salt lowers blood pressure, which lowers stroke and heart disease incidence, which feeds back into death rates in the main table.</dd>
+      <dt>What it outputs</dt>
+      <dd>Life years and health-adjusted life years gained, deaths averted, and changes in life expectancy, all as differences between the policy and no-policy tables.</dd>
+      <dt>How to read it</dt>
+      <dd>Gains build slowly. The early years show little, because disease takes years to respond to lower blood pressure and because people spared events die of other causes later. Most of the benefit appears decades out, so the time horizon you choose changes the headline number.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Forgetting that the closed cohort assumes people stay. Many migrant workers in Saudi Arabia leave before the ages when cardiovascular disease peaks. A model of all residents that follows them to age 100 credits Saudi Arabia with events that would happen elsewhere. Model Saudi nationals, or residents with an explicit assumption about leaving, and say which.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Ignoring the open-ended last age group. A table that stops at “85 and over” lumps the oldest together and has to assume how long they live. Where most cardiovascular deaths happen at old ages, that assumption moves your results. Use tables that go to 95 or 100 where you can.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>A country’s life expectancy at birth rose by five years over two decades. What would you check to know whether adult health improved?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Life expectancy at older ages (e<sub>30</sub>, e<sub>65</sub>) or adult death probabilities, such as the chance of dying between 30 and 70. A large rise in e<sub>0</sub> can come almost entirely from falling child mortality, with adult death rates barely changing.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A friend says: “Life expectancy here is 76, and my father is 76, so he has reached the end of his expected life.” What is wrong?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The 76 is the expected age at death for a <em>newborn</em> under current rates. Someone who has already reached 76 has escaped all the deaths before 76, so the relevant figure is e<sub>76</sub>, which is typically around ten more years in a middle- or high-income country.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Period life expectancy fell by over a year during a pandemic year. A journalist writes that babies born that year will live a year less. How do you correct this?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Period life expectancy describes what would happen if that year’s death rates applied for a whole lifetime. Babies born that year will meet the death rates of the coming decades, not those of the pandemic year. Their cohort life expectancy is unaffected unless high mortality persists.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Someone claims that eliminating all cardiovascular deaths would add 15 years to life expectancy, since it causes about a third of deaths. Why is this almost certainly too high?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Competing risks. Most cardiovascular deaths happen at older ages, and the people saved still face cancer, dementia, infections and other causes. Each saved person gains years, not a lifetime, and many are old. A cause-deleted life table gives the correct, much smaller figure.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Your Project 1 model shows that a salt policy raises population life expectancy by about a month. A colleague says the policy isn’t worth it. What do you reply?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>A month on average across everyone is a large total: multiplied across millions of people it is a great many life years, concentrated in those who avoid a stroke or heart attack, who may gain many years each. Report the total life years and events averted, and compare with other options on cost per health gained (Lecture 1.10), not on the per-person average alone.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Why don’t you need to age-standardise life expectancy before comparing Saudi Arabia with the UK?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Life expectancy is built from age-specific death rates applied to a fixed imaginary group of 100,000 births. The real population’s age structure never enters the calculation, so it is already comparable across populations of different ages.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Preston, Heuveline &amp; Guillot, <em>Demography: Measuring and Modeling Population Processes</em> (2001), chapter 3, “The life table and single decrement processes”, and chapter 4 on multiple decrements (cause-deleted tables).</li>
+      <li>Human Mortality Database, <em>Methods Protocol</em>: a clear account of how national period and cohort life tables are built.</li>
+      <li>Blakely et al., “Proportional multistate lifetable modelling of preventive interventions: concepts, code and worked examples”, <em>International Journal of Epidemiology</em> (2020): the life-table structure Project 1 uses.</li>
+      <li>WHO, Global Health Observatory: life tables by country and the SDG 3.4.1 indicator definition.</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="1-04-measuring-population-health.html"><small>Previous</small>1.4 Measuring population health</a>
+    <a class="next" href="1-06-summary-measures.html"><small>Next</small>1.6 Summary measures: YLL, YLD, DALYs, QALYs</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>1.3 Determinants of health · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-1">Block 1</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 1.3</p>
+  <h1>Determinants of health: social, commercial, environmental</h1>
+  <div class="lecture-meta">
+    <span class="tier tier-use">Use</span>
+    <span>Block 1 · Foundations, burden of disease and health economics</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>Risk factors such as salt intake or blood pressure are the last links in a longer chain. Further up sit the <strong>determinants</strong>: the social conditions people live in, the commercial decisions that shape what they eat and buy, and the physical environment around them. This lecture shows you how to trace a disease up that chain, so you can see where a policy acts, what your model captures and what it leaves out.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#upstream">Upstream: determinants vs risk factors</a></li>
+      <li><a href="#social">Social determinants</a></li>
+      <li><a href="#commercial">Commercial determinants</a></li>
+      <li><a href="#environmental">Environmental determinants</a></li>
+      <li><a href="#using">Using the chain in practice</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="upstream">
+    <h2>1. Upstream: determinants vs risk factors</h2>
+    <p class="point">A risk factor is what directly raises a person’s risk; a determinant is what decides who gets that risk factor in the first place.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><em>Proximal</em> (close) causes act on the body: high salt intake, raised blood pressure, smoking. <em>Distal</em> or <em>upstream</em> causes act on the proximal ones: income, education, food prices, recipes chosen by manufacturers, climate. Marmot’s phrase for them is “the causes of the causes”.</dd>
+      <dt>Why it matters</dt>
+      <dd>The further upstream a policy acts, the more people and the more diseases it reaches. A salt limit in bread acts on the food supply, so it reaches everyone who eats bread, without anyone having to change their behaviour. This is Rose’s population strategy (Lecture 1.2) seen from another angle.</dd>
+      <dt>How to tell</dt>
+      <dd>Keep asking “and what caused that?” A factor that acts on the body is a risk factor. A factor that shapes how common the risk factor is, and in whom, is a determinant.</dd>
+      <dt>Why the upstream persists</dt>
+      <dd>Link and Phelan called social conditions <em>fundamental causes</em>: money, knowledge and power let people avoid whatever the risk of the day is. When one route to disease is closed, the health gap between groups tends to reopen through another.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Concluding that an upstream factor “has no effect” because it vanishes after adjusting for the risk factors it works through. If income raises stroke risk <em>via</em> blood pressure, smoking and diet, then adjusting for those removes the pathway, not the cause. You have estimated the effect of income that doesn’t go through those routes, which is a different question.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>Draw it as a causal graph. Determinants are ancestor nodes; risk factors are mediators close to the outcome. A predictive model fed both will put most weight on the proximal mediators, because they carry the information. That is fine for prediction but says nothing about where to intervene. Feature importance is not causal importance.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>The “five whys” of fault-finding. The car stopped: the battery was flat. Why? The alternator failed. Why? It was never serviced. Why? There is no maintenance schedule. Replacing the battery fixes today; the schedule fixes the fleet.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="social">
+    <h2>2. Social determinants</h2>
+    <p class="point">The conditions in which people are born, grow, live, work and age shape their health, and they follow a gradient: each step down the social ladder carries worse health.</p>
+
+    <p>The Dahlgren–Whitehead “rainbow” model is the usual map. Each layer shapes the one inside it:</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Layer (outer to inner)</th><th>Covers</th><th>Salt example</th></tr></thead>
+        <tbody>
+          <tr><td><strong>General socioeconomic, cultural and environmental conditions</strong></td><td>Economy, laws, culture, climate</td><td>Food regulation; food culture built around bread and rice</td></tr>
+          <tr><td><strong>Living and working conditions</strong></td><td>Work, unemployment, education, housing, food production, health services</td><td>Shift workers relying on takeaway food</td></tr>
+          <tr><td><strong>Social and community networks</strong></td><td>Family, friends, community norms</td><td>Household cooking habits and shared meals</td></tr>
+          <tr><td><strong>Individual lifestyle factors</strong></td><td>Diet, smoking, activity</td><td>Adding salt at the table</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>At the centre sit fixed factors: age, sex and genes.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The WHO Commission on Social Determinants of Health defined them as the conditions above, and the unequal spread of power, money and resources that shapes them. Its framework splits them into <em>structural</em> determinants, which set a person’s social position (income, education, occupation, gender, ethnicity), and <em>intermediary</em> ones, through which position becomes health (housing, diet, stress, access to care).</dd>
+      <dt>Why it matters</dt>
+      <dd>They explain much of why health differs between groups, and they decide who benefits from a policy. An intervention that ignores them can raise average health while widening the gap.</dd>
+      <dt>How to read a value</dt>
+      <dd>Plot a health measure across ordered groups (income fifths, education levels) and look at the slope. A flat line means little inequality. A steep line means a lot. The <em>slope index of inequality</em> summarises the gap between the very top and very bottom of the ladder in one number.</dd>
+      <dt>What a change means</dt>
+      <dd>If every group improves but the slope steepens, the better-off gained more: the average hides a widening gap. If the slope flattens while all groups improve, the policy helped the worse-off most, which is the pattern structural policies tend to produce.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Thinking social determinants only concern the poorest. The Whitehall studies of British civil servants found that mortality rose, and health worsened, step by step down the employment grades, even among people who were comfortably off. It is a gradient, not a cliff at the poverty line.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">Example · the GCC</div>
+      <p>In the Gulf, nationality and occupation are major social determinants. Migrant workers make up a large part of the workforce, and many work outdoors in manual jobs, with different housing, working hours and access to health coverage from citizens. When you analyse any exposure in the region, ask whether it is spread evenly across these groups or concentrated in one of them. Heat (section 4) is the clearest case.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>A staircase, not a cliff edge. Each step down the social ladder carries a little more risk, all the way down.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="commercial">
+    <h2>3. Commercial determinants</h2>
+    <p class="point">Companies shape health through what they make, how they price and market it, and how they influence the rules and the evidence.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The systems and practices through which commercial actors affect health. The most studied are the makers of tobacco, alcohol, ultra-processed food and sugary drinks, whose profits depend on products that cause harm when consumed in the amounts they promote.</dd>
+      <dt>Why it matters</dt>
+      <dd>In most high-income settings, most of the salt and added sugar people eat is put there by manufacturers, bakers and restaurants, not added at home. Whoever sets the recipe sets the exposure. This is why reformulation and taxes work, and why industry resists them.</dd>
+      <dt>How to recognise it</dt>
+      <dd>The tactics recur across industries. The top three:
+        <ul>
+          <li><strong>Shaping policy:</strong> lobbying, offering voluntary self-regulation in place of mandatory rules, and legal challenges.</li>
+          <li><strong>Shaping evidence:</strong> funding research, stressing uncertainty, and promoting other causes (“the problem is inactivity, not sugar”).</li>
+          <li><strong>Shaping the story:</strong> framing harm as a matter of personal choice and responsibility, backed by heavy marketing.</li>
+        </ul>
+      </dd>
+      <dt>What a change means</dt>
+      <dd>A move from voluntary to mandatory limits shifts the decision from the company to the regulator. Expect larger and more even effects, and stronger push-back.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Two opposite errors. The first is accepting “it’s personal choice” at face value: people choose from what is on the shelf, at the price and portion size someone else set. The second is treating industry only as an enemy. Reformulation needs manufacturers to change recipes. The practical questions are who sets the targets, who monitors compliance, and who funds the evidence.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · the sugar industry and heart disease</div>
+      <p>Internal documents, analysed in 2016, showed that a sugar industry trade group funded a 1960s review by Harvard researchers that played down sugar’s role in heart disease and pointed to dietary fat instead. The funding was not disclosed. The case is now the standard illustration of why funding sources and conflicts of interest matter when you appraise nutrition evidence.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">Example · Saudi Arabia</div>
+      <p>Two policy responses to commercial determinants. In 2017 Saudi Arabia introduced an excise tax of 50% on soft drinks and 100% on energy drinks, and in December 2019 extended it to sweetened drinks generally: a lever on price, which industry otherwise sets (Project 4 tests whether it cut consumption). The 2019 bread salt limit is mandatory, while the 2025 limits for other foods are voluntary, so their effect depends on industry compliance. Project 9 asks why that compliance falls short.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>The eye-level supermarket shelf. You choose freely, but someone else chose what sits at eye level, and paid for the spot.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="environmental">
+    <h2>4. Environmental determinants</h2>
+    <p class="point">The physical world people live and work in, including heat, air and water, sets exposures that individuals can do little to avoid.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Physical, chemical and biological conditions outside the person: temperature, air pollution and dust, water quality, and the built environment (housing, roads, green space). Climate change acts on many of them at once.</dd>
+      <dt>Why it matters</dt>
+      <dd>Exposure is decided by place and job more than by choice, so environmental and social determinants overlap. Responses are usually structural: work rules, building standards, early-warning systems.</dd>
+      <dt>How to read a value</dt>
+      <dd>For heat, temperature alone is misleading. <em>Wet-bulb globe temperature</em> (WBGT) combines air temperature, humidity, sun and wind into one measure of heat stress on the body. Occupational guidelines set WBGT thresholds above which work must be cut back or stopped. Heat–mortality curves are usually U- or J-shaped, with risk lowest at a temperature that differs between places, because people adapt to their local climate.</dd>
+      <dt>What a change means</dt>
+      <dd>A rising count of hours above a WBGT threshold means more working time is unsafe. Whether that becomes illness depends on who is exposed and on rules such as rest breaks and midday work bans.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reading a heat threshold as the same everywhere. A temperature that is routine in Riyadh may raise mortality sharply in a city that rarely sees it, and humidity on the Gulf coast can make a lower air temperature more dangerous than a higher one inland. Use a heat-stress measure, and judge risk against local baselines.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">Example · heat in the GCC</div>
+      <p>GCC countries ban outdoor work during the hottest midday hours in summer. The ban is a structural measure on an environmental determinant, and the people it protects are mostly outdoor migrant workers, so a social determinant is part of the picture too. Project 6 measures how well the ban’s fixed hours match the hours when heat stress actually exceeds safe thresholds.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="using">
+    <h2>5. Using the chain in practice</h2>
+    <p class="point">Lay out the chain from determinant to disease, then mark where your policy acts and where your model measures.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Link</th><th>Salt (Project 1)</th><th>Sugary drinks (Project 4)</th><th>Heat (Project 6)</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Upstream determinant</strong></td><td>Recipes of bakeries and food manufacturers</td><td>Price and marketing of drinks</td><td>Climate; outdoor jobs; work rules</td></tr>
+          <tr><td><strong>Exposure</strong></td><td>Salt intake</td><td>Sugary drink intake</td><td>Hours of heat stress</td></tr>
+          <tr><td><strong>Intermediate</strong></td><td>Blood pressure</td><td>Weight, blood glucose</td><td>Core body temperature, dehydration</td></tr>
+          <tr><td><strong>Outcome</strong></td><td>Stroke, heart disease</td><td>Type 2 diabetes, tooth decay</td><td>Heat exhaustion, heat stroke</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A simple causal chain, upstream to downstream. Policies usually act at the top. Evidence on health effects usually exists only for the lower links.</dd>
+      <dt>Why it matters</dt>
+      <dd>Your model has to bridge that gap. Project 1 acts on the food supply but estimates health effects through salt intake and blood pressure, using comparative risk assessment (Lecture 1.7). The Global Burden of Disease study groups its risk factors as behavioural, environmental and occupational, and metabolic. Social and commercial determinants are not in that list, so burden is never attributed to them directly.</dd>
+      <dt>How to tell what a model leaves out</dt>
+      <dd>Find the highest link the model represents. Anything above it, such as industry compliance, price or who can afford healthier food, is either an assumption or a scenario input. Make it explicit, as Project 1 does with compliance.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Taking “no burden attributed to commercial determinants” in GBD to mean they matter little. GBD measures what it can link to the body by exposure–response data. The upstream causes of those exposures are outside its frame by design, not shown to be unimportant.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · tobacco</div>
+      <p>Tobacco control shows every level at once. Smoking is the risk factor. Price, advertising and industry lobbying are commercial determinants. Smoking concentrated in poorer groups is a social determinant. The WHO Framework Convention on Tobacco Control tackles the upstream links directly, and its Article 5.3 requires governments to protect health policy from tobacco industry interference. Food policy has no equivalent rule.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>A cohort study reports that education is not associated with stroke after adjusting for blood pressure, smoking, diabetes and body weight. A colleague concludes education doesn’t matter for stroke. What is wrong?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Those variables are likely the routes through which education acts. Adjusting for them blocks the pathways, so what remains is the effect of education that doesn’t run through them. The total effect of education may still be large. The study answered a different question from the one the colleague is asking.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A food industry body offers to reduce salt voluntarily if the government drops plans for mandatory limits. What would you want to know before judging the offer?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Whether there are specific targets by food category, a deadline, independent monitoring of salt content, and public reporting of who complies. Also what happens if targets are missed. Voluntary schemes can work (the UK’s did, for a time) when targets are clear, monitoring is independent and the threat of regulation is credible. Without those, the offer mainly delays regulation.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Heat illness in GCC outdoor workers is usually called an environmental problem. Why is it also a social one?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Everyone faces the same climate, but exposure depends on job, working hours and housing, which follow occupation and nationality. Outdoor manual work is concentrated among migrant workers, who also have less control over their schedules. The environmental hazard reaches people through a social determinant.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A ministry launches a campaign urging people to stop adding salt at the table. Which layer of the rainbow model does it target, and what would an upstream alternative be?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The innermost layer, individual lifestyle. It also targets what is usually a minor source, since in most high-income settings most salt is already in food when it is bought. An upstream alternative acts on living and working conditions or the wider economic layer: mandatory salt limits in staple and processed foods, or front-of-pack warning labels that push manufacturers to reformulate.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>After the harms of smoking became widely known, smoking fell faster in higher-income groups, and the social gap in smoking-related deaths widened. What idea explains this?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Fundamental cause theory. New knowledge about a risk is a resource, and groups with more money, education and control use it first. The gap is not tied to one mechanism, so it reappears whenever a new way to avoid risk arrives. Structural measures that need no individual resources, such as taxes and smoke-free laws, are the main way to avoid this.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Name one determinant Project 1’s model represents directly and one it can only treat as an assumption. Why does the distinction matter?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>It represents salt intake (and through it, blood pressure) directly, using exposure–response evidence. Industry compliance with the voluntary limits is an assumption, entered as scenarios (measured vs full compliance). The distinction matters because the results are only as good as those assumptions, so they have to be stated, varied in sensitivity analysis, and, where possible, checked against data, which is what Project 9 explores.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Dahlgren &amp; Whitehead, <em>Policies and Strategies to Promote Social Equity in Health</em> (Institute for Futures Studies, Stockholm, 1991): the rainbow model.</li>
+      <li>WHO Commission on Social Determinants of Health, <em>Closing the Gap in a Generation</em> (2008); Solar &amp; Irwin, <em>A Conceptual Framework for Action on the Social Determinants of Health</em> (WHO, 2010): definitions and the structural/intermediary split.</li>
+      <li>Marmot, Shipley &amp; Rose, “Inequalities in death: specific explanations of a general pattern?”, <em>Lancet</em> 1984 (Whitehall I); Marmot et al., “Health inequalities among British civil servants: the Whitehall II study”, <em>Lancet</em> 1991;337:1387–93: the social gradient.</li>
+      <li>Link &amp; Phelan, “Social conditions as fundamental causes of disease”, <em>Journal of Health and Social Behavior</em> 1995 (extra issue): fundamental cause theory.</li>
+      <li>Kickbusch, Allen &amp; Franz, “The commercial determinants of health”, <em>Lancet Global Health</em> 2016; Gilmore et al., “Defining and conceptualising the commercial determinants of health”, <em>Lancet</em> 2023 (first paper of the Lancet series on commercial determinants).</li>
+      <li>Kearns, Schmidt &amp; Glantz, “Sugar industry and coronary heart disease research: a historical analysis of internal industry documents”, <em>JAMA Internal Medicine</em> 2016;176:1680–85.</li>
+      <li>Gasparrini et al., “Mortality risk attributable to high and low ambient temperature: a multicountry observational study”, <em>Lancet</em> 2015;386:369–75: heat–mortality curves and local optimum temperatures.</li>
+      <li>GBD 2021 Risk Factors Collaborators, <em>Lancet</em> 2024, and its methods appendix: how GBD groups risk factors.</li>
+      <li>WHO Framework Convention on Tobacco Control (2003), Article 5.3 and its implementation guidelines.</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="1-02-prevention-paradox.html"><small>Previous</small>1.2 Rose’s prevention paradox</a>
+    <a class="next" href="1-04-measuring-population-health.html"><small>Next</small>1.4 Measuring population health</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>
