@@ -14,12 +14,15 @@ lectures/
 assets/
   css/style.css          shared styles (mobile, dark mode, print)
   js/math.js             maths rendering setup
+  js/progress.js         mark-as-done (saved in the browser)
   vendor/katex/          KaTeX 0.16.22 (MIT), bundled so maths renders offline
 ```
 
 ## Studying
 
 Open `index.html` in a browser. Each lecture has collapsible exercise answers, and **Print → Save as PDF** gives a clean copy with all answers expanded.
+
+**Mark as done:** each lecture has a button at the bottom, and the index has a tick circle per lecture. Progress is saved in the browser (`localStorage`), so it is per device and per browser, and clearing site data resets it.
 
 ## Lecture style
 

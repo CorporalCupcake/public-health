@@ -388,7 +388,7 @@ details.block[open] > summary { border-bottom: 1px solid var(--border); backgrou
 ol.lecture-list { list-style: none; padding: 0; margin: 0.5rem 0 1rem; font-family: var(--font-ui); font-size: 0.95rem; }
 ol.lecture-list li {
   display: grid;
-  grid-template-columns: 2.6rem 1fr;
+  grid-template-columns: 2.6rem 1fr auto;
   gap: 0.6rem;
   align-items: baseline;
   padding: 0.45rem 0;
@@ -416,6 +416,50 @@ ol.lecture-list li:last-child { border-bottom: 0; }
 }
 .progress-bar > span { display: block; height: 100%; background: var(--accent); }
 
+/* ---------- Mark as done ---------- */
+.done-bar { margin: 3rem 0 0; display: flex; justify-content: center; }
+.done-button {
+  font-family: var(--font-ui);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--accent);
+  background: transparent;
+  border: 2px solid var(--accent);
+  border-radius: 999px;
+  padding: 0.7rem 1.6rem;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.done-button:hover { background: var(--accent-soft); }
+.done-button.is-done { background: var(--accent); color: var(--bg); }
+.done-button .done-icon { display: inline-block; width: 1.1em; }
+.done-undo { font-weight: 400; opacity: 0.75; font-size: 0.85rem; }
+.done-bar + nav.pager { margin-top: 1.5rem; }
+
+.done-toggle {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  align-self: center;
+  -webkit-tap-highlight-color: transparent;
+}
+.done-toggle:hover { border-color: var(--accent); }
+li.is-done .done-toggle { background: var(--accent); border-color: var(--accent); }
+li.is-done .done-toggle::after {
+  content: "✓";
+  color: var(--bg);
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1;
+  display: block;
+}
+li.is-done .lec-title a { color: var(--muted); }
+.overall-done:empty { display: none; }
+
 /* ---------- Footer ---------- */
 .site-footer {
   border-top: 1px solid var(--border);
@@ -431,14 +475,14 @@ ol.lecture-list li:last-child { border-bottom: 0; }
   h1 { font-size: 1.6rem; }
   h2 { font-size: 1.3rem; }
   .callout { margin-left: -0.5rem; margin-right: -0.5rem; }
-  ol.lecture-list li { grid-template-columns: 2.3rem 1fr; }
+  ol.lecture-list li { grid-template-columns: 2.3rem 1fr auto; }
 }
 
 /* ---------- Print (Save as PDF) ---------- */
 @media print {
   :root { --bg: #fff; --surface: #f6f6f6; --text: #000; }
   body { font-size: 11pt; }
-  .site-header, nav.pager, .site-footer, nav.toc { display: none; }
+  .site-header, nav.pager, .site-footer, nav.toc, .done-bar { display: none; }
   main { max-width: none; padding: 0; }
   h2 { break-after: avoid; }
   .callout, table, figure, pre { break-inside: avoid; }
