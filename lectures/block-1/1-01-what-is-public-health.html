@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>1.1 What public health is · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-1">Block 1</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 1.1</p>
+  <h1>What public health is</h1>
+  <div class="lecture-meta">
+    <span class="tier tier-use">Use</span>
+    <span>Block 1 · Foundations, burden of disease and health economics</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>Public health treats a population as its patient. This lecture gives you three lenses for placing any intervention: <strong>what job it does</strong> (core functions), <strong>when it acts</strong> on the course of a disease (levels of prevention), and <strong>which area of practice</strong> it belongs to (the three domains). You will use all three to frame every project, starting with Saudi salt policy.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#population">The population is the patient</a></li>
+      <li><a href="#functions">Three core functions</a></li>
+      <li><a href="#prevention">Levels of prevention</a></li>
+      <li><a href="#domains">Three domains</a></li>
+      <li><a href="#together">Putting the lenses together</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="population">
+    <h2>1. The population is the patient</h2>
+    <p class="point">Medicine asks “why did this person get sick?” Public health asks “why does this population have so much of this disease, and what can society do about it?”</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>“The science and art of preventing disease, prolonging life and promoting health through the organised efforts of society.” Two phrases carry the meaning. <em>Preventing</em>: the work is mostly done before anyone is ill. <em>Organised efforts of society</em>: governments, laws, industry and communities act, not a single doctor.</dd>
+      <dt>Why it matters</dt>
+      <dd>The biggest levers on a population’s health sit outside the clinic: clean water, tobacco taxes, what goes into food. Most of your projects evaluate levers like these.</dd>
+      <dt>How to tell</dt>
+      <dd>Ask two questions. Who is the unit? Who acts? If the unit is a group and the actor is organised society, it is public health. If the unit is one patient and the actor is a clinician, it is clinical care.</dd>
+      <dt>How success shows</dt>
+      <dd>Success is measured as a rate across the population (deaths per 100,000, average salt intake), not as individual recoveries. The people it helps never find out, so success is invisible unless you measure it.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Equating public health with the government running hospitals. Hospitals are health care delivery. Public health is mostly prevention. Planning health services is one part of it (the third domain, below), not the whole.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">Example · Saudi Arabia</div>
+      <p>The 2019 limit on salt in bread involves no patient and no doctor. One regulation changes the diet of millions. The person whose stroke never happens will never know the policy helped them. Project 1 makes that invisible benefit visible by modelling it.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>A lifeguard keeps pulling drowning people out of a river. Public health walks upstream to find out why they keep falling in.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="functions">
+    <h2>2. Three core functions</h2>
+    <p class="point">Every public health activity does one of three jobs: find out what is wrong, decide what to do, and make sure it gets done.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Function</th><th>Plain meaning</th><th>Salt example</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Assessment</strong></td><td>Measure the population’s health and what drives it</td><td>A survey measuring salt intake from 24-hour urine</td></tr>
+          <tr><td><strong>Policy development</strong></td><td>Use the evidence to set rules, plans and priorities</td><td>Setting a maximum salt content for bread</td></tr>
+          <tr><td><strong>Assurance</strong></td><td>Make sure the policy is carried out and the services exist</td><td>Inspecting bakeries and testing bread for compliance</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <dl class="facets">
+      <dt>Why it matters</dt>
+      <dd>It tells you where a failure sits. A policy that didn’t work may have failed at assessment (wrong problem), at policy (wrong lever) or at assurance (nobody enforced it). Each failure needs a different fix.</dd>
+      <dt>How to tell</dt>
+      <dd>Look at what the activity produces. Data means assessment. A decision or rule means policy. Delivery or enforcement means assurance.</dd>
+      <dt>How they connect</dt>
+      <dd>The three form a loop. Checking compliance (assurance) produces new data, which feeds the next assessment. The US expands the same three jobs into a finer list, the “10 Essential Public Health Services”.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Treating a published policy as the finish line. Carrying it out is the assurance job, and that is often where things break. This is why Project 1 models salt limits at both measured and full compliance, and why Project 9 asks why the gap exists.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>It is the lifecycle of a model in production. Assessment is collecting data and framing the problem. Policy is the model and the decision rule. Assurance is deployment and monitoring. A model that never ships, or drifts without anyone noticing, fails at the last step, not the first.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="prevention">
+    <h2>3. Levels of prevention</h2>
+    <p class="point">Levels of prevention place an intervention on the timeline of a disease: before the risk exists, before the disease starts, before symptoms appear, or after the disease is established.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Level</th><th>Acts when</th><th>Aim</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Primordial</strong></td><td>Before risk factors appear</td><td>Stop the risk factor arising at all</td><td>Less salt in the food supply, so fewer people develop high blood pressure</td></tr>
+          <tr><td><strong>Primary</strong></td><td>Risk present, no disease</td><td>Stop the disease starting</td><td>Vaccination; treating high blood pressure to prevent stroke</td></tr>
+          <tr><td><strong>Secondary</strong></td><td>Disease present, no symptoms yet</td><td>Catch it early, while the outcome can still be changed</td><td>Screening for diabetes or breast cancer</td></tr>
+          <tr><td><strong>Tertiary</strong></td><td>Disease established</td><td>Limit damage, disability and recurrence</td><td>Cardiac rehabilitation after a heart attack</td></tr>
+          <tr><td><strong>Quaternary</strong></td><td>Any time</td><td>Protect people from too much medicine</td><td>Not screening healthy people with tests that mostly find harmless abnormalities</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <dl class="facets">
+      <dt>Why it matters</dt>
+      <dd>The level decides who you reach and what evidence you need. Earlier levels reach many people at a low cost per person, but each person gains little. Later levels reach fewer people, and each gains a lot.</dd>
+      <dt>How to tell</dt>
+      <dd>Name the disease first. Then ask: when the intervention happens, does the person already have the disease? Do they know they have it?</dd>
+      <dt>What a shift means</dt>
+      <dd>Moving effort earlier widens reach and shrinks the benefit to each person. Moving it later concentrates the benefit in people who are already ill. This trade-off is the heart of Rose’s prevention paradox (Lecture 1.2).</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Forgetting that the level depends on which disease you name. Treating high blood pressure is <em>secondary</em> prevention of hypertension, because it is already there. It is also <em>primary</em> prevention of stroke, which hasn’t happened yet. Always say “prevention of what”.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">Example · Saudi Arabia</div>
+      <p>Salt limits in bread work at two levels at once. They are <strong>primordial</strong> for high blood pressure (fewer people develop it) and <strong>primary</strong> for stroke and heart attack (people with raised blood pressure are less likely to go on to have a cardiovascular event).</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>A town and a flood. Primordial: don’t build on the floodplain. Primary: build levees. Secondary: early-warning sirens. Tertiary: repair and rebuild. Quaternary: don’t evacuate the town every time it drizzles.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="domains">
+    <h2>4. Three domains</h2>
+    <p class="point">UK practice divides public health into three domains: protecting people from threats, improving how they live, and making health services work for the population.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Domain</th><th>Covers</th><th>Example</th><th>Block</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Health protection</strong></td><td>Infectious disease, environmental hazards, emergencies</td><td>Meningococcal vaccination required of Hajj pilgrims; heat rules for outdoor workers</td><td>6</td></tr>
+          <tr><td><strong>Health improvement</strong></td><td>Behaviour, lifestyle and the conditions that shape them; chronic disease prevention</td><td>Salt reduction; sugary-drink taxes; tobacco control</td><td>7</td></tr>
+          <tr><td><strong>Healthcare public health</strong></td><td>Planning, quality, fairness and value of health services</td><td>Deciding where cardiac services go; health needs assessment</td><td>8</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <dl class="facets">
+      <dt>Why it matters</dt>
+      <dd>Jobs, training and services are organised this way in the UK and in many other systems. Each domain has its own toolkit: outbreak and surveillance methods, behaviour-change theory, and health economics with service planning.</dd>
+      <dt>How to tell</dt>
+      <dd>Ask what the problem is. Something external acting on people (a pathogen, heat, a chemical) is protection. How people live, and what shapes that, is improvement. How the health system serves people is healthcare public health.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Treating the domains as separate jobs with clean borders. They are labels for organising work, and real problems cross them. Salt policy is health improvement, but you evaluate it with healthcare public health tools such as cost-effectiveness. Use the label to find the right methods, not to argue about which box something goes in.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">Example · Hajj</div>
+      <p>Requiring meningococcal vaccination for pilgrims is health protection: a mass gathering raises the risk that an infection spreads, and the vaccine requirement guards against it. Planning clinics and emergency capacity along the pilgrimage route is healthcare public health. Promoting heat-safe behaviour among pilgrims is health improvement. One event can involve all three domains.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="together">
+    <h2>5. Putting the lenses together</h2>
+    <p class="point">The three lenses answer different questions, so any intervention gets one tag from each.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Intervention</th><th>Function</th><th>Level</th><th>Domain</th></tr></thead>
+        <tbody>
+          <tr><td>Salt limit in bread</td><td>Policy development</td><td>Primordial (blood pressure); primary (stroke)</td><td>Improvement</td></tr>
+          <tr><td>24-hour urine survey of salt intake</td><td>Assessment</td><td>None (it measures, it doesn’t prevent)</td><td>Improvement</td></tr>
+          <tr><td>Vaccine requirement for Hajj pilgrims</td><td>Policy, enforced through assurance</td><td>Primary</td><td>Protection</td></tr>
+          <tr><td>Diabetes screening in primary care</td><td>Assurance (a service is delivered)</td><td>Secondary</td><td>Healthcare public health</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Mixing up the questions. “Is it primary or secondary?” asks about timing. “Is it assessment or assurance?” asks about the job. “Protection or improvement?” asks about the area. A single intervention has an answer to each, and the answers don’t need to match.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>Suppose a law requires restaurants to display calories on menus, but a survey finds half of them don’t. Which core function failed, and what would you look at first?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p><strong>Assurance.</strong> The problem was identified (assessment) and a rule exists (policy). The breakdown is in carrying it out. Look first at enforcement and feasibility: are there inspections, are there penalties, do small restaurants know the rule, and can they afford to comply? The survey itself is assessment, which closes the loop.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A 55-year-old with high cholesterol and no heart disease starts a statin. What level of prevention is this? Does the answer change depending on the disease you name?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>For heart attack and stroke it is <strong>primary</strong> prevention: the risk factor is present, but the disease isn’t. If you name “high cholesterol” as the condition, the statin is treatment of an existing condition. The level always depends on “prevention of what”.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Compare a sugary-drink tax with a diabetes screening programme. Which acts earlier, and what does each trade off?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The <strong>tax acts earlier</strong>: it is primordial or primary. It reaches everyone at low cost per person, but each person gains little, and the effect is hard to see without population data. <strong>Screening is secondary</strong>. It reaches only people who are tested and already have the disease, but each person found early can gain a lot. It costs more per person and brings false positives. Neither is better in general; they answer different parts of the problem.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A private clinic offers healthy executives a yearly full-body scan “to catch everything early”. Which level of prevention should make you sceptical, and why?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p><strong>Quaternary.</strong> In healthy people, scans mostly find harmless abnormalities. These lead to more tests, procedures, anxiety and sometimes harm, with no proven benefit. “Catch it early” sounds like secondary prevention, but early detection only helps when catching it early changes the outcome.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A colleague says: “Our salt policy is working. No patients have complained.” What is wrong with this reasoning, and what evidence would you want instead?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Public health success is invisible to individuals, so the absence of complaints tells you nothing. You need population measures over time: salt intake (ideally from 24-hour urine), blood pressure levels, and eventually rates of stroke and heart disease. You also need evidence of compliance, because a policy can only work if it is carried out.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Heat illness among outdoor workers rises in a hot summer. Which domain owns this, and which other domain has a stake?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Mainly <strong>health protection</strong>: heat is an external environmental hazard. <strong>Healthcare public health</strong> has a stake in whether clinics and emergency services can cope in peak months. <strong>Health improvement</strong> has one in workers’ behaviour, such as drinking water and taking rest breaks. Project 6 sits mostly in protection.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Acheson, <em>Public Health in England</em> (1988): the definition used in section 1.</li>
+      <li>Institute of Medicine, <em>The Future of Public Health</em> (1988): the three core functions.</li>
+      <li>CDC, <em>10 Essential Public Health Services</em> (revised 2020): the expanded list of the three functions.</li>
+      <li>UK Faculty of Public Health, domains of public health practice: the three domains.</li>
+      <li>Strasser (1978) on primordial prevention; Jamoulle on quaternary prevention: the two levels that standard textbooks often leave out.</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="../../index.html#block-1"><small>Back to</small>Block 1</a>
+    <a class="next" href="../../index.html#block-1"><small>Next</small>1.2 Rose’s prevention paradox</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

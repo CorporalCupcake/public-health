@@ -133,6 +133,7 @@ def render(blocks: list[dict], files: dict) -> str:
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
   <title>Public Health &amp; Epidemiology Curriculum</title>
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
