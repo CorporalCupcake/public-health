@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- EDIT: lecture number and title -->
+  <title>X.Y Lecture title · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+</head>
+<body>
+<!--
+  LECTURE TEMPLATE. Paths assume the file lives in lectures/block-N/.
+  Save a copy as lectures/block-N/N-MM-short-slug.html (e.g. block-1/1-02-prevention-paradox.html).
+  The N-MM prefix is how build.py links the lecture from the index, so keep it exact.
+
+  STYLE (see README "Lecture style"):
+  - Intuition first. One <section class="concept"> per idea, opening with a one-line point.
+  - For each idea: what it is, why it matters, how to read a value, what a change means,
+    the trap, one concrete example, and an everyday analogy only where it helps.
+  - No derivations or proofs. At most 1–2 short formulas per lecture, only ones used day to day.
+    Maths: inline \( ... \), display \[ ... \].
+  - Short sentences, plain words, define jargon in a few words on first use. Lists: top 3 only.
+  - Check-yourself questions test meaning and judgement, not arithmetic.
+  Callout classes: trap, example, analogy, gulf (Saudi/GCC example), ml (link to stats/ML background), key.
+-->
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-N">Block N</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture X.Y</p>
+  <h1>Lecture title</h1>
+  <div class="lecture-meta">
+    <span class="tier tier-master">Master</span>
+    <span>Block N · Block title</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>Two or three sentences: what this lecture lets you do, and why it matters for the projects.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#idea-1">First idea</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <section class="concept" id="idea-1">
+    <h2>1. First idea</h2>
+    <p class="point">Lead with the point in one sentence.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Plain-words definition. Define jargon in a few words.</dd>
+      <dt>Why it matters</dt>
+      <dd>What decision or result depends on it.</dd>
+      <dt>How to read it</dt>
+      <dd>What counts as good, bad or typical.</dd>
+      <dt>What a change means</dt>
+      <dd>E.g. “a relative risk going from 1.2 to 2 means…”.</dd>
+    </dl>
+
+    <!-- Optional: small table for reading values -->
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Value</th><th>Read it as</th></tr></thead>
+        <tbody>
+          <tr><td>…</td><td>…</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>The common misreading, and the right reading.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example</div>
+      <p>One concrete example (any field; Saudi/GCC where it fits, using class="callout gulf").</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>One short everyday analogy, only if it helps.</p>
+    </div>
+  </section>
+
+  <section id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>A question about meaning or judgement…</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Answer…</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Author, <em>Book title</em>, chapter N. What to check there.</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="#"><small>Previous</small>X.Y−1 Title</a>
+    <a class="next" href="#"><small>Next</small>X.Y+1 Title</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

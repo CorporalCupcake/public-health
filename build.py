@@ -1,0 +1,177 @@
+#!/usr/bin/env python3
+"""Build index.html from Curriculum.md and the lecture files in lectures/.
+
+Run after adding or renaming a lecture:  python3 build.py
+
+A lecture is linked from the index when a file named
+lectures/block-N/N-MM-anything.html exists (e.g. block-1/1-02-prevention-paradox.html).
+Standard library only.
+"""
+from __future__ import annotations
+
+import html
+import re
+from datetime import date
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent
+CURRICULUM = ROOT / "Curriculum.md"
+LECTURES = ROOT / "lectures"
+OUT = ROOT / "index.html"
+
+BLOCK_RE = re.compile(r"^## Block (\d+) — (.+?) \(weeks (\d+)–(\d+)\)\s*$")
+LECTURE_RE = re.compile(r"^\| (\d+)\.(\d+) \| (.+?) \| (Recognise|Use|Master) \|\s*$")
+PROJECT_RE = re.compile(r"^\*\*Project (\w+): (.+?)\*\* (.+)$")
+
+
+def inline_md(text: str) -> str:
+    """Minimal Markdown → HTML for bold/italic, after escaping."""
+    text = html.escape(text, quote=False)
+    text = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", text)
+    text = re.sub(r"\*(.+?)\*", r"<em>\1</em>", text)
+    return text
+
+
+def parse_curriculum() -> list[dict]:
+    blocks: list[dict] = []
+    current = None
+    for line in CURRICULUM.read_text(encoding="utf-8").splitlines():
+        m = BLOCK_RE.match(line)
+        if m:
+            current = {
+                "n": int(m[1]),
+                "title": m[2],
+                "weeks": (int(m[3]), int(m[4])),
+                "lectures": [],
+                "projects": [],
+            }
+            blocks.append(current)
+            continue
+        if line.startswith("## ") and current is not None and not BLOCK_RE.match(line):
+            current = None  # left the block sections (e.g. "## Project rules")
+            continue
+        if current is None:
+            continue
+        m = LECTURE_RE.match(line)
+        if m:
+            current["lectures"].append(
+                {"block": int(m[1]), "num": int(m[2]), "title": m[3], "tier": m[4]}
+            )
+            continue
+        m = PROJECT_RE.match(line)
+        if m:
+            current["projects"].append({"id": m[1], "title": m[2], "desc": m[3]})
+    return blocks
+
+
+def find_lecture_files() -> dict[tuple[int, int], Path]:
+    found = {}
+    for path in LECTURES.glob("block-*/*.html"):
+        m = re.match(r"^(\d+)-(\d+)-", path.name)
+        if m:
+            found[(int(m[1]), int(m[2]))] = path.relative_to(ROOT)
+    return found
+
+
+def render(blocks: list[dict], files: dict) -> str:
+    total = sum(len(b["lectures"]) for b in blocks)
+    ready_total = sum(1 for b in blocks for l in b["lectures"] if (l["block"], l["num"]) in files)
+
+    # Open the first block that still has unwritten lectures.
+    open_block = next(
+        (b["n"] for b in blocks if any((l["block"], l["num"]) not in files for l in b["lectures"])),
+        None,
+    )
+
+    parts = []
+    for b in blocks:
+        n_ready = sum(1 for l in b["lectures"] if (l["block"], l["num"]) in files)
+        n = len(b["lectures"])
+        pct = round(100 * n_ready / n) if n else 0
+        items = []
+        for l in b["lectures"]:
+            key = (l["block"], l["num"])
+            tier = f'<span class="tier tier-{l["tier"].lower()}">{l["tier"]}</span>'
+            title = html.escape(l["title"])
+            if key in files:
+                href = files[key].as_posix()
+                items.append(
+                    f'<li class="lec-ready"><span class="lec-num">{l["block"]}.{l["num"]}</span>'
+                    f'<span class="lec-title"><a href="{href}">{title}</a></span>{tier}</li>'
+                )
+            else:
+                items.append(
+                    f'<li class="lec-pending"><span class="lec-num">{l["block"]}.{l["num"]}</span>'
+                    f'<span class="lec-title">{title}</span>{tier}</li>'
+                )
+        projects = "".join(
+            f'<div class="project"><p><strong>Project {p["id"]}: {inline_md(p["title"])}</strong> '
+            f'{inline_md(p["desc"])}</p></div>'
+            for p in b["projects"]
+        )
+        is_open = " open" if b["n"] == open_block else ""
+        parts.append(
+            f"""<details class="block" id="block-{b['n']}"{is_open}>
+  <summary>
+    <span class="block-title">Block {b['n']} · {html.escape(b['title'])}</span>
+    <span class="block-weeks">Weeks {b['weeks'][0]}–{b['weeks'][1]}</span>
+    <span class="block-progress">{n_ready} of {n} lectures written</span>
+    <span class="progress-bar"><span style="width:{pct}%"></span></span>
+  </summary>
+  <div class="block-body">
+    <ol class="lecture-list">
+      {''.join(items)}
+    </ol>
+    {projects}
+  </div>
+</details>"""
+        )
+
+    blocks_html = "\n".join(parts)
+    return f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Public Health &amp; Epidemiology Curriculum</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<!-- Generated by build.py from Curriculum.md. Do not edit by hand. -->
+<header class="site-header">
+  <div class="inner"><nav class="breadcrumb"><a href="index.html">Curriculum</a></nav></div>
+</header>
+<main>
+  <h1>Public Health &amp; Epidemiology</h1>
+  <p class="lede">A 119-week curriculum: MPH core, MSc Epidemiology methods, applied biostatistics,
+  and specialist training in pharmacoepidemiology, real-world evidence and the causal evaluation of AI.</p>
+
+  <div class="legend">
+    <span><strong>{ready_total}</strong> of {total} lectures written</span>
+    <span class="tier tier-recognise">Recognise</span> know what it is
+    <span class="tier tier-use">Use</span> apply with a reference
+    <span class="tier tier-master">Master</span> do unaided, defend to a reviewer
+  </div>
+
+  {blocks_html}
+
+  <p style="margin-top:2rem"><a href="Curriculum.md">Full curriculum document (project rules, data, journals, textbooks)</a></p>
+</main>
+<footer class="site-footer"><div class="inner">Index built {date.today().isoformat()}</div></footer>
+</body>
+</html>
+"""
+
+
+def main() -> None:
+    blocks = parse_curriculum()
+    if not blocks:
+        raise SystemExit("No blocks found in Curriculum.md — check the '## Block N — … (weeks a–b)' headings.")
+    files = find_lecture_files()
+    OUT.write_text(render(blocks, files), encoding="utf-8")
+    n_lec = sum(len(b["lectures"]) for b in blocks)
+    print(f"Wrote {OUT.name}: {len(blocks)} blocks, {n_lec} lectures, {len(files)} written.")
+
+
+if __name__ == "__main__":
+    main()
