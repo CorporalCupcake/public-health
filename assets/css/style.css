@@ -1,5 +1,35 @@
 /* Public Health & Epidemiology — shared styles
-   Mobile-first, dark-mode aware, print-friendly. No external dependencies. */
+   Mobile-first, dark-mode aware, print-friendly. No external dependencies.
+   Font: Atkinson Hyperlegible (SIL OFL, see assets/fonts/OFL.txt). */
+
+@font-face {
+  font-family: "Atkinson Hyperlegible";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../fonts/atkinson-hyperlegible-400-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Atkinson Hyperlegible";
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../fonts/atkinson-hyperlegible-400-italic.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Atkinson Hyperlegible";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("../fonts/atkinson-hyperlegible-700-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Atkinson Hyperlegible";
+  font-style: italic;
+  font-weight: 700;
+  font-display: swap;
+  src: url("../fonts/atkinson-hyperlegible-700-italic.woff2") format("woff2");
+}
 
 :root {
   --bg: #fdfcf9;
@@ -20,30 +50,30 @@
   --tier-recognise: #6b7280;
   --tier-use: #2563a6;
   --tier-master: #8a3ffc;
-  --measure: 42rem;
+  --measure: 54rem;
   --radius: 10px;
-  --font-body: "Iowan Old Style", "Charter", "Georgia", "Cambria", serif;
-  --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", "Helvetica Neue", Arial, sans-serif;
+  --font-body: "Atkinson Hyperlegible", -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  --font-ui: "Atkinson Hyperlegible", -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
   --font-mono: "SF Mono", "JetBrains Mono", "Menlo", "Consolas", monospace;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #15171a;
-    --surface: #1e2125;
+    --bg: #000000;
+    --surface: #111214;
     --text: #e6e6e3;
     --muted: #9aa1ab;
-    --border: #33383f;
+    --border: #2a2d32;
     --accent: #4fc1b8;
-    --accent-soft: #1d3331;
+    --accent-soft: #0f2321;
     --key: #4fc1b8;
-    --key-bg: #172b29;
+    --key-bg: #0c1f1d;
     --example: #e3b45c;
-    --example-bg: #2b2416;
+    --example-bg: #1f190c;
     --pitfall: #f08080;
-    --pitfall-bg: #2e1a1b;
+    --pitfall-bg: #221112;
     --gulf: #9aa8f0;
-    --gulf-bg: #1e2236;
+    --gulf-bg: #121628;
     --tier-recognise: #9aa1ab;
     --tier-use: #6aa8e8;
     --tier-master: #b78cff;
