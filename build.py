@@ -77,10 +77,10 @@ def render(blocks: list[dict], files: dict) -> str:
     total = sum(len(b["lectures"]) for b in blocks)
     ready_total = sum(1 for b in blocks for l in b["lectures"] if (l["block"], l["num"]) in files)
 
-    # Open the first block that still has unwritten lectures.
-    open_block = next(
-        (b["n"] for b in blocks if any((l["block"], l["num"]) not in files for l in b["lectures"])),
-        None,
+    # Open the latest block that has any written lectures (the one being studied).
+    open_block = max(
+        (b["n"] for b in blocks if any((l["block"], l["num"]) in files for l in b["lectures"])),
+        default=1,
     )
 
     parts = []
@@ -91,18 +91,17 @@ def render(blocks: list[dict], files: dict) -> str:
         items = []
         for l in b["lectures"]:
             key = (l["block"], l["num"])
-            tier = f'<span class="tier tier-{l["tier"].lower()}">{l["tier"]}</span>'
             title = html.escape(l["title"])
             if key in files:
                 href = files[key].as_posix()
                 items.append(
                     f'<li class="lec-ready"><span class="lec-num">{l["block"]}.{l["num"]}</span>'
-                    f'<span class="lec-title"><a href="{href}">{title}</a></span>{tier}</li>'
+                    f'<span class="lec-title"><a href="{href}">{title}</a></span></li>'
                 )
             else:
                 items.append(
                     f'<li class="lec-pending"><span class="lec-num">{l["block"]}.{l["num"]}</span>'
-                    f'<span class="lec-title">{title}</span>{tier}</li>'
+                    f'<span class="lec-title">{title}</span></li>'
                 )
         projects = "".join(
             f'<div class="project"><p><strong>Project {p["id"]}: {inline_md(p["title"])}</strong> '
@@ -149,9 +148,6 @@ def render(blocks: list[dict], files: dict) -> str:
 
   <div class="legend">
     <span><strong>{ready_total}</strong> of {total} lectures written</span>
-    <span class="tier tier-recognise">Recognise</span> know what it is
-    <span class="tier tier-use">Use</span> apply with a reference
-    <span class="tier tier-master">Master</span> do unaided, defend to a reviewer
   </div>
 
   {blocks_html}
