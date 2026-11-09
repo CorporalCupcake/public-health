@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>2.16 Pharmacoepidemiology: an introduction · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/2-16.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-2">Block 2</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 2.16</p>
+  <h1>Pharmacoepidemiology: an introduction (taken to full depth in Block 5)</h1>
+  <div class="lecture-meta">
+    <span>Block 2 · Epidemiology</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>Pharmacoepidemiology studies how medicines behave once millions of ordinary patients use them. Trials are too small, too short and too selective to answer every question, so the rest is answered with observational data. Those data have traps that are specific to drugs: <strong>confounding by indication</strong>, <strong>prevalent-user bias</strong> and <strong>immortal time</strong>. The <strong>new-user, active-comparator design</strong> is the standard defence. This lecture gives you the ideas. Block 5 gives you the methods, and Project 5A puts them to work.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#why">Why trials are not enough</a></li>
+      <li><a href="#sources-data">Where the data come from</a></li>
+      <li><a href="#indication">Confounding by indication</a></li>
+      <li><a href="#acnu">The new-user, active-comparator design</a></li>
+      <li><a href="#immortal">Immortal time</a></li>
+      <li><a href="#signals">Signal detection: disproportionality</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="why">
+    <h2>1. Why trials are not enough</h2>
+    <p class="point">A drug is licensed on evidence from a few thousand carefully chosen people; it is then used by millions of people who are older, sicker and on other drugs.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Post-marketing (phase IV) research: studies of a medicine’s benefits and harms after approval, in routine use. It covers rare and delayed adverse effects, effects in groups the trials excluded, drug interactions, and how the drug is actually prescribed.</dd>
+      <dt>Why it matters</dt>
+      <dd>Pre-approval trials are too <em>small</em> to see rare harms, too <em>short</em> to see late ones, and too <em>selective</em>: they often exclude the elderly, pregnant women and people with several conditions. Those are the people most likely to be harmed.</dd>
+      <dt>How to read it</dt>
+      <dd>If a trial of <em>n</em> people saw no cases of a harm, the upper 95% limit for its risk is roughly 3/<em>n</em> (the “rule of three”). Three thousand patients with no liver failure still leaves a risk of up to 1 in 1,000 compatible with the data.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>“No safety signal in the trials” read as “safe”. It means no harm common enough to show up in a few thousand people over a year or two. Rofecoxib (Vioxx) was approved on trial evidence and withdrawn in 2004, five years later, after a trial confirmed an increased risk of cardiovascular events in long-term users.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>A trial is a test drive on a dry afternoon. Pharmacoepidemiology is the record of how the car does over ten winters, with every kind of driver.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="sources-data">
+    <h2>2. Where the data come from</h2>
+    <p class="point">Pharmacoepidemiology runs on data collected for other purposes, so the first question for every source is what it records well and what it misses.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Source</th><th>Good for</th><th>Weak on</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Insurance claims</strong></td><td>Complete record of dispensed prescriptions and billed diagnoses; large; long follow-up</td><td>Clinical detail (BP, labs, smoking); diagnoses coded for billing; over-the-counter drugs</td></tr>
+          <tr><td><strong>Electronic health records</strong></td><td>Clinical measurements, notes, lab results; ICU data such as MIMIC-IV</td><td>Prescribed is not dispensed or taken; care outside the system is invisible</td></tr>
+          <tr><td><strong>Registries</strong></td><td>Well-defined disease or device populations with validated outcomes</td><td>Often limited drug data; may need linkage</td></tr>
+          <tr><td><strong>Spontaneous reports</strong></td><td>Early warning of new, rare or unexpected harms, worldwide</td><td>No denominator, heavy under-reporting, reporting driven by publicity</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">In the Gulf</div>
+      <p>The Saudi Food and Drug Authority set up its National Pharmacovigilance Centre in 2009 to collect adverse drug reaction reports. In November 2025 the SFDA signed an agreement with the Uppsala Monitoring Centre to link its national database with VigiBase, the WHO’s global database of individual case safety reports. Nationwide linked prescription databases of the Scandinavian kind are not yet a standard research resource in the Gulf. For drug safety questions in Saudi patients, you will often combine local reports or hospital EHRs with evidence from elsewhere.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Treating a prescription record as exposure. In an EHR, a prescription shows the doctor’s intent. It does not show that the drug was dispensed, or taken. In MIMIC-IV, the medication administration records are closer to true exposure than the orders.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="indication">
+    <h2>3. Confounding by indication</h2>
+    <p class="point">Doctors prescribe for reasons, and those reasons usually predict the outcome too, so treated and untreated patients differ before the drug does anything.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Confounding where the confounder is the indication for treatment, or its severity. Its mirror image is <em>confounding by contraindication</em>: patients who are too frail or at high bleeding risk are not prescribed the drug.</dd>
+      <dt>Why it matters</dt>
+      <dd>It is the main threat to every observational drug study, and it can push either way. Drugs given to sicker patients look harmful; drugs withheld from frail patients look protective.</dd>
+      <dt>How to read it</dt>
+      <dd>Ask why patients got the drug, and whether that reason is recorded in the data well enough to adjust for. Severity and frailty usually are not.</dd>
+      <dt>What a change means</dt>
+      <dd>Comparing two drugs for the same indication (an <em>active comparator</em>) makes the groups far more alike than comparing users with non-users, because both groups had the indication and a doctor decided to treat it.</dd>
+    </dl>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Project 5A</div>
+      <p>Among ICU patients with new-onset AF, those who get anticoagulants differ from those who do not. Patients who are actively bleeding, about to have surgery or close to death are not anticoagulated. A naive comparison will show anticoagulation “reducing mortality” partly because the dying were not treated. That is why Project 5A needs a careful design and a quantitative bias analysis (Lecture 2.13), and why Lecture 5.4 covers propensity scores.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Believing that adjusting for the recorded diagnosis removes confounding by indication. The diagnosis code is the same for mild and severe disease. Severity, which drives both treatment and outcome, often lives only in the clinician’s head.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>The treatment decision is itself a model: clinicians map patient features to “treat” or “don’t treat”. If you could predict that decision perfectly from recorded features, treated and untreated patients would have no overlap and there would be nothing to compare. Good observational designs need patients for whom the decision was genuinely a toss-up. That is the propensity-score idea in Block 5.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="acnu">
+    <h2>4. The new-user, active-comparator design</h2>
+    <p class="point">Start the clock when patients first start a drug, and compare them with patients who start an alternative drug for the same condition.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Include only <strong>new users</strong>: people with no use of either drug during a lookback (washout) period. Set the index date, time zero, at the first prescription. Measure covariates before it. Compare with new users of an <strong>active comparator</strong>, a drug used for the same indication.</dd>
+      <dt>Why it matters</dt>
+      <dd>It deals with three problems at once. New users capture the early period when many adverse effects occur. Covariates measured before the drug cannot have been changed by it. An active comparator narrows confounding by indication.</dd>
+      <dt>How to read it</dt>
+      <dd>A good pharmacoepidemiology paper states its time zero, washout, comparator and the reason follow-up ends. If you cannot find those, be cautious.</dd>
+      <dt>What a change means</dt>
+      <dd>Including <em>prevalent users</em>, people already on the drug for some time, adds sample size but brings in survivors. Those who had early harms or stopped the drug have already left.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · A new-user, active-comparator cohort</div>
+      <svg class="viz-svg" viewBox="0 0 640 300" role="img" aria-label="A timeline. Before the index date is a lookback window in which there must be no use of either drug and covariates are measured. At the index date, the first prescription, follow-up starts for starters of drug A and starters of the comparator drug B. Below, a prevalent user who started the drug years earlier enters at the same date, after the early high-risk period has already passed unobserved.">
+        <defs><marker id="l216-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead"/></marker></defs>
+        <text x="330" y="20" text-anchor="middle" class="viz-bold">Index date = time zero</text>
+        <text x="330" y="36" text-anchor="middle" class="viz-small viz-muted">first prescription of A or B</text>
+        <line x1="330" y1="44" x2="330" y2="258" class="edge strong" stroke-dasharray="5 4"/>
+
+        <text x="10" y="84" class="viz-small viz-bold">Drug A starters</text>
+        <text x="10" y="128" class="viz-small viz-bold">Drug B starters</text>
+        <text x="10" y="144" class="viz-small viz-muted">(active comparator)</text>
+
+        <g class="s5"><rect x="122" y="58" width="200" height="100" rx="10" class="node-fill"/></g>
+        <g text-anchor="middle">
+          <text x="222" y="84" class="viz-bold">Lookback (washout)</text>
+          <text x="222" y="106" class="viz-small">no use of A or B</text>
+          <text x="222" y="124" class="viz-small">covariates measured here,</text>
+          <text x="222" y="140" class="viz-small">before the drug can change them</text>
+        </g>
+
+        <g class="s1"><rect x="338" y="62" width="290" height="38" rx="8" class="node-fill"/></g>
+        <g class="s2"><rect x="338" y="114" width="290" height="38" rx="8" class="node-fill"/></g>
+        <text x="483" y="86" text-anchor="middle" class="viz-small">follow-up from day one of drug A</text>
+        <text x="483" y="138" text-anchor="middle" class="viz-small">follow-up from day one of drug B</text>
+
+        <text x="10" y="200" class="viz-small viz-bold colour s3">Prevalent user</text>
+        <text x="10" y="216" class="viz-small viz-muted">(excluded)</text>
+        <g class="s3">
+          <circle cx="130" cy="196" r="6" class="dot"/>
+          <line x1="130" y1="196" x2="628" y2="196" class="stroke dashed"/>
+        </g>
+        <text x="138" y="182" class="viz-small colour s3">started years earlier</text>
+        <text x="226" y="222" text-anchor="middle" class="viz-small viz-muted">early harms happened here, unseen</text>
+        <text x="483" y="222" text-anchor="middle" class="viz-small viz-muted">only the survivors are followed</text>
+
+        <line x1="20" y1="268" x2="628" y2="268" class="edge" marker-end="url(#l216-arrow)"/>
+        <text x="20" y="290" class="viz-small viz-muted">earlier</text>
+        <text x="628" y="290" text-anchor="end" class="viz-small viz-muted">time</text>
+      </svg>
+      <figcaption>Everything is anchored to one moment: the first prescription. Eligibility and covariates come from before it; follow-up starts at it, for both drugs. A prevalent user’s clock started years earlier, so their early experience is missing.</figcaption>
+    </figure>
+
+    <div class="widget" data-widget="new-vs-prevalent">
+      <div class="widget-title">Depletion of susceptibles: why prevalent users look safer</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">A drug harms a susceptible minority early, and nobody else. Compare a new-user study (follow-up from the first prescription) with a prevalent-user study of people already on the drug. Then lengthen the time prevalent users have been on it before the study starts.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Hormone therapy and heart disease</div>
+      <p>Observational studies suggested that postmenopausal hormone therapy prevented coronary heart disease; the Women’s Health Initiative trial did not find that. Hernán and colleagues re-analysed the Nurses’ Health Study as new users only, with follow-up from initiation as in the trial. Once the two were analysed the same way, the remaining differences could largely be explained by time since menopause and length of follow-up.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Choosing non-users as the comparator because they are easy to find. Non-users differ from users in the indication, in contact with health care and in health-seeking behaviour. People who take preventive drugs faithfully tend to be healthier in ways the data do not record, the <em>healthy adherer</em> effect.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Judging a gym’s injury rate by surveying members of five years’ standing. The people injured in their first month quit long ago and are not in your sample.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="immortal">
+    <h2>5. Immortal time</h2>
+    <p class="point">If being classed as “treated” requires surviving long enough to get the treatment, the treated group gets free survival time and the drug looks protective.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A period of follow-up during which, by the way exposure is defined, the outcome cannot occur. The classic case defines users as anyone who receives the drug at any time during follow-up, while follow-up starts earlier for everyone. You met it in Lecture 2.2 as a cohort design error.</dd>
+      <dt>Why it matters</dt>
+      <dd>It can make a useless drug look strongly protective. Suissa found it in several published drug studies that had reported large benefits.</dd>
+      <dt>How to read it</dt>
+      <dd>Check that eligibility, treatment assignment and the start of follow-up happen at the same moment. If “exposed” is defined using information from after time zero, look for immortal time.</dd>
+      <dt>What a change means</dt>
+      <dd>The fixes: treat exposure as time-varying (unexposed until the first dose, exposed after), or emulate a trial with a clear time zero and a grace period. Lectures 5.3 and 5.9 cover both.</dd>
+    </dl>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Anticoagulation after ICU admission</div>
+      <p>Suppose Project 5A classed patients as “anticoagulated” if they received an anticoagulant at any point in the ICU stay, with follow-up from admission for everyone. A patient started on day 4 must have survived days 1–3. Those three days are counted as treated survival, while deaths in the first days fall almost entirely in the untreated group. The drug would look protective even if it did nothing.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Fixing immortal time by simply dropping the early deaths. That throws away real outcomes and creates selection bias. Assign the person-time correctly instead.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="signals">
+    <h2>6. Signal detection: disproportionality</h2>
+    <p class="point">Spontaneous reports have no denominator, so pharmacovigilance asks a narrower question: is this event reported for this drug more often than for other drugs?</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Put the reports in a 2×2 table: drug of interest or not, event of interest or not. The <strong>proportional reporting ratio</strong> (PRR) compares the share of the drug’s reports that mention the event with the same share for all other drugs. The <strong>reporting odds ratio</strong> (ROR) is the odds-ratio version.</dd>
+      <dt>Why it matters</dt>
+      <dd>It is how regulators scan millions of reports for drug–event pairs worth a closer look, often years before a formal study.</dd>
+      <dt>How to read it</dt>
+      <dd>A PRR of 3 means the event makes up three times as large a share of this drug’s reports. It does not mean the drug triples the risk. One widely used screen (Evans and colleagues, developed on UK Yellow Card data) flags a pair when the PRR is at least 2, χ² at least 4 and there are at least 3 reports.</dd>
+    </dl>
+
+    \[ PRR = \frac{a/(a+b)}{c/(c+d)} \]
+
+    <div class="widget" data-widget="disproportionality">
+      <div class="widget-title">A disproportionality table</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Start with 12 reports of the event for drug X. Reduce them to see when the signal disappears. Then switch on the media story, which triples reporting of this event for this drug without changing anyone’s actual risk.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reading a PRR as a relative risk. Reports depend on publicity, how new the drug is, litigation and who prescribes it. A drug with many reports of one serious event can also <em>mask</em> signals for other events, because its total reports grow. A signal is a hypothesis, to be tested with a proper study.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>The PRR is the <em>lift</em> of association-rule mining: how much more often the event appears with this drug than at baseline. Like lift, it is unstable when counts are small. That is why the WHO’s VigiBase uses a Bayesian measure, the information component, which shrinks small-count estimates towards no association. The FDA uses a similar empirical Bayes measure. Lecture 5.12 covers both.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>A new anticoagulant’s trials enrolled 6,000 patients and saw no cases of severe liver injury. A colleague says liver injury “has been ruled out”. What do you say?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The data are compatible with a risk of up to about 1 in 2,000 (3/6,000). That is too common to ignore once a million patients take the drug. Trial participants were also selected, so risk in older or multimorbid patients may be higher. This is exactly what post-marketing surveillance is for.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A cohort study finds that statin users have lower rates of death from road accidents and infections, as well as heart disease, than non-users. What does that suggest?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Healthy-user and healthy-adherer confounding. Statins are not expected to prevent road accidents, so the comparison of users with non-users is picking up differences in health and behaviour. The same bias likely inflates the heart disease benefit too. An active comparator and a new-user design would help, and “negative control” outcomes like these are a useful check.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Study 1 compares current NSAID users (mostly long-term) with non-users and finds a hazard ratio for GI bleeding of 1.3. Study 2 uses new users and finds 2.5 in the first months. Which better describes the risk to someone starting today?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Study 2. Long-term users are those who tolerated the drug; people who bled early stopped it and are missing from Study 1, so it underestimates the risk at the start of treatment.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>An ICU study defines “treated” as receiving a beta-blocker at any time during the admission and finds a large survival benefit. What is your first question?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>When does follow-up start, and when did treatment start? If follow-up starts at admission, treated patients had to survive until their first dose, so there is immortal time. There is also confounding by indication: patients too unstable for a beta-blocker were not given one.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>After a news story, a drug–event pair crosses the Evans thresholds with a PRR of 4. A journalist asks whether the drug quadruples the risk. How do you answer?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>No. The PRR compares shares of reports, not risks in patients, and publicity alone inflates it (stimulated reporting). The signal justifies a closer look: case review, then a pharmacoepidemiological study with a proper denominator and comparator.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Strom, Kimmel &amp; Hennessy (eds), <em>Pharmacoepidemiology</em> (Wiley): the standard textbook.</li>
+      <li>Hanley &amp; Lippman-Hand, “If nothing goes wrong, is everything all right? Interpreting zero numerators”, <em>JAMA</em> (1983): the rule of three.</li>
+      <li>Walker, “Confounding by indication”, <em>Epidemiology</em> (1996).</li>
+      <li>Ray, “Evaluating medication effects outside of clinical trials: new-user designs”, <em>American Journal of Epidemiology</em> (2003).</li>
+      <li>Lund, Richardson &amp; Stürmer, “The active comparator, new user study design in pharmacoepidemiology”, <em>Current Epidemiology Reports</em> (2015).</li>
+      <li>Hernán et al., “Observational studies analyzed like randomized experiments: an application to postmenopausal hormone therapy and coronary heart disease”, <em>Epidemiology</em> (2008).</li>
+      <li>Suissa, “Immortal time bias in pharmaco-epidemiology”, <em>American Journal of Epidemiology</em> (2008).</li>
+      <li>Evans, Waller &amp; Davis, “Use of proportional reporting ratios (PRRs) for signal generation from spontaneous adverse drug reaction reports”, <em>Pharmacoepidemiology and Drug Safety</em> (2001).</li>
+      <li>Saudi Food and Drug Authority, National Pharmacovigilance Centre; Uppsala Monitoring Centre, VigiBase.</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="2-15-clinical-epidemiology.html"><small>Previous</small>2.15 Clinical epidemiology</a>
+    <a class="next" href="2-17-cardiovascular-epidemiology.html"><small>Next</small>2.17 Cardiovascular and chronic disease epidemiology</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

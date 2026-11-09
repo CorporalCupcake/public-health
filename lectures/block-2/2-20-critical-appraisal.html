@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>2.20 Critical appraisal · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/2-20.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-2">Block 2</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 2.20</p>
+  <h1>Critical appraisal: running a journal club on any epidemiology paper</h1>
+  <div class="lecture-meta">
+    <span>Block 2 · Epidemiology</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>Appraisal is not a hunt for flaws; every study has them. It is a fixed sequence of five questions that ends in a judgement: <strong>how far should this result change what we believe or do?</strong> This lecture gathers Block 2 into that sequence, so you can take any paper, find the one or two threats that matter, say which way they push the result, and write a one-page verdict a policymaker could use.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#flow">The appraisal sequence</a></li>
+      <li><a href="#question">The question: PICO and PECO</a></li>
+      <li><a href="#design">Does the design fit the question?</a></li>
+      <li><a href="#threats">Chance, bias, confounding: direction and size</a></li>
+      <li><a href="#result">Effect size and precision</a></li>
+      <li><a href="#applicability">Does it apply here, and so what?</a></li>
+      <li><a href="#checklists">Reporting checklists and risk-of-bias tools</a></li>
+      <li><a href="#session">Running the journal club</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="flow">
+    <h2>1. The appraisal sequence</h2>
+    <p class="point">Ask five questions in order: what was asked, can this design answer it, could chance, bias or confounding explain the result, how big and precise is it, and does it apply to us?</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A routine for reading any epidemiology paper, from a cohort to a meta-analysis. Each step uses lectures you have already done.</dd>
+      <dt>Why it matters</dt>
+      <dd>Without a sequence, discussion follows whatever caught someone’s eye. People argue about the p-value while missing that the comparison group was wrong.</dd>
+      <dt>How to read it</dt>
+      <dd>The order matters. A fatal problem early, such as a design that cannot answer the question, makes later steps moot. A precise estimate of the wrong thing is still wrong.</dd>
+      <dt>What a change means</dt>
+      <dd>The output is not “good” or “bad” but a shift in belief: this moves me a lot, a little, or not at all, and here is why.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · The appraisal sequence</div>
+      <svg class="viz-svg" viewBox="0 0 640 352" role="img" aria-label="Five steps in order, top to bottom: question, design, threats (chance, bias, confounding), result, applicability. Each has its key question to the right.">
+        <defs>
+          <marker id="l220-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead"/></marker>
+        </defs>
+        <g class="s1"><rect x="10" y="12" width="170" height="48" rx="10" class="node-fill"/></g>
+        <g class="s4"><rect x="10" y="82" width="170" height="48" rx="10" class="node-fill"/></g>
+        <g class="s3"><rect x="10" y="152" width="170" height="48" rx="10" class="node-fill"/></g>
+        <g class="s2"><rect x="10" y="222" width="170" height="48" rx="10" class="node-fill"/></g>
+        <g class="s5"><rect x="10" y="292" width="170" height="48" rx="10" class="node-fill"/></g>
+        <g text-anchor="middle">
+          <text x="95" y="41" class="viz-bold">1 · Question</text>
+          <text x="95" y="111" class="viz-bold">2 · Design</text>
+          <text x="95" y="181" class="viz-bold">3 · Threats</text>
+          <text x="95" y="251" class="viz-bold">4 · Result</text>
+          <text x="95" y="321" class="viz-bold">5 · Applicability</text>
+        </g>
+        <path d="M95,60 L95,79" class="edge" marker-end="url(#l220-arrow)"/>
+        <path d="M95,130 L95,149" class="edge" marker-end="url(#l220-arrow)"/>
+        <path d="M95,200 L95,219" class="edge" marker-end="url(#l220-arrow)"/>
+        <path d="M95,270 L95,289" class="edge" marker-end="url(#l220-arrow)"/>
+        <text x="200" y="32" class="viz-bold">Who was compared with whom, for what outcome?</text>
+        <text x="200" y="51" class="viz-small viz-muted">PICO or PECO; is it the question the title claims?</text>
+        <text x="200" y="102" class="viz-bold">Can this design answer that question?</text>
+        <text x="200" y="121" class="viz-small viz-muted">Compare it with the ideal trial you would run</text>
+        <text x="200" y="168" class="viz-bold">Could anything other than a real effect explain it?</text>
+        <g class="s3">
+          <rect x="200" y="176" width="124" height="24" rx="12" class="fill-soft"/>
+          <rect x="332" y="176" width="124" height="24" rx="12" class="fill-soft"/>
+          <rect x="464" y="176" width="150" height="24" rx="12" class="fill-soft"/>
+        </g>
+        <g text-anchor="middle">
+          <text x="262" y="193" class="viz-small viz-bold">Chance · 2.5</text>
+          <text x="394" y="193" class="viz-small viz-bold">Bias · 2.7, 2.8</text>
+          <text x="539" y="193" class="viz-small viz-bold">Confounding · 2.6</text>
+        </g>
+        <text x="200" y="242" class="viz-bold">How big, how precise, on which scale?</text>
+        <text x="200" y="261" class="viz-small viz-muted">Absolute and relative effects; read the interval, not the p-value</text>
+        <text x="200" y="312" class="viz-bold">Does it apply here, and so what?</text>
+        <text x="200" y="331" class="viz-small viz-muted">Transportability, certainty of evidence, a one-sentence decision</text>
+      </svg>
+      <figcaption>Work top to bottom. For step 3, name each threat with its likely direction and rough size, using bias analysis from Lecture 2.13 when it matters.</figcaption>
+    </figure>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>A pilot’s pre-flight check. Pilots know how planes work; the checklist stops them skipping a step because something else looked interesting. It also fixes the order: there is no point checking the in-flight meals if the fuel tank is empty.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="question">
+    <h2>2. The question: PICO and PECO</h2>
+    <p class="point">Before judging a result, write down exactly what was compared: in which people, against what, for which outcome, over what time.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>PICO</strong> (population, intervention, comparator, outcome) for treatments; <strong>PECO</strong> (exposure instead of intervention) for observational questions. Add time: how long, and from when.</dd>
+      <dt>Why it matters</dt>
+      <dd>Titles and conclusions often answer a broader question than the methods did. “Coffee and heart disease” may really be “3 or more cups versus none, self-reported once, in employed volunteers, over five years”.</dd>
+      <dt>How to read it</dt>
+      <dd>Pay most attention to the comparator. “Versus non-drinkers” may include former drinkers who stopped because they were ill. “Versus usual care” depends on what usual care was.</dd>
+      <dt>What a change means</dt>
+      <dd>If your PECO and the paper’s conclusion do not match, the mismatch is your first finding.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reading the abstract’s conclusion first. It frames everything after. Read the methods first and write your own one-line PECO, then see whether the conclusion stays within it.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="design">
+    <h2>3. Does the design fit the question?</h2>
+    <p class="point">There is no best design in general, only the best feasible design for a given question; judge the paper against the ideal study you would run if you could.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Matching the type of question to the design that answers it with the fewest assumptions.</dd>
+      <dt>Why it matters</dt>
+      <dd>A cross-sectional survey can estimate prevalence well and causation poorly. A trial can test a drug well and a lifelong diet poorly.</dd>
+      <dt>How to read it</dt>
+      <dd>Describe the trial you would run with unlimited money and ethics approval. Then list how this study departs from it: no randomisation, a different time zero, a different comparator. Each departure is a place to look for bias. Lecture 4.5 turns this into a formal method, target trial emulation.</dd>
+      <dt>What a change means</dt>
+      <dd>The further the design is from the ideal, the more the conclusion leans on assumptions, and the more those assumptions need defending.</dd>
+    </dl>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Question</th><th>Usual best feasible design</th><th>Watch for</th></tr></thead>
+        <tbody>
+          <tr><td>How common is it?</td><td>Cross-sectional survey with a probability sample</td><td>Non-response; sampling frame (Lecture 2.4)</td></tr>
+          <tr><td>Does a treatment work?</td><td>Randomised trial</td><td>Loss to follow-up; who was eligible</td></tr>
+          <tr><td>Does an exposure cause disease?</td><td>Cohort; case-control for rare outcomes</td><td>Confounding; reverse causation; control selection (2.2, 2.3)</td></tr>
+          <tr><td>How accurate is a test?</td><td>Cross-sectional accuracy study against a reference standard</td><td>Spectrum; verification bias (2.11)</td></tr>
+          <tr><td>Who will get the disease?</td><td>Cohort with external validation</td><td>Overfitting; calibration in the new setting (2.15, 2.17)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Using a fixed hierarchy of evidence (“trials beat cohorts”) as the verdict. A well-done cohort can beat a small, leaky trial, and for questions like long-term diet or harms, a trial may be impossible. Judge the design against the question, then judge the execution.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="threats">
+    <h2>4. Chance, bias, confounding: direction and size</h2>
+    <p class="point">For every result, ask whether chance, bias or confounding could have produced it, and for each threat you name, say which way it pushes the estimate and roughly how far.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The three alternative explanations to a real effect. Chance is random error; bias is systematic error from how people were selected or measured; confounding is mixing of the exposure effect with other causes.</dd>
+      <dt>Why it matters</dt>
+      <dd>This is the core of appraisal and the step most often done badly. Saying “there may be residual confounding” helps nobody. Saying “smokers drank less, so residual confounding by smoking would make coffee look protective” does.</dd>
+      <dt>How to read it</dt>
+      <dd>Pick the one or two threats that could change the conclusion. For each, give a direction (toward or away from the null, or exaggerating benefit) and a size, with a quick bias analysis if needed.</dd>
+      <dt>What a change means</dt>
+      <dd>A threat that pushes <em>toward</em> the null cannot explain a positive finding away; it suggests the true effect is larger. A threat that pushes <em>away</em> from the null is the one to worry about.</dd>
+    </dl>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Threat</th><th>Ask</th><th>Lecture</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Chance</strong></td><td>How many events? How wide is the interval? How many outcomes, exposures and subgroups were tested?</td><td>2.5</td></tr>
+          <tr><td><strong>Confounding</strong></td><td>What differs between the groups besides the exposure? Was it measured and adjusted for? Could it be reverse causation?</td><td>2.6, 2.10</td></tr>
+          <tr><td><strong>Selection bias</strong></td><td>Who got in, who was lost, and does that depend on both exposure and outcome?</td><td>2.7</td></tr>
+          <tr><td><strong>Information bias</strong></td><td>How were exposure and outcome measured? Could errors differ by group?</td><td>2.8, 2.14</td></tr>
+          <tr><td><strong>Size of the threat</strong></td><td>How strong would the bias need to be to change the conclusion?</td><td>2.13</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="widget" data-widget="appraisal-walkthrough">
+      <div class="widget-title">Appraisal walkthrough: a fictional coffee cohort</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Read the abstract, then work through seven highlighted details. For each, pick the threat that matters most. Feedback explains the direction of the problem and points to the lecture that covers it.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>The bias laundry list: twenty possible biases, none with a direction. It sounds rigorous and decides nothing. Two threats with directions and rough sizes are worth more than twenty names.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · the sick quitter</div>
+      <p>Early studies found that moderate drinkers had lower mortality than non-drinkers. Shaper and colleagues in the British Regional Heart Study showed that the non-drinker group included many men who had stopped drinking because they were already ill, which made abstaining look harmful. This is the same threat as question 2 in the walkthrough.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="result">
+    <h2>5. Effect size and precision</h2>
+    <p class="point">Report the effect on both scales, read the whole confidence interval, and ask how strong an unmeasured confounder would need to be to explain the effect away.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The size of the effect (relative and absolute), its precision (the interval), and its robustness to bias.</dd>
+      <dt>Why it matters</dt>
+      <dd>A 38% relative reduction sounds large. If the baseline risk is 3% over five years, it is about 1 percentage point: roughly 90 people would need the exposure for five years to avoid one event (Lecture 2.17).</dd>
+      <dt>How to read it</dt>
+      <dd>Check both ends of the interval: would the conclusion change if the truth were at the end nearer the null? Then compute the <strong>E-value</strong> (Lecture 2.13), the minimum risk ratio an unmeasured confounder would need with both exposure and outcome to explain away the result. For a risk ratio above 1 (for a protective ratio, use its inverse):</dd>
+    </dl>
+
+    \[ E = RR + \sqrt{RR\,(RR - 1)} \]
+
+    <dl class="facets">
+      <dt>What a change means</dt>
+      <dd>For the fictional coffee study, HR 0.62 inverts to about 1.61, giving an E-value of about 2.6; for the interval limit nearer the null (0.94), it is about 1.3. Smoking and activity can easily have associations of that size, so the result is fragile. (A hazard ratio approximates a risk ratio when the outcome is rare, as here.)</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Treating p &lt; 0.05 as the result. The p-value is a summary of chance only. A result can be significant and fully explained by confounding, or non-significant and compatible with an important benefit (Lecture 2.5).</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>Multiplicity is the epidemiology version of the leaderboard problem. Twelve dietary exposures tested and one reported is like twelve models tuned on the test set and the best one published: the winning score is optimistic. Ask how many analyses were run, and whether the main one was pre-registered.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="applicability">
+    <h2>6. Does it apply here, and so what?</h2>
+    <p class="point">A valid result answers the question for the people studied; whether it applies to your population depends on whether they differ in things that change the effect.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Applicability (or transportability): moving a result from the study population to a target population, such as Saudi adults.</dd>
+      <dt>Why it matters</dt>
+      <dd>Most evidence comes from Western populations. Decisions in the Gulf need a view on whether it transfers.</dd>
+      <dt>How to read it</dt>
+      <dd>Ask three things. Do effect modifiers differ (age, sex, diabetes, ancestry; Lecture 2.9)? Does baseline risk differ? Is the intervention delivered the same way? Relative effects often transfer better than absolute ones; recompute the absolute effect with the local baseline risk.</dd>
+      <dt>What a change means</dt>
+      <dd>The “so what” is one sentence a decision-maker can act on: what the evidence supports, for whom, with what certainty. GRADE (Lecture 2.12) gives the vocabulary: high, moderate, low or very low certainty.</dd>
+    </dl>
+
+    <div class="callout gulf">
+      <div class="callout-title">Example · transporting evidence to the Gulf</div>
+      <p>Lecture 2.17 showed Western risk scores overpredicting risk in Emirati adults (Al-Shamsi, 2020): numbers built elsewhere did not transfer without recalibration. Population mix matters too. In the 2022 Saudi census, 41.6% of residents were not Saudi nationals, so a “Saudi” study that sampled only Saudis, or only clinic attenders, may not describe the people a national policy would reach.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Confusing unrepresentative with biased. A study of Riyadh office workers can give a valid comparison within its sample (Lecture 2.7). The question is not “is the sample like Saudi Arabia?” but “would the effect differ in the people we care about?”</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="checklists">
+    <h2>7. Reporting checklists and risk-of-bias tools</h2>
+    <p class="point">Reporting checklists tell you whether a paper says what it did; risk-of-bias tools help you judge whether what it did is trustworthy. They are different jobs.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Reporting guidelines, collected by the EQUATOR Network, list what each study type should report. Risk-of-bias tools are structured judgements, domain by domain, used in systematic reviews.</dd>
+      <dt>Why it matters</dt>
+      <dd>Checklists make appraisal possible by forcing authors to report key details. They also double as a list of what to look for.</dd>
+      <dt>How to read it</dt>
+      <dd>Use the checklist to find missing information. Use the risk-of-bias tool to judge the information that is there.</dd>
+      <dt>What a change means</dt>
+      <dd>A missing item (no flow diagram, no handling of missing data) is not proof of bias, but it means you cannot rule bias out.</dd>
+    </dl>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Study type</th><th>Reporting guideline</th><th>Risk-of-bias tool</th></tr></thead>
+        <tbody>
+          <tr><td>Observational (cohort, case-control, cross-sectional)</td><td>STROBE (2007, 22 items); RECORD for routinely collected data</td><td>ROBINS-E (exposures), ROBINS-I (interventions)</td></tr>
+          <tr><td>Randomised trial</td><td>CONSORT 2025 (30 items)</td><td>RoB 2</td></tr>
+          <tr><td>Systematic review</td><td>PRISMA 2020 (27 items)</td><td>AMSTAR 2; ROBIS</td></tr>
+          <tr><td>Prediction model, including ML</td><td>TRIPOD+AI (2024)</td><td>PROBAST</td></tr>
+          <tr><td>Diagnostic accuracy</td><td>STARD 2015</td><td>QUADAS-2</td></tr>
+          <tr><td>Mendelian randomisation</td><td>STROBE-MR (2021)</td><td>Sensitivity analyses (Lecture 2.19)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>“It follows STROBE, so it is high quality.” STROBE’s authors say plainly that it is a reporting guideline, not a tool for judging quality. A well-reported study can describe, in full detail, a badly biased comparison.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>TRIPOD+AI and PROBAST are the checklists for appraising ML papers in health. The questions will feel familiar: was the test set truly external, was there leakage between training and test data, was calibration reported as well as discrimination, how were missing data handled? Systematic reviews that applied PROBAST to clinical prediction models, such as the COVID-19 models of 2020, rated most of them at high risk of bias.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="session">
+    <h2>8. Running the journal club</h2>
+    <p class="point">A good journal club gives people roles, keeps to time, and ends with a one-page written verdict; without these, it becomes a summary of the abstract followed by loose opinions.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A regular session, often 60 minutes, where a group appraises one paper using the sequence above.</dd>
+      <dt>Why it matters</dt>
+      <dd>It is how teams keep appraisal skills sharp, and practice for peer review, systematic review risk-of-bias work, and policy briefs.</dd>
+      <dt>How to read it</dt>
+      <dd>Pick the paper a week ahead and ask everyone to read the methods, not just the abstract. Rotate roles so everyone practises being the sceptic.</dd>
+      <dt>What a change means</dt>
+      <dd>If two sessions in a row end without a written verdict, the format has drifted. Go back to timing and roles.</dd>
+    </dl>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Role</th><th>Job</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Presenter</strong></td><td>States the PECO and the main result in two minutes. No slides of the abstract.</td></tr>
+          <tr><td><strong>Sceptic</strong></td><td>Argues the strongest alternative explanation, with its direction.</td></tr>
+          <tr><td><strong>Methods checker</strong></td><td>Recomputes one or two numbers: events, absolute risk difference, an E-value.</td></tr>
+          <tr><td><strong>Scribe</strong></td><td>Fills in the one-page summary live and reads it back at the end.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Minutes</th><th>Step</th><th>Led by</th></tr></thead>
+        <tbody>
+          <tr><td>0–5</td><td>Question (PECO) and headline result</td><td>Presenter</td></tr>
+          <tr><td>5–15</td><td>Design: the ideal study, and how this one departs from it</td><td>Presenter</td></tr>
+          <tr><td>15–35</td><td>Threats: top two, each with direction and rough size</td><td>Sceptic, methods checker</td></tr>
+          <tr><td>35–45</td><td>Result: absolute and relative, interval, robustness</td><td>Methods checker</td></tr>
+          <tr><td>45–55</td><td>Applicability and “so what” for our setting</td><td>Everyone</td></tr>
+          <tr><td>55–60</td><td>Read back the one-page summary; record the verdict</td><td>Scribe</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>The one-page summary has eight lines: <strong>citation</strong>; <strong>PECO</strong>; <strong>design and how it departs from the ideal</strong>; <strong>main threat and its direction</strong>; <strong>second threat and its direction</strong>; <strong>result</strong> (absolute, relative, interval); <strong>does it apply here?</strong>; and <strong>verdict</strong>, in one sentence, with a certainty level. The summary table in the walkthrough is this format in miniature.</p>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Spending the hour on the threats you find easiest to discuss. The timing table protects the last two steps, which are the ones a decision-maker needs.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">Example · Project 2</div>
+      <p>The salt meta-analysis in Project 2 needs a risk-of-bias judgement for every included survey. Running two or three journal clubs on GCC salt studies, using this format, is good practice for that work and a natural way to train the second reviewer.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>A case-control study finds that night-shift work is linked to breast cancer (adjusted OR 1.8, 95% CI 1.1–2.9), with shift history taken by interview after diagnosis. Which threat do you examine first, and which way does it push?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Differential recall. Women with cancer may search their past harder for causes and report more night work than controls, which pushes the OR away from the null. Ask whether shift history came from employment records for a subset, and how much over-reporting would explain an OR of 1.8.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A cohort reports no association between a food and diabetes (HR 1.05, 95% CI 0.80–1.38), with intake from a single food-frequency questionnaire. Is this good evidence of no effect?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>No. The interval is compatible with a 20% reduction or a 38% increase, and non-differential measurement error from one questionnaire usually pulls estimates toward the null. Both point the same way: an effect could be hidden. “Not significant” is not “no effect”.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A large European trial shows a drug cuts stroke by 25% (relative). A Saudi committee asks whether the result applies locally. What do you check, and what do you compute?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Check whether Saudi patients differ in effect modifiers (age, diabetes, adherence, ancestry if the drug’s metabolism varies) and whether the drug would be used the same way. Then apply the 25% to the local baseline stroke risk to get the absolute reduction and NNT, because those, not the relative effect, drive cost and benefit.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A colleague says a paper is high quality because it ticks every STROBE item. How do you reply?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>STROBE checks reporting, not validity. It tells you the paper describes its methods fully; it does not tell you the methods avoided bias. Use the reported details to judge confounding, selection and measurement, or use a tool like ROBINS-E.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Your journal club spent 40 minutes listing possible biases and ran out of time. What went wrong, and what do you change?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Threats were named without direction or size, so nothing was decided, and the applicability and “so what” steps were lost. Next time, use the timing table, ask the sceptic for the top two threats with directions, have the methods checker size one of them, and end with the written verdict.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A cohort reports HR 0.62 with an E-value of 2.6, and 1.3 for the confidence limit. The authors adjusted only for age and sex. How reassured are you?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Not very. An unmeasured confounder associated with both exposure and outcome by a risk ratio of about 1.3 could make the interval include 1, and 2.6 could remove the effect entirely. Smoking alone often has stronger links than that to heart disease, and it was not adjusted for.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Lash, VanderWeele, Haneuse &amp; Rothman, <em>Modern Epidemiology</em>, 4th ed. (2021): the chapters on random error, confounding, selection bias, measurement error and bias analysis.</li>
+      <li>Greenhalgh, <em>How to Read a Paper: The Basics of Evidence-Based Healthcare</em>, 6th ed. (Wiley, 2019).</li>
+      <li>von Elm, Altman, Egger, Pocock, Gøtzsche &amp; Vandenbroucke, “The Strengthening the Reporting of Observational Studies in Epidemiology (STROBE) statement: guidelines for reporting observational studies”, <em>The Lancet</em> (2007); Vandenbroucke et al., “STROBE: explanation and elaboration”, <em>PLoS Medicine</em> (2007).</li>
+      <li>Hopewell et al., “CONSORT 2025 statement: updated guideline for reporting randomised trials”, <em>BMJ</em> (2025).</li>
+      <li>Page et al., “The PRISMA 2020 statement: an updated guideline for reporting systematic reviews”, <em>BMJ</em> (2021).</li>
+      <li>Collins et al., “TRIPOD+AI statement: updated guidance for reporting clinical prediction models that use regression or machine learning methods”, <em>BMJ</em> (2024).</li>
+      <li>Sterne et al., “RoB 2: a revised tool for assessing risk of bias in randomised trials”, <em>BMJ</em> (2019); Sterne et al., “ROBINS-I: a tool for assessing risk of bias in non-randomised studies of interventions”, <em>BMJ</em> (2016).</li>
+      <li>Guyatt et al., “GRADE: an emerging consensus on rating quality of evidence and strength of recommendations”, <em>BMJ</em> (2008).</li>
+      <li>VanderWeele &amp; Ding, “Sensitivity analysis in observational research: introducing the E-value”, <em>Annals of Internal Medicine</em> (2017).</li>
+      <li>Shaper, Wannamethee &amp; Walker, “Alcohol and mortality in British men: explaining the U-shaped curve”, <em>The Lancet</em> (1988).</li>
+      <li>Wynants et al., “Prediction models for diagnosis and prognosis of covid-19: systematic review and critical appraisal”, <em>BMJ</em> (2020).</li>
+      <li>EQUATOR Network, equator-network.org: the library of reporting guidelines.</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="2-19-genetic-epidemiology-mendelian-randomisation.html"><small>Previous</small>2.19 Genetic epidemiology and Mendelian randomisation</a>
+    <a class="next" href="../../index.html#block-3"><small>Next</small>Block 3 · Biostatistics core</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

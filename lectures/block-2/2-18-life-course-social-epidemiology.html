@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>2.18 Life-course and social epidemiology · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/2-18.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-2">Block 2</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 2.18</p>
+  <h1>Life-course and social epidemiology</h1>
+  <div class="lecture-meta">
+    <span>Block 2 · Epidemiology</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>Adult disease has roots across the whole of life, and it follows social position step by step. <strong>Life-course epidemiology</strong> asks <em>when</em> exposures matter; <strong>social epidemiology</strong> asks <em>why</em> disease tracks income, education and occupation, and how to measure the gap. You need both to read any paper that “adjusts for socioeconomic status”, and Project 8 (who benefits from Saudi salt policy) is built on the inequality measures at the end.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#lifecourse">The life-course view and early origins</a></li>
+      <li><a href="#models">Critical periods, sensitive periods and accumulation</a></li>
+      <li><a href="#chain">Chains of risk</a></li>
+      <li><a href="#gradient">The social gradient</a></li>
+      <li><a href="#sep">Measuring socioeconomic position</a></li>
+      <li><a href="#fundamental">Fundamental causes and intersectionality</a></li>
+      <li><a href="#sii">Measuring inequality: SII and RII</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="lifecourse">
+    <h2>1. The life-course view and early origins</h2>
+    <p class="point">Life-course epidemiology studies how exposures from before birth to old age combine to shape adult disease, rather than looking only at adult risk factors.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A way of framing questions about timing: does it matter <em>when</em> someone was exposed, for how long, and in what order? Its best-known branch is <strong>DOHaD</strong> (developmental origins of health and disease): the idea that conditions in the womb and infancy programme later risk.</dd>
+      <dt>Why it matters</dt>
+      <dd>It changes where you look for prevention. If heart disease starts partly in fetal growth or childhood poverty, adult risk-factor control is only part of the answer.</dd>
+      <dt>How to read it</dt>
+      <dd>Early-origins findings are usually modest associations from cohorts with long gaps between exposure and outcome. Ask what happened in between, and whether family background explains both ends.</dd>
+      <dt>What a change means</dt>
+      <dd>If an early-life association weakens a lot when you compare siblings (who share family background), much of it was probably confounding by family circumstances.</dd>
+    </dl>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Barker and the Dutch famine</div>
+      <p>Barker and colleagues (1989) traced men born in Hertfordshire, England, whose birth and infant weights had been recorded by midwives and health visitors. Those with the lowest weight at one year had the highest death rates from ischaemic heart disease. The Dutch Hunger Winter of 1944–45 offered a sharper test: people exposed to famine in early gestation had more coronary heart disease in later life than those not exposed (Roseboom and colleagues, 2000). A famine with a clear start and end date works almost like a natural experiment.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reading birth weight as the cause. Birth weight is a marker of fetal conditions, and it also tracks parental income, maternal smoking and genetics. Low birth weight predicting heart disease does not mean that raising birth weight would prevent it.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="models">
+    <h2>2. Critical periods, sensitive periods and accumulation</h2>
+    <p class="point">Life-course models differ in one thing: how much an exposure counts depending on when it happens.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Model</th><th>Claim</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Critical period</strong></td><td>Only exposure inside one window has an effect; later exposure cannot add or undo it</td><td>Thalidomide causes limb defects only in a short window of early pregnancy</td></tr>
+          <tr><td><strong>Sensitive period</strong></td><td>Exposure counts at any age but more in some windows</td><td>Childhood poverty may weigh more for adult heart disease than poverty in mid-life</td></tr>
+          <tr><td><strong>Accumulation</strong></td><td>Every period of exposure adds; total dose matters, not timing</td><td>Pack-years of smoking; years spent in poverty</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <dl class="facets">
+      <dt>Why it matters</dt>
+      <dd>The models point to different policies. A critical period says: target the window. Accumulation says: reduce exposure whenever you can, it always helps.</dd>
+      <dt>How to tell them apart</dt>
+      <dd>Compare people whose exposure came at different times. Under a critical period, early-only and lifelong exposure look alike and late-only looks unexposed. Under accumulation, early-only and late-only look alike. Formal versions fit each model as a constrained regression and compare it with an unconstrained one (Mishra and colleagues’ structured approach).</dd>
+      <dt>What a change means</dt>
+      <dd>If late exposure adds nothing once early exposure is known, that favours a critical period. If each extra exposed period adds a similar amount, that favours accumulation.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · How much exposure counts at each age</div>
+      <svg class="viz-svg" viewBox="0 0 640 220" role="img" aria-label="Three panels. Critical period: weight only in an early window. Sensitive period: weight highest early and falling with age. Accumulation: equal weight at every age.">
+        <g text-anchor="middle">
+          <text x="112" y="24" class="viz-bold">Critical period</text>
+          <text x="112" y="42" class="viz-small viz-muted">only one window counts</text>
+          <text x="322" y="24" class="viz-bold">Sensitive period</text>
+          <text x="322" y="42" class="viz-small viz-muted">early counts more</text>
+          <text x="532" y="24" class="viz-bold">Accumulation</text>
+          <text x="532" y="42" class="viz-small viz-muted">every year adds</text>
+        </g>
+        <g>
+          <line x1="24" x2="200" y1="170" y2="170" class="viz-axis"/>
+          <line x1="234" x2="410" y1="170" y2="170" class="viz-axis"/>
+          <line x1="444" x2="620" y1="170" y2="170" class="viz-axis"/>
+          <line x1="24" x2="24" y1="60" y2="170" class="viz-axis"/>
+          <line x1="234" x2="234" y1="60" y2="170" class="viz-axis"/>
+          <line x1="444" x2="444" y1="60" y2="170" class="viz-axis"/>
+        </g>
+        <g class="s3">
+          <path d="M24,170L24,72L56,72L56,170Z" class="fill-soft"/>
+          <path d="M24,72L56,72L56,170L200,170" class="stroke"/>
+          <path d="M234.0,70.0L242.0,82.7L250.0,93.9L258.0,103.6L266.0,112.0L274.0,119.4L282.0,125.9L290.0,131.5L298.0,136.4L306.0,140.7L314.0,144.4L322.0,147.7L330.0,150.5L338.0,153.0L346.0,155.2L354.0,157.1L362.0,158.7L370.0,160.2L378.0,161.4L386.0,162.5L394.0,163.5L402.0,164.3L410.0,165.0L410,170L234,170Z" class="fill-soft"/>
+          <path d="M234.0,70.0L242.0,82.7L250.0,93.9L258.0,103.6L266.0,112.0L274.0,119.4L282.0,125.9L290.0,131.5L298.0,136.4L306.0,140.7L314.0,144.4L322.0,147.7L330.0,150.5L338.0,153.0L346.0,155.2L354.0,157.1L362.0,158.7L370.0,160.2L378.0,161.4L386.0,162.5L394.0,163.5L402.0,164.3L410.0,165.0" class="stroke"/>
+          <path d="M444,128L620,128L620,170L444,170Z" class="fill-soft"/>
+          <path d="M444,128L620,128" class="stroke"/>
+        </g>
+        <g>
+          <text x="24" y="188" class="viz-tick">birth</text><text x="200" y="188" class="viz-tick" text-anchor="end">adulthood</text>
+          <text x="234" y="188" class="viz-tick">birth</text><text x="410" y="188" class="viz-tick" text-anchor="end">adulthood</text>
+          <text x="444" y="188" class="viz-tick">birth</text><text x="620" y="188" class="viz-tick" text-anchor="end">adulthood</text>
+        </g>
+        <text x="320" y="214" class="viz-label" text-anchor="middle">Height of each curve: how much a year of exposure at that age adds to adult risk</text>
+      </svg>
+      <figcaption>The shaded area under each curve is the total effect of lifelong exposure. The models can agree on that total and still disagree completely about who is harmed when exposure starts or stops.</figcaption>
+    </figure>
+
+    <div class="widget" data-widget="life-course">
+      <div class="widget-title">Life-course models explorer</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Choose a model, then switch exposure on or off at each stage (or load a history). Adult risk is 1 plus the weights of the exposed stages. Notice which histories each model cannot tell apart.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Calling any early-life association a “critical period”. A true critical period predicts that later exposure adds nothing and later improvement undoes nothing. Most adult chronic disease evidence fits sensitive periods or accumulation better.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>A duckling imprints on whatever moves in its first hours: a critical period. A child picks up a native accent far more easily than an adult: a sensitive period. Sun damage to the skin adds up with every summer: accumulation.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="chain">
+    <h2>3. Chains of risk</h2>
+    <p class="point">In a chain of risk, one disadvantage raises the chance of the next, so an early exposure can harm health mainly through what it leads to.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A sequence of linked exposures. Low parental income makes poorer schooling more likely, which makes insecure work more likely, and so on. In a <em>pure</em> chain, the early link has no effect of its own; in an <em>additive</em> chain, each link also harms directly.</dd>
+      <dt>Why it matters</dt>
+      <dd>Every link is a place to intervene. It also explains why people who escape early disadvantage often do much better than those who do not.</dd>
+      <dt>How to read it</dt>
+      <dd>Each arrow is a probability, not a certainty. A study that reports the early exposure’s effect “adjusted for adult income and smoking” has removed the chain and kept only the direct arrow.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · A chain of risk from childhood to heart disease</div>
+      <svg class="viz-svg" viewBox="0 0 640 170" role="img" aria-label="Five linked boxes: low parental income, poorer schooling, insecure manual job, smoking stress and diet, heart disease in mid-life. A dashed arrow from the first to the last shows a possible direct effect.">
+        <defs><marker id="l218-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead"/></marker></defs>
+        <path d="M64,68 C200,8 440,8 576,66" class="edge" stroke-dasharray="6 5" marker-end="url(#l218-arrow)"/>
+        <text x="320" y="46" class="viz-small viz-muted" text-anchor="middle">direct effect, if any (additive chain)</text>
+        <g class="s4">
+          <rect x="10" y="72" width="108" height="58" rx="10" class="node-fill"/>
+          <rect x="138" y="72" width="108" height="58" rx="10" class="node-fill"/>
+          <rect x="266" y="72" width="108" height="58" rx="10" class="node-fill"/>
+          <rect x="394" y="72" width="108" height="58" rx="10" class="node-fill"/>
+        </g>
+        <g class="s3"><rect x="522" y="72" width="108" height="58" rx="10" class="node-fill"/></g>
+        <g class="viz-small" text-anchor="middle">
+          <text x="64" y="97">Low parental</text><text x="64" y="113">income</text>
+          <text x="192" y="97">Poorer</text><text x="192" y="113">schooling</text>
+          <text x="320" y="97">Insecure,</text><text x="320" y="113">manual job</text>
+          <text x="448" y="97">Smoking,</text><text x="448" y="113">stress, diet</text>
+          <text x="576" y="97" class="viz-bold">Heart disease</text><text x="576" y="113" class="viz-bold">in mid-life</text>
+        </g>
+        <path d="M118,101 L134,101" class="edge" marker-end="url(#l218-arrow)"/>
+        <path d="M246,101 L262,101" class="edge" marker-end="url(#l218-arrow)"/>
+        <path d="M374,101 L390,101" class="edge" marker-end="url(#l218-arrow)"/>
+        <path d="M502,101 L518,101" class="edge" marker-end="url(#l218-arrow)"/>
+        <g text-anchor="middle">
+          <text x="64" y="150" class="viz-tick">birth</text><text x="192" y="150" class="viz-tick">childhood</text><text x="320" y="150" class="viz-tick">early adult</text><text x="448" y="150" class="viz-tick">adult</text><text x="576" y="150" class="viz-tick">mid-life</text>
+        </g>
+      </svg>
+      <figcaption>Solid arrows: each disadvantage makes the next more likely. Breaking any link (school support, job security, smoke-free laws) weakens the whole chain. The dashed arrow is the only part left if a study adjusts for all the later links.</figcaption>
+    </figure>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Adjusting away the effect you want. If you estimate the effect of childhood poverty on heart disease and adjust for adult income, education and smoking, you block the chain and are left with the direct arrow only. That answers a mediation question (Lecture 4.10), not “how much does childhood poverty matter?”. Adult factors here are mediators, not confounders (Lecture 2.6).</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example</div>
+      <p>A paper reports that childhood social class “has no independent effect” on adult coronary risk after adjusting for adult class, smoking and blood pressure. Read correctly, it says the childhood effect runs mostly <em>through</em> adult circumstances. It does not say childhood does not matter.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="gradient">
+    <h2>4. The social gradient</h2>
+    <p class="point">Health worsens step by step down the social ladder, not only at the bottom; every rung is less healthy than the one above it.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The graded relation between socioeconomic position and health. It appears for most causes of death, in most countries, with most measures of position.</dd>
+      <dt>Why it matters</dt>
+      <dd>A gradient means inequality is not only a poverty problem. Policies that help only the poorest leave most of the gradient in place.</dd>
+      <dt>How to read it</dt>
+      <dd>Plot the health measure across ordered groups. A steady slope is a gradient. A flat line with a step at the bottom is a threshold. A gradient that persists after adjusting for behaviours points to wider causes such as work control, stress and material conditions.</dd>
+      <dt>What a change means</dt>
+      <dd>A gradient that steepens over time means the better-off are gaining faster, even if every group is improving.</dd>
+    </dl>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Whitehall</div>
+      <p>Among 17,530 London civil servants, none of them poor and all with access to the NHS, men in the lowest employment grade had 3.6 times the coronary death rate of administrators over seven and a half years (Marmot and colleagues, 1978). Each grade in between fell in order. Smoking, blood pressure and cholesterol explained only part of the gap. Whitehall II (from 1985, men and women) went on to study job control and stress as reasons.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">Example · the Gulf ladder</div>
+      <p>In the Gulf, nationality is a major axis of social position. Saudi Arabia’s 2022 census counted 41.6% of residents as non-Saudi, many of them in manual or low-paid work. A gradient measured among nationals only can miss the steepest part of the ladder. When you read a Gulf survey, check whether it sampled non-nationals, including workers in shared housing, before quoting its inequality estimates.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Explaining the gradient away as “just behaviour”. Behaviours are themselves patterned by position, and in Whitehall they explained only part of the gap. Adjusting for them shows how much runs through them, not that the rest is unimportant.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="sep">
+    <h2>5. Measuring socioeconomic position</h2>
+    <p class="point">There is no single measure of socioeconomic position (SEP); each captures a different resource at a different point in life, so choose the one that fits your causal question.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Measure</th><th>What it captures</th><th>Main weakness</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Education</strong></td><td>Knowledge and skills, fixed by early adulthood; easy to ask</td><td>Its meaning shifts across generations as schooling expands</td></tr>
+          <tr><td><strong>Income or wealth</strong></td><td>Material resources now (income) or accumulated (wealth)</td><td>Often missing or misreported; illness can lower income (reverse causation)</td></tr>
+          <tr><td><strong>Occupation</strong></td><td>Status, working conditions, control</td><td>Leaves out people not in paid work, often many women</td></tr>
+          <tr><td><strong>Area deprivation</strong></td><td>Where you live, from census data</td><td>Describes places, not people (ecological fallacy, Lecture 2.4)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <dl class="facets">
+      <dt>Why it matters</dt>
+      <dd>“Adjusted for SES” can mean any of these, and they are not interchangeable. Each fits a different question: education for health knowledge, income for access, occupation for working conditions.</dd>
+      <dt>How to read it</dt>
+      <dd>Check which measure, at which life stage, and whether it was measured before the outcome. Income measured after diagnosis partly reflects the disease.</dd>
+      <dt>What a change means</dt>
+      <dd>If results change a lot between measures, the measures are capturing different mechanisms. Report each rather than combining them into one index without thought.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Treating one SES variable as “controlling for socioeconomic status”. One crude measure leaves residual confounding (Lecture 2.6). A study adjusted for education alone has not removed the role of income, wealth or neighbourhood.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">Example · SEP in Saudi data</div>
+      <p>Schooling in Saudi Arabia expanded very fast over a few decades, so “primary or less” describes many older adults, especially women, but a small and unusual group of young adults. Comparing that group across age bands mixes inequality with changing group size. That is exactly the problem the slope index in section 7 solves.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="fundamental">
+    <h2>6. Fundamental causes and intersectionality</h2>
+    <p class="point">Social position keeps producing health gaps even when the diseases and risk factors change, because it controls the resources people use to avoid whatever risk is current.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>Fundamental cause theory</strong> (Link and Phelan, 1995): money, knowledge, power and social connections are flexible resources. Whatever the risk of the day, people with more of them avoid it sooner. <strong>Intersectionality</strong> adds that positions combine: the health of a migrant woman cannot be read off “migrant” plus “woman”.</dd>
+      <dt>Why it matters</dt>
+      <dd>It predicts that new prevention knowledge widens gaps at first, because the advantaged adopt it first. Health policy needs to plan for that, for example by making the healthy choice the default for everyone.</dd>
+      <dt>How to read it</dt>
+      <dd>A test of the theory: the more preventable a cause of death, the steeper its social gradient should be. Phelan and colleagues (2004) found exactly that.</dd>
+      <dt>What a change means</dt>
+      <dd>For intersectionality, look for interaction on the additive scale (Lecture 2.9): is the excess risk in people with both positions bigger than the sum of each alone?</dd>
+    </dl>
+
+    <div class="callout example">
+      <div class="callout-title">Example</div>
+      <p>Smoking was common across social classes in many countries before its harms were known. Once the evidence spread, the better-off quit first, and smoking became concentrated in disadvantaged groups. The mechanism changed; the gradient re-formed.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Assuming that a population-wide gain helps everyone equally. A salt-reduction campaign that relies on reading labels may help the educated most and widen the gap. A reformulation limit (such as the bread limit in Project 1) acts on everyone’s food without effort, and is more likely to narrow it. Project 8 tests this.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>Intersectionality is the epidemiology version of subgroup fairness. A classifier can be fair across sex and fair across ethnicity separately yet unfair to one sex-by-ethnicity group. Checking marginal groups is not enough; you need the intersections, with care for small cells and wide intervals.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="sii">
+    <h2>7. Measuring inequality: SII and RII</h2>
+    <p class="point">The slope index of inequality (SII) and relative index of inequality (RII) summarise the whole social gradient in one number, fairly across populations whose groups differ in size.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Rank everyone on the social ladder from 0 (top) to 1 (bottom), giving each group the midpoint of its share of the ranks. Regress the health measure on this rank, weighting by group size. The <strong>SII</strong> is the fitted difference between the very bottom and the very top. The <strong>RII</strong> is the same comparison as a ratio. Lecture 1.3 introduced the idea.</dd>
+      <dt>Why it matters</dt>
+      <dd>Comparing the top and bottom groups depends on how big those groups are. When schooling expands, the “primary or less” group shrinks and becomes more extreme, so its rate ratio can change even if nothing about inequality has. The SII and RII use all groups and adjust for their sizes.</dd>
+      <dt>How to read it</dt>
+      <dd>An SII of 10 deaths per 1,000 means the model puts the bottom of the ladder 10 per 1,000 above the top. An RII of 2 means twice the rate. Report both: the absolute and relative views can move in opposite directions.</dd>
+      <dt>What a change means</dt>
+      <dd>If rates fall by half in every group, the RII is unchanged but the SII halves. Policies are often judged on one and attacked on the other.</dd>
+    </dl>
+
+    <div class="widget" data-widget="sii-gradient">
+      <div class="widget-title">Same gradient, different group sizes</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Set how steep the gradient is, then expand education so the groups change size. The real inequality stays fixed. Compare the top-versus-bottom group measures with the SII and RII.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Saying “inequality fell” because relative inequality fell. If everyone’s death rate halves, the relative gap is unchanged and the absolute gap halves; if the better-off improve faster, the relative gap can widen while the absolute gap shrinks. Always state which scale.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Project 8</div>
+      <p>To ask who benefits from Saudi salt policy, estimate deaths averted per 100,000 across education or income groups, then report the SII and RII before and after the policy. If the SII falls, the policy narrows the absolute gap. If the RII rises, the relative gap widens. Both can happen at once.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>A cohort finds that childhood poverty predicts adult diabetes, but the association disappears after adjusting for adult income and BMI. The authors conclude childhood poverty “does not matter”. What is wrong?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Adult income and BMI are likely links in a chain from childhood poverty to diabetes, so they are mediators. Adjusting for them removes the indirect effect, leaving only the direct one. The correct reading is that childhood poverty acts mainly through adult circumstances, which still makes it a target.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>People exposed to a risk only in early childhood and people exposed only in mid-life end up with the same adult risk. Which life-course model does that support, and which does it argue against?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>It supports accumulation, where total exposure matters and timing does not. It argues against a critical period in childhood (where mid-life exposure should add nothing) and against a strong early sensitive period (where early exposure should weigh more).</p></div>
+        </details>
+      </li>
+      <li>
+        <p>In country A, the lowest education group’s mortality ratio against the highest rose over 20 years, while the RII was stable. Has inequality worsened?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Probably not. The extreme groups changed size as education expanded, so the lowest group became smaller and more disadvantaged. The RII accounts for group sizes and says the underlying relative gradient is stable. Check the SII as well, since absolute inequality can move differently.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A Saudi survey of nationals reports a shallow social gradient in hypertension. What would you check before concluding inequality is small?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Who was sampled: if non-nationals and workers in shared housing were excluded, much of the low end of the ladder is missing. Also which SEP measure was used and when, how hypertension was measured (measured or self-reported, since diagnosis depends on access to care), and whether the absolute and relative gaps tell the same story.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A new, effective health app is free to download. Using fundamental cause theory, what do you predict for inequality in the outcome it targets, and what would you design differently?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The advantaged will adopt and use it first, so the gradient is likely to widen at first even if everyone gains on average. Designs that need no effort or resources from the user (default changes, reformulation, outreach to low-SEP groups) are less likely to widen gaps. Measure the SII and RII before and after.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Ben-Shlomo &amp; Kuh, “A life course approach to chronic disease epidemiology: conceptual models, empirical challenges and interdisciplinary perspectives”, <em>International Journal of Epidemiology</em> (2002); Kuh, Ben-Shlomo, Lynch, Hallqvist &amp; Power, “Life course epidemiology”, <em>Journal of Epidemiology and Community Health</em> (2003): the models and glossary.</li>
+      <li>Mishra, Nitsch, Black, De Stavola, Kuh &amp; Hardy, “A structured approach to modelling the effects of binary exposure variables over the life course”, <em>International Journal of Epidemiology</em> (2009).</li>
+      <li>Barker, Winter, Osmond, Margetts &amp; Simmonds, “Weight in infancy and death from ischaemic heart disease”, <em>The Lancet</em> (1989); Roseboom et al., “Coronary heart disease after prenatal exposure to the Dutch famine, 1944–45”, <em>Heart</em> (2000).</li>
+      <li>Marmot, Rose, Shipley &amp; Hamilton, “Employment grade and coronary heart disease in British civil servants”, <em>Journal of Epidemiology and Community Health</em> (1978).</li>
+      <li>Galobardes, Shaw, Lawlor, Lynch &amp; Davey Smith, “Indicators of socioeconomic position (parts 1 and 2)”, <em>Journal of Epidemiology and Community Health</em> (2006).</li>
+      <li>Link &amp; Phelan, “Social conditions as fundamental causes of disease”, <em>Journal of Health and Social Behavior</em> (1995); Phelan, Link, Diez-Roux, Kawachi &amp; Levin, “‘Fundamental causes’ of social inequalities in mortality: a test of the theory”, <em>Journal of Health and Social Behavior</em> (2004).</li>
+      <li>Mackenbach &amp; Kunst, “Measuring the magnitude of socio-economic inequalities in health: an overview of available measures illustrated with two examples from Europe”, <em>Social Science &amp; Medicine</em> (1997): SII and RII.</li>
+      <li>Bauer, “Incorporating intersectionality theory into population health research methodology”, <em>Social Science &amp; Medicine</em> (2014).</li>
+      <li>General Authority for Statistics (Saudi Arabia), Census 2022 results: population by nationality.</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="2-17-cardiovascular-epidemiology.html"><small>Previous</small>2.17 Cardiovascular and chronic disease epidemiology</a>
+    <a class="next" href="2-19-genetic-epidemiology-mendelian-randomisation.html"><small>Next</small>2.19 Genetic epidemiology and Mendelian randomisation</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

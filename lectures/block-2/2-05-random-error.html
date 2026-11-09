@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>2.5 Random error · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/2-05.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-2">Block 2</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 2.5</p>
+  <h1>Random error: precision, confidence intervals, p-values and their misuse</h1>
+  <div class="lecture-meta">
+    <span>Block 2 · Epidemiology</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>Every estimate wobbles because it comes from a finite sample. A <strong>confidence interval</strong> shows how far it could plausibly wobble; a <strong>p-value</strong> squeezes that into one number and loses most of the information. Read the interval, not the asterisk. This is how you will report every pooled estimate in Project 2 and every hazard ratio in Project 3, and how you will judge the small studies Project 2 pools.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#precision">Precision is not validity</a></li>
+      <li><a href="#ci">What a confidence interval means</a></li>
+      <li><a href="#pvalue">What a p-value is, and isn’t</a></li>
+      <li><a href="#absence">Not significant is not “no effect”</a></li>
+      <li><a href="#power">Power, study size and the winner’s curse</a></li>
+      <li><a href="#multiple">Many tests, one lucky result</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="precision">
+    <h2>1. Precision is not validity</h2>
+    <p class="point">Random error makes estimates scatter around their target; systematic error (bias) moves the target. Bigger studies fix the first, never the second.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>Random error</strong> is the chance variation you would see if you repeated the same study on new samples. <strong>Precision</strong> is its opposite: little scatter. <strong>Validity</strong> means the estimate is aimed at the right target, free of confounding, selection and measurement bias (Lectures 2.6–2.8). Lecture 1.8’s bullseye showed the same split for a single measurement.</dd>
+      <dt>Why it matters</dt>
+      <dd>Confidence intervals and p-values describe random error only. They assume the study is otherwise unbiased. A tight interval around a biased estimate is confidently wrong.</dd>
+      <dt>How to read it</dt>
+      <dd>Precision comes from information: for a ratio measure, mainly the number of outcome <em>events</em>, not the number of people. A cohort of 100,000 with 40 deaths is imprecise.</dd>
+      <dt>What a change means</dt>
+      <dd>The standard error shrinks with the square root of the information. Quadrupling the events roughly halves the width of the interval. Doubling them narrows it by only about 30%.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>“The study had 2 million patients, so the result is solid.” Size buys precision, not validity. Huge electronic health record studies often report intervals so narrow they look like certainty, while the real uncertainty lies in confounding and misclassification, which the interval does not include.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>This is the variance–bias split. Random error is variance: it falls as data grow. Bias is the gap between what your pipeline estimates and the true quantity, and more data from the same biased source just estimates the wrong thing more precisely. A model trained on 10 million records from one hospital system still inherits that system’s selection.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="ci">
+    <h2>2. What a confidence interval means</h2>
+    <p class="point">A 95% confidence interval comes from a procedure that, over many repeats of the study, catches the true value 95% of the time; read it as the range of effects reasonably compatible with your data.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>An estimate plus and minus a multiple of its standard error. For ratio measures (RR, OR, HR) the calculation is done on the log scale, which is why such intervals are lopsided around the estimate.</dd>
+    </dl>
+
+    \[ \text{95\% CI} \;=\; \text{estimate} \;\pm\; 1.96 \times \text{SE} \quad(\text{on the log scale for ratios}) \]
+
+    <dl class="facets">
+      <dt>Why it matters</dt>
+      <dd>It carries both pieces of information a reader needs: how big the effect might be (where the interval sits) and how sure we are (its width). A p-value carries neither on its own.</dd>
+      <dt>How to read it</dt>
+      <dd>Read both ends. An RR of 1.30 (1.05–1.61) is compatible with a small harm and with a fairly large one. For ratios, the ratio of upper to lower limit is a quick precision score: about 1.5 is precise, above 4 is very imprecise.</dd>
+      <dt>What a change means</dt>
+      <dd>Moving from 95% to 99% widens the interval; the data haven’t changed, only how often you are willing to miss. Adding studies in a meta-analysis (Lecture 2.12) narrows it.</dd>
+    </dl>
+
+    <div class="widget" data-widget="ci-coverage">
+      <div class="widget-title">Fifty studies, fifty intervals</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Each line is one study’s 95% interval for mean salt intake. Run more batches: about 1 in 20 misses the truth, and you can’t tell which from inside the study. Then change the sample size and the confidence level and watch width and coverage separately.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>“There is a 95% probability the true RR lies between 1.05 and 1.61.” Strictly, the 95% belongs to the procedure, not to this interval, which either contains the truth or doesn’t. In practice the bigger error is forgetting the assumptions: the 95% holds only if there is no bias and the model is right. The interval is a statement about random error alone.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example</div>
+      <p>Two studies of the same exposure report RR 1.4 (0.9–2.2) and RR 1.4 (1.2–1.6). Same estimate, very different information. The first is compatible with no effect and with a doubling of risk. The second rules out both no effect and a doubling. A reviewer who writes “inconsistent findings” because one is significant and one isn’t has misread them: the two agree.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>A ring toss. The peg (the truth) stays put; you throw rings (intervals) from different samples. A good throwing procedure lands 95 rings in 100 over the peg. Once a ring has landed, it is either around the peg or not; the 95% describes your throwing, not that ring.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="pvalue">
+    <h2>3. What a p-value is, and isn’t</h2>
+    <p class="point">A p-value measures how surprising your data would be if the null hypothesis and every other assumption of the model were true; it is not the probability that the null is true.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The probability, under the null model, of getting a result at least as extreme as the one observed. Small p means the data fit the null model poorly. It does not say which part of the model is wrong: the null, or an assumption such as no bias.</dd>
+      <dt>Why it matters</dt>
+      <dd>Journals, regulators and news stories still sort findings at p = 0.05. In 2016 the American Statistical Association issued a formal statement to correct the most common misreadings, and many statisticians now argue for dropping the word “significant” altogether.</dd>
+      <dt>How to read it</dt>
+      <dd>As a continuous measure of compatibility with the null. p = 0.04 and p = 0.06 are nearly the same evidence. p = 0.001 says the data fit “no effect” badly; it says nothing about whether the effect is large.</dd>
+      <dt>What a change means</dt>
+      <dd>For a fixed effect, p falls as the study grows. So p mixes two things you want kept apart: effect size and sample size. Report both separately, as an estimate and an interval.</dd>
+    </dl>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Common reading of p = 0.03</th><th>Why it’s wrong (ASA 2016)</th><th>Say instead</th></tr></thead>
+        <tbody>
+          <tr><td>“3% chance the null is true”</td><td>p is computed assuming the null is true; it can’t also be the null’s probability</td><td>“Data this extreme would be unusual if there were no effect and no bias”</td></tr>
+          <tr><td>“The effect is real and important”</td><td>p measures neither size nor importance</td><td>Give the estimate and its interval, and judge importance from them</td></tr>
+          <tr><td>“p &gt; 0.05, so no effect”</td><td>Decisions shouldn’t rest on a threshold alone</td><td>See section 4: read what the interval includes</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Treating p &lt; 0.05 as a finish line. The threshold is a convention, and crossing it turns a continuous result into a yes/no that throws away the effect size, the precision and the plausibility. Report exact p-values if you must report them at all, and never only the stars.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>A p-value is P(data this extreme | null), not P(null | data). It is the same mix-up as confusing a test’s sensitivity, P(positive | disease), with its positive predictive value, P(disease | positive). Turning one into the other needs a base rate, or prior: how plausible the hypothesis was before the study. That is Bayesian territory (Block 3) and diagnostic-test territory (Lecture 2.11).</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="absence">
+    <h2>4. Not significant is not “no effect”</h2>
+    <p class="point">A non-significant result with a wide interval means “we don’t know”; only a narrow interval hugging the null means “probably little or no effect”.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>“Absence of evidence is not evidence of absence” (Altman and Bland). A study can fail to reach p &lt; 0.05 because the effect is small or because the study is small. The interval tells you which.</dd>
+      <dt>Why it matters</dt>
+      <dd>Many “null” findings in the literature are just underpowered. Calling them evidence of safety or of no benefit can stop good policies and hide real harms.</dd>
+      <dt>How to read it</dt>
+      <dd>Ask: what is the smallest effect that would matter? If the whole interval sits below it, the study shows no important effect. If the interval stretches well past it, the study is inconclusive, whatever the p-value.</dd>
+      <dt>What a change means</dt>
+      <dd>Two results with the same p-value can mean very different things, and two results on opposite sides of 0.05 can agree almost perfectly.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · Four studies, read by their intervals</div>
+      <svg class="viz-svg" viewBox="0 0 640 262" role="img" aria-label="Forest-style plot of four studies on a log relative-risk axis. A: RR 1.8, wide interval crossing 1, p 0.12. B: RR 1.08, narrow interval just above 1, p 0.01. C: RR 1.01, narrow interval around 1, p 0.78. D: RR 1.6, interval 1.10 to 2.33, p 0.01.">
+        <!-- gridlines at RR 0.5, 1, 2, 4: x = 200 + 140*(log2 RR + 1) -->
+        <line x1="200" y1="24" x2="200" y2="214" class="viz-grid"/>
+        <line x1="480" y1="24" x2="480" y2="214" class="viz-grid"/>
+        <line x1="620" y1="24" x2="620" y2="214" class="viz-grid"/>
+        <line x1="340" y1="24" x2="340" y2="214" class="edge" stroke-dasharray="5 4"/>
+        <line x1="200" y1="214" x2="620" y2="214" class="viz-axis"/>
+        <g text-anchor="middle">
+          <text x="200" y="232" class="viz-tick">0.5</text>
+          <text x="340" y="232" class="viz-tick">1</text>
+          <text x="480" y="232" class="viz-tick">2</text>
+          <text x="620" y="232" class="viz-tick">4</text>
+          <text x="410" y="254" class="viz-label">Relative risk (log scale)</text>
+          <text x="340" y="16" class="viz-small viz-muted">no effect</text>
+        </g>
+        <!-- A: RR 1.8 (0.85–3.8) -->
+        <text x="10" y="50" class="viz-bold">A · small study</text>
+        <text x="10" y="67" class="viz-small viz-muted">RR 1.8 (0.85–3.8), p = 0.12</text>
+        <g class="s2"><line x1="307" y1="56" x2="610" y2="56" class="stroke"/><rect x="452" y="50" width="13" height="13" class="fill"/></g>
+        <!-- B: RR 1.08 (1.02–1.15) -->
+        <text x="10" y="95" class="viz-bold">B · very large study</text>
+        <text x="10" y="112" class="viz-small viz-muted">RR 1.08 (1.02–1.15), p = 0.01</text>
+        <g class="s1"><line x1="344" y1="101" x2="368" y2="101" class="stroke"/><rect x="349" y="95" width="13" height="13" class="fill"/></g>
+        <!-- C: RR 1.01 (0.94–1.08) -->
+        <text x="10" y="140" class="viz-bold">C · precise null</text>
+        <text x="10" y="157" class="viz-small viz-muted">RR 1.01 (0.94–1.08), p = 0.78</text>
+        <g class="s5"><line x1="327" y1="146" x2="356" y2="146" class="stroke"/><rect x="335" y="140" width="13" height="13" class="fill"/></g>
+        <!-- D: RR 1.6 (1.10–2.33) -->
+        <text x="10" y="185" class="viz-bold">D · mid-sized study</text>
+        <text x="10" y="202" class="viz-small viz-muted">RR 1.6 (1.10–2.33), p = 0.01</text>
+        <g class="s1"><line x1="359" y1="191" x2="511" y2="191" class="stroke"/><rect x="429" y="185" width="13" height="13" class="fill"/></g>
+        <g class="viz-small">
+          <text x="528" y="105" class="colour s1">small but clear</text>
+          <text x="374" y="150" class="viz-muted">little effect</text>
+          <text x="524" y="195" class="colour s1">larger, clear</text>
+        </g>
+      </svg>
+      <figcaption>Illustrative numbers. A is “not significant” yet compatible with nearly a fourfold risk: inconclusive, not null. C is the only real evidence of little effect. B and D share a p-value but describe effects of very different size. Only the intervals show this.</figcaption>
+    </figure>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Writing “there was no association (p = 0.12)”. Write the estimate and interval and say what they include: “RR 1.8 (0.85–3.8); the data are compatible with no effect and with a large increase.” The same applies to “no difference between men and women” in a survey of 150 people.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">Example · Project 2</div>
+      <p>Collecting 24-hour urine is burdensome, so single studies are often small. A study of a couple of hundred adults finding “no significant difference” in salt intake between, say, nationals and expatriates usually has an interval wide enough to include a gap of a gram or more. That is why pooling them (Lecture 2.12) is worth doing: the pooled interval can answer what no single study could.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="power">
+    <h2>5. Power, study size and the winner’s curse</h2>
+    <p class="point">Low power doesn’t just miss real effects; the effects it does catch are exaggerated, because only the lucky overestimates make it past p &lt; 0.05.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>Power</strong> is the chance a study reaches significance if a stated true effect exists. The convention is to plan for 80% power at the smallest effect worth detecting. A <strong>sample size calculation</strong> runs this in reverse: given the effect, the event rate and the power wanted, how many people?</dd>
+      <dt>Why it matters</dt>
+      <dd>When power is low, a significant result must have landed far from the truth to clear the bar. Filter the literature on significance and you filter in overestimates. Gelman and Carlin call the size of the overestimate a <em>type M</em> (magnitude) error and the chance of a significant result with the wrong sign a <em>type S</em> error.</dd>
+      <dt>How to read it</dt>
+      <dd>Around 80% power, significant estimates are only mildly inflated. Below about 30%, expect significant estimates to overstate the true log RR by half or more. At very low power, even the direction becomes unreliable.</dd>
+      <dt>What a change means</dt>
+      <dd>Halving the effect you want to detect roughly quadruples the sample size needed. That is why small true effects, the usual case in epidemiology, need large studies.</dd>
+    </dl>
+
+    <div class="widget" data-widget="winners-curse">
+      <div class="widget-title">The significance filter</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Each dot is one study of the same true effect. Amber dots reached p &lt; 0.05. Shrink the study size and watch the amber line drift away from the truth, even though every study is unbiased. Then make the studies large and watch the gap close.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Planning a large study from a pilot’s significant effect. If the pilot found RR 3 with wide intervals, the true effect is probably smaller, and a sample size based on RR 3 will leave the main study underpowered. Plan on the smallest effect that would matter, not on the most exciting estimate so far.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example</div>
+      <p>First reports of a new association are often the largest. Ioannidis described this pattern as “why most discovered true associations are inflated”: the first study is often the one that was lucky enough to be significant, and later, larger studies drift toward a smaller effect. When you read a striking first result, mentally shrink it.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>The same mechanism as picking the best model on a validation set: its validation score is optimistic because you chose it for being high. The best of many noisy estimates is biased upward. Fresh test data, or shrinkage, corrects it; in epidemiology, replication and meta-analysis play that role.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="multiple">
+    <h2>6. Many tests, one lucky result</h2>
+    <p class="point">Run enough tests and something will be “significant” by chance, so a result means less when it was one of many looks at the data.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>At p &lt; 0.05, each test of a true null has a 1 in 20 chance of a false alarm. With 20 independent tests of true nulls, the chance of at least one false alarm is about 64%. The same happens, less visibly, through many analysis choices: subgroups, cut-points, outcomes, covariate sets. Gelman and Loken call this the “garden of forking paths”.</dd>
+      <dt>Why it matters</dt>
+      <dd>Exploratory analyses are fine; presenting them as if they were the one planned test is not. This is why Project 2 will be registered on PROSPERO and why trials register their primary outcome in advance.</dd>
+      <dt>How to read it</dt>
+      <dd>Ask how many comparisons were possible and whether the reported one was pre-specified. A single significant subgroup among a dozen is weak evidence. Formal corrections (Bonferroni, false discovery rate) exist; transparency matters more.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Fixing the problem with Bonferroni and then reading the survivors as definite. Corrections trade false alarms for missed effects and still leave you with a yes/no. Report every analysis you ran, mark which were planned, and give intervals for all of them.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Firing at a barn wall and then painting the target around the tightest cluster of holes. Each hole is real; the claim of accuracy is not.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>A trial reports RR 0.85 (0.70–1.03), p = 0.10, and concludes “the drug has no effect on mortality”. What would you write in a peer review?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The conclusion doesn’t follow. The interval is compatible with a 30% reduction in mortality, which would be very important, and with a small increase. The honest reading is that the trial is inconclusive. Ask the authors to report the estimate and interval and to describe it as such.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>An electronic health record study of 3 million people reports HR 1.04 (1.02–1.06) for an exposure. Is this strong evidence of harm?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>It is strong evidence that the association isn’t due to random error. It is weak evidence of a causal effect: a 4% difference can easily come from residual confounding or measurement error, which the interval doesn’t include. Also ask whether 4% would matter clinically, even if real.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A colleague says, “There’s a 95% chance the true RR is between 1.2 and 2.0.” What is right and what is wrong with this?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The 95% strictly describes how often the procedure catches the truth over repeated studies, not this particular interval. More importantly, it holds only if the study is unbiased and the model is right. A safer reading: “RRs from 1.2 to 2.0 are reasonably compatible with these data, assuming no bias.”</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A pilot of 60 people found a significant effect, RR 3.0. A team plans its main trial’s sample size on RR 3.0. What would you warn them about?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The winner’s curse. A small study only reaches significance if its estimate lands far from the null, so the true effect is probably smaller. Sized for RR 3.0, the main trial is likely underpowered for the real effect. Plan on the smallest effect that would be worth acting on.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A paper tests 25 foods against colorectal cancer and highlights the one with p = 0.03. How much weight do you give it?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Little, on its own. With 25 tests, one or two results below 0.05 are expected even if no food has any effect. Treat it as a hypothesis for a pre-specified test in independent data, and look at whether the effect size is plausible and consistent with other studies.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Studies B and D in the diagram both have p = 0.01. Why might a policymaker care much more about one of them?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>D’s effect is far larger (RR 1.6 against 1.08), so acting on it changes many more outcomes per person exposed. B is very precise about a small effect. The p-value is the same because B’s small effect is offset by its huge size. Effect size and precision, not p, should drive the decision, together with an assessment of bias in each.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Lash, VanderWeele, Haneuse &amp; Rothman, <em>Modern Epidemiology</em>, 4th edition (2021): the chapters on precision and study size, and on statistical inference in epidemiology.</li>
+      <li>Wasserstein &amp; Lazar, “The ASA statement on p-values: context, process, and purpose”, <em>The American Statistician</em> (2016): the six principles behind the table in section 3.</li>
+      <li>Greenland, Senn, Rothman, Carlin, Poole, Goodman &amp; Altman, “Statistical tests, P values, confidence intervals, and power: a guide to misinterpretations”, <em>European Journal of Epidemiology</em> (2016): the fullest list of misreadings, with corrections.</li>
+      <li>Altman &amp; Bland, “Absence of evidence is not evidence of absence”, <em>BMJ</em> (1995). Amrhein, Greenland &amp; McShane, “Scientists rise up against statistical significance”, <em>Nature</em> (2019): compatibility intervals.</li>
+      <li>Gelman &amp; Carlin, “Beyond power calculations: assessing type S (sign) and type M (magnitude) errors”, <em>Perspectives on Psychological Science</em> (2014). Ioannidis, “Why most discovered true associations are inflated”, <em>Epidemiology</em> (2008).</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="2-04-cross-sectional-ecological-case-crossover.html"><small>Previous</small>2.4 Cross-sectional, ecological and case-crossover designs</a>
+    <a class="next" href="2-06-confounding.html"><small>Next</small>2.6 Confounding</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

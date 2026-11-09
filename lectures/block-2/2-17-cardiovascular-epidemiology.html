@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>2.17 Cardiovascular and chronic disease epidemiology · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/2-17.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-2">Block 2</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 2.17</p>
+  <h1>Cardiovascular and chronic disease epidemiology: the great cohorts and risk scores</h1>
+  <div class="lecture-meta">
+    <span>Block 2 · Epidemiology</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>Almost everything a cardiologist believes about prevention came from a handful of long cohort studies, and each one taught a method lesson as well as a medical one. Their main product is the <strong>risk score</strong>: a model that turns a person’s risk factors into a <strong>10-year absolute risk</strong>. Scores travel badly between populations, so you need to know how to read calibration, when to <strong>recalibrate</strong>, and why treatment decisions run on absolute rather than relative risk. Project 3 uses this directly: it is a cardiovascular cohort analysis, and reviewers will read it against these cohorts.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#cohorts">The great cohorts and what each taught</a></li>
+      <li><a href="#framingham">Framingham and the idea of a risk factor</a></li>
+      <li><a href="#seven">Seven Countries: the power and limits of comparing populations</a></li>
+      <li><a href="#biobank">UK Biobank and the healthy-volunteer effect</a></li>
+      <li><a href="#tenyear">What a 10-year risk means</a></li>
+      <li><a href="#recalibration">Scores in new populations: calibration and recalibration</a></li>
+      <li><a href="#absolute">Relative versus absolute risk for treatment</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="cohorts">
+    <h2>1. The great cohorts and what each taught</h2>
+    <p class="point">A few cohorts built cardiovascular prevention, and the risk scores used today descend directly from them.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Large prospective cohorts (Lecture 2.2) that measured blood pressure, cholesterol, smoking and more in healthy people, then counted heart attacks and strokes for decades. Later, their data were turned into prediction equations.</dd>
+      <dt>Why it matters</dt>
+      <dd>When you read a cardiovascular paper, its assumptions usually trace back to one of these studies. Knowing who was in each cohort tells you whom its findings and scores apply to.</dd>
+      <dt>How to read it</dt>
+      <dd>Ask three things of any cohort: who was enrolled, what was measured at baseline, and how outcomes were ascertained. Most later controversies come from one of the three.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · The great cohorts and the scores they produced</div>
+      <svg class="viz-svg" viewBox="0 0 640 400" role="img" aria-label="Timeline from 1948 to 2021. Cohorts: Framingham 1948, Seven Countries 1958, Whitehall 1967, British Regional Heart Study 1978, UK Biobank 2006. Risk scores: Framingham score 1998, SCORE 2003, Pooled Cohort Equations 2013, QRISK3 2017, WHO risk charts 2019, SCORE2 2021.">
+        <g class="s1"><circle cx="96" cy="16" r="6" class="dot"/></g>
+        <text x="108" y="20" class="viz-small">Cohort</text>
+        <g class="s2"><circle cx="176" cy="16" r="6" class="dot"/></g>
+        <text x="188" y="20" class="viz-small">Risk score</text>
+        <line x1="78" y1="40" x2="78" y2="380" class="edge"/>
+        <g class="viz-small viz-bold" text-anchor="end">
+          <text x="64" y="54">1948</text><text x="64" y="86">1958</text><text x="64" y="118">1967</text>
+          <text x="64" y="150">1978</text><text x="64" y="182">1998</text><text x="64" y="214">2003</text>
+          <text x="64" y="246">2006</text><text x="64" y="278">2013</text><text x="64" y="310">2017</text>
+          <text x="64" y="342">2019</text><text x="64" y="374">2021</text>
+        </g>
+        <g class="s1">
+          <circle cx="78" cy="50" r="6" class="dot"/><circle cx="78" cy="82" r="6" class="dot"/>
+          <circle cx="78" cy="114" r="6" class="dot"/><circle cx="78" cy="146" r="6" class="dot"/>
+          <circle cx="78" cy="242" r="6" class="dot"/>
+        </g>
+        <g class="s2">
+          <circle cx="78" cy="178" r="6" class="dot"/><circle cx="78" cy="210" r="6" class="dot"/>
+          <circle cx="78" cy="274" r="6" class="dot"/><circle cx="78" cy="306" r="6" class="dot"/>
+          <circle cx="78" cy="338" r="6" class="dot"/><circle cx="78" cy="370" r="6" class="dot"/>
+        </g>
+        <g class="viz-bold">
+          <text x="96" y="55">Framingham</text>
+          <text x="96" y="87">Seven Countries</text>
+          <text x="96" y="119">Whitehall</text>
+          <text x="96" y="151">British Regional Heart</text>
+          <text x="96" y="183">Framingham score</text>
+          <text x="96" y="215">SCORE</text>
+          <text x="96" y="247">UK Biobank</text>
+          <text x="96" y="279">Pooled Cohort Eqns</text>
+          <text x="96" y="311">QRISK3</text>
+          <text x="96" y="343">WHO risk charts</text>
+          <text x="96" y="375">SCORE2</text>
+        </g>
+        <g class="viz-small">
+          <text x="276" y="55">BP, cholesterol, smoking predict heart disease</text>
+          <text x="276" y="87">Diet and heart disease across whole populations</text>
+          <text x="276" y="119">A social gradient in heart disease, not a threshold</text>
+          <text x="276" y="151">A US score overpredicts in British men</text>
+          <text x="276" y="183">Risk factors become a 10-year CHD probability</text>
+          <text x="276" y="215">Fatal CVD risk, separate charts for Europe</text>
+          <text x="276" y="247">500,000 volunteers, genes and imaging</text>
+          <text x="276" y="279">US guideline score, Black and white adults</text>
+          <text x="276" y="311">UK GP records, adds ethnicity and deprivation</text>
+          <text x="276" y="343">Recalibrated to 21 world regions</text>
+          <text x="276" y="375">Fatal and non-fatal CVD, four European regions</text>
+        </g>
+      </svg>
+      <figcaption>Cohorts (teal) generated the evidence; scores (amber) packaged it for clinics. Each score is tied to the population and era it was fitted in, which is why newer scores keep appearing.</figcaption>
+    </figure>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Cohort</th><th>Who</th><th>The method lesson</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Framingham</strong> (1948)</td><td>5,209 adults in one Massachusetts town</td><td>Measure many factors before disease, then follow: the template for every cohort since</td></tr>
+          <tr><td><strong>Seven Countries</strong> (1958)</td><td>12,763 men aged 40–59, 16 cohorts in 7 countries</td><td>Population-level comparisons generate hypotheses but cannot settle individual causation</td></tr>
+          <tr><td><strong>Whitehall / BRHS</strong> (1967 / 1978)</td><td>London civil servants; 7,735 men in 24 British towns</td><td>Risk follows social position (Lecture 2.18); scores need checking before export</td></tr>
+          <tr><td><strong>UK Biobank</strong> (2006)</td><td>About 500,000 volunteers aged 40–69</td><td>Size buys precision, not representativeness</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Treating “a famous cohort found it” as settled. Framingham was white, mostly middle-class and from one town; Seven Countries enrolled only men; UK Biobank is healthier than Britain. Each finding is true <em>for that population</em> until shown to transport.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="framingham">
+    <h2>2. Framingham and the idea of a risk factor</h2>
+    <p class="point">Framingham’s lasting gift is the idea that disease risk can be predicted years ahead from measurable traits, which its investigators named “risk factors”.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>From 1948, the study examined residents of Framingham, Massachusetts every two years. By 1961 its leaders (Kannel, Dawber and colleagues) showed that blood pressure, cholesterol and smoking predicted coronary heart disease, and popularised the term <em>risk factor</em>. Their children (from 1971) and grandchildren later joined as new cohorts.</dd>
+      <dt>Why it matters</dt>
+      <dd>Before Framingham, heart attacks were widely seen as an unpredictable part of ageing. Prediction made prevention thinkable: if you can see who is at risk, you can act before the event.</dd>
+      <dt>How to read it</dt>
+      <dd>A risk factor is anything that predicts the outcome. Some are causes (blood pressure), some are markers of a cause (a raised CRP may be), and some are fixed (age, sex). Prediction does not need causation; prevention does.</dd>
+      <dt>What a change means</dt>
+      <dd>If lowering a risk factor in a trial lowers events, it is a cause you can act on. Blood pressure and LDL cholesterol passed that test. HDL cholesterol predicted well but did not (Lecture 2.19).</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reading every risk factor as a treatment target. A score uses whatever predicts. A variable can carry a large coefficient because it stands in for something unmeasured. Before treating it, ask for trial or genetic evidence that changing it changes risk.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>This is the prediction-versus-intervention split. A risk score is a supervised model of \(P(\text{event}\mid\text{features})\). A feature with high importance tells you nothing about what happens if you intervene on it. That needs the causal tools of Block 4.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="seven">
+    <h2>3. Seven Countries: the power and limits of comparing populations</h2>
+    <p class="point">Ancel Keys’s study showed that populations eating more saturated fat had more heart disease; its central comparison was between populations, which is both its strength and its weakness.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>From 1958, 16 cohorts of men aged 40–59 in the US, Finland, the Netherlands, Italy, the former Yugoslavia, Greece and Japan were examined and followed. Cohorts with higher average saturated fat intake had higher coronary death rates.</dd>
+      <dt>Why it matters</dt>
+      <dd>It shaped decades of dietary guidelines, and its critics still argue about it. It is the textbook case of what an ecological comparison (Lecture 2.4) can and cannot show.</dd>
+      <dt>How to read it</dt>
+      <dd>A strong correlation across cohort averages says diet <em>might</em> matter. It cannot rule out that the high-fat populations also differed in smoking, activity, sugar, wealth or health care. Those factors travel with diet at the population level.</dd>
+      <dt>What a change means</dt>
+      <dd>When individual-level studies and trials later tested the diet–heart idea, the effects were much smaller than the between-country slope suggested. A steep ecological slope rarely survives as a steep individual effect.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>The ecological fallacy: assuming that because high-fat <em>countries</em> had more heart disease, high-fat <em>individuals</em> do. The between-population pattern can be driven entirely by other differences between the populations.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · choosing the units</div>
+      <p>Before the Seven Countries study, Keys had plotted fat intake against heart disease deaths for six countries. Yerushalmy and Hilleboe (1957) showed that with all 22 countries that had data, the association was much weaker. Whether or not the choice was deliberate, the lesson holds: in an ecological comparison, which units are included can make the result.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Countries with more Nobel prizes per head eat more chocolate. Nobody thinks chocolate makes laureates; both follow wealth. Population averages carry everything that travels with them.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="biobank">
+    <h2>4. UK Biobank and the healthy-volunteer effect</h2>
+    <p class="point">UK Biobank is huge and richly measured, but its volunteers are healthier than the population they came from, so it is good for associations and poor for rates.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>About 500,000 people aged 40–69 recruited in 2006–2010, with questionnaires, physical measures, blood, genotypes, and later imaging, all linked to hospital and death records. About 9.2 million were invited; 5.5% took part.</dd>
+      <dt>Why it matters</dt>
+      <dd>It is the default dataset for modern cardiovascular, genetic and ML research, including much of the polygenic score work in Lecture 2.19. You will review papers built on it.</dd>
+      <dt>How to read it</dt>
+      <dd>Compared with the general population, participants were less likely to smoke, be obese or drink daily. At ages 70–74 their all-cause death rate was about 46% lower in men and 55% lower in women (Fry and colleagues, 2017).</dd>
+      <dt>What a change means</dt>
+      <dd>For prevalence or incidence, this bias is fatal: UK Biobank rates understate the population’s. For exposure–outcome associations, it often matters less, but not always: if both the exposure and the outcome affect who volunteers, selection opens a collider path (Lecture 2.7).</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Thinking that 500,000 people makes the result safe. Size shrinks random error (Lecture 2.5), not selection bias. A huge biased sample gives a narrow confidence interval around the wrong answer.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">Example · Gulf biobanks</div>
+      <p>Qatar Biobank is also a volunteer cohort, which supplies the samples sequenced by the Qatar Genome Programme (Lecture 2.19). The same rule applies: use it for associations, and check its participants against census or survey data before quoting rates for the Qatari population.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="tenyear">
+    <h2>5. What a 10-year risk means</h2>
+    <p class="point">A 10-year risk of 15% means that of 100 people with this profile, about 15 will have a heart attack or stroke within 10 years; it describes a group, applied to one person.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>An absolute risk (Lecture 2.1): a probability over a fixed horizon, from a model fitted in a cohort. Most scores model time to event, so they handle people who are followed for less than 10 years.</dd>
+      <dt>Why it matters</dt>
+      <dd>Guidelines use it to decide who is offered treatment. NICE offers a statin from a QRISK3 risk of 10%; US guidelines use the Pooled Cohort Equations, with 7.5% marking intermediate risk.</dd>
+      <dt>How to read it</dt>
+      <dd>Below 5% is low; 5–10% borderline; 10–20% moderate to high; above 20% high (rough bands; each guideline sets its own). The number is only meaningful if the score is <em>calibrated</em> for the population it is used in.</dd>
+      <dt>What a change means</dt>
+      <dd>Age dominates: in most scores a decade of age moves risk more than any single modifiable factor. So a 45-year-old smoker with high blood pressure can score “low” over 10 years while carrying a high lifetime risk. Some guidelines add a lifetime-risk estimate for exactly this reason.</dd>
+    </dl>
+
+    <div class="widget" data-widget="cvd-risk">
+      <div class="widget-title">A toy 10-year risk score</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Set a profile and read the risk as 100 people. Then switch to the recalibrated version: the same person, same coefficients, in a population with twice the baseline risk. Watch the treatment effect in absolute terms change with it.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>“My risk is 10%, so I am 10% of the way to a heart attack.” It means one in ten people <em>like you</em> will have an event; you will either have one or not. The score cannot say which of the hundred you are.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>A weather forecast of 30% rain. It is right if it rains on about 30% of days it says 30%. It never promises what today will do.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="recalibration">
+    <h2>6. Scores in new populations: calibration and recalibration</h2>
+    <p class="point">A score usually ranks people well anywhere, but its absolute numbers are tied to the baseline risk of the population it was built in; moving it means recalibrating.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>Discrimination</strong> is how well a score ranks people (the C-statistic: the chance a random case scores higher than a random non-case). <strong>Calibration</strong> is whether predicted risks match observed risks. <strong>Recalibration</strong> keeps the coefficients but resets the baseline risk, and sometimes the average risk-factor levels, to the new population.</dd>
+      <dt>Why it matters</dt>
+      <dd>Treatment thresholds are absolute. An over-predicting score treats people who would not benefit enough; an under-predicting score misses people who would.</dd>
+      <dt>How to read it</dt>
+      <dd>A calibration plot puts predicted risk on the x-axis and observed risk on the y-axis. Points on the diagonal: calibrated. Below it: the score over-predicts. A C-statistic of 0.7–0.8 is typical for cardiovascular scores.</dd>
+      <dt>What a change means</dt>
+      <dd>Resetting the baseline moves every prediction up or down together. Because the ranking does not change, the C-statistic does not change either. Good discrimination can hide bad calibration.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · One score, three populations</div>
+      <svg class="viz-svg" viewBox="0 0 640 300" role="img" aria-label="Calibration plot. Predicted 10-year risk on the x-axis, observed on the y-axis. Points from a lower-risk population fall below the diagonal; points from a higher-risk population fall above it.">
+        <g>
+          <line x1="60" x2="620" y1="254" y2="254" class="viz-axis"/>
+          <line x1="60" x2="60" y1="254" y2="16" class="viz-axis"/>
+          <line x1="60" x2="620" y1="194.5" y2="194.5" class="viz-grid"/>
+          <line x1="60" x2="620" y1="135" y2="135" class="viz-grid"/>
+          <line x1="60" x2="620" y1="75.5" y2="75.5" class="viz-grid"/>
+          <line x1="60" x2="620" y1="16" y2="16" class="viz-grid"/>
+          <g class="viz-tick" text-anchor="end">
+            <text x="52" y="258">0%</text><text x="52" y="198">10%</text><text x="52" y="139">20%</text><text x="52" y="79">30%</text><text x="52" y="20">40%</text>
+          </g>
+          <g class="viz-tick" text-anchor="middle">
+            <text x="60" y="272">0%</text><text x="200" y="272">10%</text><text x="340" y="272">20%</text><text x="480" y="272">30%</text><text x="620" y="272">40%</text>
+          </g>
+          <text x="340" y="294" class="viz-label" text-anchor="middle">Predicted 10-year risk</text>
+          <text x="14" y="135" class="viz-label" text-anchor="middle" transform="rotate(-90 14 135)">Observed 10-year risk</text>
+        </g>
+        <line x1="60" y1="254" x2="620" y2="16" class="stroke dashed s5"/>
+        <g class="s3">
+          <circle cx="88.0" cy="246.3" r="5" class="dot"/><circle cx="116.0" cy="238.5" r="5" class="dot"/><circle cx="144.0" cy="230.8" r="5" class="dot"/><circle cx="172.0" cy="223.1" r="5" class="dot"/><circle cx="200.0" cy="215.3" r="5" class="dot"/><circle cx="242.0" cy="203.7" r="5" class="dot"/><circle cx="284.0" cy="192.1" r="5" class="dot"/><circle cx="340.0" cy="176.6" r="5" class="dot"/><circle cx="410.0" cy="157.3" r="5" class="dot"/><circle cx="508.0" cy="130.2" r="5" class="dot"/>
+        </g>
+        <g class="s4">
+          <circle cx="88.0" cy="236.7" r="5" class="dot"/><circle cx="116.0" cy="219.5" r="5" class="dot"/><circle cx="144.0" cy="202.2" r="5" class="dot"/><circle cx="172.0" cy="185.0" r="5" class="dot"/><circle cx="200.0" cy="167.7" r="5" class="dot"/><circle cx="242.0" cy="141.8" r="5" class="dot"/><circle cx="284.0" cy="116.0" r="5" class="dot"/><circle cx="340.0" cy="81.4" r="5" class="dot"/><circle cx="410.0" cy="38.3" r="5" class="dot"/>
+        </g>
+        <line x1="76" x2="100" y1="30" y2="30" class="stroke dashed s5"/>
+        <text x="108" y="34" class="viz-small">Perfect calibration</text>
+        <g class="s4"><circle cx="88" cy="48" r="5" class="dot"/></g>
+        <text x="108" y="52" class="viz-small">Higher-risk population: underpredicts</text>
+        <g class="s3"><circle cx="88" cy="66" r="5" class="dot"/></g>
+        <text x="108" y="70" class="viz-small">Lower-risk population: overpredicts</text>
+        <text x="610" y="236" class="viz-small viz-muted" text-anchor="end">Each dot: one tenth of people,</text>
+        <text x="610" y="250" class="viz-small viz-muted" text-anchor="end">grouped by predicted risk</text>
+      </svg>
+      <figcaption>Illustrative numbers. The same score ranks people equally well in all three populations, so the C-statistic barely moves. What changes is the level. Recalibration slides each set of dots back onto the diagonal.</figcaption>
+    </figure>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Score</th><th>Built from</th><th>Typical use</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Pooled Cohort Equations</strong> (2013); PREVENT (2023)</td><td>US cohorts</td><td>US guidelines; PREVENT is the AHA’s newer replacement</td></tr>
+          <tr><td><strong>QRISK3</strong> (2017)</td><td>Millions of UK GP records</td><td>NICE, England</td></tr>
+          <tr><td><strong>SCORE2</strong> (2021)</td><td>European cohorts, recalibrated to four risk regions</td><td>ESC guidelines</td></tr>
+          <tr><td><strong>WHO risk charts</strong> (2019)</td><td>85 cohorts, recalibrated to 21 world regions with GBD data</td><td>Primary care where no local score exists, including the Middle East</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Framingham in Britain</div>
+      <p>Brindle and colleagues (2003) applied the Framingham coronary score to 6,643 men in the British Regional Heart Study. It predicted 4.1% coronary deaths over 10 years; 2.8% occurred, an overestimate of about half. QRISK was later built partly because of results like this.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">Example · scores in the Gulf</div>
+      <p>No major score was built in a Gulf population. In 1,041 Emirati adults followed for about 10 years, the 2008 Framingham scores and the Pooled Cohort Equations all <strong>over-predicted</strong> risk, with moderate discrimination (C-statistics 0.69–0.77); the authors concluded none was accurate as is and recalibration could help (Al-Shamsi and colleagues, 2020). Saudi comparisons so far are small and often hospital-based, sometimes scoring patients who have already had an event: that shows how scores classify people, not whether they are calibrated. I could not find a large prospective Saudi calibration study; check before assuming one exists. The WHO charts for North Africa and the Middle East are the pragmatic default.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Judging a score by its C-statistic alone. A score with C = 0.78 can still predict twice the true risk. Always ask for the calibration plot, or at least observed versus expected events, in the population where it will be used.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>This is domain shift, mostly <em>label shift</em>: the base rate changes while the feature–outcome relation is roughly stable. The fix is the one you know: keep the model, update the intercept (calibration-in-the-large), and if needed refit the slope on the linear predictor, as in Platt scaling. Monotone recalibration leaves AUC untouched. Lecture 5.13 takes this further.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="absolute">
+    <h2>7. Relative versus absolute risk for treatment</h2>
+    <p class="point">Treatments cut risk by a roughly constant fraction, so the absolute benefit depends on how high the risk was to start with; that is why guidelines treat by absolute risk.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Statin trials show a relative reduction of about a fifth in major vascular events per mmol/L of LDL lowered, fairly similar across risk groups. The <strong>absolute risk reduction</strong> (ARR) is the baseline risk times that fraction. The number needed to treat follows from it:</dd>
+    </dl>
+
+    \[ \text{NNT} = \frac{1}{\text{ARR}} \]
+
+    <dl class="facets">
+      <dt>Why it matters</dt>
+      <dd>The same drug, with the same relative effect, prevents many events in high-risk people and few in low-risk people. Side effects and costs do not shrink with risk, so treating very low-risk people can do more harm than good.</dd>
+      <dt>How to read it</dt>
+      <dd>With a 25% relative reduction: baseline 20% gives ARR 5 points (NNT 20 over 10 years); baseline 4% gives ARR 1 point (NNT 100). Illustrative numbers.</dd>
+      <dt>What a change means</dt>
+      <dd>Recalibrating a score changes absolute risk, so it changes ARR, NNT and who crosses the treatment threshold, without changing the trial’s relative effect at all. Try it in the widget above.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Treating only the high-risk tail and assuming that is where the events are. In Brindle’s British men, 84% of coronary events happened in men the Framingham score classed as low risk. This is Rose’s prevention paradox (Lecture 1.2): many people at modest risk produce most cases, which is why population measures such as salt reduction (Project 1) complement risk-score prescribing.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · reading a headline</div>
+      <p>“Drug cuts heart attacks by 30%” sounds the same for everyone. For a 60-year-old diabetic smoker at 25% risk it means about 7–8 fewer events per 100 treated over 10 years. For a healthy 40-year-old at 2% risk it means fewer than 1 per 100. Ask for the absolute numbers.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>A 20% discount saves more on a car than on a coffee. The discount is the relative effect; the saving depends on the price you started from.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>A colleague proposes using QRISK3 unchanged to decide statin eligibility in a Saudi primary-care network. What would you ask for before agreeing?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Evidence of calibration in a comparable Saudi or Gulf population: a calibration plot or observed-to-expected ratio from a prospective cohort with complete outcome follow-up. Good discrimination elsewhere is not enough. If predictions are systematically off, recalibrate the baseline (and possibly the slope) to local incidence before using a fixed threshold such as 10%.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A score has a C-statistic of 0.80 in a new country but predicts 18% average risk where 9% is observed. Is it “a good score” there?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>It ranks people well but is badly calibrated: every prediction is roughly double. It would push many people over treatment thresholds who should not cross them. Because the ranking is good, recalibration is likely to fix it cheaply; a new model is not needed.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>UK Biobank shows lower cancer incidence than national registries. A student concludes the registries over-count. What is the better explanation?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The healthy-volunteer effect. Only about 5.5% of those invited joined, and they smoke less, are less obese and die less than the population. UK Biobank is not designed to estimate population rates; its value is in associations, and even those need thought about selection.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Countries with higher average salt intake have higher stroke mortality. Does that show salt causes stroke?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>No, on its own it is ecological evidence, like the Seven Countries diet–heart comparison. Salt-heavy countries may also differ in blood-pressure treatment, smoking, income and health care. The causal case for salt rests on trials of salt and blood pressure plus cohort and trial outcome evidence (Lecture 1.9), not on the country plot.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Two patients each hear that a drug “reduces risk by 25%”. One has 10-year risk 4%, the other 24%. What would you tell each?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The relative effect is the same, but the absolute benefit is not: about 1 event avoided per 100 treated over 10 years for the first, about 6 per 100 for the second. Whether the first patient should take it depends on side effects, cost and preference; for the second, the case is much stronger.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Why do most cardiovascular events happen in people a score calls “low risk”, and what does that imply for Saudi policy?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Because low-risk people are the large majority, so even their small individual risks add up to most events. Prescribing by score helps the high-risk minority, but cutting events across the population needs measures that shift everyone’s risk a little, such as lowering salt in bread. The two strategies are complements.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Kannel, Dawber, Kagan, Revotskie &amp; Stokes, “Factors of risk in the development of coronary heart disease: six-year follow-up experience. The Framingham Study”, <em>Annals of Internal Medicine</em> (1961).</li>
+      <li>Keys (ed.), <em>Seven Countries: A Multivariate Analysis of Death and Coronary Heart Disease</em>, Harvard University Press (1980); Yerushalmy &amp; Hilleboe, “Fat in the diet and mortality from heart disease: a methodologic note”, <em>New York State Journal of Medicine</em> (1957).</li>
+      <li>Brindle, Emberson, Lampe et al., “Predictive accuracy of the Framingham coronary risk score in British men: prospective cohort study”, <em>BMJ</em> (2003).</li>
+      <li>Fry, Littlejohns, Sudlow et al., “Comparison of sociodemographic and health-related characteristics of UK Biobank participants with those of the general population”, <em>American Journal of Epidemiology</em> (2017).</li>
+      <li>Hippisley-Cox, Coupland &amp; Brindle, “Development and validation of QRISK3 risk prediction algorithms”, <em>BMJ</em> (2017); SCORE2 working group and ESC Cardiovascular risk collaboration, <em>European Heart Journal</em> (2021); WHO CVD Risk Chart Working Group, “World Health Organization cardiovascular disease risk charts: revised models to estimate risk in 21 global regions”, <em>Lancet Global Health</em> (2019).</li>
+      <li>Al-Shamsi, Govender &amp; King, “External validation and clinical usefulness of three commonly used cardiovascular risk prediction scores in an Emirati population: a retrospective longitudinal cohort study”, <em>BMJ Open</em> (2020).</li>
+      <li>D’Agostino, Grundy, Sullivan &amp; Wilson, “Validation of the Framingham coronary heart disease prediction scores: results of a multiple ethnic groups investigation”, <em>JAMA</em> (2001): the recalibration method.</li>
+      <li>Steyerberg, <em>Clinical Prediction Models</em> (2nd edition), chapters on validation and updating; Rothman, Greenland &amp; Lash, <em>Modern Epidemiology</em> (4th edition), chapter on cohort studies.</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="2-16-pharmacoepidemiology-intro.html"><small>Previous</small>2.16 Pharmacoepidemiology: an introduction</a>
+    <a class="next" href="2-18-life-course-social-epidemiology.html"><small>Next</small>2.18 Life-course and social epidemiology</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

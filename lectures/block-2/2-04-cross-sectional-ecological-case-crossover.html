@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>2.4 Cross-sectional, ecological and case-crossover designs · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/2-04.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-2">Block 2</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 2.4</p>
+  <h1>Cross-sectional, ecological and case-crossover designs</h1>
+  <div class="lecture-meta">
+    <span>Block 2 · Epidemiology</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>Three designs that each trade something away. A <strong>cross-sectional</strong> study measures exposure and disease at one moment, which is cheap but blurs which came first. An <strong>ecological</strong> study compares groups rather than people, which suits group-level questions but can mislead about individuals. A <strong>case-crossover</strong> study compares each case with themselves at other times, which removes every fixed personal confounder but works only for short-lived exposures and sudden outcomes.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#cross-sectional">Cross-sectional studies</a></li>
+      <li><a href="#temporality">Which came first?</a></li>
+      <li><a href="#neyman">Prevalent cases are survivors</a></li>
+      <li><a href="#ecological">Ecological studies</a></li>
+      <li><a href="#fallacy">The ecological fallacy</a></li>
+      <li><a href="#case-crossover">Case-crossover designs</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="cross-sectional">
+    <h2>1. Cross-sectional studies: a snapshot</h2>
+    <p class="point">A cross-sectional study measures exposure and outcome in a sample at one point in time, so it estimates prevalence, not incidence.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A survey of a defined population at one time: who has the condition now, and what are they like now. National health surveys, screening surveys and most studies of salt intake from 24-hour urine are cross-sectional.</dd>
+      <dt>Why it matters</dt>
+      <dd>It is the main source of the numbers a health system plans with: how many adults have hypertension, how many smoke, how much salt people eat. For that descriptive job, a well-sampled cross-sectional survey is the right design, not a weak one.</dd>
+      <dt>How to read it</dt>
+      <dd>First check the sampling: a random, weighted national sample supports “X% of Saudi adults”; a clinic sample does not. Then check measurement: measured blood pressure or HbA1c beats self-report. Associations are reported as prevalence ratios or prevalence odds ratios.</dd>
+      <dt>What a change means</dt>
+      <dd>A rise in prevalence between two surveys can mean more new cases, or the same number of cases living longer (Lecture 1.4’s bathtub). A snapshot can’t tell you which.</dd>
+    </dl>
+
+    <div class="callout gulf">
+      <div class="callout-title">Saudi Arabia</div>
+      <p>The 2013 Saudi Health Interview Survey, run by the Ministry of Health with the Institute for Health Metrics and Evaluation, interviewed and examined a national multistage sample of about 10,700 people aged 15 and over. It is a classic cross-sectional survey: excellent for prevalence of diabetes, hypertension and smoking, silent on what caused what. The studies you will pool in Project 2, on 24-hour urinary sodium in the GCC, are almost all cross-sectional too, which is exactly what an estimate of average intake needs.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="temporality">
+    <h2>2. Which came first?</h2>
+    <p class="point">When exposure and disease are measured at the same moment, a disease can change the exposure, and the association runs backwards.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>Reverse causation</strong>: the outcome causes the exposure, rather than the reverse. In a snapshot, both are present together and you cannot see the order.</dd>
+      <dt>Why it matters</dt>
+      <dd>Diagnosed people get advice and change their behaviour. People told they have hypertension are advised to cut salt; people with diabetes switch to diet drinks; people with heart disease stop exercising hard. In a cross-sectional survey each of these makes a harmful exposure look protective or a harmless one look harmful.</dd>
+      <dt>How to read it</dt>
+      <dd>Ask whether the exposure is fixed (genotype, sex, place of birth) or could have changed after disease. Fixed exposures are safe in a snapshot; changeable ones are suspect.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reading “people with hypertension eat less salt than people without” as evidence that salt doesn’t matter. The diagnosed group has been told to cut down. Restricting to people who don’t yet know their status, or using a cohort, is how to recover the order.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>A photo of a car park shows that cars with flat tyres are more often parked near the tyre shop. Without the film, you can’t tell whether the shop causes flats or flats bring cars to the shop.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="neyman">
+    <h2>3. Prevalent cases are survivors</h2>
+    <p class="point">A snapshot over-represents long-lasting cases, so any factor that changes how long people live with a disease distorts a prevalence comparison.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>Prevalence-incidence bias</strong> (also called Neyman bias, or survival bias): people who died quickly, or recovered quickly, are missing from the snapshot. The prevalence odds ratio mixes the effect on getting the disease with the effect on how long it lasts.</dd>
+      <dt>Why it matters</dt>
+      <dd>It affects every study that recruits <em>existing</em> cases, including case-control studies that use prevalent cases. If an exposure makes a disease more often fatal, prevalent cases will under-represent the exposed, and the exposure can look protective.</dd>
+      <dt>How to read it</dt>
+      <dd>In a stable population the prevalence odds ratio is roughly the incidence rate ratio multiplied by the ratio of average disease durations:</dd>
+    </dl>
+
+    \[ \text{prevalence odds ratio} \approx \text{rate ratio} \times \frac{\text{duration in exposed}}{\text{duration in unexposed}} \]
+
+    <div class="callout example">
+      <div class="callout-title">Example</div>
+      <p>Suppose smoking doubles the rate of heart attacks and also makes a first attack more often fatal. A survey of people living after a heart attack meets fewer smokers than were struck, because more smokers died. If smokers survive with the condition half as long on average, the prevalence odds ratio comes out near 2 × ½ = 1. Smoking would look harmless. Illustrative numbers.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Using “cases attending the diabetes clinic” as cases. They are survivors who stayed in care. Use newly diagnosed (incident) cases wherever you can.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="ecological">
+    <h2>4. Ecological studies</h2>
+    <p class="point">An ecological study compares groups (countries, regions, years) using group averages, and answers questions about groups.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The unit of analysis is a population, not a person. Exposure is a group measure (average salt sales, tax rate, air pollution level); outcome is a group rate (stroke mortality). You never know which individuals were exposed or got ill.</dd>
+      <dt>Why it matters</dt>
+      <dd>It is cheap, uses routine data, and is sometimes the only option. For group-level exposures it is also the <em>right</em> level: a tax, a law, a reformulation policy or a city’s air quality acts on whole populations.</dd>
+      <dt>How to read it</dt>
+      <dd>Ask whether the question is about groups (“did countries that taxed sugary drinks see sales fall?”) or about people (“do individuals who drink more get diabetes?”). Ecological data can answer the first. For the second they are only a lead.</dd>
+      <dt>What a change means</dt>
+      <dd>With few groups, a handful of unusual ones can make the correlation. Six GCC countries give six points; any comparison rests on very little.</dd>
+    </dl>
+
+    <div class="callout example">
+      <div class="callout-title">Example</div>
+      <p>In 1975, Armstrong and Doll correlated national cancer rates with national diet across dozens of countries. Countries with higher fat intake had much higher breast cancer rates. The authors presented the correlations as leads to test in individual-level studies, and later individual-level studies gave a far weaker and more mixed picture. Rich countries differ from poor ones in fat intake and in reproductive patterns, screening and much else.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">Project 4</div>
+      <p>Your study of GCC sugary-drink taxes uses country-level sales and trade data. That is ecological, and appropriate: the tax is a country-level exposure and sales are a country-level outcome. The risk is in the next step. Claiming that the tax reduced individual diabetes risk needs individual data, or an explicit model linking the change in intake to disease, of the kind you will build in Project 1.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="fallacy">
+    <h2>5. The ecological fallacy</h2>
+    <p class="point">A relationship between group averages need not hold for individuals within the groups; it can even have the opposite sign.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The <strong>ecological fallacy</strong> is assuming that a group-level association describes individuals. Its mirror, the <strong>atomistic fallacy</strong>, is assuming an individual-level association explains differences between groups.</dd>
+      <dt>Why it matters</dt>
+      <dd>The between-group slope mixes the individual effect with everything else that differs between groups. In 1950 Robinson showed that US states with more immigrants had higher literacy, while immigrants themselves were less often literate than native-born residents: immigrants had settled in states with good schools.</dd>
+      <dt>How to read it</dt>
+      <dd>Try the widget. The within-group slope is the effect for individuals; the ecological slope uses only the group means; the pooled slope ignores groups. Make them disagree in sign.</dd>
+    </dl>
+
+    <div class="widget" data-widget="ecological-fallacy">
+      <div class="widget-title">Groups vs individuals</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Five groups of 40 people. Set the slope for individuals within each group and, separately, how group averages line up. The dashed line through the five group means is what an ecological study sees.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Adjusting an ecological analysis for group-level confounders and assuming that fixes it. Ecological bias can arise even without confounding, whenever the effect of exposure differs between groups or depends on other factors within groups. Only individual-level data inside groups can rule it out.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>This is Simpson’s paradox in regression form. A model trained on country-level aggregates and then used to score individuals has learned the between-country slope, not the within-person one. Mixed models with group means as separate predictors (“within-between” models) estimate both slopes at once.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="case-crossover">
+    <h2>6. Case-crossover designs</h2>
+    <p class="point">For a short-lived exposure and a sudden outcome, compare each case’s exposure just before the event with their own exposure at other times.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Only cases are studied. For each case, the <strong>hazard window</strong> is the short period just before the event, when a trigger would act. One or more <strong>control windows</strong> of the same length, at other times, show how often that person is usually exposed. Analysis is matched (conditional logistic regression), each person their own stratum.</dd>
+      <dt>Why it matters</dt>
+      <dd>Each person is their own control, so everything fixed about them (genes, sex, chronic disease, income) cancels out without being measured. It is the design for triggers: heavy exertion and heart attack, a hot day and kidney stones, air pollution and asthma attacks.</dd>
+      <dt>When it works</dt>
+      <dd>The exposure must vary within a person over time and act quickly; the outcome must be abrupt. It fails for chronic exposures (diet, smoking) and slow diseases.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · Hazard and control windows</div>
+      <svg class="viz-svg" viewBox="0 0 640 318" role="img" aria-label="Top: one person's timeline with brief exposure episodes. The hazard window just before the event contains an exposure; of two earlier control windows of equal length, one contains an exposure. Bottom: a 28-day month strip where the case day is compared with the same weekday in the other weeks of the month.">
+        <text x="20" y="18" class="viz-bold">One case, compared with themselves</text>
+        <g class="s2">
+          <rect x="200" y="62" width="60" height="36" class="fill-soft"/>
+          <rect x="360" y="62" width="60" height="36" class="fill-soft"/>
+        </g>
+        <g class="s3"><rect x="520" y="62" width="60" height="36" class="fill-soft"/></g>
+        <line x1="40" x2="600" y1="80" y2="80" class="viz-axis"/>
+        <g class="s1">
+          <rect x="120" y="74" width="16" height="12" class="fill"/>
+          <rect x="222" y="74" width="16" height="12" class="fill"/>
+          <rect x="300" y="74" width="10" height="12" class="fill"/>
+          <rect x="452" y="74" width="12" height="12" class="fill"/>
+          <rect x="545" y="74" width="16" height="12" class="fill"/>
+        </g>
+        <g class="s3"><circle cx="584" cy="80" r="7" class="dot"/></g>
+        <text x="584" y="52" text-anchor="middle" class="viz-small colour s3">event</text>
+        <text x="230" y="116" text-anchor="middle" class="viz-small colour s2">control window</text>
+        <text x="390" y="116" text-anchor="middle" class="viz-small colour s2">control window</text>
+        <text x="550" y="116" text-anchor="middle" class="viz-small colour s3">hazard window</text>
+        <text x="230" y="132" text-anchor="middle" class="viz-small viz-muted">exposed</text>
+        <text x="390" y="132" text-anchor="middle" class="viz-small viz-muted">not exposed</text>
+        <text x="550" y="132" text-anchor="middle" class="viz-small viz-muted">exposed</text>
+        <text x="40" y="52" class="viz-small"><tspan class="colour s1">Teal blocks</tspan> = brief exposures (e.g. heavy exertion)</text>
+        <text x="600" y="152" text-anchor="end" class="viz-small viz-muted">time →</text>
+
+        <text x="20" y="186" class="viz-bold">Time-stratified control days for a daily exposure such as heat</text>
+        <text x="109" y="206" text-anchor="middle" class="viz-small viz-muted">week 1</text>
+        <text x="249" y="206" text-anchor="middle" class="viz-small viz-muted">week 2</text>
+        <text x="389" y="206" text-anchor="middle" class="viz-small viz-muted">week 3</text>
+        <text x="529" y="206" text-anchor="middle" class="viz-small viz-muted">week 4</text>
+        <g class="s5">
+          <rect x="40" y="214" width="18" height="26" class="node"/><rect x="60" y="214" width="18" height="26" class="node"/><rect x="100" y="214" width="18" height="26" class="node"/><rect x="120" y="214" width="18" height="26" class="node"/><rect x="140" y="214" width="18" height="26" class="node"/><rect x="160" y="214" width="18" height="26" class="node"/>
+          <rect x="180" y="214" width="18" height="26" class="node"/><rect x="200" y="214" width="18" height="26" class="node"/><rect x="240" y="214" width="18" height="26" class="node"/><rect x="260" y="214" width="18" height="26" class="node"/><rect x="280" y="214" width="18" height="26" class="node"/><rect x="300" y="214" width="18" height="26" class="node"/>
+          <rect x="320" y="214" width="18" height="26" class="node"/><rect x="340" y="214" width="18" height="26" class="node"/><rect x="380" y="214" width="18" height="26" class="node"/><rect x="400" y="214" width="18" height="26" class="node"/><rect x="420" y="214" width="18" height="26" class="node"/><rect x="440" y="214" width="18" height="26" class="node"/>
+          <rect x="460" y="214" width="18" height="26" class="node"/><rect x="480" y="214" width="18" height="26" class="node"/><rect x="520" y="214" width="18" height="26" class="node"/><rect x="540" y="214" width="18" height="26" class="node"/><rect x="560" y="214" width="18" height="26" class="node"/><rect x="580" y="214" width="18" height="26" class="node"/>
+        </g>
+        <g class="s2">
+          <rect x="80" y="214" width="18" height="26" class="node-fill"/><rect x="220" y="214" width="18" height="26" class="node-fill"/><rect x="500" y="214" width="18" height="26" class="node-fill"/>
+        </g>
+        <g class="s3"><rect x="360" y="214" width="18" height="26" class="node-fill"/></g>
+        <text x="89" y="258" text-anchor="middle" class="viz-small colour s2">control</text>
+        <text x="229" y="258" text-anchor="middle" class="viz-small colour s2">control</text>
+        <text x="369" y="258" text-anchor="middle" class="viz-small colour s3">case day</text>
+        <text x="509" y="258" text-anchor="middle" class="viz-small colour s2">control</text>
+        <text x="20" y="286" class="viz-small">Compare the temperature on the case day with the same weekday in the other weeks of that month.</text>
+        <text x="20" y="304" class="viz-small viz-muted">Matching on month and weekday removes season, long-term trend and day-of-week patterns by design.</text>
+      </svg>
+      <figcaption>Top: the question is whether exposure is more common in the hazard window than in the same person’s control windows. Bottom: for daily exposures, control days are fixed in advance by calendar (same weekday, same month), including days after the event.</figcaption>
+    </figure>
+
+    <div class="callout example">
+      <div class="callout-title">Example</div>
+      <p>Maclure introduced the design in 1991 to study triggers of heart attack. Mittleman and colleagues used it in 1993: they asked people who had had a heart attack about heavy physical exertion in the hour before symptoms and compared that with their usual frequency of heavy exertion. The risk was clearly raised in the hour after heavy exertion, and much more so in people who rarely exercised.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">Project 6 · heat and outdoor workers</div>
+      <p>A case-crossover design fits heat and acute outcomes in the Gulf: hospital admissions for heat illness, kidney injury or injury at work among outdoor workers. Each admission is a case day; control days are the same weekday in the same month; exposure is daily heat stress from ERA5 at the worker’s location. Every fixed worker trait cancels, including nationality, job and baseline health, which are hard to measure well in migrant workforces.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Choosing control windows only before the event when the exposure trends over time. In a warming spell, or across the summer, earlier days are cooler than later ones, so “before” controls make heat look harmful even if it isn’t. Time-stratified control days on both sides of the event, within the same month, avoid this.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>This is a person fixed-effects model. Conditional logistic regression with one stratum per person is like demeaning features within each user before fitting: only within-person variation is used, so anything constant per person can’t confound. The price is the same as in ML: features that never vary within a person get no coefficient. Lecture 5.5 extends this to the self-controlled case series.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>A national cross-sectional survey finds that adults with diagnosed diabetes drink fewer sugary drinks than adults without diabetes. A newspaper concludes that sugary drinks don’t cause diabetes. What is wrong?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Reverse causation. Once diagnosed, people are told to cut sugary drinks, so current intake reflects the diagnosis. A snapshot can’t show what they drank before diabetes began. A cohort measuring intake before diagnosis, or restricting to undiagnosed people, would address it.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A study of a fatal cancer recruits cases from people currently receiving treatment. An exposure looks protective. Name the bias and the mechanism.</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Prevalence-incidence (Neyman) bias. If the exposure makes the cancer kill faster, exposed cases die before they can be recruited, so they are under-represented among current patients. The fix is incident cases, recruited at diagnosis.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Across 20 countries, higher average income goes with higher heart disease mortality. Within each country, richer people have lower heart disease mortality. Is one of these wrong?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>No. They answer different questions. Between countries, income goes with diet, ageing populations and other national factors. Within countries, income goes with better access to care and healthier behaviour. Using the country pattern to predict an individual commits the ecological fallacy.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Would a case-crossover design suit the effect of long-term salt intake on stroke? Of a heatwave on emergency kidney admissions?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Not for salt: intake is fairly stable within a person and works over years, so hazard and control windows would look alike. Yes for heat: daily heat varies within a person, acts within days, and admissions are abrupt.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A case-crossover study of air pollution and asthma uses as controls the same day one, two and three weeks before each attack. Pollution in the region fell steadily over the study years. In which direction is the estimate biased?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Towards protection. With pollution falling, the earlier control days tend to be more polluted than the case days, so case days look relatively clean and pollution looks less harmful than it is. (If pollution were rising, the bias would run the other way.) Time-stratified control days on both sides of the event, within the same month, remove most of this.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Lash, VanderWeele, Haneuse &amp; Rothman, <em>Modern Epidemiology</em>, 4th ed. (2021): chapters on study design and on ecologic studies.</li>
+      <li>Robinson, “Ecological correlations and the behavior of individuals”, <em>American Sociological Review</em> (1950).</li>
+      <li>Morgenstern, “Ecologic studies in epidemiology: concepts, principles, and methods”, <em>Annual Review of Public Health</em> (1995).</li>
+      <li>Armstrong &amp; Doll, “Environmental factors and cancer incidence and mortality in different countries, with special reference to dietary practices”, <em>International Journal of Cancer</em> (1975).</li>
+      <li>Maclure, “The case-crossover design: a method for studying transient effects on the risk of acute events”, <em>American Journal of Epidemiology</em> (1991).</li>
+      <li>Mittleman et al., “Triggering of acute myocardial infarction by heavy physical exertion”, <em>New England Journal of Medicine</em> (1993).</li>
+      <li>Janes, Sheppard &amp; Lumley, “Case-crossover analyses of air pollution exposure data: referent selection strategies and their implications for bias”, <em>Epidemiology</em> (2005).</li>
+      <li>Sackett, “Bias in analytic research”, <em>Journal of Chronic Diseases</em> (1979): prevalence-incidence (Neyman) bias.</li>
+      <li>Saudi Ministry of Health and Institute for Health Metrics and Evaluation, Saudi Health Interview Survey (2013).</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="2-03-case-control-studies.html"><small>Previous</small>2.3 Case-control studies</a>
+    <a class="next" href="2-05-random-error.html"><small>Next</small>2.5 Random error</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

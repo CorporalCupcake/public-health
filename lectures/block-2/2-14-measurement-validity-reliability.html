@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>2.14 Measurement: validity, reliability and agreement · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/2-14.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-2">Block 2</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 2.14</p>
+  <h1>Measurement: validity, reliability and agreement (kappa, ICC, Bland-Altman)</h1>
+  <div class="lecture-meta">
+    <span>Block 2 · Epidemiology</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>Every exposure, outcome and label in a study is a measurement, and each can be wrong in two ways: consistently off target (a <strong>validity</strong> problem) or inconsistent from one reading to the next (a <strong>reliability</strong> problem). This lecture gives you the three tools for checking measurements: <strong>kappa</strong> for categories, the <strong>ICC</strong> for continuous reliability, and <strong>Bland-Altman</strong> limits of agreement for comparing two methods. Project 2 rests on one measurement choice, 24-hour urine over spot urine, and you need to be able to defend it.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#vr">Validity and reliability</a></li>
+      <li><a href="#icc">Reliability of continuous measures: the ICC</a></li>
+      <li><a href="#kappa">Agreement on categories: Cohen’s kappa</a></li>
+      <li><a href="#corr">Correlation is not agreement</a></li>
+      <li><a href="#ba">Bland-Altman limits of agreement</a></li>
+      <li><a href="#reference">When the reference is imperfect</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="vr">
+    <h2>1. Validity and reliability</h2>
+    <p class="point">Validity asks whether a measure hits the true value; reliability asks whether it gives the same answer twice. They are separate, and you need both.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>Validity</strong>: the measure captures what it claims to, without systematic error. It is checked against a better measure (<em>criterion validity</em>). <strong>Reliability</strong>: repeat measurements of the same thing agree. It is checked by repeating the test over time (<em>test–retest</em>), across observers (<em>inter-rater</em>) or within one observer (<em>intra-rater</em>).</dd>
+      <dt>Why it matters</dt>
+      <dd>Poor validity biases results in a direction you may not know. Poor reliability adds noise, which usually dilutes associations towards the null (regression dilution, Lecture 1.8) and wastes sample size.</dd>
+      <dt>How to read it</dt>
+      <dd>Reliability is necessary but not sufficient: an unreliable measure cannot be valid for individuals, but a perfectly reliable one can be consistently wrong.</dd>
+      <dt>What a change means</dt>
+      <dd>Averaging repeated readings improves reliability. It does nothing for validity. Three readings from a device that reads 5 mmHg high are still 5 mmHg high.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · Reliability and validity are separate axes</div>
+      <svg class="viz-svg" viewBox="0 0 640 330" role="img" aria-label="A two-by-two grid. Columns: high reliability, where repeat readings bunch together, and low reliability, where they scatter. Rows: valid, centred on the true value, and not valid, off target. Each cell shows six readings on a number line against the true value, with an example measure.">
+        <text x="255" y="20" text-anchor="middle" class="viz-bold">High reliability</text>
+        <text x="255" y="36" text-anchor="middle" class="viz-small viz-muted">repeat readings bunch together</text>
+        <text x="510" y="20" text-anchor="middle" class="viz-bold">Low reliability</text>
+        <text x="510" y="36" text-anchor="middle" class="viz-small viz-muted">repeat readings scatter</text>
+        <text x="60" y="110" text-anchor="middle" class="viz-bold">Valid</text>
+        <text x="60" y="128" text-anchor="middle" class="viz-small viz-muted">centred on</text>
+        <text x="60" y="143" text-anchor="middle" class="viz-small viz-muted">the true value</text>
+        <text x="60" y="240" text-anchor="middle" class="viz-bold">Not valid</text>
+        <text x="60" y="258" text-anchor="middle" class="viz-small viz-muted">systematically</text>
+        <text x="60" y="273" text-anchor="middle" class="viz-small viz-muted">off target</text>
+        <g class="s1"><rect x="130" y="50" width="250" height="125" rx="10" class="node-fill"/></g>
+        <g class="s2"><rect x="385" y="50" width="250" height="125" rx="10" class="node"/></g>
+        <g class="s2"><rect x="130" y="180" width="250" height="125" rx="10" class="node"/></g>
+        <g class="s3"><rect x="385" y="180" width="250" height="125" rx="10" class="node"/></g>
+        <!-- number lines and true values -->
+        <g>
+          <line x1="150" y1="105" x2="360" y2="105" class="viz-axis"/>
+          <line x1="405" y1="105" x2="615" y2="105" class="viz-axis"/>
+          <line x1="150" y1="235" x2="360" y2="235" class="viz-axis"/>
+          <line x1="405" y1="235" x2="615" y2="235" class="viz-axis"/>
+          <line x1="230" y1="78" x2="230" y2="118" class="edge strong" stroke-dasharray="3 3"/>
+          <line x1="485" y1="78" x2="485" y2="118" class="edge strong" stroke-dasharray="3 3"/>
+          <line x1="230" y1="208" x2="230" y2="248" class="edge strong" stroke-dasharray="3 3"/>
+          <line x1="485" y1="208" x2="485" y2="248" class="edge strong" stroke-dasharray="3 3"/>
+          <text x="230" y="72" text-anchor="middle" class="viz-small viz-muted">true value</text>
+          <text x="485" y="72" text-anchor="middle" class="viz-small viz-muted">true value</text>
+          <text x="230" y="202" text-anchor="middle" class="viz-small viz-muted">true value</text>
+          <text x="485" y="202" text-anchor="middle" class="viz-small viz-muted">true value</text>
+        </g>
+        <!-- readings -->
+        <g class="s1"><circle cx="222" cy="105" r="5" class="dot"/><circle cx="226" cy="98" r="5" class="dot"/><circle cx="231" cy="105" r="5" class="dot"/><circle cx="235" cy="98" r="5" class="dot"/><circle cx="239" cy="105" r="5" class="dot"/><circle cx="229" cy="91" r="5" class="dot"/></g>
+        <g class="s2"><circle cx="425" cy="105" r="5" class="dot"/><circle cx="455" cy="98" r="5" class="dot"/><circle cx="478" cy="105" r="5" class="dot"/><circle cx="500" cy="98" r="5" class="dot"/><circle cx="520" cy="105" r="5" class="dot"/><circle cx="548" cy="98" r="5" class="dot"/></g>
+        <g class="s2"><circle cx="300" cy="235" r="5" class="dot"/><circle cx="304" cy="228" r="5" class="dot"/><circle cx="309" cy="235" r="5" class="dot"/><circle cx="313" cy="228" r="5" class="dot"/><circle cx="317" cy="235" r="5" class="dot"/><circle cx="307" cy="221" r="5" class="dot"/></g>
+        <g class="s3"><circle cx="500" cy="235" r="5" class="dot"/><circle cx="525" cy="228" r="5" class="dot"/><circle cx="548" cy="235" r="5" class="dot"/><circle cx="566" cy="228" r="5" class="dot"/><circle cx="590" cy="235" r="5" class="dot"/><circle cx="608" cy="228" r="5" class="dot"/></g>
+        <!-- examples -->
+        <g text-anchor="middle">
+          <text x="255" y="143" class="viz-small">Validated BP device,</text>
+          <text x="255" y="160" class="viz-small">average of three readings</text>
+          <text x="510" y="143" class="viz-small">One 24-hour urine: right on</text>
+          <text x="510" y="160" class="viz-small">average, varies day to day</text>
+          <text x="255" y="273" class="viz-small">A scale that always</text>
+          <text x="255" y="290" class="viz-small">reads 2 kg heavy</text>
+          <text x="510" y="273" class="viz-small">Self-reported salt use:</text>
+          <text x="510" y="290" class="viz-small">noisy and biased</text>
+        </g>
+      </svg>
+      <figcaption>Each cell shows six repeat readings of one person against their true value. Moving right costs reliability; moving down costs validity. Averaging readings moves you left, never up.</figcaption>
+    </figure>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Calling a questionnaire “validated” because its test–retest reliability is high. Answering the same way twice shows consistency, not truth. People who under-report salt use do so every time.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>A watch that is always exactly five minutes fast is perfectly reliable and never valid. A watch that is right on average but drifts a minute either way each day is valid on average and unreliable for catching a train.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="icc">
+    <h2>2. Reliability of continuous measures: the ICC</h2>
+    <p class="point">The intraclass correlation coefficient (ICC) is the share of all the variation in readings that comes from real differences between people rather than from measurement noise.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Take repeated measurements on many people. Split the total variance into the part between people (signal) and the part within a person (noise). The ICC is the signal share, from 0 (all noise) to 1 (no noise).</dd>
+      <dt>Why it matters</dt>
+      <dd>For a measurement with classical random error, the ICC is the factor by which a regression slope on that exposure is shrunk. An ICC of 0.5 roughly halves a true association. This is regression dilution in one number.</dd>
+      <dt>How to read it</dt>
+      <dd>Koo and Li’s widely used bands: below 0.5 poor, 0.5–0.75 moderate, 0.75–0.9 good, above 0.9 excellent. Apply them to the confidence interval, not only the point estimate. Check which ICC form was used: <em>agreement</em> forms penalise a systematic offset between raters; <em>consistency</em> forms ignore it.</dd>
+      <dt>What a change means</dt>
+      <dd>The ICC rises if people differ more, even with the same measurement noise. The same blood pressure device has a higher ICC in a mixed clinic population than in a group of healthy 20-year-olds.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Quoting an ICC as a fixed property of an instrument. It belongs to the instrument <em>in a population</em>. An ICC from a varied validation sample overstates reliability in a narrower study population, such as your own.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example</div>
+      <p>Sodium intake swings from day to day, so a single 24-hour urine has modest reliability for an individual’s usual intake, even though it is the most valid measure available (Lecture 1.8). A study that collects two or more 24-hour urines on a subsample can estimate the ICC and correct its risk estimates for dilution.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>The ICC is the share of variance explained by a random intercept for person: the R² of “who was measured”. Low ICC means noisy features, and noise in an input (unlike noise in the label) biases a linear model’s coefficient towards zero. That is the errors-in-variables problem.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="kappa">
+    <h2>3. Agreement on categories: Cohen’s kappa</h2>
+    <p class="point">Kappa measures how much two raters agree beyond the agreement they would reach by chance, given how often each says “yes”.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Raw agreement minus chance agreement, divided by the most that could be gained over chance. 1 is perfect agreement; 0 is no better than chance.</dd>
+      <dt>Why it matters</dt>
+      <dd>It is the standard check for inter-rater reliability: two screeners in a systematic review (Lecture 2.12), two cardiologists reading ECGs, two coders assigning causes of death.</dd>
+      <dt>How to read it</dt>
+      <dd>Landis and Koch’s labels are the common shorthand: 0.21–0.40 fair, 0.41–0.60 moderate, 0.61–0.80 substantial, above 0.80 almost perfect. They called the bands arbitrary. For ordered categories (none, mild, severe), use <em>weighted</em> kappa, which gives partial credit for near misses.</dd>
+      <dt>What a change means</dt>
+      <dd>For the same raters, kappa drops as the finding gets rarer. A kappa going from 0.8 to 0.3 can mean the raters got worse, or only that you moved from a clinic to a screening population.</dd>
+    </dl>
+
+    <div class="widget" data-widget="kappa-prevalence">
+      <div class="widget-title">Same readers, different prevalence</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Two ECG readers each classify AF correctly at the accuracy you set. Drag the prevalence from 30% (a cardiology clinic) down to 2% (population screening). Watch raw agreement stay flat while kappa collapses.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap · the prevalence paradox</div>
+      <p>Reading a low kappa as poor raters when the finding is rare. When almost everything is negative, chance alone produces high agreement, so kappa has little room to rise above it. Feinstein and Cicchetti called this “high agreement but low kappa”. Report the 2×2 table, the prevalence, and positive and negative agreement separately, not kappa alone.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example</div>
+      <p>Two cardiologists who each read 95% of ECGs correctly, with independent errors, agree on about 90% of tracings at any prevalence. Kappa is about 0.78 when 30% have AF, but about 0.25 when 2% do (illustrative numbers). Same readers, same skill, very different kappa.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="corr">
+    <h2>4. Correlation is not agreement</h2>
+    <p class="point">A high correlation shows that two methods rank people in the same order; it says nothing about whether they give the same number.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Correlation measures how well the points fit <em>any</em> straight line. Agreement asks whether they fit one particular line: y = x.</dd>
+      <dt>Why it matters</dt>
+      <dd>Method-comparison papers often report r = 0.9 and declare a new method valid. A device that reads every person 25 mmol too high, or one that compresses everyone towards the middle, can still have r above 0.9.</dd>
+      <dt>How to read it</dt>
+      <dd>Correlation also depends on how spread out the people are. Test the same two methods in a wide range of people and r looks excellent; test them in a narrow range and it looks poor. The disagreement between methods has not changed.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Using a paired t-test to show “no significant difference” between methods. It tests only the average gap. Two methods can agree on average and disagree by 60 mmol in individuals, and a small study will call that “no difference”.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>A thermometer in Celsius and one in Fahrenheit correlate perfectly. Nobody would say they agree.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="ba">
+    <h2>5. Bland-Altman limits of agreement</h2>
+    <p class="point">Plot the difference between two methods against their average; the mean difference is the bias, and the mean ± 1.96 SD of the differences is the range within which 95% of individual disagreements fall.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>For each person, compute the new-method reading minus the reference reading. The average is the <strong>bias</strong>. The bias plus and minus 1.96 standard deviations of those differences are the <strong>95% limits of agreement</strong>.</dd>
+      <dt>Why it matters</dt>
+      <dd>It answers the clinical question directly: “if I use the new method instead of the old one, how far off could I be for one patient?”</dd>
+      <dt>How to read it</dt>
+      <dd>Decide in advance what difference would not matter, then compare the limits with it. Look for patterns: a sloping cloud means <em>proportional bias</em> (the methods disagree more at high or low values); a fan shape means the error grows with the level, so analyse ratios or log values instead.</dd>
+      <dt>What a change means</dt>
+      <dd>Limits of agreement of −20 to +20 mmol/day might be fine for a population survey and useless for an individual patient. The plot does not decide; your threshold does.</dd>
+    </dl>
+
+    <div class="widget" data-widget="bland-altman">
+      <div class="widget-title">High correlation, poor agreement</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">A new sodium method is compared with 24-hour urine in 120 adults. Start with “High r, poor agreement”: the scatter looks excellent, the Bland-Altman plot does not. Then try the spot-urine-like pattern and the narrow-range case.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reporting only the bias. A mean difference of 2 mmol/day sounds reassuring; limits of agreement of −60 to +64 mean the method is useless for individuals. Always report both, with confidence intervals for the limits when the sample is small.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example</div>
+      <p>Blood pressure monitors are validated this way. The ISO 81060-2 standard requires, against reference readings, a mean difference within ±5 mmHg and a standard deviation of differences no larger than 8 mmHg. A device with r = 0.95 but a 10 mmHg bias fails.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">Example · Project 2</div>
+      <p>When you screen GCC studies, you will meet spot-urine equations “validated” against 24-hour urine with a correlation or a matching group mean. Neither shows individual agreement. Look for a Bland-Altman plot. Spot equations typically show proportional bias: they overestimate at low intake and underestimate at high intake (Lecture 1.8). That is why Project 2 includes 24-hour urine only.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="reference">
+    <h2>6. When the reference is imperfect</h2>
+    <p class="point">Every validation compares one measure with another, and the reference has its own errors; know them before you trust the comparison.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A <em>gold standard</em> is rarely gold. 24-hour urine misses sodium when collections are incomplete. Echocardiography readers disagree on ejection fraction. Chart review depends on what was written down.</dd>
+      <dt>Why it matters</dt>
+      <dd>Errors in the reference make a good new method look worse (it is penalised for disagreeing with a wrong answer), or a bad one look better if both share the same error.</dd>
+      <dt>What to do</dt>
+      <dd>Check the reference’s own quality (for urine, creatinine-based completeness checks); use the average of several reference readings; and feed the measured sensitivity, specificity or ICC into a bias analysis (Lecture 2.13).</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Treating disagreement with the reference as error in the new method only. If two methods disagree, either can be wrong. Bland-Altman plots against the <em>mean</em> of the two, not against the reference, for this reason.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>Your labels are measurements too. If two cardiologists labelling ECGs agree with kappa 0.6, no model can be judged much above that agreement against one of them, and a model that “beats the cardiologist” may simply match the other cardiologist’s errors. Report inter-annotator agreement for your reference labels, and when labels are noisy, use an adjudicated panel as the test-set reference. This matters for Project 5B: ask how each AI device’s reference standard was produced.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>A food frequency questionnaire for sodium gives almost identical answers when people complete it twice, a month apart. Is it a valid measure of sodium intake?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Not necessarily. That shows test–retest reliability. Validity needs a comparison with a better measure, such as repeated 24-hour urines. Questionnaires often under-report sodium consistently, which is high reliability with poor validity.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Two screeners in your systematic review agree on 97% of abstracts, but kappa is only 0.45. Your co-author says the screening was unreliable. What do you check first?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The prevalence of “include”. If only a few percent of abstracts are eligible, chance agreement on “exclude” is very high and kappa is pulled down even for good screeners. Look at the 2×2 table and positive agreement: what matters is how often they agreed on the abstracts that either one wanted to include.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A paper validates a cuffless blood pressure watch against a cuff device with r = 0.93 and concludes it is accurate. What would you ask for?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>A Bland-Altman analysis: the mean difference and the 95% limits of agreement, ideally judged against a pre-set threshold such as the ISO criterion (mean within ±5 mmHg, SD at most 8 mmHg). Also the range of blood pressures in the sample, since a wide range inflates r without improving agreement.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Your exposure has an ICC of 0.4 for a single measurement. What does that predict for your association estimate, and what could you do?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>With classical random error, the estimated slope will be heavily diluted towards the null, to roughly 40% of its true size. Options: take repeat measurements and average them, measure repeats on a subsample to estimate and correct the dilution, or run a measurement-error bias analysis (Lecture 2.13).</p></div>
+        </details>
+      </li>
+      <li>
+        <p>An AI-ECG model scores lower agreement with Cardiologist A than Cardiologist B does. Does that prove the model is worse than Cardiologist B?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>No. Cardiologist A is an imperfect reference. B may share A’s errors or style, which raises their agreement without making either correct. A fairer test uses an adjudicated panel or an objective reference (for example echocardiography for ejection fraction) and reports inter-reader agreement alongside the model’s results.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Bland &amp; Altman, “Statistical methods for assessing agreement between two methods of clinical measurement”, <em>The Lancet</em> (1986): limits of agreement and why correlation is the wrong tool.</li>
+      <li>Koo &amp; Li, “A guideline of selecting and reporting intraclass correlation coefficients for reliability research”, <em>Journal of Chiropractic Medicine</em> (2016): ICC forms and interpretation bands.</li>
+      <li>Landis &amp; Koch, “The measurement of observer agreement for categorical data”, <em>Biometrics</em> (1977): the kappa labels.</li>
+      <li>Feinstein &amp; Cicchetti, “High agreement but low kappa: I. The problems of two paradoxes”, and Cicchetti &amp; Feinstein, “II. Resolving the paradoxes”, <em>Journal of Clinical Epidemiology</em> (1990).</li>
+      <li>ISO 81060-2, <em>Non-invasive sphygmomanometers: clinical investigation of intermittent automated measurement type</em> (2018, amended 2020): the device validation criteria.</li>
+      <li>Rothman, Greenland &amp; Lash (eds), <em>Modern Epidemiology</em>, 4th edition: the chapter on measurement error and misclassification.</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="2-13-quantitative-bias-analysis.html"><small>Previous</small>2.13 Quantitative bias analysis</a>
+    <a class="next" href="2-15-clinical-epidemiology.html"><small>Next</small>2.15 Clinical epidemiology</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

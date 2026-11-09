@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>2.7 Selection bias and collider bias · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/2-07.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-2">Block 2</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 2.7</p>
+  <h1>Selection bias and collider bias</h1>
+  <div class="lecture-meta">
+    <span>Block 2 · Epidemiology</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p><strong>Selection bias</strong> arises when the people analysed are picked, or kept, in a way that depends on both the exposure and the outcome. Its engine is the <strong>collider</strong>: a variable caused by two others. Restricting to, or adjusting for, a collider creates associations that don’t exist in the population. This one idea explains Berkson’s bias, the obesity paradox, biased hospital-based AI training sets and much loss-to-follow-up bias. It is a standard risk-of-bias domain in Project 2 and a design worry in Projects 3 and 5A.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#who">Unrepresentative is not the same as biased</a></li>
+      <li><a href="#collider">Colliders: conditioning on a common effect</a></li>
+      <li><a href="#berkson">Berkson’s bias: hospital samples</a></li>
+      <li><a href="#paradox">Paradoxes from selecting on disease</a></li>
+      <li><a href="#followup">Loss to follow-up and healthy people</a></li>
+      <li><a href="#defend">Defences</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="who">
+    <h2>1. Unrepresentative is not the same as biased</h2>
+    <p class="point">A sample can differ from the population and still give an unbiased exposure–outcome estimate; selection bias needs selection that depends on both exposure and outcome.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Two different problems share the word “selection”. <strong>Generalisability</strong> (external validity) asks whether the result applies to other people. <strong>Selection bias</strong> (an internal-validity problem) means the association among those studied differs from the association in the population they came from.</dd>
+      <dt>Why it matters</dt>
+      <dd>Prevalence and averages need a representative sample. Exposure–outcome associations often don’t, as long as who takes part doesn’t depend jointly on exposure and outcome. Mixing the two leads to dismissing good cohorts and trusting bad ones.</dd>
+      <dt>How to read it</dt>
+      <dd>For a prevalence estimate (as in Project 2’s salt intake), ask “who was sampled, and who responded?” For an association, ask “could entry or retention depend on the exposure <em>and</em> on the outcome or its causes?”</dd>
+    </dl>
+
+    <div class="callout example">
+      <div class="callout-title">Example · UK Biobank</div>
+      <p>About 5.5% of the 9 million people invited joined UK Biobank. Participants were less likely to smoke or be obese, and their death rates were much lower than the general population’s (Fry and colleagues, 2017): a clear healthy-volunteer effect. So UK Biobank is a poor source for prevalence. Yet when Batty and colleagues (2020) compared its risk-factor associations with those from representative surveys with ordinary response rates, they matched closely: the smoking hazard ratio for cardiovascular death was about 2.0 in both.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>“The response rate was only 30%, so the results are biased.” Low response threatens prevalence estimates directly. For associations, it causes bias only if response depends on both exposure and outcome. Ask how, not just how much.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="collider">
+    <h2>2. Colliders: conditioning on a common effect</h2>
+    <p class="point">When two arrows point into the same variable, that variable is a collider; leave it alone and the path through it is closed, condition on it and the path opens.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A <strong>collider</strong> is a common effect of two variables. <em>Conditioning</em> means restricting to one level of it, stratifying on it or adjusting for it in a model. Selection into a study is conditioning: the analysis contains only people with “selected = yes”. In a DAG this is drawn as a box around the selection node.</dd>
+      <dt>Why it matters</dt>
+      <dd>It is the opposite of confounding. Confounding paths are open until you adjust; collider paths are closed until you adjust. Adjusting for the wrong variable creates bias where there was none.</dd>
+      <dt>How to read it</dt>
+      <dd>Trace every path between exposure and outcome. A path with a collider on it carries no association, unless you have conditioned on the collider or on something it causes.</dd>
+      <dt>What a change means</dt>
+      <dd>The stronger both causes drive selection, and the stricter the selection, the larger the spurious association.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · Selection on a collider</div>
+      <svg class="viz-svg" viewBox="0 0 640 236" role="img" aria-label="Two panels. Left: conditions A and B both cause hospital admission; with admission not conditioned on, A and B are independent. Right: admission is boxed, meaning the study includes only admitted people; a spurious link appears between A and B.">
+        <defs>
+          <marker id="l27-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead accent"/></marker>
+          <marker id="l27-arrow-m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead"/></marker>
+        </defs>
+        <line x1="320" y1="10" x2="320" y2="226" class="viz-grid"/>
+        <g text-anchor="middle">
+          <text x="160" y="20" class="viz-bold">Whole population</text>
+          <text x="480" y="20" class="viz-bold">Hospital study (selected)</text>
+        </g>
+        <!-- left panel -->
+        <g class="s5">
+          <rect x="20" y="42" width="100" height="36" rx="8" class="node"/>
+          <rect x="200" y="42" width="100" height="36" rx="8" class="node"/>
+        </g>
+        <g class="s2"><rect x="100" y="142" width="120" height="36" rx="8" class="node-fill"/></g>
+        <path d="M85,78 L128,138" class="edge" marker-end="url(#l27-arrow-m)"/>
+        <path d="M235,78 L192,138" class="edge" marker-end="url(#l27-arrow-m)"/>
+        <!-- right panel -->
+        <g class="s5">
+          <rect x="340" y="42" width="100" height="36" rx="8" class="node"/>
+          <rect x="520" y="42" width="100" height="36" rx="8" class="node"/>
+        </g>
+        <g class="s2"><rect x="420" y="142" width="120" height="36" rx="8" class="node-fill"/></g>
+        <rect x="413" y="135" width="134" height="50" class="edge strong"/>
+        <path d="M405,78 L446,131" class="edge accent" marker-end="url(#l27-arrow)"/>
+        <path d="M555,78 L514,131" class="edge accent" marker-end="url(#l27-arrow)"/>
+        <line x1="444" y1="60" x2="516" y2="60" class="stroke s3 dashed"/>
+        <text x="480" y="50" text-anchor="middle" class="viz-small colour s3">spurious link</text>
+        <g text-anchor="middle">
+          <text x="70" y="65">Condition A</text><text x="250" y="65">Condition B</text>
+          <text x="160" y="165">Admitted</text>
+          <text x="390" y="65">Condition A</text><text x="570" y="65">Condition B</text>
+          <text x="480" y="165">Admitted</text>
+          <text x="160" y="210" class="viz-small viz-muted">A and B independent</text>
+          <text x="480" y="210" class="viz-small viz-muted">box = only admitted people analysed</text>
+        </g>
+      </svg>
+      <figcaption>Either condition can get you admitted. Among admitted people, someone without condition A probably has condition B, or they wouldn’t be there. That “explaining away” creates a negative association that does not exist in the population.</figcaption>
+    </figure>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Among successful film actors, talent and good looks seem negatively related. Not because talent makes you plain, but because it takes talent <em>or</em> looks to get cast. Look only at people who made it and the less talented ones are, by necessity, the better-looking.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>This is “explaining away” in a Bayesian network: two independent parents become dependent once you observe their shared child. In a model, adding a feature that is a common effect of the exposure and the outcome (a test ordered, a referral, an admission) opens exactly this path. Conditioning on a feature is not neutral.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="berkson">
+    <h2>3. Berkson’s bias: hospital samples</h2>
+    <p class="point">Studying only hospital patients can create associations between diseases, or between exposures and diseases, that don’t exist outside the hospital.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Berkson (1946) showed that if two conditions each raise the chance of admission, they become associated among inpatients even when independent in the community. The same holds for any filter that both variables pass through: referral to a specialist centre, being tested, joining a registry.</dd>
+      <dt>Why it matters</dt>
+      <dd>Hospital-based case-control studies, clinic cohorts and most EHR data are selected this way. Lecture 2.3’s rule, controls must come from the population that produced the cases, is the defence.</dd>
+      <dt>How to read it</dt>
+      <dd>Ask what determined entry into the data. If entry depends on the exposure and on the outcome (or its causes), expect bias; its direction depends on how they combine.</dd>
+    </dl>
+
+    <div class="widget" data-widget="berkson-collider">
+      <div class="widget-title">Admission creates a correlation</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Two conditions with no link in the population. Raise the admission cut-off and watch the correlation among admitted patients turn negative. Switch to “at random” to see that selection alone is not the problem: selection that depends on both is.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · COVID-19</div>
+      <p>Early in the pandemic, several studies of tested or hospitalised patients suggested that smokers were less likely to have severe COVID-19. Griffith and colleagues (2020) showed how this can arise from collider bias: being tested or admitted depended both on COVID-19 symptoms and on other conditions, such as smoking-related illness. Restricting to tested people made smoking and COVID-19 look negatively related.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Assuming a big sample protects you. Selection bias does not shrink with sample size. Ten million admitted patients give a very precise estimate of the wrong association.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="paradox">
+    <h2>4. Paradoxes from selecting on disease</h2>
+    <p class="point">Studying only people who already have a disease conditions on a collider, and can make a known risk factor look harmless or even protective.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>Index event bias</strong>: in studies of recurrence or prognosis, everyone has had a first event (the index event). If the exposure and some other cause both lead to that first event, then among patients, those without the exposure tend to have more of the other cause. If that other cause also affects the outcome, the exposure’s effect is distorted, usually toward the null and sometimes past it.</dd>
+      <dt>Why it matters</dt>
+      <dd>Many famous “paradoxes” follow this pattern: the obesity paradox in heart failure, the birth-weight paradox, and paradoxes in recurrent stroke and venous thrombosis.</dd>
+      <dt>How to read it</dt>
+      <dd>When a well-established risk factor looks protective among patients with the disease it causes, suspect selection before biology.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · The obesity paradox as collider bias</div>
+      <svg class="viz-svg" viewBox="0 0 640 236" role="img" aria-label="DAG: obesity and other causes both cause heart failure, which is boxed because only heart failure patients are studied. Other causes also raise death risk. The arrow from obesity to death is the question.">
+        <defs>
+          <marker id="l27-arrow2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead accent"/></marker>
+          <marker id="l27-arrow2m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead"/></marker>
+        </defs>
+        <g class="s2"><rect x="40" y="50" width="140" height="40" rx="8" class="node-fill"/></g>
+        <g class="s4"><rect x="250" y="50" width="140" height="40" rx="8" class="node-fill"/></g>
+        <rect x="243" y="43" width="154" height="54" class="edge strong"/>
+        <g class="s5"><rect x="460" y="45" width="160" height="50" rx="8" class="node"/></g>
+        <g class="s3"><rect x="250" y="170" width="140" height="40" rx="8" class="node-fill"/></g>
+        <g text-anchor="middle">
+          <text x="110" y="75" class="viz-bold">Obesity</text>
+          <text x="320" y="75" class="viz-bold">Heart failure</text>
+          <text x="540" y="66" class="viz-bold">Other causes</text>
+          <text x="540" y="84" class="viz-small viz-muted">e.g. valve disease, genes</text>
+          <text x="320" y="195" class="viz-bold">Death</text>
+          <text x="320" y="122" class="viz-small viz-muted">box: only heart-failure patients studied</text>
+        </g>
+        <path d="M180,70 L239,70" class="edge accent" marker-end="url(#l27-arrow2)"/>
+        <path d="M460,70 L401,70" class="edge accent" marker-end="url(#l27-arrow2)"/>
+        <path d="M500,95 L388,166" class="edge accent" marker-end="url(#l27-arrow2)"/>
+        <path d="M140,90 L252,166" class="edge" stroke-dasharray="6 5" marker-end="url(#l27-arrow2m)"/>
+        <text x="180" y="152" text-anchor="end" class="viz-small viz-muted">effect asked about</text>
+        <text x="468" y="150" class="viz-small">also raise death risk</text>
+      </svg>
+      <figcaption>Teal arrows are the path opened by selecting heart-failure patients: obesity → [heart failure] ← other causes → death. Thin patients with heart failure more often got it from other, deadlier causes, so obesity looks protective. Reverse causation (illness causing weight loss) adds to the effect.</figcaption>
+    </figure>
+
+    <div class="callout example">
+      <div class="callout-title">Example</div>
+      <p>Among low-birth-weight babies, those born to smokers have lower mortality than those born to non-smokers. Smoking does not protect them. Low birth weight has several causes; among low-birth-weight babies, those whose mothers did not smoke more often owe their low weight to other causes, such as birth defects, that are far more lethal (Hernández-Díaz and colleagues, 2006).</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Adjusting the paradox away with more covariates. You can’t fix collider bias by adjusting for the collider; that is what caused it. The fix is to measure the shared causes (and adjust for them), or to change the question: study people from before the first event.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="followup">
+    <h2>5. Loss to follow-up and healthy people</h2>
+    <p class="point">Selection doesn’t stop at entry: who drops out, who stays employed and who stays in the country are selection too.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>Loss to follow-up</strong> biases a cohort when leaving depends on exposure and on outcome risk, for example sicker exposed people dropping out. The <strong>healthy worker effect</strong>: employed people are healthier than the general population, because illness pushes people out of work. The <strong>healthy volunteer effect</strong>: people who join studies are healthier and more health-conscious.</dd>
+      <dt>Why it matters</dt>
+      <dd>A cohort that loses 20% of people can still be unbiased if losses are unrelated to exposure and outcome; one that loses 5% can be badly biased if all of them were the sickest exposed people.</dd>
+      <dt>How to read it</dt>
+      <dd>Compare those lost with those kept on baseline exposure and risk factors. Similar profiles are reassuring, not proof. Comparing workers with the general population is unfair; compare workers with other workers.</dd>
+    </dl>
+
+    <div class="callout gulf">
+      <div class="callout-title">Example · GCC migrant workers</div>
+      <p>Migrant workers in the Gulf generally pass a medical examination before they receive a work permit, and workers who become seriously ill or lose their job often leave the country. Both are selection. Cross-sectional surveys of resident workers miss those who left sick, so they understate disease. Cohorts lose them to follow-up, and their deaths may happen elsewhere. This is a healthy-migrant effect layered on a healthy-worker effect, and it can make expatriates look healthier than their exposures would predict.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Analysing only complete cases and saying nothing. A “complete-case analysis” is a selected sample. Report how many were lost, from which groups, and how the results change under reasonable assumptions about them.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="defend">
+    <h2>6. Defences</h2>
+    <p class="point">Prevent selection bias at the design stage; once it is in the data, you can only correct it with information about who was left out.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Stage</th><th>Defence</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Design</strong></td><td>Define the source population; sample cases and controls (or exposed and unexposed) from it in the same way</td><td>Population-based controls rather than other hospital patients</td></tr>
+          <tr><td><strong>Conduct</strong></td><td>Chase follow-up hard; record reasons for loss</td><td>Linkage to death registries so no death is lost</td></tr>
+          <tr><td><strong>Analysis</strong></td><td>Reweight those observed to stand in for those lost; run sensitivity analyses</td><td>Inverse-probability-of-censoring weights (Block 4); bias analysis (Lecture 2.13)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <dl class="facets">
+      <dt>Why it matters</dt>
+      <dd>Weighting works only if you measured the variables that drive selection. If selection depends on something unrecorded, no analysis recovers the population.</dd>
+      <dt>How to read it</dt>
+      <dd>In Project 2’s risk-of-bias assessment, ask for each study: how were participants sampled, what was the response rate, how many 24-hour urine collections were incomplete and excluded, and could exclusion relate to salt intake?</dd>
+    </dl>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>Training data are selected data. An ECG model trained on patients whose clinicians ordered an echocardiogram learns from people who were already suspected of heart disease. Its accuracy there says little about performance in screening, and any association it learns between features may be a product of who got the test. This is dataset shift, with a causal explanation: the selection node.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>In Project 2, excluding incomplete 24-hour urine collections is necessary, because they under-measure sodium. But completers may differ from non-completers in age, sex, work pattern and diet. If they do, the pooled mean describes completers, not the population. Record each study’s completeness criteria and exclusion rate, and compare completers with non-completers where the paper allows.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>A cohort recruited only 8% of those invited. A reviewer says its hazard ratios can’t be trusted. How do you respond?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Low response is a problem for prevalence and absolute risks. For hazard ratios it causes bias only if participation depended jointly on exposure and on outcome risk (or its causes). Point to evidence such as UK Biobank, where associations matched representative surveys despite 5.5% response, while acknowledging that this needs checking for each exposure.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>In a hospital-based study, diabetes appears protective against a particular cancer. What explanation would you look at first?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Berkson’s bias. If both diabetes and the cancer independently raise the chance of being in hospital, conditioning on admission makes them negatively associated. Check whether controls came from the population that produced the cases, or were other inpatients admitted for diabetes-related reasons.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Among patients who have had a heart attack, smokers have lower recurrence rates than non-smokers. Why might this be?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Index event bias. Non-smokers who had a first heart attack despite not smoking are more likely to carry other strong causes (genetic risk, severe hyperlipidaemia), which also drive recurrence. Conditioning on the first event makes smoking look less harmful or even protective. Studying people from before the first event avoids this.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A colleague adds “number of hospital visits in the past year” as a covariate in a model of an exposure’s effect on mortality. Is this safe?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Probably not. Hospital visits are plausibly caused by the exposure and by underlying illness that also causes death, which makes it a collider (and possibly a mediator). Adjusting for it can create bias. Draw the DAG before deciding.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A cohort loses 25% of participants by year 5. Losses were similar in exposed and unexposed groups. Is the estimate safe from selection bias?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Not necessarily. Equal numbers lost doesn’t mean equal kinds of people lost. Bias arises if, within the exposed group, those lost were at higher (or lower) outcome risk than those lost from the unexposed group. Compare the baseline risk profiles of those lost and kept in each group, and run a sensitivity analysis.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Lash, VanderWeele, Haneuse &amp; Rothman, <em>Modern Epidemiology</em>, 4th edition (2021): the chapter “Selection Bias and Generalizability”.</li>
+      <li>Hernán, Hernández-Díaz &amp; Robins, “A structural approach to selection bias”, <em>Epidemiology</em> (2004): selection bias as conditioning on a collider. Berkson, “Limitations of the application of fourfold table analysis to hospital data”, <em>Biometrics Bulletin</em> (1946).</li>
+      <li>Fry et al., “Comparison of sociodemographic and health-related characteristics of UK Biobank participants with those of the general population”, <em>American Journal of Epidemiology</em> (2017). Batty et al., “Comparison of risk factor associations in UK Biobank against representative, general population based studies with conventional response rates”, <em>BMJ</em> (2020).</li>
+      <li>Hernández-Díaz, Schisterman &amp; Hernán, “The birth weight ‘paradox’ uncovered?”, <em>American Journal of Epidemiology</em> (2006). Banack &amp; Kaufman, “The obesity paradox: understanding the effect of obesity on mortality among individuals with cardiovascular disease”, <em>Preventive Medicine</em> (2014). Dahabreh &amp; Kent, “Index event bias as an explanation for the paradoxes of recurrence risk research”, <em>JAMA</em> (2011).</li>
+      <li>Griffith et al., “Collider bias undermines our understanding of COVID-19 disease risk and severity”, <em>Nature Communications</em> (2020).</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="2-06-confounding.html"><small>Previous</small>2.6 Confounding</a>
+    <a class="next" href="2-08-information-bias.html"><small>Next</small>2.8 Information bias and misclassification</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

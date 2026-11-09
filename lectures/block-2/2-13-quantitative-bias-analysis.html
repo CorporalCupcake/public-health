@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>2.13 Quantitative bias analysis · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/2-13.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-2">Block 2</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 2.13</p>
+  <h1>Quantitative bias analysis: how much could bias have changed this result?</h1>
+  <div class="lecture-meta">
+    <span>Block 2 · Epidemiology</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>A confidence interval describes random error only. <strong>Quantitative bias analysis</strong> (QBA) puts numbers on systematic error: “if the bias were this big, the estimate would have been that.” It replaces the vague limitations paragraph with an adjusted estimate and states the assumptions behind it. Project 5A plans a QBA for unmeasured confounding, and the same tools let you judge any observational result you read.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#why">Why the confidence interval is not enough</a></li>
+      <li><a href="#parameters">Bias parameters</a></li>
+      <li><a href="#simple">Simple bias analysis</a></li>
+      <li><a href="#levels">Multidimensional and probabilistic analysis</a></li>
+      <li><a href="#evalue">The E-value</a></li>
+      <li><a href="#practice">Doing it well</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="why">
+    <h2>1. Why the confidence interval is not enough</h2>
+    <p class="point">A bigger study shrinks the confidence interval but leaves bias exactly where it was, so the interval grows more confident about a possibly wrong answer.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>QBA is a set of methods that estimate what a result would have been without a named bias: unmeasured confounding (Lecture 2.6), selection bias (Lecture 2.7) or misclassification (Lecture 2.8). You state how big the bias might be, and the method gives you a bias-adjusted estimate.</dd>
+      <dt>Why it matters</dt>
+      <dd>In large observational studies, systematic error usually dwarfs random error. An EHR study of 200,000 patients has a tight interval, but its main uncertainty is whether the comparison groups were comparable. QBA is how you show a reviewer that you have thought about the bias in numbers, not adjectives.</dd>
+      <dt>How to read it</dt>
+      <dd>The output is a conditional statement: “<em>if</em> the bias parameters are these, the estimate would be this.” It is not a corrected truth. A result that survives plausible bias is robust; one that flips under mild bias is fragile.</dd>
+      <dt>What a change means</dt>
+      <dd>If modest, realistic bias moves a risk ratio from 1.4 to 1.05, the original finding was mostly bias-sensitive. If it takes implausibly strong bias to move it below 1.2, the finding is robust to that bias, though not to others you did not model.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Writing “residual confounding may have biased our results towards the null” with no numbers. That sentence is almost always a guess, and the direction is often wrong. QBA forces you to say how strong the bias would need to be and whether that is believable.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>A test-set confidence interval for AUC covers sampling noise in the test set. It says nothing about dataset shift, label noise or leakage. Those are systematic errors, and they are the ones that sink deployed models. QBA is the epidemiologist’s version of stress-testing a result under named failure modes.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Weighing yourself ten times on a bathroom scale averages away the wobble but not a scale set 2 kg low. To fix that you need to know, or assume, how far off the scale is.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="parameters">
+    <h2>2. Bias parameters</h2>
+    <p class="point">Every bias analysis needs a few numbers that describe the bias, called bias parameters, and the analysis is only as good as where those numbers come from.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Bias parameters are the quantities the data cannot tell you but the bias depends on. Each bias has its own set.</dd>
+      <dt>Why it matters</dt>
+      <dd>Choosing them is the real work. The arithmetic afterwards is mechanical.</dd>
+      <dt>Where they come from</dt>
+      <dd>In order of preference: a validation substudy in your own data; published validation studies in similar settings; and only then structured expert judgement, stated openly.</dd>
+    </dl>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Bias</th><th>Bias parameters</th><th>Typical source</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Unmeasured confounding</strong></td><td>Prevalence of the confounder in the exposed and the unexposed; how strongly it raises outcome risk</td><td>Another cohort that did measure it; the literature</td></tr>
+          <tr><td><strong>Misclassification</strong></td><td>Sensitivity and specificity of the exposure or outcome measure, separately for cases and non-cases if it may be differential</td><td>A validation study against a better measure (chart review, 24-hour urine)</td></tr>
+          <tr><td><strong>Selection bias</strong></td><td>The probability of being included for each combination of exposure and outcome</td><td>Response rates by group; data on non-participants</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Tuning the parameters until the answer looks right. Pick and justify the values before you see the bias-adjusted result, ideally in the protocol. A bias analysis built backwards from the conclusion is advocacy, not analysis.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example</div>
+      <p>A case-control study asks about recalled painkiller use. A validation study in a similar population compared recall with pharmacy records and found that cases recalled use more completely than controls. Those two sensitivities, one for cases and one for controls, become the bias parameters for a differential misclassification analysis.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="simple">
+    <h2>3. Simple bias analysis</h2>
+    <p class="point">Simple bias analysis plugs one value for each bias parameter into a formula and returns one bias-adjusted estimate.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>For a binary unmeasured confounder, compare how common it is in the exposed and unexposed groups and weigh that by how much it raises risk. The result is a <em>bias factor</em>: how much the confounder inflates (or shrinks) the observed risk ratio. Divide by it.</dd>
+    </dl>
+
+    \[ RR_{\text{adj}} = \frac{RR_{\text{obs}}}{\dfrac{p_1(RR_{UD}-1)+1}{p_0(RR_{UD}-1)+1}} \]
+
+    <dl class="facets">
+      <dt>In words</dt>
+      <dd>\(p_1\) and \(p_0\) are the confounder’s prevalence in the exposed and unexposed; \(RR_{UD}\) is how much it raises the outcome risk. If the confounder is equally common in both groups, the bias factor is 1 and nothing changes.</dd>
+      <dt>Why it matters</dt>
+      <dd>It turns “we could not adjust for frailty” into “if frailty were half as common among treated patients and doubled mortality, our risk ratio of 0.80 would become 0.93.”</dd>
+      <dt>Misclassification and selection</dt>
+      <dd>Same idea, different arithmetic. For misclassification, use sensitivity and specificity to back-calculate the counts you would have seen with perfect classification, then recompute the ratio. For selection, divide the odds ratio by a factor built from the four selection probabilities.</dd>
+      <dt>What a change means</dt>
+      <dd>The bias factor grows with both the imbalance between groups and the confounder’s effect. A strong confounder that is equally common in both groups does nothing; a weak one that is very unequally spread does little.</dd>
+    </dl>
+
+    <div class="widget" data-widget="confounder-adjust">
+      <div class="widget-title">Adjust for a confounder you never measured</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Start with the Project 5A-style case: treated patients look protected (RR 0.80), but frail patients, who die more often, were less likely to be treated. Move the prevalences and the confounder’s strength, then switch to probabilistic and widen the uncertainty.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reporting the bias-adjusted point estimate as “the true effect”. It is the effect <em>under one set of assumed values</em>. Change the assumptions and it moves. That is why simple analysis is a first step, not a conclusion.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">Example · Project 5A</div>
+      <p>In MIMIC-IV, critically ill patients with new-onset AF who receive anticoagulation are probably less frail and at lower bleeding risk than those who do not. Frailty is poorly recorded, so it is an unmeasured confounder. A simple bias analysis with prevalences and strengths taken from published ICU frailty studies shows whether any apparent survival benefit could be frailty alone. Write the parameter values and their sources into the protocol before running it.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="levels">
+    <h2>4. Multidimensional and probabilistic analysis</h2>
+    <p class="point">When you are unsure of the bias parameters, which is nearly always, vary them: first across a grid, then across whole distributions.</p>
+
+    <dl class="facets">
+      <dt>Multidimensional</dt>
+      <dd>Repeat the simple analysis over a grid of values, for example confounder prevalence 10–40% and strength 1.5–4. The output is a table. It shows which parameters matter and where the result flips.</dd>
+      <dt>Probabilistic</dt>
+      <dd>Give each parameter a distribution, draw values thousands of times, and compute a bias-adjusted estimate each time. The output is a distribution, summarised by its median and a 95% <em>simulation interval</em>. You can add random error too, so the interval reflects both kinds of uncertainty.</dd>
+      <dt>How to read it</dt>
+      <dd>A probabilistic interval wider than the conventional CI is normal and honest. If it is centred far from the original estimate, the bias you modelled matters more than chance does.</dd>
+      <dt>What a change means</dt>
+      <dd>Widening a parameter’s distribution widens the simulation interval. If that barely changes the answer, the result is insensitive to that parameter and you can stop worrying about it.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · Three levels of bias analysis</div>
+      <svg class="viz-svg" viewBox="0 0 640 290" role="img" aria-label="Three boxes from left to right: simple bias analysis takes one value per parameter and gives one adjusted estimate; multidimensional takes a grid of values and gives a table; probabilistic takes distributions and gives a distribution with a simulation interval. An arrow underneath runs from less to more realism about uncertainty, and more assumptions to justify.">
+        <defs><marker id="l213-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead accent"/></marker></defs>
+        <g class="s1">
+          <rect x="8" y="12" width="190" height="168" rx="10" class="node-fill"/>
+          <rect x="225" y="12" width="190" height="168" rx="10" class="node-fill"/>
+          <rect x="442" y="12" width="190" height="168" rx="10" class="node-fill"/>
+        </g>
+        <g text-anchor="middle">
+          <text x="103" y="38" class="viz-bold">1. Simple</text>
+          <text x="103" y="62" class="viz-small viz-muted">Input</text>
+          <text x="103" y="80" class="viz-small">one value for each</text>
+          <text x="103" y="96" class="viz-small">bias parameter</text>
+          <text x="103" y="124" class="viz-small viz-muted">Output</text>
+          <text x="103" y="142" class="viz-small">one bias-adjusted</text>
+          <text x="103" y="158" class="viz-small">estimate</text>
+
+          <text x="320" y="38" class="viz-bold">2. Multidimensional</text>
+          <text x="320" y="62" class="viz-small viz-muted">Input</text>
+          <text x="320" y="80" class="viz-small">several values for each</text>
+          <text x="320" y="96" class="viz-small">parameter (a grid)</text>
+          <text x="320" y="124" class="viz-small viz-muted">Output</text>
+          <text x="320" y="142" class="viz-small">a table of adjusted</text>
+          <text x="320" y="158" class="viz-small">estimates</text>
+
+          <text x="537" y="38" class="viz-bold">3. Probabilistic</text>
+          <text x="537" y="62" class="viz-small viz-muted">Input</text>
+          <text x="537" y="80" class="viz-small">a distribution for</text>
+          <text x="537" y="96" class="viz-small">each parameter</text>
+          <text x="537" y="124" class="viz-small viz-muted">Output</text>
+          <text x="537" y="142" class="viz-small">median and 95%</text>
+          <text x="537" y="158" class="viz-small">simulation interval</text>
+
+          <text x="103" y="204" class="viz-small viz-muted">Use for: could this</text>
+          <text x="103" y="220" class="viz-small viz-muted">bias matter at all?</text>
+          <text x="320" y="204" class="viz-small viz-muted">Use for: which parameters</text>
+          <text x="320" y="220" class="viz-small viz-muted">flip the result?</text>
+          <text x="537" y="204" class="viz-small viz-muted">Use for: a headline</text>
+          <text x="537" y="220" class="viz-small viz-muted">bias-adjusted interval</text>
+        </g>
+        <path d="M198,96 L221,96" class="edge accent" marker-end="url(#l213-arrow)"/>
+        <path d="M415,96 L438,96" class="edge accent" marker-end="url(#l213-arrow)"/>
+        <path d="M40,252 L600,252" class="edge accent" marker-end="url(#l213-arrow)"/>
+        <text x="320" y="276" text-anchor="middle" class="viz-small">more realism about uncertainty · more work · more assumptions to justify</text>
+      </svg>
+      <figcaption>Each level reuses the one before: the probabilistic analysis is the simple formula run thousands of times. Start simple to see whether a bias could matter; go probabilistic for the result you report.</figcaption>
+    </figure>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reading a probabilistic simulation interval as more objective than a simple analysis because it looks statistical. It is built from distributions you chose. A narrow distribution on a badly guessed parameter gives a narrow, confident, wrong interval.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>This is the same Monte Carlo machinery as probabilistic sensitivity analysis in Lecture 1.12: put distributions on uncertain inputs, push draws through a deterministic function, summarise the outputs. Here the function is the bias formula and the inputs are bias parameters.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="evalue">
+    <h2>5. The E-value</h2>
+    <p class="point">The E-value is the minimum strength of association an unmeasured confounder would need with both the exposure and the outcome to fully explain away an observed risk ratio.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A single number on the risk ratio scale, from VanderWeele and Ding (2017). It needs no bias parameters, only the estimate: \( E = RR + \sqrt{RR\,(RR-1)} \), with protective ratios inverted first. Compute it for the confidence limit nearer 1 as well.</dd>
+      <dt>Why it matters</dt>
+      <dd>It is quick, assumption-light and now common in journals. It answers “how strong would confounding have to be?” when you have no idea what the confounder is.</dd>
+      <dt>How to read it</dt>
+      <dd>RR 2.0 gives E = 3.41: a confounder that tripled both the chance of exposure and the risk of the outcome, beyond the measured covariates, could just explain it away; weaker confounding could not. RR 1.1 gives E = 1.43, which many unmeasured factors could reach. An E-value of 1 for the CI limit means the interval already includes 1.</dd>
+      <dt>What a change means</dt>
+      <dd>E-values grow roughly in line with the risk ratio. Going from RR 1.3 (E = 1.92) to RR 2 (E = 3.41) nearly doubles the confounding needed, which is why strong associations are harder to explain away.</dd>
+    </dl>
+
+    <div class="widget" data-widget="evalue-curve">
+      <div class="widget-title">E-value and the confounders that could explain a result</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Set the observed RR and its lower limit. The red curve marks every confounder strong enough to explain the estimate away; the E-value is where it crosses the diagonal. Then place a confounder you can actually name and see whether it reaches the curve.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap · how E-values are misused</div>
+      <p>Treating a “large” E-value as proof of causation. There is no threshold that makes an E-value large, and it says nothing about selection bias, measurement error or several confounders acting together. Ioannidis, Tan and Blum (2019) showed it is nearly a restatement of the effect size. Its proper use is a comparison: is the E-value bigger than the associations of the strongest <em>measured</em> confounders in your data? If adjusting for age and diabetes moved the estimate a lot, an unmeasured factor of similar strength could too.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example</div>
+      <p>In 1959, Cornfield and colleagues answered sceptics who claimed a hidden factor caused both smoking and lung cancer. Because smokers had about nine times the lung cancer risk, any such factor would need to be at least nine times as common in smokers. No plausible candidate came close. It was an early bias analysis, and the E-value is its modern descendant.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>An E-value is like a wind rating for a roof: it tells you how strong a storm would have to be to blow it off. It does not tell you whether such storms happen where you live. You still have to check the local weather.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="practice">
+    <h2>6. Doing it well</h2>
+    <p class="point">Good bias analysis targets the few biases most likely to matter, takes parameters from evidence, and reports adjusted results next to the conventional ones.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Step</th><th>What to do</th></tr></thead>
+        <tbody>
+          <tr><td><strong>1. Choose the biases</strong></td><td>List the biases that could change the conclusion, not all conceivable ones. Usually one to three.</td></tr>
+          <tr><td><strong>2. Choose the method and parameters</strong></td><td>Simple to see if a bias could matter, probabilistic for the reported result. Write the parameter values and sources into the protocol.</td></tr>
+          <tr><td><strong>3. Report it fully</strong></td><td>Show the conventional and bias-adjusted estimates side by side, every assumption, and code that a reader could rerun.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <dl class="facets">
+      <dt>Why it matters</dt>
+      <dd>This is the approach in Lash, Fox and colleagues’ textbook and their 2014 “good practices” paper. Reviewers at pharmacoepidemiology journals increasingly expect it.</dd>
+      <dt>Order of biases</dt>
+      <dd>When you model several biases, apply corrections in the reverse order of how they arose: misclassification first, then selection, then confounding.</dd>
+      <dt>What a change means</dt>
+      <dd>If the bias-adjusted interval still excludes the null under realistic assumptions, say so. If it does not, that is a finding too: the data cannot rule out bias as the explanation.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Running one bias analysis for confounding and calling the result robust. A finding can survive unmeasured confounding and still be driven by misclassified outcomes or selective inclusion. Say which biases you analysed and which you did not.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">Example · Projects 2 and 3</div>
+      <p>24-hour urine underestimates intake when collections are incomplete. In Project 2, a simple bias analysis can ask how far a pooled GCC mean would rise if a stated share of collections missed part of the day, using completeness rates from the included studies. In Project 3, NHANES has one urine sample per person, so a misclassification or measurement-error analysis shows how much the sodium-to-potassium association could be diluted (Lecture 1.8).</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>A cohort of 500,000 people reports RR 1.15 (95% CI 1.10 to 1.20) and says the narrow interval shows the finding is robust. What is missing from that argument?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The interval only reflects random error, which is small because the study is huge. Robustness to bias is a separate question. With RR 1.15, the E-value is only about 1.6, so a modest unmeasured confounder could explain it. A bias analysis, not the interval, would show whether the finding is robust.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A paper reports an E-value of 2.5 and concludes “our results are robust to unmeasured confounding”. What would you want to know before agreeing?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>How strong the measured confounders were. If adjusting for known factors with associations around 2–3 already moved the estimate substantially, an unmeasured factor of similar strength is plausible and 2.5 is not reassuring. You would also want to know whether selection bias and misclassification were considered, since the E-value says nothing about them.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>An unmeasured confounder strongly raises the outcome risk (RR 4) but is equally common in exposed and unexposed people. How much bias does it cause?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>None. Confounding needs imbalance between the groups as well as an effect on the outcome. With equal prevalence the bias factor is 1. Strength alone does not make a confounder dangerous.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Your simple bias analysis moves the RR from 0.80 to 0.93. Your probabilistic analysis gives a median of 0.92 and a simulation interval of 0.78 to 1.08. How would you summarise the evidence in one sentence?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Something like: “Under plausible assumptions about unmeasured frailty, most of the apparent benefit could be confounding, and the data are compatible with no effect.” The conventional estimate overstated both the size and the certainty of the benefit.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A colleague chooses bias parameters after seeing that the first set they tried made the result non-significant. What is wrong, and how should it be done?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The parameters were chosen for the answer they give, not for the evidence behind them, so the analysis can produce any result. Parameters should come from validation data or the literature, be fixed in the protocol before the result is seen, and be reported with their sources.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Fox, MacLehose &amp; Lash, <em>Applying Quantitative Bias Analysis to Epidemiologic Data</em>, 2nd edition (Springer, 2021); first edition by Lash, Fox &amp; Fink (2009). The chapters on unmeasured confounding, misclassification, selection bias and probabilistic analysis; the best-practices section.</li>
+      <li>Lash, Fox, MacLehose, Maldonado, McCandless &amp; Greenland, “Good practices for quantitative bias analysis”, <em>International Journal of Epidemiology</em> (2014).</li>
+      <li>Rothman, Greenland &amp; Lash (eds), <em>Modern Epidemiology</em>, 4th edition: the chapter on bias analysis.</li>
+      <li>VanderWeele &amp; Ding, “Sensitivity analysis in observational research: introducing the E-value”, <em>Annals of Internal Medicine</em> (2017).</li>
+      <li>Ioannidis, Tan &amp; Blum, “Limitations and misinterpretations of E-values for sensitivity analyses of observational studies”, <em>Annals of Internal Medicine</em> (2019).</li>
+      <li>Cornfield, Haenszel, Hammond, Lilienfeld, Shimkin &amp; Wynder, “Smoking and lung cancer: recent evidence and a discussion of some questions”, <em>Journal of the National Cancer Institute</em> (1959).</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="2-12-systematic-reviews-meta-analysis.html"><small>Previous</small>2.12 Systematic reviews and meta-analysis</a>
+    <a class="next" href="2-14-measurement-validity-reliability.html"><small>Next</small>2.14 Measurement: validity, reliability and agreement</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

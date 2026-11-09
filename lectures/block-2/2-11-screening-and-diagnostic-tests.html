@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>2.11 Screening and diagnostic tests · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/2-11.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-2">Block 2</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 2.11</p>
+  <h1>Screening and diagnostic test evaluation</h1>
+  <div class="lecture-meta">
+    <span>Block 2 · Epidemiology</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>A test’s <strong>sensitivity</strong> and <strong>specificity</strong> describe the test; its <strong>predictive values</strong> describe what a result means for the person in front of you, and they depend on how common the disease is. Screening adds a second problem: finding disease earlier can look like success even when nobody lives longer. This lecture gives you the numbers to read any test, and the biases to check before believing any screening claim. Lecture 2.15 takes diagnostic accuracy studies further.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#sensspec">Sensitivity and specificity</a></li>
+      <li><a href="#ppv">Predictive values and prevalence</a></li>
+      <li><a href="#roc">Thresholds and the ROC curve</a></li>
+      <li><a href="#biases">Lead time, length time, overdiagnosis</a></li>
+      <li><a href="#programme">Should we screen?</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="sensspec">
+    <h2>1. Sensitivity and specificity</h2>
+    <p class="point">Sensitivity is how many of the sick a test catches; specificity is how many of the healthy it clears.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Compare the test with a <em>reference standard</em> (the best available way of knowing who truly has the disease). <strong>Sensitivity</strong> = true positives ÷ everyone with the disease. <strong>Specificity</strong> = true negatives ÷ everyone without it.</dd>
+      <dt>Why it matters</dt>
+      <dd>They are the closest thing a test has to fixed properties, so they are what guidelines, regulators and reviews report. They tell you what a test does to a group whose disease status you already know.</dd>
+      <dt>How to read it</dt>
+      <dd>A highly sensitive test, when negative, rules disease <em>out</em> (few sick people test negative). A highly specific test, when positive, rules disease <em>in</em> (few healthy people test positive). Screening tests usually favour sensitivity; confirmatory tests favour specificity.</dd>
+      <dt>What a change means</dt>
+      <dd>Specificity moving from 95% to 99% sounds small. In 100,000 healthy people screened it cuts false positives from 5,000 to 1,000: four thousand fewer people sent for follow-up tests.</dd>
+    </dl>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th></th><th>Has disease</th><th>No disease</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Test positive</strong></td><td>True positive (TP)</td><td>False positive (FP)</td></tr>
+          <tr><td><strong>Test negative</strong></td><td>False negative (FN)</td><td>True negative (TN)</td></tr>
+          <tr><td></td><td>Sensitivity = TP ÷ (TP + FN)</td><td>Specificity = TN ÷ (TN + FP)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Treating sensitivity and specificity as universal constants. They shift with the <em>spectrum</em> of patients: a test validated on advanced cases versus healthy volunteers looks better than it will in a screening population full of early, subtle disease and look-alike conditions. Ask who was in the validation study.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>A smoke alarm. Sensitive: it goes off for every real fire. Specific: it stays quiet when you make toast. Make it more sensitive and it screams at toast; make it more specific and it may sleep through a smouldering fire.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="ppv">
+    <h2>2. Predictive values and prevalence</h2>
+    <p class="point">When a disease is rare, most positive results are false, even from a good test.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The <strong>positive predictive value</strong> (PPV) is the share of positive results that are true. The <strong>negative predictive value</strong> (NPV) is the share of negatives that are true. They answer the patient’s question: “I tested positive; do I have it?”</dd>
+    </dl>
+
+    \[ \text{PPV} = \frac{\text{sens} \times p}{\text{sens} \times p + (1-\text{spec}) \times (1-p)} \]
+
+    <dl class="facets">
+      <dt>Why it matters</dt>
+      <dd>The same test gives very different PPVs in a screening population and a specialist clinic, because the prevalence \(p\) (the share who have the disease) differs. Rare disease means the large healthy group, times a small false-positive rate, swamps the small sick group.</dd>
+      <dt>How to read it</dt>
+      <dd>Think in natural frequencies: per 1,000 people, how many are sick, how many of those test positive, and how many of the healthy also test positive? Then divide. It is much harder to get wrong than the formula.</dd>
+      <dt>What a change means</dt>
+      <dd>With 90% sensitivity and 95% specificity, PPV is about 15% at 1% prevalence and about 89% at 30% prevalence. Same test, same lab; different population.</dd>
+    </dl>
+
+    <div class="widget" data-widget="ppv-icons">
+      <div class="widget-title">1,000 people, one test</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Each square is a person. Lower the prevalence and watch the false alarms (amber) outnumber the true positives (red). Then see how much specificity you need to rescue the PPV.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Quoting a PPV from a validation study in a different population. A study that enrolled half cases and half controls has 50% “prevalence” by design; its PPV says nothing about a population where 1 in 200 has the disease. Sensitivity and specificity travel (roughly); predictive values do not.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>Sensitivity is recall; PPV is precision; prevalence is class balance. A classifier validated on a balanced dataset will have far lower precision when deployed where positives are rare. An AI-ECG model that flags low ejection fraction with excellent discrimination in a cardiology clinic will still produce mostly false alarms if run on everyone in primary care. This is why precision–recall curves, not just ROC curves, matter for rare outcomes.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="roc">
+    <h2>3. Thresholds and the ROC curve</h2>
+    <p class="point">Most tests give a number, and the cut-off you choose trades sensitivity against specificity; the ROC curve shows every trade at once.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Sick and healthy people have overlapping distributions of the test value. Moving the threshold down catches more sick people (sensitivity up) and flags more healthy ones (specificity down). The <strong>ROC curve</strong> plots sensitivity against 1 − specificity for every threshold. The <strong>area under it</strong> (AUC) is the chance that a randomly chosen sick person scores higher than a randomly chosen healthy one.</dd>
+      <dt>Why it matters</dt>
+      <dd>AUC compares tests independent of threshold. But a programme runs at one threshold, chosen by weighing the harm of a missed case against the cost of a false alarm and the follow-up capacity.</dd>
+      <dt>How to read it</dt>
+      <dd>AUC 0.5 is a coin toss; 0.7 is modest; 0.8 is good; above 0.9 is excellent for most clinical uses. The curve bowing towards the top-left is what you want.</dd>
+      <dt>What a change means</dt>
+      <dd>An AUC rising from 0.75 to 0.80 is a real gain in ranking, but whether it changes decisions depends on the part of the curve near the threshold you will actually use.</dd>
+    </dl>
+
+    <div class="widget" data-widget="roc-threshold">
+      <div class="widget-title">Move the threshold, trace the ROC curve</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">People with a test value at or above the threshold test positive. Slide the threshold and watch the point move along the curve. Then increase the separation between groups and see the whole curve improve.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Choosing a model or test on AUC alone. AUC ignores prevalence and calibration (whether a predicted 20% risk really means 20 in 100). Two tests with the same AUC can perform very differently at the threshold you need, and a well-ranked but miscalibrated risk score will put the wrong people over a treatment threshold.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>This is exactly classifier threshold tuning. The epidemiology twist is that the threshold is a value judgement: set it from the relative costs of false negatives and false positives (decision curve analysis formalises this), not by maximising Youden’s index or accuracy. Recalibrate to the target population before choosing it.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="biases">
+    <h2>4. Lead time, length time, overdiagnosis</h2>
+    <p class="point">Screening always makes survival after diagnosis look better; only fewer deaths in the whole screened population shows it works.</p>
+
+    <dl class="facets">
+      <dt>Lead-time bias</dt>
+      <dd>Screening moves the date of diagnosis earlier. If death comes at the same age, survival “from diagnosis” grows by exactly the lead time, with no benefit at all.</dd>
+      <dt>Length-time bias</dt>
+      <dd>Slow-growing disease spends longer in the detectable-but-silent phase, so periodic screening finds more of it. Screen-detected cases are therefore biased towards milder disease and look better than symptom-detected cases, whatever screening does.</dd>
+      <dt>Overdiagnosis</dt>
+      <dd>The extreme of length time: detecting disease that would never have caused symptoms or death in the person’s lifetime. Each overdiagnosed person is counted as a “cure” while receiving treatment that can only harm them.</dd>
+      <dt>How to read it</dt>
+      <dd>Rising incidence with flat mortality after screening starts is the fingerprint of overdiagnosis. Better five-year survival among screen-detected cases proves nothing on its own.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · Lead-time bias</div>
+      <svg class="viz-svg" viewBox="0 0 640 268" role="img" aria-label="Two timelines for the same person. Without screening: disease onset at 58, symptoms and diagnosis at 67, death at 70, so survival after diagnosis is 3 years. With screening: onset at 58, screen detection at 63, death still at 70, so survival is 7 years. The 4-year difference is lead time.">
+        <defs><marker id="l211-tick" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M5,0L5,10" class="edge strong"/></marker></defs>
+        <!-- shaded lead time band between rows -->
+        <g class="s2"><rect x="280" y="64" width="110" height="106" class="fill-soft"/></g>
+        <text x="335" y="121" text-anchor="middle" class="viz-small viz-bold colour s2">lead time</text>
+        <text x="335" y="137" text-anchor="middle" class="viz-small colour s2">4 years</text>
+        <!-- Row 1 -->
+        <text x="60" y="24" class="viz-bold">Without screening</text>
+        <g class="s5"><line x1="142.5" y1="64" x2="472.5" y2="64" class="stroke"/></g>
+        <g class="s5"><circle cx="142.5" cy="64" r="6" class="dot"/></g>
+        <g class="s2"><circle cx="390" cy="64" r="7" class="dot"/></g>
+        <g class="s3"><circle cx="472.5" cy="64" r="7" class="dot"/></g>
+        <text x="142.5" y="48" text-anchor="middle" class="viz-small">onset (silent)</text>
+        <text x="390" y="48" text-anchor="middle" class="viz-small colour s2">symptoms, diagnosis</text>
+        <text x="482" y="48" text-anchor="start" class="viz-small colour s3">death</text>
+        <path d="M390,82 L472.5,82" class="edge" marker-start="url(#l211-tick)" marker-end="url(#l211-tick)"/>
+        <text x="431" y="100" text-anchor="middle" class="viz-small">survival 3 years</text>
+        <!-- Row 2 -->
+        <text x="60" y="130" class="viz-bold">With screening</text>
+        <g class="s5"><line x1="142.5" y1="170" x2="472.5" y2="170" class="stroke"/></g>
+        <g class="s5"><circle cx="142.5" cy="170" r="6" class="dot"/></g>
+        <g class="s1"><circle cx="280" cy="170" r="7" class="dot"/></g>
+        <g class="s3"><circle cx="472.5" cy="170" r="7" class="dot"/></g>
+        <text x="280" y="158" text-anchor="end" dx="-10" class="viz-small colour s1">screen detects</text>
+        <text x="482" y="174" text-anchor="start" class="viz-small colour s3">death, same age</text>
+        <path d="M280,190 L472.5,190" class="edge" marker-start="url(#l211-tick)" marker-end="url(#l211-tick)"/>
+        <text x="376" y="208" text-anchor="middle" class="viz-small">survival 7 years</text>
+        <!-- age axis -->
+        <line x1="60" y1="232" x2="610" y2="232" class="viz-axis"/>
+        <g text-anchor="middle" class="viz-tick">
+          <text x="60" y="250">55</text><text x="197.5" y="250">60</text><text x="335" y="250">65</text><text x="472.5" y="250">70</text><text x="610" y="250">75</text>
+        </g>
+        <text x="335" y="265" text-anchor="middle" class="viz-label">Age (years)</text>
+      </svg>
+      <figcaption>Illustrative ages. The person dies at 70 either way. Screening has more than doubled “survival after diagnosis” without adding a day of life. This is why screening trials use mortality in everyone randomised, not survival among those diagnosed.</figcaption>
+    </figure>
+
+    <div class="callout example">
+      <div class="callout-title">Example</div>
+      <p>In South Korea, thyroid ultrasound became a common add-on to health check-ups. Ahn, Kim and Welch reported that by 2011 the rate of thyroid cancer diagnosis was about 15 times the 1993 rate, while thyroid cancer mortality stayed essentially flat. The extra diagnoses led to surgery for many people whose cancers would probably never have harmed them.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>“Five-year survival for screen-detected cancer is 95% versus 60% for symptom-detected, so screening works.” All three biases inflate that comparison. The valid evidence is a randomised trial (or strong natural experiment) comparing disease-specific and all-cause mortality in everyone invited versus not invited.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="programme">
+    <h2>5. Should we screen?</h2>
+    <p class="point">A screening programme is a whole pathway, from invitation to treatment, and it is worth running only if the pathway as a whole does more good than harm at reasonable cost.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Wilson and Jungner’s 1968 principles for WHO remain the starting point. The three that matter most: the condition is an important health problem with a detectable early stage; there is an acceptable, accurate test; and early treatment improves outcomes compared with treatment at symptoms.</dd>
+      <dt>Why it matters</dt>
+      <dd>Screening invites healthy people, so the ethical bar is higher than for treating the sick. Every programme harms some people: false positives, anxiety, overdiagnosis, complications of follow-up tests.</dd>
+      <dt>How to judge it</dt>
+      <dd>Look for randomised evidence of a mortality or morbidity benefit; numbers needed to screen and numbers overdiagnosed per death prevented; uptake, follow-up and quality assurance in the real programme; and cost-effectiveness (Lecture 1.10).</dd>
+      <dt>What a change means</dt>
+      <dd>Extending screening to a lower-risk group lowers prevalence, so PPV falls, false positives per case found rise, and the balance of benefit and harm can flip even with the same test.</dd>
+    </dl>
+
+    <div class="callout gulf">
+      <div class="callout-title">Example · Saudi Arabia</div>
+      <p>Saudi Arabia’s premarital screening programme for sickle cell disease and β-thalassaemia became mandatory in 2004. Couples must be tested and at-risk couples are offered genetic counselling, but the marriage can go ahead whatever the result. So the programme can only work through couples’ choices, and its evaluation has to measure them. Memish and Saeedi reported that voluntary cancellation of planned marriages among at-risk couples rose from 9.2% in 2004 to 51.9% in 2009. Note the outcome: not test accuracy, but behaviour and, ultimately, affected births.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Evaluating a programme by its test. A perfectly accurate test inside a programme with low uptake, slow follow-up or no effective treatment achieves nothing. Most real screening failures happen after the test.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Airport security. The scanner’s accuracy matters, but so do queue length, what staff do with an alarm, and how many innocent travellers are searched for each real threat found.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>A new blood test for pancreatic cancer has 95% sensitivity and 95% specificity. A company proposes offering it to all adults over 50. What is the main problem, without doing exact arithmetic?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Pancreatic cancer is rare in the general population, so 5% false positives among the huge healthy majority will vastly outnumber true positives. PPV will be very low, and each false positive leads to scans, biopsies and anxiety. The test might be useful in a high-risk group where prevalence is higher.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Five-year survival after breast cancer diagnosis rose sharply after a screening programme started. Name two reasons this could happen with no lives saved.</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Lead time: diagnosis moves earlier, so survival from diagnosis grows even if death comes at the same age. Length time and overdiagnosis: screening preferentially finds slow-growing or never-harmful cancers, which survive well regardless. Only mortality in the whole invited population can show benefit.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Two AI-ECG models have the same AUC. Why might one be far better for a screening programme?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>AUC summarises ranking across all thresholds. The programme runs at one threshold, usually in the high-specificity region because prevalence is low. The ROC curves can cross, so one model can be better exactly where you operate. Calibration in the target population also matters, and AUC ignores it.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A test is validated in a study of 200 confirmed cases and 200 healthy volunteers. Which of its reported numbers would you trust least for primary care, and why?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The predictive values, because the study fixed prevalence at 50% by design. Sensitivity and specificity are also probably optimistic: confirmed cases tend to be clear-cut and healthy volunteers have none of the look-alike conditions seen in practice (spectrum effect).</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Saudi premarital screening is very accurate for carrier status. Why is that not enough to call the programme effective?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The programme’s goal is fewer affected births, and results don’t bar marriage. Effectiveness depends on counselling, couples’ decisions and access to other options after the test. You judge it by downstream outcomes, such as at-risk marriages and affected births, not by test accuracy.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Wilson &amp; Jungner, <em>Principles and Practice of Screening for Disease</em>, WHO Public Health Papers 34 (1968).</li>
+      <li>Grimes &amp; Schulz, “Uses and abuses of screening tests”, <em>The Lancet</em> (2002): sensitivity, specificity, predictive values and the biases.</li>
+      <li>Welch &amp; Black, “Overdiagnosis in cancer”, <em>Journal of the National Cancer Institute</em> (2010).</li>
+      <li>Ahn, Kim &amp; Welch, “Korea’s thyroid-cancer ‘epidemic’: screening and overdiagnosis”, <em>New England Journal of Medicine</em> (2014).</li>
+      <li>Memish &amp; Saeedi, “Six-year outcome of the national premarital screening and genetic counseling program for sickle cell disease and β-thalassemia in Saudi Arabia”, <em>Annals of Saudi Medicine</em> (2011).</li>
+      <li>Lash, VanderWeele, Haneuse &amp; Rothman, <em>Modern Epidemiology</em>, 4th ed. (2021), chapter 35, “Clinical Epidemiology”.</li>
+      <li>Raffle &amp; Gray, <em>Screening: Evidence and Practice</em> (Oxford University Press): programme design, harms and evaluation.</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="2-10-causation.html"><small>Previous</small>2.10 Causation</a>
+    <a class="next" href="2-12-systematic-reviews-meta-analysis.html"><small>Next</small>2.12 Systematic reviews and meta-analysis</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

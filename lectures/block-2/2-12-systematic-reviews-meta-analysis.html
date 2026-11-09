@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>2.12 Systematic reviews and meta-analysis · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/2-12.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-2">Block 2</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 2.12</p>
+  <h1>Systematic reviews and meta-analysis: PICO, search, screening, risk of bias, pooling, PRISMA</h1>
+  <div class="lecture-meta">
+    <span>Block 2 · Epidemiology</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>A systematic review answers a focused question using all the relevant studies, found and judged by methods fixed in advance. A meta-analysis is the optional statistical step that pools their results. This lecture walks the whole pipeline using <strong>Project 2</strong> as the running example: a systematic review and meta-analysis of salt intake measured by 24-hour urine in adults in the GCC, pooled by country and sex. Its pooled estimate later replaces the intake inputs in Project 1.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#question">The question and the protocol</a></li>
+      <li><a href="#search">Searching and screening</a></li>
+      <li><a href="#rob">Extraction and risk of bias</a></li>
+      <li><a href="#pooling">Pooling: fixed and random effects</a></li>
+      <li><a href="#heterogeneity">Heterogeneity: I², τ and the prediction interval</a></li>
+      <li><a href="#pubbias">Small-study effects and publication bias</a></li>
+      <li><a href="#grade">Certainty and reporting: GRADE and PRISMA</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="question">
+    <h2>1. The question and the protocol</h2>
+    <p class="point">A review is only as good as its question, and the question must be fixed, with its methods, before you look at the studies.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>For effects, frame the question as <strong>PICO</strong> (Population, Intervention, Comparator, Outcome) or <strong>PECO</strong> (E for exposure). For prevalence or average levels, JBI’s <strong>CoCoPop</strong> fits better: Condition, Context, Population. The <em>protocol</em> states the question, eligibility criteria, search, risk-of-bias tool and analysis plan. Register it on <strong>PROSPERO</strong> before screening starts.</dd>
+      <dt>Why it matters</dt>
+      <dd>Every later decision (which study counts, which estimate to extract, which subgroup to report) can be bent, consciously or not, once you have seen the results. A dated, public protocol is your defence, and reviewers and journals check it.</dd>
+      <dt>How to read it</dt>
+      <dd>A good question is narrow enough to answer and broad enough to matter. Too narrow, and you find two studies; too broad, and you pool things that should never be averaged.</dd>
+    </dl>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Element</th><th>Project 2</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Condition</strong></td><td>Salt (sodium) intake measured by 24-hour urine collection. Spot-urine estimates excluded (Lecture 1.9)</td></tr>
+          <tr><td><strong>Context</strong></td><td>The six GCC countries; community or population-based samples</td></tr>
+          <tr><td><strong>Population</strong></td><td>Adults (18 and over), any nationality resident in the GCC</td></tr>
+          <tr><td><strong>Results</strong></td><td>Mean intake in g/day with its SD and sample size, by country and sex</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Quietly changing eligibility after seeing the studies (“let’s also include spot-urine studies, there are more of them”). Changes are sometimes needed; make them as dated, justified protocol amendments, and report them. Undisclosed changes are how reviews end up confirming what their authors hoped.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="search">
+    <h2>2. Searching and screening</h2>
+    <p class="point">Find every eligible study, not just the easy ones, and have two people independently decide which ones count.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Build the search from concept blocks: synonyms joined with OR within a block, blocks joined with AND (salt terms AND urine terms AND GCC country terms). Run it in several databases, then add citation searching and grey literature. Two reviewers screen titles and abstracts, then full texts, independently, and resolve disagreements by discussion or a third person.</dd>
+      <dt>Why it matters</dt>
+      <dd>Studies that are hard to find differ from easy ones: smaller, non-English, unpublished, or with less exciting results. Single screening misses eligible studies; dual screening is the PRISMA and Cochrane expectation, which is why Project 2 needs a second screener.</dd>
+      <dt>How to read it</dt>
+      <dd>Report the agreement between screeners (kappa, Lecture 2.14) and the full PRISMA flow. A flow diagram with suspiciously round numbers or no reasons for exclusion is a warning sign.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · PRISMA 2020 flow for Project 2</div>
+      <svg class="viz-svg" viewBox="0 0 640 476" role="img" aria-label="PRISMA 2020 flow diagram with illustrative counts: 1,240 records identified; 410 duplicates removed; 830 screened; 760 excluded; 70 reports sought; 4 not retrieved; 66 assessed; 48 excluded with reasons; 14 studies from 18 reports included.">
+        <defs><marker id="l212-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead"/></marker></defs>
+        <!-- stage bars -->
+        <g class="s4">
+          <rect x="2" y="14" width="28" height="92" rx="6" class="node-fill"/>
+          <rect x="2" y="148" width="28" height="236" rx="6" class="node-fill"/>
+          <rect x="2" y="398" width="28" height="64" rx="6" class="node-fill"/>
+        </g>
+        <g text-anchor="middle" class="viz-small viz-bold">
+          <text x="20" y="60" transform="rotate(-90 20 60)">Identification</text>
+          <text x="20" y="266" transform="rotate(-90 20 266)">Screening</text>
+          <text x="20" y="430" transform="rotate(-90 20 430)">Included</text>
+        </g>
+        <!-- main column -->
+        <g class="s1">
+          <rect x="44" y="14" width="280" height="92" rx="8" class="node"/>
+          <rect x="44" y="148" width="280" height="48" rx="8" class="node"/>
+          <rect x="44" y="218" width="280" height="48" rx="8" class="node"/>
+          <rect x="44" y="288" width="280" height="48" rx="8" class="node"/>
+          <rect x="44" y="398" width="280" height="64" rx="8" class="node-fill"/>
+        </g>
+        <g class="s5">
+          <rect x="360" y="14" width="270" height="92" rx="8" class="node"/>
+          <rect x="360" y="148" width="270" height="48" rx="8" class="node"/>
+          <rect x="360" y="218" width="270" height="48" rx="8" class="node"/>
+          <rect x="360" y="280" width="270" height="110" rx="8" class="node"/>
+        </g>
+        <g text-anchor="middle">
+          <text x="184" y="44" class="viz-bold">Records identified: 1,240</text>
+          <text x="184" y="66" class="viz-small viz-muted">MEDLINE, Embase, Scopus,</text>
+          <text x="184" y="84" class="viz-small viz-muted">Global Index Medicus</text>
+          <text x="184" y="177" class="viz-bold">Records screened: 830</text>
+          <text x="184" y="247" class="viz-bold">Reports sought: 70</text>
+          <text x="184" y="317" class="viz-bold">Reports assessed: 66</text>
+          <text x="184" y="425" class="viz-bold">Studies included: 14</text>
+          <text x="184" y="445" class="viz-small">from 18 reports</text>
+
+          <text x="495" y="54" class="viz-bold">Removed before screening</text>
+          <text x="495" y="74" class="viz-small">Duplicates: 410</text>
+          <text x="495" y="177" class="viz-small">Excluded on title/abstract: 760</text>
+          <text x="495" y="247" class="viz-small">Reports not retrieved: 4</text>
+          <text x="495" y="303" class="viz-bold">Reports excluded: 48</text>
+        </g>
+        <g class="viz-small">
+          <text x="376" y="326">Spot or estimated urine only: 21</text>
+          <text x="376" y="345">Not adults, or not in the GCC: 12</text>
+          <text x="376" y="364">No usable mean or SD: 9</text>
+          <text x="376" y="383">Same participants as another: 6</text>
+        </g>
+        <path d="M184,106 L184,144" class="edge" marker-end="url(#l212-arrow)"/>
+        <path d="M184,196 L184,214" class="edge" marker-end="url(#l212-arrow)"/>
+        <path d="M184,266 L184,284" class="edge" marker-end="url(#l212-arrow)"/>
+        <path d="M184,336 L184,394" class="edge" marker-end="url(#l212-arrow)"/>
+        <path d="M324,60 L356,60" class="edge" marker-end="url(#l212-arrow)"/>
+        <path d="M324,172 L356,172" class="edge" marker-end="url(#l212-arrow)"/>
+        <path d="M324,242 L356,242" class="edge" marker-end="url(#l212-arrow)"/>
+        <path d="M324,312 L356,312" class="edge" marker-end="url(#l212-arrow)"/>
+      </svg>
+      <figcaption>Illustrative counts, not real results. Every box must add up: 1,240 − 410 = 830 screened; 66 − 48 = 18 reports. The full PRISMA 2020 template adds a second column for studies found by other methods (citation searching, websites, national survey reports).</figcaption>
+    </figure>
+
+    <div class="callout gulf">
+      <div class="callout-title">Example · Project 2</div>
+      <p>For GCC salt data, the big databases are not enough. Add Global Index Medicus (which covers the WHO Eastern Mediterranean regional index), Arabic-language reports, ministry of health and national survey reports, and conference abstracts. Search each country by name and by older or alternative names. Contact authors of studies that measured 24-hour urine but did not report the mean by sex.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Counting reports as studies. One national survey can produce four papers. Pooling all four counts the same people four times and inflates precision. Link reports to studies before extraction; PRISMA 2020 asks for both counts.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="rob">
+    <h2>3. Extraction and risk of bias</h2>
+    <p class="point">Extract the same numbers from every study using a piloted form, and judge each study’s risk of bias with a tool built for its design.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>Data extraction</strong>: two people independently record design, setting, sample, measurement method and results on a form tested on a few studies first. <strong>Risk of bias</strong>: a structured judgement, domain by domain, of whether a study’s result is likely to be systematically wrong.</dd>
+      <dt>Why it matters</dt>
+      <dd>Pooling biased studies gives a precise, biased answer. Risk of bias judgements feed sensitivity analyses (does the pooled mean change if you drop high-risk studies?) and the GRADE certainty rating.</dd>
+      <dt>How to read it</dt>
+      <dd>Use domain-level judgements (low, some concerns, high), not a single quality score. Summary scores add up unrelated items and hide which bias matters.</dd>
+    </dl>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Studies in the review</th><th>Standard tool</th><th>Core question</th></tr></thead>
+        <tbody>
+          <tr><td>Randomised trials</td><td><strong>RoB 2</strong></td><td>Five domains, from randomisation to selective reporting</td></tr>
+          <tr><td>Non-randomised studies of interventions</td><td><strong>ROBINS-I</strong></td><td>How far is this from the trial we wish had been done?</td></tr>
+          <tr><td>Observational studies of exposures</td><td><strong>ROBINS-E</strong> (2024)</td><td>The same logic, for exposure effects in cohorts</td></tr>
+          <tr><td>Prevalence or mean-level surveys (Project 2)</td><td><strong>JBI checklist for prevalence studies</strong></td><td>Sampling frame and method, response, valid and reliable measurement</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">Example · Project 2</div>
+      <p>Add salt-specific items to the JBI checklist and pre-specify them: was the 24-hour collection checked for completeness (by urine volume, creatinine or PABA)? Was the sample drawn from the general population or from a clinic or workplace? One collection or several per person? A single 24-hour urine gives an unbiased mean but an inflated SD, because day-to-day variation is added to between-person variation. That matters for Project 1, which needs the spread of usual intake, not just the average. For extraction, convert everything to salt in g/day: sodium in mmol divided by 17.1, or sodium in grams times 2.54.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Using a tool built for effects (such as the Newcastle–Ottawa scale or ROBINS-E) on prevalence studies. Its questions about comparability of exposed and unexposed groups don’t apply, and the questions that do matter (representative sampling, complete urine collections) are missing.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="pooling">
+    <h2>4. Pooling: fixed and random effects</h2>
+    <p class="point">A meta-analysis is a weighted average; the fixed-effect and random-effects models differ in what they assume is being averaged, and so in the weights.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Each study gets weight in proportion to its precision. The <strong>fixed-effect</strong> model assumes every study estimates the same true value, so only sampling error separates them. The <strong>random-effects</strong> model assumes each study has its own true value, drawn from a distribution with spread \(\tau\) (tau), and estimates the mean of that distribution.</dd>
+    </dl>
+
+    \[ w_i = \frac{1}{SE_i^2 + \tau^2} \]
+
+    <dl class="facets">
+      <dt>Why it matters</dt>
+      <dd>With \(\tau = 0\) this is the fixed-effect weight. As \(\tau\) grows, it dominates every study’s variance and the weights become more equal: small studies gain influence and the confidence interval widens. For salt intake across six countries, true means surely differ, so random effects is the honest default.</dd>
+      <dt>How to read it</dt>
+      <dd>Look at the forest plot before the diamond. If the studies’ intervals barely overlap, the pooled mean is an average of different things, and you should say so.</dd>
+      <dt>What a change means</dt>
+      <dd>If the random-effects mean moves well away from the fixed-effect mean, small studies disagree with large ones. Find out why before reporting either.</dd>
+    </dl>
+
+    <div class="widget" data-widget="forest-re">
+      <div class="widget-title">A forest plot of 24-hour urine salt intake</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Box size is each study’s weight. Switch between fixed-effect and random-effects weights, drop studies, and turn up the true spread between studies. Watch I², τ and the prediction interval respond.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>Random effects is a two-level hierarchical model: partial pooling, the same idea as empirical Bayes shrinkage or a mixed model. Fixed effect is complete pooling; analysing each study alone is no pooling. Inverse-variance weighting is also how you would combine independent, unbiased estimators in an ensemble, and like an ensemble it cannot cancel a bias that all members share.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Choosing the model by a heterogeneity test (“Q was not significant, so fixed effect”). The test has little power with few studies. Choose the model from what you believe about the studies, in the protocol. In practice, report random effects with a modern τ² estimator (REML) and a Hartung–Knapp interval when studies are few; the simple DerSimonian–Laird method in the widget understates uncertainty then.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="heterogeneity">
+    <h2>5. Heterogeneity: I², τ and the prediction interval</h2>
+    <p class="point">I² tells you what share of the spread is real, τ tells you how big the real spread is, and the prediction interval tells you where a new setting’s value is likely to fall.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>I²</strong>: the percentage of the variation between study results that is due to real differences rather than chance. <strong>τ</strong>: the standard deviation of true values across studies, in the outcome’s own units (g/day). <strong>Prediction interval</strong>: the range in which the true value for a new, similar study or country is expected to lie, about the mean ± 2τ when you have many studies.</dd>
+      <dt>Why it matters</dt>
+      <dd>The confidence interval for the mean shrinks as studies accumulate; the prediction interval does not, because real spread is not noise. For Project 1, “what is intake in Saudi Arabia?” is closer to a prediction question than to “what is the GCC average?”.</dd>
+      <dt>How to read it</dt>
+      <dd>I² depends on study size: big, precise studies push it towards 100% even when true differences are small. Reviews of means and prevalences routinely show I² above 90%. So read τ for size, and the prediction interval for meaning.</dd>
+      <dt>What a change means</dt>
+      <dd>A τ going from 0.5 to 2 g/day means countries’ true averages differ by a few grams rather than a fraction of one: big enough to make a single GCC figure misleading for policy.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Explaining heterogeneity with meta-regression on study-level averages (“studies with more women had lower intake, so women eat less salt”). That is an ecological inference (Lecture 2.4). Compare sex using within-study, sex-specific estimates, which is why Project 2 extracts them separately.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Average house prices across a country. The confidence interval says how well you know the national average. The prediction interval says what a house in a city you haven’t surveyed might cost. Buyers need the second.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="pubbias">
+    <h2>6. Small-study effects and publication bias</h2>
+    <p class="point">If small studies with disappointing results stay unpublished, the published ones overstate the effect, and a funnel plot can reveal the gap.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A <strong>funnel plot</strong> shows each study’s estimate against its precision. Without bias, small studies scatter widely and symmetrically around the pooled value; large ones cluster tightly. A missing corner (small studies with null or unfavourable results) suggests <em>publication bias</em>, though other causes of small-study effects exist.</dd>
+      <dt>Why it matters</dt>
+      <dd>The pooled estimate inherits whatever selection the publishing process applied. Lost null results inflate effects, sometimes enough to create one from nothing.</dd>
+      <dt>How to read it</dt>
+      <dd>Only with about 10 or more studies; fewer cannot show a shape. Asymmetry is a prompt to investigate, not proof: small studies can differ for real reasons (different populations, more intensive interventions) or have more bias.</dd>
+    </dl>
+
+    <div class="widget" data-widget="funnel">
+      <div class="widget-title">What goes missing from a funnel plot</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Simulated trials of an intervention on systolic blood pressure, all with the same true effect. Send most non-significant trials to the file drawer and watch the funnel lose its lower-right corner and the pooled effect grow.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">Example · Project 2</div>
+      <p>Funnel plots were built for effects, where significance drives publication. A survey that measures mean salt intake has no “significant” result to chase, so selection works differently: surveys that went unpublished, or were reported only in government documents. For Project 2, your protection is the grey-literature search, not a funnel test.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reporting “no publication bias (Egger p = 0.4)” for seven studies. The test has almost no power with few studies, and a non-significant result proves nothing. Cochrane advises against such tests with fewer than 10 studies.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="grade">
+    <h2>7. Certainty and reporting: GRADE and PRISMA</h2>
+    <p class="point">GRADE rates how much to trust the pooled answer; PRISMA makes sure a reader can see exactly how you got it.</p>
+
+    <dl class="facets">
+      <dt>GRADE</dt>
+      <dd>Rates the certainty of a body of evidence as high, moderate, low or very low. For effects, randomised evidence starts high and observational evidence starts low. You then rate down for five problems: <strong>risk of bias</strong>, <strong>inconsistency</strong> (unexplained heterogeneity), <strong>indirectness</strong> (wrong population or measure), <strong>imprecision</strong> and <strong>publication bias</strong>. Observational evidence can be rated up for large effects or a dose–response.</dd>
+      <dt>PRISMA 2020</dt>
+      <dd>The reporting guideline for systematic reviews: a 27-item checklist plus the flow diagram. Follow it from the protocol stage, as the project rules require, not as a final formatting step. PRISMA-P covers the protocol itself.</dd>
+      <dt>How to read it</dt>
+      <dd>“Low-certainty evidence” is not “no effect”. It means the true value may be substantially different from the estimate.</dd>
+    </dl>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Project 2</div>
+      <p>For a pooled mean like Project 2’s, apply the same five domains, but there is less agreement about where certainty should start. State your choice and reasons in the protocol. Expect to rate down for inconsistency (large τ) and perhaps indirectness (studies from a few cities standing in for whole countries).</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Treating a meta-analysis as more trustworthy than its studies. Pooling reduces random error, not bias. Ten biased studies make one precise biased answer, which is worse than one imprecise one because it looks certain.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>Your Project 2 meta-analysis gives a pooled mean of 10 g/day (95% CI 9.4 to 10.6) with I² = 96% and a prediction interval of 7 to 13 g/day. Which number should Project 1 use for Saudi Arabia, and why?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Neither the pooled mean nor its CI on its own. Large I² and a wide prediction interval mean countries truly differ, so a GCC average may be well off for Saudi Arabia. Use Saudi-specific studies (a country subgroup) if there are enough, and carry the uncertainty, including the between-study spread, into Project 1’s probabilistic sensitivity analysis.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A colleague proposes including spot-urine studies “because 24-hour urine studies are too few”. How do you respond?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Spot-urine equations are systematically biased for population sodium in ways that vary by population (Lecture 1.9), so adding them would trade a little imprecision for bias of unknown size. If the protocol is changed, it must be a documented amendment. Better: keep 24-hour studies as the primary analysis and report spot-urine studies separately, if at all.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Why does adding a huge, precise study often increase I² even when it agrees roughly with the others?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>I² compares real spread with sampling error. A very precise study has tiny sampling error, so any real difference from the others becomes large relative to chance. I² is a relative measure; τ, in g/day, tells you whether the spread is big enough to matter.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Random-effects and fixed-effect pooled estimates for a set of trials differ markedly, with random effects showing the larger benefit. What might be going on?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Random effects gives small studies more weight, so the gap means small studies show bigger effects than large ones: a small-study effect. Possible reasons are publication bias, more bias in small trials, or genuinely different interventions or populations. Look at the funnel plot and the risk of bias of the small studies before trusting the random-effects estimate.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Your second screener disagrees with you on 15% of abstracts. Is the review in trouble?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Not necessarily. Disagreement at title and abstract stage is expected, which is why dual screening exists. Resolve each disagreement by discussion or a third reviewer, report agreement (kappa), and if disagreements cluster on one criterion, clarify its wording in the protocol. Inclusive screening at this stage is fine because full-text review follows.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Higgins, Thomas et al. (eds), <em>Cochrane Handbook for Systematic Reviews of Interventions</em>, version 6.5 (2024): chapter 4 (searching and selecting), chapter 8 (RoB 2), chapter 10 (meta-analysis and heterogeneity), chapter 13 (missing evidence), chapter 14 (GRADE).</li>
+      <li>Page et al., “The PRISMA 2020 statement: an updated guideline for reporting systematic reviews”, <em>BMJ</em> (2021).</li>
+      <li>Munn, Moola, Lisy, Riitano &amp; Tufanaru, “Methodological guidance for systematic reviews of observational epidemiological studies reporting prevalence and cumulative incidence data”, <em>International Journal of Evidence-Based Healthcare</em> (2015): CoCoPop and the JBI prevalence checklist.</li>
+      <li>Sterne et al., “RoB 2”, <em>BMJ</em> (2019); Sterne et al., “ROBINS-I”, <em>BMJ</em> (2016); Higgins et al., “ROBINS-E”, <em>Environment International</em> (2024).</li>
+      <li>Higgins &amp; Thompson, “Quantifying heterogeneity in a meta-analysis”, <em>Statistics in Medicine</em> (2002); Riley, Higgins &amp; Deeks, “Interpretation of random effects meta-analyses”, <em>BMJ</em> (2011): I², τ and prediction intervals.</li>
+      <li>Borenstein, Hedges, Higgins &amp; Rothstein, <em>Introduction to Meta-Analysis</em> (Wiley): fixed versus random effects, explained without heavy maths.</li>
+      <li>Guyatt et al., “GRADE: an emerging consensus on rating quality of evidence and strength of recommendations”, <em>BMJ</em> (2008).</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="2-11-screening-and-diagnostic-tests.html"><small>Previous</small>2.11 Screening and diagnostic tests</a>
+    <a class="next" href="2-13-quantitative-bias-analysis.html"><small>Next</small>2.13 Quantitative bias analysis</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

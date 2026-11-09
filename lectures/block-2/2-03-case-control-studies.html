@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>2.3 Case-control studies · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/2-03.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-2">Block 2</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 2.3</p>
+  <h1>Case-control studies, including nested and case-cohort designs</h1>
+  <div class="lecture-meta">
+    <span>Block 2 · Epidemiology</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>A case-control study is a cohort study done efficiently: instead of following everyone, you take the cases and a <strong>sample</strong> of the population they came from. Done right, it gives the same answer as the full cohort for a fraction of the cost. Done wrong, usually through poor choice of controls, it gives a confident wrong answer. This lecture covers why you get an odds ratio, what that odds ratio estimates, how to choose controls, and the two designs that live inside cohorts: <strong>nested case-control</strong> and <strong>case-cohort</strong>.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#idea">Sampling on the outcome</a></li>
+      <li><a href="#why-or">Why you get an odds ratio</a></li>
+      <li><a href="#base">Choosing controls: the study base</a></li>
+      <li><a href="#sampling">What the odds ratio estimates</a></li>
+      <li><a href="#nested">Nested case-control and case-cohort</a></li>
+      <li><a href="#matching">Matching</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="idea">
+    <h2>1. Sampling on the outcome</h2>
+    <p class="point">Start from people who have the disease (cases) and a sample of people from the same population (controls), and compare how often each group was exposed.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A case-control study selects people by <strong>outcome</strong>, then looks back at their exposure. The cases are everyone (or a random sample of everyone) who developed the disease in a defined population and period. The controls are a sample of that same population, used to estimate how common exposure was in it.</dd>
+      <dt>Why it matters</dt>
+      <dd>For a rare disease a cohort would need hundreds of thousands of people to collect a few hundred cases. A case-control study collects those cases directly. It is also the design of choice when the exposure is expensive to measure, when latency is long, or when you need an answer in weeks (outbreak investigations).</dd>
+      <dt>How to read it</dt>
+      <dd>The result is an odds ratio. If exposure is more common in cases than controls, the OR is above 1. Section 4 explains exactly what it estimates.</dd>
+      <dt>What it can’t give you</dt>
+      <dd>Absolute risks or rates, because you chose how many controls to take. You can get them only if you know the size of the source population or the overall disease rate.</dd>
+    </dl>
+
+    <div class="callout example">
+      <div class="callout-title">Example</div>
+      <p>In 1971, doctors in Boston investigated eight young women with clear-cell adenocarcinoma of the vagina, a cancer almost never seen at that age. Each case was matched with four controls. Seven of the eight case mothers had taken diethylstilbestrol (DES) in pregnancy; none of the control mothers had. Eight cases were enough because the association was enormous. A cohort design would have needed to follow huge numbers of exposed daughters for 20 years.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Thinking that looking back means the logic runs backwards. A well-designed case-control study still asks whether exposure <em>preceded</em> disease. Measure exposure in the period before the disease started, and beware of cases recalling exposure differently because they are ill (recall bias, Lecture 2.8).</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Investigating why some phones overheat. You don’t buy a million phones and wait. You collect the overheated ones, pick a random set of normal ones sold through the same shops, and compare which charger each was used with.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="why-or">
+    <h2>2. Why you get an odds ratio</h2>
+    <p class="point">Because you fixed the number of cases and controls, risks are meaningless in a case-control table, but the odds ratio survives the sampling intact.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>In a case-control table, the share of exposed people who are cases depends on how many controls you chose: take twice as many controls and the “risk” halves. What you can estimate is the <strong>exposure odds</strong> in cases and in controls. Their ratio is mathematically identical to the ratio of disease odds you would have got from the full population.</dd>
+      <dt>Why it matters</dt>
+      <dd>This is why case-control studies work at all. Sampling all cases and a fraction of non-cases multiplies both exposed and unexposed non-case counts by the same fraction, which cancels in the odds ratio.</dd>
+      <dt>How to read it</dt>
+      <dd>Read it as an odds ratio from the source population. Whether it also equals a risk ratio or rate ratio depends on how controls were sampled (Section 4).</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Computing “the risk of disease in the exposed” from a case-control table, or a risk difference or NNT. Those numbers reflect your choice of control-to-case ratio, not the population. Only ratio measures carry over.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>This is downsampling the majority class. If you keep all positives and a random fraction of negatives, logistic regression slopes (log odds ratios) are unbiased; only the intercept shifts, by the log of the sampling fraction. King and Zeng’s “prior correction” for rare events is exactly the case-control result. The predicted probabilities are wrong until you correct the intercept, just as case-control risks are.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="base">
+    <h2>3. Choosing controls: the study base principle</h2>
+    <p class="point">Controls must come from the same population that produced the cases, and be chosen without regard to their exposure.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The <strong>study base</strong> (or source population) is the people, and the time, in which the cases arose. Controls are a sample of it. The practical test: <em>if this control had developed the disease, would they have become a case in my study?</em> If no, they don’t belong.</dd>
+      <dt>Why it matters</dt>
+      <dd>Controls exist to estimate how common exposure is in the base. If they come from somewhere else, or are picked in a way linked to exposure, the OR is biased however carefully cases were found. Most bad case-control studies fail here.</dd>
+      <dt>How to read it</dt>
+      <dd>Population-based cases with random population controls is the cleanest. Hospital controls are convenient, but only valid if their reason for admission is unrelated to the exposure and they come from the same catchment as the cases.</dd>
+      <dt>What a change means</dt>
+      <dd>If the controls’ exposure prevalence is pushed up, the OR is pushed down, and vice versa. Over-sampling exposed controls by 50% cuts the OR by about a third.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · Sampling cases and controls from one study base</div>
+      <svg class="viz-svg" viewBox="0 0 640 300" role="img" aria-label="A source population of exposed and unexposed people. All cases are taken. Controls are a random sample of the same population, regardless of exposure. The study compares exposure odds in cases with exposure odds in controls.">
+        <defs><marker id="l23-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead accent"/></marker></defs>
+        <rect x="10" y="30" width="330" height="214" rx="14" class="node s5"/>
+        <text x="175" y="20" text-anchor="middle" class="viz-small viz-bold">Study base: the population and time that produced the cases</text>
+        <!-- people grid: 12 columns x 6 rows, x = 40 + 25c, y = 58 + 30r. Exposed = cols 0-3 (teal), unexposed = cols 4-11 (grey) -->
+        <g class="s1">
+          <circle cx="40" cy="58" r="7" class="dot"/><circle cx="65" cy="58" r="7" class="dot"/><circle cx="90" cy="58" r="7" class="dot"/><circle cx="115" cy="58" r="7" class="dot"/>
+          <circle cx="40" cy="88" r="7" class="dot"/><circle cx="65" cy="88" r="7" class="dot"/><circle cx="90" cy="88" r="7" class="dot"/><circle cx="115" cy="88" r="7" class="dot"/>
+          <circle cx="40" cy="118" r="7" class="dot"/><circle cx="65" cy="118" r="7" class="dot"/><circle cx="90" cy="118" r="7" class="dot"/><circle cx="115" cy="118" r="7" class="dot"/>
+          <circle cx="40" cy="148" r="7" class="dot"/><circle cx="65" cy="148" r="7" class="dot"/><circle cx="90" cy="148" r="7" class="dot"/><circle cx="115" cy="148" r="7" class="dot"/>
+          <circle cx="40" cy="178" r="7" class="dot"/><circle cx="65" cy="178" r="7" class="dot"/><circle cx="90" cy="178" r="7" class="dot"/><circle cx="115" cy="178" r="7" class="dot"/>
+          <circle cx="40" cy="208" r="7" class="dot"/><circle cx="65" cy="208" r="7" class="dot"/><circle cx="90" cy="208" r="7" class="dot"/><circle cx="115" cy="208" r="7" class="dot"/>
+        </g>
+        <g class="s5">
+          <circle cx="140" cy="58" r="7" class="dot"/><circle cx="165" cy="58" r="7" class="dot"/><circle cx="190" cy="58" r="7" class="dot"/><circle cx="215" cy="58" r="7" class="dot"/><circle cx="240" cy="58" r="7" class="dot"/><circle cx="265" cy="58" r="7" class="dot"/><circle cx="290" cy="58" r="7" class="dot"/><circle cx="315" cy="58" r="7" class="dot"/>
+          <circle cx="140" cy="88" r="7" class="dot"/><circle cx="165" cy="88" r="7" class="dot"/><circle cx="190" cy="88" r="7" class="dot"/><circle cx="215" cy="88" r="7" class="dot"/><circle cx="240" cy="88" r="7" class="dot"/><circle cx="265" cy="88" r="7" class="dot"/><circle cx="290" cy="88" r="7" class="dot"/><circle cx="315" cy="88" r="7" class="dot"/>
+          <circle cx="140" cy="118" r="7" class="dot"/><circle cx="165" cy="118" r="7" class="dot"/><circle cx="190" cy="118" r="7" class="dot"/><circle cx="215" cy="118" r="7" class="dot"/><circle cx="240" cy="118" r="7" class="dot"/><circle cx="265" cy="118" r="7" class="dot"/><circle cx="290" cy="118" r="7" class="dot"/><circle cx="315" cy="118" r="7" class="dot"/>
+          <circle cx="140" cy="148" r="7" class="dot"/><circle cx="165" cy="148" r="7" class="dot"/><circle cx="190" cy="148" r="7" class="dot"/><circle cx="215" cy="148" r="7" class="dot"/><circle cx="240" cy="148" r="7" class="dot"/><circle cx="265" cy="148" r="7" class="dot"/><circle cx="290" cy="148" r="7" class="dot"/><circle cx="315" cy="148" r="7" class="dot"/>
+          <circle cx="140" cy="178" r="7" class="dot"/><circle cx="165" cy="178" r="7" class="dot"/><circle cx="190" cy="178" r="7" class="dot"/><circle cx="215" cy="178" r="7" class="dot"/><circle cx="240" cy="178" r="7" class="dot"/><circle cx="265" cy="178" r="7" class="dot"/><circle cx="290" cy="178" r="7" class="dot"/><circle cx="315" cy="178" r="7" class="dot"/>
+          <circle cx="140" cy="208" r="7" class="dot"/><circle cx="165" cy="208" r="7" class="dot"/><circle cx="190" cy="208" r="7" class="dot"/><circle cx="215" cy="208" r="7" class="dot"/><circle cx="240" cy="208" r="7" class="dot"/><circle cx="265" cy="208" r="7" class="dot"/><circle cx="290" cy="208" r="7" class="dot"/><circle cx="315" cy="208" r="7" class="dot"/>
+        </g>
+        <!-- cases: red rings (4 exposed, 2 unexposed) -->
+        <g class="s3">
+          <circle cx="65" cy="58" r="11" class="stroke"/><circle cx="115" cy="118" r="11" class="stroke"/><circle cx="40" cy="178" r="11" class="stroke"/><circle cx="90" cy="208" r="11" class="stroke"/>
+          <circle cx="215" cy="88" r="11" class="stroke"/><circle cx="290" cy="178" r="11" class="stroke"/>
+        </g>
+        <!-- controls: amber dashed rings (2 exposed, 4 unexposed) -->
+        <g class="s2">
+          <circle cx="90" cy="88" r="11" class="stroke dashed"/><circle cx="65" cy="148" r="11" class="stroke dashed"/>
+          <circle cx="165" cy="58" r="11" class="stroke dashed"/><circle cx="265" cy="118" r="11" class="stroke dashed"/><circle cx="190" cy="208" r="11" class="stroke dashed"/><circle cx="315" cy="148" r="11" class="stroke dashed"/>
+        </g>
+        <text x="77" y="236" text-anchor="middle" class="viz-small colour s1">exposed</text>
+        <text x="228" y="236" text-anchor="middle" class="viz-small viz-muted">unexposed</text>
+        <!-- right side -->
+        <path d="M344,90 L394,90" class="edge accent" marker-end="url(#l23-arrow)"/>
+        <path d="M344,180 L394,180" class="edge accent" marker-end="url(#l23-arrow)"/>
+        <g class="s3"><rect x="398" y="58" width="232" height="66" rx="10" class="node"/></g>
+        <text x="514" y="80" text-anchor="middle" class="viz-small viz-bold">Cases: all who got the disease</text>
+        <text x="514" y="98" text-anchor="middle" class="viz-small">4 exposed, 2 unexposed</text>
+        <text x="514" y="114" text-anchor="middle" class="viz-small viz-muted">exposure odds 4 ÷ 2 = 2</text>
+        <g class="s2"><rect x="398" y="148" width="232" height="66" rx="10" class="node"/></g>
+        <text x="514" y="170" text-anchor="middle" class="viz-small viz-bold">Controls: random sample of the base</text>
+        <text x="514" y="188" text-anchor="middle" class="viz-small">2 exposed, 4 unexposed</text>
+        <text x="514" y="204" text-anchor="middle" class="viz-small viz-muted">exposure odds 2 ÷ 4 = 0.5</text>
+        <text x="514" y="246" text-anchor="middle" class="viz-bold">Odds ratio = 2 ÷ 0.5 = 4</text>
+        <text x="20" y="272" class="viz-small"><tspan class="colour s3">Solid red ring</tspan> = case.  <tspan class="colour s2">Dashed amber ring</tspan> = control, picked without looking at exposure.</text>
+        <text x="20" y="290" class="viz-small viz-muted">Controls stand in for the whole base: their exposure split should mirror it (here 1 in 3 exposed).</text>
+      </svg>
+      <figcaption>Cases and controls come from the same base. The controls’ only job is to show how common exposure is in that base; pick them by exposure, or from a different base, and the odds ratio is wrong. Illustrative numbers.</figcaption>
+    </figure>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap · hospital controls with a related illness</div>
+      <p>A 1981 study of coffee and pancreatic cancer used controls who were patients of the same doctors, many with digestive diseases. Those patients had often cut down on coffee, so controls drank less than the base, and coffee looked like a risk factor. Later studies did not confirm the association. Controls must not be chosen for conditions linked to the exposure.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">Example · Saudi hospitals</div>
+      <p>Many Saudi hospitals serve defined populations: military and National Guard personnel and their families, university staff, or a Ministry of Health catchment. For a case-control study of heart attack in one such hospital, the study base is that eligible population, not Riyadh as a whole. Controls should be drawn from people eligible for the same hospital, for example from its registered population or clinics for unrelated conditions.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="sampling">
+    <h2>4. What the odds ratio estimates</h2>
+    <p class="point">The same arithmetic estimates a risk ratio, a rate ratio or an odds ratio, depending on who was eligible to be a control.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Controls sampled from</th><th>Name</th><th>The OR estimates</th><th>Rare disease needed?</th></tr></thead>
+        <tbody>
+          <tr><td>People still disease-free at the end</td><td>Cumulative (classic)</td><td>The odds ratio</td><td>Yes, to read it as a risk ratio</td></tr>
+          <tr><td>Everyone at the start, whether or not they later became cases</td><td>Case-base / case-cohort</td><td>The risk ratio</td><td>No</td></tr>
+          <tr><td>People still at risk at the moment each case occurs</td><td>Incidence density (risk-set)</td><td>The rate ratio</td><td>No</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <dl class="facets">
+      <dt>Why it matters</dt>
+      <dd>The “rare disease assumption” is often quoted as a weakness of all case-control studies. It isn’t. It applies only to cumulative sampling. Most modern studies use incidence density sampling, which estimates the rate ratio with no rare-disease requirement.</dd>
+      <dt>How to read it</dt>
+      <dd>Find the sentence in the methods that says how and when controls were chosen. “Controls were selected from those at risk at the date of each case’s diagnosis” means a rate ratio. “Controls were people without the disease at the end of the study” means an odds ratio.</dd>
+      <dt>What a change means</dt>
+      <dd>Under incidence density sampling a person can be a control early and a case later. That is correct, not a mistake: at the earlier time, they were part of the population at risk.</dd>
+    </dl>
+
+    <div class="widget" data-widget="cc-sample">
+      <div class="widget-title">Recover a cohort’s answer from a sample</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">A cohort of 40,000 people, 30% exposed, is simulated. All cases are taken, plus a few controls per case. Compare the three control pools as the disease gets common, then make the controls over-represent exposed people and watch the estimate drift.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Treating a large sample as protection against a biased one. Doubling the controls per case narrows the confidence interval around whatever the controls estimate. If they over-represent exposed people, you get a more precise wrong answer.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="nested">
+    <h2>5. Nested case-control and case-cohort designs</h2>
+    <p class="point">Inside an existing cohort, you can measure an expensive exposure only in the cases and a sample, and still get the cohort’s answer.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A <strong>nested case-control</strong> study takes every case in a cohort and, at each case’s event time, samples a few controls from those still at risk (incidence density sampling). A <strong>case-cohort</strong> study draws a random <strong>subcohort</strong> at the start, then adds every case, inside or outside it.</dd>
+      <dt>Why it matters</dt>
+      <dd>Biobanks store blood for hundreds of thousands of people. Assaying all of them costs a fortune; assaying the cases and a few controls costs little and loses little precision. The cohort already defines the study base, so control selection is clean.</dd>
+      <dt>How to choose</dt>
+      <dd>Nested case-control suits one outcome and time-matched comparisons; it is analysed with conditional logistic regression and estimates the rate ratio. Case-cohort lets one subcohort serve as the comparison group for many outcomes, and is analysed with a weighted Cox model.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · Two ways to sample inside a cohort</div>
+      <svg class="viz-svg" viewBox="0 0 640 374" role="img" aria-label="Top: nested case-control. At each case's event time, two controls are sampled from those still at risk; one later becomes a case. Bottom: case-cohort. A random subcohort is chosen at the start and all cases are added.">
+        <text x="20" y="18" class="viz-bold">Nested case-control: controls drawn from the risk set at each case’s time</text>
+        <text x="20" y="80" class="viz-small viz-muted">each line is</text>
+        <text x="20" y="95" class="viz-small viz-muted">one person</text>
+        <!-- lines y = 34 + 14 i, x 120..600 -->
+        <g class="s5">
+          <line x1="120" x2="600" y1="34" y2="34" class="stroke"/>
+          <line x1="120" x2="260" y1="48" y2="48" class="stroke"/>
+          <line x1="120" x2="600" y1="62" y2="62" class="stroke"/>
+          <line x1="120" x2="420" y1="76" y2="76" class="stroke"/>
+          <line x1="120" x2="340" y1="90" y2="90" class="stroke"/>
+          <line x1="120" x2="600" y1="104" y2="104" class="stroke"/>
+          <line x1="120" x2="600" y1="118" y2="118" class="stroke"/>
+          <line x1="120" x2="520" y1="132" y2="132" class="stroke"/>
+        </g>
+        <line x1="260" x2="260" y1="26" y2="140" class="edge" stroke-dasharray="3 3"/>
+        <line x1="420" x2="420" y1="26" y2="140" class="edge" stroke-dasharray="3 3"/>
+        <line x1="520" x2="520" y1="26" y2="140" class="edge" stroke-dasharray="3 3"/>
+        <g class="s3"><circle cx="260" cy="48" r="6" class="dot"/><circle cx="420" cy="76" r="6" class="dot"/><circle cx="520" cy="132" r="6" class="dot"/></g>
+        <g class="s2">
+          <circle cx="260" cy="90" r="7" class="stroke"/><circle cx="260" cy="118" r="7" class="stroke"/>
+          <circle cx="420" cy="34" r="7" class="stroke"/><circle cx="420" cy="132" r="7" class="stroke"/>
+          <circle cx="520" cy="62" r="7" class="stroke"/><circle cx="520" cy="104" r="7" class="stroke"/>
+        </g>
+        <line x1="120" x2="600" y1="146" y2="146" class="viz-axis"/>
+        <text x="600" y="162" text-anchor="end" class="viz-small viz-muted">time since entry →</text>
+        <text x="120" y="180" class="viz-small">The last person is a control at the second case’s time, then a case later. That is correct.</text>
+
+        <text x="20" y="216" class="viz-bold">Case-cohort: a random subcohort chosen at the start, plus every case</text>
+        <text x="20" y="240" class="viz-small colour s1">subcohort</text>
+        <text x="20" y="255" class="viz-small colour s1">(chosen at</text>
+        <text x="20" y="270" class="viz-small colour s1">the start)</text>
+        <g class="s1">
+          <line x1="120" x2="600" y1="232" y2="232" class="stroke" style="stroke-width:5"/>
+          <line x1="120" x2="420" y1="246" y2="246" class="stroke" style="stroke-width:5"/>
+          <line x1="120" x2="600" y1="260" y2="260" class="stroke" style="stroke-width:5"/>
+          <path d="M108,226 L102,226 L102,266 L108,266" class="stroke"/>
+        </g>
+        <g class="s5">
+          <line x1="120" x2="260" y1="274" y2="274" class="stroke"/>
+          <line x1="120" x2="340" y1="288" y2="288" class="stroke"/>
+          <line x1="120" x2="600" y1="302" y2="302" class="stroke"/>
+          <line x1="120" x2="520" y1="316" y2="316" class="stroke"/>
+          <line x1="120" x2="600" y1="330" y2="330" class="stroke"/>
+        </g>
+        <g class="s3"><circle cx="420" cy="246" r="6" class="dot"/><circle cx="260" cy="274" r="6" class="dot"/><circle cx="520" cy="316" r="6" class="dot"/></g>
+        <line x1="120" x2="600" y1="344" y2="344" class="viz-axis"/>
+        <text x="600" y="360" text-anchor="end" class="viz-small viz-muted">time since entry →</text>
+        <text x="120" y="360" class="viz-small">Cases outside the subcohort are added; one case is also in it.</text>
+      </svg>
+      <figcaption>Red dot = case; amber ring = sampled control; thick teal line = subcohort member. Both designs measure the expensive exposure only in marked people. Nested case-control ties each control to a case’s time; case-cohort’s subcohort serves every outcome.</figcaption>
+    </figure>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Analysing a nested case-control study as if controls were an unmatched sample, or excluding controls who later became cases. Either throws away the time matching that makes it estimate the rate ratio. Keep the matched sets and use conditional logistic regression.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · from your ECG work</div>
+      <p>Suppose a hospital cohort of 100,000 patients has stored ECGs, and you want to test a feature that needs expert manual annotation. Annotating every ECG is impossible. Annotate the ECGs of everyone who had sudden cardiac death, plus four risk-set controls each, and you estimate the same rate ratio a full-cohort analysis would, at a few percent of the effort.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>Risk-set sampling is negative sampling done carefully. For each positive (a case at time t), you sample a few negatives from those who could have been positive at that same moment. Conditional logistic regression over these matched sets approximates the Cox partial likelihood, much as sampled softmax approximates a full softmax.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="matching">
+    <h2>6. Matching</h2>
+    <p class="point">Matching controls to cases on a confounder makes the analysis more efficient, but does not remove confounding unless the analysis respects the matching.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Choosing controls so that they resemble each case on factors such as age and sex: individually (four controls of the same age band for each case) or by frequency (the same age mix overall).</dd>
+      <dt>Why it matters</dt>
+      <dd>Matching on a strong confounder makes strata balanced, so the adjusted estimate is more precise. But in a case-control study, matching itself pulls the controls’ exposure towards the cases’, so a matched design analysed without accounting for matching is biased towards no effect.</dd>
+      <dt>How to read it</dt>
+      <dd>Check the paper used conditional logistic regression (individual matching) or adjusted for the matching factors (frequency matching). You can’t study the effect of a matching factor itself.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap · overmatching</div>
+      <p>Matching on a factor that is caused by the exposure, or that is linked to exposure but not to disease. Matching on a consequence of the exposure removes part of the effect you want; matching on a pure correlate of exposure wastes precision. Match only on genuine confounders (Lecture 2.6).</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>A case-control study of a common outcome reports an OR of 2.5. A reviewer says “the rare disease assumption fails, so this overstates the RR”. When is the reviewer right, and when wrong?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Right if controls were sampled from people still disease-free at the end (cumulative sampling): then the OR estimates the odds ratio, which exceeds the RR for a common outcome. Wrong if controls were sampled from the risk set at each case’s time (the OR estimates the rate ratio) or from the whole baseline population (it estimates the risk ratio). Check the methods.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Cases of stroke come from a regional stroke registry covering all hospitals; controls are visitors at one teaching hospital’s outpatient clinics. What is the problem?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The controls don’t represent the study base. The cases come from the whole region; the controls come from one hospital’s outpatients, who differ in where they live, insurance, health and probably in many exposures. Controls should be a random sample of the region’s population over the same period.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A colleague trains a classifier on all 500 cases and 5,000 randomly sampled non-cases from a population of 1 million, then reports its predicted probabilities as patients’ risks. What’s wrong, and what is still fine?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The predicted probabilities are far too high, because the sample has about 1 case per 10 non-cases instead of the population’s ratio. The model needs its intercept (or calibration) corrected for the sampling fraction. The odds ratios (logistic slopes) and the ranking of patients are still fine.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A biobank cohort wants to study a new biomarker and five different cancers. Nested case-control or case-cohort?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Case-cohort. One random subcohort, assayed once, can serve as the comparison group for all five cancers, plus the cases of each. A nested case-control design would need a separate set of matched controls for each cancer.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>In a nested case-control study, a person sampled as a control in 2015 developed the disease in 2019. Should they be removed from the control set?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>No. In 2015 they were at risk and disease-free, so they were a valid member of the risk set. Removing future cases from the control pool biases the estimate away from the rate ratio. They appear twice: as a control in 2015 and as a case in 2019.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Lash, VanderWeele, Haneuse &amp; Rothman, <em>Modern Epidemiology</em>, 4th ed. (2021): the chapter on case-control studies. Study base, control sampling schemes, and what each odds ratio estimates.</li>
+      <li>Wacholder, McLaughlin, Silverman &amp; Mandel, “Selection of controls in case-control studies. I. Principles”, <em>American Journal of Epidemiology</em> (1992), and parts II and III in the same issue.</li>
+      <li>Miettinen, “Estimability and estimation in case-referent studies”, <em>American Journal of Epidemiology</em> (1976): incidence density sampling.</li>
+      <li>Prentice, “A case-cohort design for epidemiologic cohort studies and disease prevention trials”, <em>Biometrika</em> (1986).</li>
+      <li>MacMahon, Yen, Trichopoulos, Warren &amp; Nardi, “Coffee and cancer of the pancreas”, <em>New England Journal of Medicine</em> (1981): the hospital-control example.</li>
+      <li>Herbst, Ulfelder &amp; Poskanzer, “Adenocarcinoma of the vagina: association of maternal stilbestrol therapy with tumor appearance in young women”, <em>New England Journal of Medicine</em> (1971).</li>
+      <li>King &amp; Zeng, “Logistic regression in rare events data”, <em>Political Analysis</em> (2001): case-control sampling and prior correction, in ML terms.</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="2-02-cohort-studies.html"><small>Previous</small>2.2 Cohort studies</a>
+    <a class="next" href="2-04-cross-sectional-ecological-case-crossover.html"><small>Next</small>2.4 Cross-sectional, ecological and case-crossover designs</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

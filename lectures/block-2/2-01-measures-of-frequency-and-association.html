@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>2.1 Measures of frequency and association · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/2-01.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-2">Block 2</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 2.1</p>
+  <h1>Measures of frequency and association: risks, rates, odds, ratios, differences</h1>
+  <div class="lecture-meta">
+    <span>Block 2 · Epidemiology</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>Every epidemiology result is one of three ways of counting disease (a <strong>risk</strong>, a <strong>rate</strong> or an <strong>odds</strong>) compared between two groups by <strong>dividing</strong> (a ratio) or <strong>subtracting</strong> (a difference). Knowing which one a paper reports, and what it can and cannot tell you, is the first step in reading any study. Project 2 pools means, Project 1 turns relative risks into absolute deaths averted, and every later lecture in this block assumes this vocabulary.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#three">Risk, rate and odds</a></li>
+      <li><a href="#person-time">Person-time and rates</a></li>
+      <li><a href="#ratios">Ratio measures</a></li>
+      <li><a href="#differences">Difference measures and NNT</a></li>
+      <li><a href="#or-rr">When the odds ratio is not the risk ratio</a></li>
+      <li><a href="#framing">Relative versus absolute framing</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="three">
+    <h2>1. Risk, rate and odds</h2>
+    <p class="point">Risk, rate and odds put the same new cases over three different denominators, so they answer three different questions.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Measure</th><th>Cases divided by</th><th>Range</th><th>Answers</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Risk</strong> (incidence proportion)</td><td>People at risk at the start</td><td>0 to 1, over a stated period</td><td>“What is my chance of getting it in 10 years?”</td></tr>
+          <tr><td><strong>Rate</strong> (incidence rate)</td><td>Person-time at risk</td><td>0 upwards, per person-year</td><td>“How fast are new cases arising?”</td></tr>
+          <tr><td><strong>Odds</strong></td><td>People who did <em>not</em> get it</td><td>0 upwards</td><td>“Cases per non-case”: the currency of logistic regression and case-control studies</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Three summaries of how often a disease starts. A <strong>risk</strong> is a probability over a fixed window. A <strong>rate</strong> is a speed: events per unit of time lived at risk. <strong>Odds</strong> are the risk divided by its complement: a risk of 20% is odds of 0.2 ÷ 0.8 = 0.25, or “1 case for every 4 non-cases”.</dd>
+      <dt>Why it matters</dt>
+      <dd>Each design delivers one of them naturally. A closed cohort with full follow-up gives risks. A cohort where people join and leave gives rates. A case-control study and a logistic model give odds. Mixing them up is the most common error in reading results.</dd>
+      <dt>How to read it</dt>
+      <dd>For a rare outcome all three are close: a 1-year risk of 1% is odds of about 0.0101 and a rate of about 1 per 100 person-years. As the outcome gets common they pull apart, and the odds grows fastest. Prevalence (Lecture 1.4) is a fourth, separate measure: existing cases at one moment, not new ones.</dd>
+      <dt>What a change means</dt>
+      <dd>A risk can only double if it starts below 50%. A rate or odds has no ceiling, so a “doubling” means different things on each scale.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Quoting a risk without its time window. “A 10% risk of heart attack” is meaningless until you add “over 10 years”. A rate carries its time in its units (per person-year); a risk must carry it in words.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Betting odds. A horse at “4 to 1 against” is expected to win 1 race in 5, a probability of 20%. Bookmakers talk in odds; doctors and patients think in probabilities. Epidemiologists use both and must translate.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="person-time">
+    <h2>2. Person-time and rates</h2>
+    <p class="point">A rate divides events by the total time people were actually watched while at risk, so it copes with people joining late, leaving early or dying of something else.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>Person-time</strong> adds up, person by person, the time each one was under observation and still able to have the event. One person followed for 10 years and ten people followed for 1 year both give 10 person-years. A person stops contributing at the event, at loss to follow-up, at death from another cause, or at the end of the study.</dd>
+      <dt>Why it matters</dt>
+      <dd>Real cohorts are untidy. A risk needs everyone followed for the full window, which rarely happens. A rate uses all the follow-up you have, which is why most cohort papers and registries report rates, and why Poisson regression with person-time as an offset (Lecture 3.3) is a workhorse.</dd>
+      <dt>How to read it</dt>
+      <dd>“12 per 100 person-years” means: if you watched 100 people for a year, or 50 people for two years, you would expect about 12 events. Rates are usually quoted per 1,000 or per 100,000 person-years.</dd>
+      <dt>What a change means</dt>
+      <dd>For short windows and rare events, risk ≈ rate × time. That breaks down when the event is common or the window is long, because people who have had the event can’t have it again.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · Person-time in a small cohort</div>
+      <svg class="viz-svg" viewBox="0 0 640 352" role="img" aria-label="Six people followed over five years. Each line shows the time they were at risk. Two have the event. Total 16.5 person-years, so the rate is 2 per 16.5 person-years, about 12 per 100 person-years.">
+        <text x="632" y="22" text-anchor="end" class="viz-small viz-bold">Person-years</text>
+        <g class="viz-small">
+          <text x="20" y="44">A · full follow-up</text>
+          <text x="20" y="78">B · event</text>
+          <text x="20" y="112">C · joined late</text>
+          <text x="20" y="146">D · lost</text>
+          <text x="20" y="180">E · late, event</text>
+          <text x="20" y="214">F · other death</text>
+        </g>
+        <!-- grid: x = 150 + 86 * year -->
+        <g>
+          <line x1="150" x2="150" y1="28" y2="226" class="viz-grid"/>
+          <line x1="236" x2="236" y1="28" y2="226" class="viz-grid"/>
+          <line x1="322" x2="322" y1="28" y2="226" class="viz-grid"/>
+          <line x1="408" x2="408" y1="28" y2="226" class="viz-grid"/>
+          <line x1="494" x2="494" y1="28" y2="226" class="viz-grid"/>
+          <line x1="580" x2="580" y1="28" y2="226" class="viz-grid"/>
+        </g>
+        <g class="s1">
+          <line x1="150" x2="580" y1="40" y2="40" class="stroke"/>
+          <line x1="150" x2="322" y1="74" y2="74" class="stroke"/>
+          <line x1="236" x2="580" y1="108" y2="108" class="stroke"/>
+          <line x1="150" x2="408" y1="142" y2="142" class="stroke"/>
+          <line x1="322" x2="451" y1="176" y2="176" class="stroke"/>
+          <line x1="150" x2="236" y1="210" y2="210" class="stroke"/>
+        </g>
+        <!-- end markers -->
+        <g class="s5">
+          <line x1="580" x2="580" y1="32" y2="48" class="stroke"/>
+          <line x1="580" x2="580" y1="100" y2="116" class="stroke"/>
+        </g>
+        <g class="s3">
+          <circle cx="322" cy="74" r="7" class="dot"/>
+          <circle cx="451" cy="176" r="7" class="dot"/>
+        </g>
+        <g class="s2">
+          <circle cx="408" cy="142" r="6" class="node"/>
+        </g>
+        <g class="s5">
+          <rect x="230" y="204" width="12" height="12" class="dot"/>
+        </g>
+        <g class="viz-small" text-anchor="end">
+          <text x="632" y="44">5.0</text>
+          <text x="632" y="78">2.0</text>
+          <text x="632" y="112">4.0</text>
+          <text x="632" y="146">3.0</text>
+          <text x="632" y="180">1.5</text>
+          <text x="632" y="214">1.0</text>
+        </g>
+        <line x1="590" x2="634" y1="226" y2="226" class="viz-axis"/>
+        <text x="632" y="244" text-anchor="end" class="viz-small viz-bold">16.5</text>
+        <!-- axis -->
+        <line x1="150" x2="580" y1="226" y2="226" class="viz-axis"/>
+        <g class="viz-tick" text-anchor="middle">
+          <text x="150" y="244">0</text><text x="236" y="244">1</text><text x="322" y="244">2</text>
+          <text x="408" y="244">3</text><text x="494" y="244">4</text><text x="580" y="244">5</text>
+        </g>
+        <text x="365" y="262" text-anchor="middle" class="viz-label">Years since the study began</text>
+        <!-- legend -->
+        <g class="s3"><circle cx="26" cy="288" r="6" class="dot"/></g>
+        <text x="38" y="292" class="viz-small">event</text>
+        <g class="s2"><circle cx="100" cy="288" r="5" class="node"/></g>
+        <text x="112" y="292" class="viz-small">lost to follow-up</text>
+        <g class="s5"><rect x="230" y="282" width="12" height="12" class="dot"/></g>
+        <text x="248" y="292" class="viz-small">died of another cause</text>
+        <g class="s5"><line x1="400" x2="400" y1="280" y2="296" class="stroke"/></g>
+        <text x="410" y="292" class="viz-small">study ended</text>
+        <text x="20" y="324" class="viz-small"><tspan class="viz-bold">Rate</tspan> = 2 events ÷ 16.5 person-years ≈ <tspan class="viz-bold colour s1">12 per 100 person-years</tspan>.</text>
+        <text x="20" y="342" class="viz-small viz-muted">A 5-year risk of 2 ÷ 6 would ignore that C, D, E and F were not watched for all five years.</text>
+      </svg>
+      <figcaption>Each line is time at risk. People join late (C, E), leave early (D, F) or have the event (B, E). The rate uses exactly the time watched; a simple risk would need everyone followed for all five years.</figcaption>
+    </figure>
+
+    <div class="widget" data-widget="rate-risk">
+      <div class="widget-title">From a rate to a risk</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Set a constant rate and a follow-up period. The teal curve is the true risk; the red dashed line is the shortcut “rate × time”. Push the rate up or the follow-up out and watch the shortcut break.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Counting time after the event as time at risk. Once someone has had their first heart attack they can’t have a first heart attack again. Leaving them in the denominator inflates person-time and makes the rate look lower than it is.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example</div>
+      <p>A registry reports 300 strokes in 50,000 person-years: 6 per 1,000 person-years. Over one year that is roughly a 0.6% risk. Over 30 years it is not 18%: the true risk is about 16.5%, because the people who already had a stroke stop counting. The shortcut always overstates, and more so for longer windows and higher rates (illustrative numbers).</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="ratios">
+    <h2>3. Ratio measures: risk ratio, rate ratio, odds ratio</h2>
+    <p class="point">A ratio measure divides the frequency in the exposed by the frequency in the unexposed, so it says how many times more common the outcome is.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The <strong>risk ratio</strong> (RR, also “relative risk”) divides risks. The <strong>rate ratio</strong> divides rates; a hazard ratio from a Cox model (Lecture 3.6) is its close cousin. The <strong>odds ratio</strong> (OR) divides odds. In a 2×2 table with exposed cases \(a\), exposed non-cases \(b\), unexposed cases \(c\) and unexposed non-cases \(d\):</dd>
+    </dl>
+
+    \[ \text{OR} = \frac{a/b}{c/d} = \frac{ad}{bc} \]
+
+    <dl class="facets">
+      <dt>Why it matters</dt>
+      <dd>Ratios measure <em>strength</em> of association, which is what you weigh when asking whether an exposure causes disease (Lecture 2.10). They are also fairly stable across populations with different baseline risks, which is why meta-analyses and GBD risk curves (Lecture 1.7) are built from them.</dd>
+      <dt>How to read it</dt>
+      <dd>1 means no association. Above 1, more disease in the exposed; below 1, less. An RR of 1.2 is weak and easily produced by modest bias; 2 to 3 is moderate; above 5 is strong and hard to explain away (smoking and lung cancer is around 10 or more).</dd>
+      <dt>What a change means</dt>
+      <dd>An RR moving from 1.2 to 2 means the excess risk in the exposed went from 20% extra to 100% extra, a five-fold larger excess. Ratios are symmetric on the log scale: an RR of 0.5 is as strong as an RR of 2, just in the other direction.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reading an RR of 0.8 and an RR of 1.25 as different sizes. They are mirror images: swap which group you call “exposed” and one becomes the other. Compare ratios on the log scale, and say which group is the reference.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>A logistic regression coefficient, exponentiated, is an odds ratio, not a risk ratio. A Poisson model with log person-time as an offset gives rate ratios. If you want an RR or a risk difference from a logistic model, predict each person’s probability with exposure set to 1 and to 0, average, and compare (marginal standardisation). This is the same trick you will use for causal effects in Block 4.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="differences">
+    <h2>4. Difference measures and the number needed to treat</h2>
+    <p class="point">A difference measure subtracts, so it says how many extra (or fewer) cases the exposure produces per person, which is what a health service or a patient actually experiences.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The <strong>risk difference</strong> (RD, or “absolute risk reduction” when it favours treatment) is risk in the exposed minus risk in the unexposed. The <strong>rate difference</strong> does the same for rates. The <strong>number needed to treat</strong> (NNT) is the RD turned upside down:</dd>
+    </dl>
+
+    \[ \text{NNT} = \frac{1}{\text{RD}} \]
+
+    <dl class="facets">
+      <dt>Why it matters</dt>
+      <dd>Differences measure <em>impact</em>. Deaths averted, cases prevented and costs saved (Project 1) are all differences. Two treatments with the same RR can have very different value if the patients start at different risks.</dd>
+      <dt>How to read it</dt>
+      <dd>0 means no difference. An RD of −2 percentage points over 5 years means 2 fewer events per 100 people treated for 5 years; the NNT is 50. When the exposure harms, the same sum gives the <strong>number needed to harm</strong> (NNH). An NNT always needs a time period and a comparator.</dd>
+      <dt>What a change means</dt>
+      <dd>NNT falls as baseline risk rises: halving a 20% risk gives NNT 10, halving a 2% risk gives NNT 100. Same drug, same RR, ten times the value per patient treated.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Treating an NNT as fixed property of a drug. It belongs to a drug <em>in a population at a given risk over a given time</em>. An NNT from a trial in people with a previous heart attack does not apply to healthy people with a raised cholesterol.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>A 50% discount. On a coffee it saves you a little; on a car it saves you a lot. The ratio (50%) is the same; the difference (riyals saved) depends on the starting price, which is the baseline risk.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="or-rr">
+    <h2>5. When the odds ratio is not the risk ratio</h2>
+    <p class="point">The odds ratio is close to the risk ratio only when the outcome is rare; when the outcome is common, the OR is always further from 1 than the RR.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>When risks are small, odds ≈ risk, so OR ≈ RR. This is the <strong>rare disease assumption</strong>. As the outcome becomes common, odds grow faster than risks and the OR drifts away from 1: above the RR when the exposure is harmful, below it when protective.</dd>
+      <dt>Why it matters</dt>
+      <dd>Logistic regression is the default model for binary outcomes, so ORs are everywhere, and readers almost always interpret them as RRs. For common outcomes (hypertension, diabetes, obesity, any treatment decision) that exaggerates the effect.</dd>
+      <dt>How to read it</dt>
+      <dd>As a rough rule, if the outcome occurs in under about 10% of the unexposed, read the OR as an RR. Above that, convert it, or ask for an RR or risk difference directly (Zhang &amp; Yu give a simple correction; marginal standardisation is better).</dd>
+      <dt>What a change means</dt>
+      <dd>With a true RR of 2, the OR is about 2.1 at a 5% baseline risk, about 2.7 at 20%, and 6 at 40%. The association did not get stronger; only the scale changed.</dd>
+    </dl>
+
+    <div class="widget" data-widget="two-by-two">
+      <div class="widget-title">A 2×2 table, live</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Set the risk in the unexposed and the true risk ratio. The table and all four measures update. The chart holds your RR fixed and shows what the OR would be at every baseline risk: watch it peel away once the outcome is common.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reporting an OR as “x times as likely”. “Likely” is a probability word, so it describes an RR. Say “the odds were x times higher”, or better, convert to a risk ratio or a risk difference for the reader.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example</div>
+      <p>A 1999 <em>NEJM</em> study of physicians’ referrals for cardiac catheterisation reported an odds ratio of about 0.6 for Black versus white patients. News reports turned this into “40% less likely to be referred”. The actual referral rates were about 85% and 91%: a risk ratio of about 0.93. Because referral was very common, the OR was far from the RR (Schwartz, Woloshin &amp; Welch, 1999). Try it in the widget with the “Referral example” button.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">Example · Saudi surveys</div>
+      <p>Hypertension, diabetes and obesity are common in Saudi adults: the 2005 national STEPS survey found hypertension in about a quarter of adults. Cross-sectional papers on these outcomes usually report logistic ORs. When you read or extract them (Project 2 and beyond), remember that an OR of 2 for a condition affecting 30% of the reference group is a prevalence ratio of only about 1.5.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="framing">
+    <h2>6. Relative versus absolute framing</h2>
+    <p class="point">Relative measures tell you how strong an effect is; absolute measures tell you how much it matters; honest reporting gives both.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Population</th><th>Risk without</th><th>Risk with treatment</th><th>RR</th><th>RD</th><th>NNT</th></tr></thead>
+        <tbody>
+          <tr><td>Low risk</td><td>2%</td><td>1%</td><td>0.5</td><td>−1 point</td><td>100</td></tr>
+          <tr><td>High risk</td><td>20%</td><td>10%</td><td>0.5</td><td>−10 points</td><td>10</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The same effect expressed two ways. “Halves your risk” is relative. “1 fewer event per 100 people over 10 years” is absolute. The table shows one treatment (illustrative numbers): the RR is identical, the benefit is ten times larger in the high-risk group.</dd>
+      <dt>Why it matters</dt>
+      <dd>Relative effects sound bigger and are what drug adverts and headlines prefer. Absolute effects are what patients and payers need: they drive NNTs, costs per case prevented and the ICERs of Lecture 1.10.</dd>
+      <dt>How to read it</dt>
+      <dd>Read the relative effect to judge whether the association is real and strong; read the absolute effect to judge whether it is worth acting on. If a paper gives only one, find the baseline risk and work out the other.</dd>
+      <dt>What a change means</dt>
+      <dd>An effect can be constant on one scale and vary on the other. If the RR is the same in men and women but women start at lower risk, the RD differs. Whether there is “effect modification” depends on the scale you chose (Lecture 2.9).</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Applying a trial’s RR and its NNT together to a new population. The RR usually transports reasonably well; the NNT does not. Recompute the NNT from the new population’s baseline risk.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">Example · Project 1</div>
+      <p>Project 1 combines both scales exactly as this section says. The salt–blood pressure–disease evidence arrives as relative risks, turned into a PIF (Lecture 1.7). The deaths and DALYs averted are absolute: the PIF times Saudi disease rates from GBD. A policy with a modest relative effect can still avert many events in a population with high cardiovascular rates.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>A cohort recruits people over several years and loses some to emigration. Should it report the 5-year risk or the rate? Why?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The rate. People were watched for different lengths of time, so a simple 5-year risk would treat someone lost after one year as if they had been followed for five without an event. A rate uses exactly the person-time observed. A risk can still be estimated, but it needs survival methods (Lecture 3.6), not a simple proportion.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A logistic regression of diabetes (prevalence 25% in the unexposed) on obesity gives OR = 3. A colleague writes “obese people are three times as likely to have diabetes”. What would you change?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The outcome is common, so the OR overstates the prevalence ratio; the true ratio is nearer 2. Either write “the odds of diabetes were three times higher”, or, better, report the prevalence ratio or difference from marginal standardisation of the same model.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Drug X cuts stroke risk by 30% (RR 0.7). It is offered to two groups: atrial fibrillation patients with a high stroke risk, and healthy middle-aged adults. Which group has the smaller NNT, and does that settle who should get it?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The high-risk group: the same 30% cut removes more events when there are more to remove. It doesn’t settle the question on its own: harms (bleeding, side effects) are often roughly constant in absolute terms, so in low-risk people the NNH may be smaller than the NNT.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A study reports RR 1.15 for an exposure and an outcome. Another reports RR 4. Without knowing anything else, which is more likely to be explained away by bias, and why?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>RR 1.15. A small excess can be produced by modest confounding or selection bias. Explaining away an RR of 4 would need a strong confounder that is very unevenly distributed. Lectures 2.6 and 2.13 make this precise, for example with E-values.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A newspaper says a food “raises cancer risk by 20%”. What two questions do you ask before deciding whether it matters?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>First, 20% of what: what is the baseline risk, over what time? A 20% rise on a 1-in-10,000 lifetime risk adds about 2 cases per 100,000 people. Second, is a ratio of 1.2 likely to be causal, or could modest confounding produce it? The first question is about absolute impact, the second about strength.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Lash, VanderWeele, Haneuse &amp; Rothman, <em>Modern Epidemiology</em>, 4th ed. (2021): the chapters on measures of occurrence and on measures of effect and association. Risk, rate, odds and person-time; ratio and difference measures.</li>
+      <li>Laupacis, Sackett &amp; Roberts, “An assessment of clinically useful measures of the consequences of treatment”, <em>New England Journal of Medicine</em> (1988): the number needed to treat.</li>
+      <li>Zhang &amp; Yu, “What’s the relative risk? A method of correcting the odds ratio in cohort studies of common outcomes”, <em>JAMA</em> (1998).</li>
+      <li>Schwartz, Woloshin &amp; Welch, “Misunderstandings about the effects of race and sex on physicians’ referrals for cardiac catheterization”, <em>New England Journal of Medicine</em> (1999): the OR-read-as-RR example.</li>
+      <li>Saeed et al., “Prevalence, awareness, treatment, and control of hypertension among Saudi adult population: a national survey”, <em>International Journal of Hypertension</em> (2011): the 2005 STEPS figures.</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="../block-1/1-12-uncertainty-and-voi.html"><small>Previous</small>1.12 Uncertainty and value of information</a>
+    <a class="next" href="2-02-cohort-studies.html"><small>Next</small>2.2 Cohort studies</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>2.9 Effect modification and interaction · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/2-09.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-2">Block 2</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 2.9</p>
+  <h1>Effect modification and interaction</h1>
+  <div class="lecture-meta">
+    <span>Block 2 · Epidemiology</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>An exposure rarely has one effect. It can be bigger in some groups than others, and two exposures together can do more (or less) than their parts. Whether that is true <strong>depends on the scale</strong>: ratio or difference. For public health the difference scale usually matters most, because it says where an intervention prevents the most cases. Project 8 (who benefits from Saudi salt policy) is an effect-modification question on the additive scale.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#modification">Effect modification</a></li>
+      <li><a href="#scale">It depends on the scale</a></li>
+      <li><a href="#interaction">Interaction and RERI</a></li>
+      <li><a href="#publichealth">Why the additive scale matters</a></li>
+      <li><a href="#vsconfounding">Effect modification is not confounding</a></li>
+      <li><a href="#reporting">How to report it</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="modification">
+    <h2>1. Effect modification</h2>
+    <p class="point">Effect modification means the effect of an exposure differs across levels of a third variable, so one summary number would hide something true.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>You estimate the exposure effect separately within groups (<em>strata</em>) of a third variable, the <em>modifier</em>: age, sex, baseline risk, genotype. If the stratum-specific effects differ by more than chance, that variable modifies the effect.</dd>
+      <dt>Why it matters</dt>
+      <dd>It tells you who to target, whose results transfer to which population, and whether a single pooled estimate is a fair summary. A treatment that helps on average can do nothing, or harm, in a subgroup.</dd>
+      <dt>How to read it</dt>
+      <dd>Compare the stratum estimates and the confidence interval for their difference (or ratio). Two RRs of 1.8 and 2.1 with wide intervals are compatible with no modification. RRs of 1.1 and 3.0 with tight intervals are not.</dd>
+      <dt>What a change means</dt>
+      <dd>If the effect in older adults moves from equal to twice that in younger adults, a policy aimed at older adults now buys more per person reached. The average effect has not changed; the map of where it lands has.</dd>
+    </dl>
+
+    <div class="callout example">
+      <div class="callout-title">Example</div>
+      <p>In He, Li and MacGregor’s 2013 meta-analysis of salt-reduction trials, cutting salt by about 4.4 g a day lowered systolic blood pressure by about 5.4 mmHg in people with hypertension and about 2.4 mmHg in people without. Hypertension status modifies the effect of salt on blood pressure. Both groups benefit; one benefits more.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reading “interaction p = 0.3” as “the effect is the same in every group”. Tests for interaction have little power: detecting a difference in effects as large as the main effect needs roughly four times the sample size. A non-significant test means the data cannot tell, not that the effects are equal. Report the stratum estimates and let the reader see.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Fertiliser on two fields. On poor soil it doubles the harvest; on rich soil it adds a little. The fertiliser is the same; the soil modifies what it does.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="scale">
+    <h2>2. It depends on the scale</h2>
+    <p class="point">“Is there effect modification?” has no answer until you say “on which scale”: the same data can show none on the ratio scale and plenty on the difference scale.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The <strong>multiplicative scale</strong> compares ratios (RR, OR, hazard ratio). The <strong>additive scale</strong> compares differences (risk difference, RD). Effect modification on one scale is called <em>effect measure modification</em>, because it is a property of the measure as much as of the biology.</dd>
+      <dt>Why it matters</dt>
+      <dd>If baseline risk differs between groups, a constant RR forces the RD to differ, and a constant RD forces the RR to differ. When both factors have any effect, the absence of modification on one scale guarantees its presence on the other.</dd>
+      <dt>How to read it</dt>
+      <dd>Always ask what the baseline risk is in each stratum. A common RR across groups with very different baseline risks means very different numbers of cases caused, or prevented, in each.</dd>
+      <dt>What a change means</dt>
+      <dd>An RR of 2 in a group with 2% baseline risk adds 2 cases per 100. The same RR of 2 in a group with 20% baseline risk adds 20 per 100: ten times as many cases from the “same” effect.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · Same relative risk, different risk difference</div>
+      <svg class="viz-svg" viewBox="0 0 640 290" role="img" aria-label="Bar chart. Younger adults: risk 2 percent unexposed, 4 percent exposed, RR 2, RD 2 points. Older adults: risk 20 percent unexposed, 40 percent exposed, RR 2, RD 20 points.">
+        <defs><marker id="l29-arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0L10,5L0,10Z" class="arrowhead"/></marker></defs>
+        <!-- axis: y = 240 is 0%, 40% at y = 40 (5 px per point) -->
+        <line x1="70" y1="240" x2="620" y2="240" class="viz-axis"/>
+        <line x1="70" y1="240" x2="70" y2="30" class="viz-axis"/>
+        <line x1="70" y1="140" x2="620" y2="140" class="viz-grid"/>
+        <line x1="70" y1="40" x2="620" y2="40" class="viz-grid"/>
+        <text x="62" y="244" text-anchor="end" class="viz-tick">0%</text>
+        <text x="62" y="144" text-anchor="end" class="viz-tick">20%</text>
+        <text x="62" y="44" text-anchor="end" class="viz-tick">40%</text>
+        <text x="14" y="140" text-anchor="middle" class="viz-label" transform="rotate(-90 14 140)">Risk of the outcome</text>
+        <!-- younger -->
+        <g class="s5"><rect x="110" y="230" width="60" height="10" class="fill"/></g>
+        <g class="s3"><rect x="180" y="220" width="60" height="20" class="fill"/></g>
+        <text x="140" y="222" text-anchor="middle" class="viz-small">2%</text>
+        <text x="210" y="212" text-anchor="middle" class="viz-small">4%</text>
+        <text x="175" y="262" text-anchor="middle" class="viz-bold">Younger adults</text>
+        <text x="175" y="280" text-anchor="middle" class="viz-small viz-muted">RR 2 · RD +2 points</text>
+        <!-- older -->
+        <g class="s5"><rect x="380" y="140" width="60" height="100" class="fill"/></g>
+        <g class="s3"><rect x="450" y="40" width="60" height="200" class="fill"/></g>
+        <text x="410" y="132" text-anchor="middle" class="viz-small">20%</text>
+        <text x="480" y="32" text-anchor="middle" class="viz-small">40%</text>
+        <text x="445" y="262" text-anchor="middle" class="viz-bold">Older adults</text>
+        <text x="445" y="280" text-anchor="middle" class="viz-small viz-muted">RR 2 · RD +20 points</text>
+        <!-- RD bracket for older -->
+        <path d="M530,138 L530,42" class="edge" marker-start="url(#l29-arrow)" marker-end="url(#l29-arrow)"/>
+        <text x="540" y="86" class="viz-small colour s3">20 extra cases</text>
+        <text x="540" y="102" class="viz-small colour s3">per 100 exposed</text>
+        <path d="M260,238 L260,222" class="edge"/>
+        <text x="270" y="234" class="viz-small colour s3">2 extra per 100</text>
+        <!-- legend -->
+        <g class="s5"><rect x="90" y="56" width="14" height="14" class="fill"/></g>
+        <text x="110" y="68" class="viz-small">Unexposed</text>
+        <g class="s3"><rect x="190" y="56" width="14" height="14" class="fill"/></g>
+        <text x="210" y="68" class="viz-small">Exposed</text>
+      </svg>
+      <figcaption>Illustrative numbers. Doubling the risk is “the same effect” on the ratio scale and a tenfold difference in cases on the difference scale. Remove the exposure in older adults and you prevent ten times as many cases per person.</figcaption>
+    </figure>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Saying “the effect was the same in men and women” because the hazard ratios matched. If women had half the baseline risk, the exposure caused half as many cases per woman. Name the scale every time: “no modification of the hazard ratio by sex”.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>A logistic regression without a product term is not “no interaction”. It assumes no interaction on the log-odds scale, which builds in interaction on the probability scale: the same coefficient moves a 2% risk far less than a 40% risk. The choice of link function is a choice of scale. Tree models and neural nets learn interactions on whatever scale the loss sees, so ask on which scale an explanation (SHAP interaction values, partial dependence) is reported.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="interaction">
+    <h2>3. Interaction and RERI</h2>
+    <p class="point">Interaction asks whether two exposures together do more than you would expect from each alone; RERI measures the excess on the additive scale.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Lay out four groups with one shared reference: neither exposure, A only, B only, both. Express each group’s risk relative to “neither”: \(RR_{10}\), \(RR_{01}\), \(RR_{11}\). The <strong>relative excess risk due to interaction</strong> (RERI) is the part of the joint risk ratio not explained by adding the two separate excesses.</dd>
+    </dl>
+
+    \[ \text{RERI} = RR_{11} - RR_{10} - RR_{01} + 1 \]
+
+    <dl class="facets">
+      <dt>Why it matters</dt>
+      <dd>RERI works with ratios, so you can get it from a case-control study or a logistic model (with ORs standing in for RRs when the outcome is rare), yet it answers the additive question.</dd>
+      <dt>How to read it</dt>
+      <dd>RERI = 0: effects add exactly. RERI &gt; 0: <em>superadditive</em>, the pair causes extra cases beyond the sum. RERI &lt; 0: <em>subadditive</em>. On the multiplicative scale, compare \(RR_{11}\) with \(RR_{10} \times RR_{01}\): equal means no multiplicative interaction.</dd>
+      <dt>What a change means</dt>
+      <dd>A RERI of 2 means the joint exposure adds twice the baseline risk on top of what the two separate effects would add. If baseline risk is 1%, that is 2 extra cases per 100 people with both exposures.</dd>
+    </dl>
+
+    <div class="widget" data-widget="interaction-table">
+      <div class="widget-title">Two exposures, four risks</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Set the risk in each of the four groups. The dashed marks show what the “both” group would have if effects simply added or simply multiplied. Load the presets, then try to find risks with interaction on one scale but not the other.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example</div>
+      <p>In Hammond, Selikoff and Seidman’s 1979 cohort of US insulation workers, lung cancer death rates relative to men with neither exposure were about 5 for asbestos alone, 11 for smoking alone and 53 for both. That is close to multiplicative (5.2 × 10.9 ≈ 56): little interaction on the ratio scale. On the additive scale, RERI ≈ 53 − 5.2 − 10.9 + 1 ≈ 38: massive. About 70% of the lung cancer risk in smoking asbestos workers (38 ÷ 53) is attributable to the two exposures acting together, beyond what either adds alone.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Coding the two exposures with “neither” as reference in one model but reporting RERI from stratum-specific RRs that use different reference groups. RERI needs all three ratios against the same doubly-unexposed group. Also, RERI from adjusted ratios needs the same adjustment set in all three.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="publichealth">
+    <h2>4. Why the additive scale matters</h2>
+    <p class="point">Public health decisions are about cases prevented, and cases are counted on the additive scale, so additive interaction tells you where an intervention does the most good.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>If removing exposure A prevents more cases per person in group B+ than in B−, there is additive interaction between A and B (or modification of A’s risk difference by B). With limited resources, you act first where the risk difference is largest.</dd>
+      <dt>Why it matters</dt>
+      <dd>Ratio measures are convenient for modelling and fairly stable across settings, so papers report them. But a ministry funds programmes in cases, deaths and DALYs. Translating a common RR into stratum-specific absolute effects is how a pooled estimate becomes a targeting decision.</dd>
+      <dt>How to read it</dt>
+      <dd>Positive additive interaction: target the group that already carries the second exposure. Negative: the second exposure “uses up” some of the cases, so removing A achieves less there than you would expect.</dd>
+      <dt>What a change means</dt>
+      <dd>In the asbestos example, getting an asbestos worker to stop smoking prevents far more lung cancer than getting a non-exposed smoker to stop, even though the RR for smoking is similar in both.</dd>
+    </dl>
+
+    <div class="callout gulf">
+      <div class="callout-title">Example · Project 8</div>
+      <p>Salt reduction lowers blood pressure more in people with hypertension (section 1), and each mmHg fall cuts cardiovascular risk by roughly the same proportion at any starting level (Lecture 1.9). Baseline cardiovascular risk is far higher in older adults and in people with hypertension. So a uniform salt policy delivers most of its absolute benefit to older, hypertensive groups. Saudi nationals and non-nationals have very different age structures, so the same relative effect will avert very different numbers of events per 1,000 in each. That is the distributional question Project 8 answers.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Concluding “no need to target, the RR is the same everywhere”. A constant RR with unequal baseline risks is exactly the situation where targeting the high-risk group prevents more cases per person. Whether targeting beats a population-wide approach is a separate question (Rose, Lecture 1.2), but the RR alone cannot settle it.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="vsconfounding">
+    <h2>5. Effect modification is not confounding</h2>
+    <p class="point">Confounding is a bias you remove; effect modification is a finding you report.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A <strong>confounder</strong> distorts the crude estimate because it is linked to both exposure and outcome (Lecture 2.6). A <strong>modifier</strong> changes the size of the true effect. The same variable can be both, one, or neither.</dd>
+      <dt>Why it matters</dt>
+      <dd>The two call for opposite actions. For confounding you adjust and give one pooled estimate. For effect modification you give stratum-specific estimates, because a pooled one averages over real differences and depends on how the strata are mixed in your sample.</dd>
+      <dt>How to tell</dt>
+      <dd>Stratify and compare. See the table.</dd>
+    </dl>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Crude RR</th><th>RR in stratum 1</th><th>RR in stratum 2</th><th>Read it as</th></tr></thead>
+        <tbody>
+          <tr><td>2.0</td><td>2.0</td><td>2.0</td><td>Neither: the variable doesn’t matter here</td></tr>
+          <tr><td>2.0</td><td>1.3</td><td>1.3</td><td>Confounding: strata agree with each other, not with the crude</td></tr>
+          <tr><td>2.0</td><td>1.1</td><td>3.5</td><td>Effect modification (of the RR): strata disagree</td></tr>
+          <tr><td>3.0</td><td>1.1</td><td>2.0</td><td>Both: report strata, and don’t trust the crude</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Pooling clearly different strata with a Mantel–Haenszel or regression-adjusted estimate and calling it “the effect”. It is a weighted average whose weights come from your sample, so it may describe no real group. A second trap runs the other way: odds ratios can differ between crude and stratified analyses even without confounding (<em>non-collapsibility</em>), so a crude-versus-adjusted gap in ORs is not proof of confounding.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Confounding is a smudge on the lens: clean it and the picture is right. Effect modification is that the picture really has two different scenes in it: no amount of cleaning makes them one.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="reporting">
+    <h2>6. How to report it</h2>
+    <p class="point">Give readers enough numbers to judge modification on both scales themselves; a single interaction p-value is not enough.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Knol and VanderWeele’s recommendations: present the effect of each exposure combination against one shared reference group, the effect of each exposure within strata of the other, and interaction on both scales (RERI and the ratio of RRs), all with confidence intervals.</dd>
+      <dt>Why it matters</dt>
+      <dd>Readers differ in which scale they need. A clinician or policy-maker usually needs absolute effects; a meta-analyst usually needs ratios. A full table serves both.</dd>
+      <dt>Interaction or modification?</dt>
+      <dd>Strictly, <strong>interaction</strong> is about two exposures you could both change (smoking and asbestos). <strong>Effect modification</strong> needs only one: the modifier can be a marker you would never intervene on, such as sex or nationality. The arithmetic is the same; the causal claim is different. You need to control confounding for both factors to claim interaction, but only for the exposure to claim modification.</dd>
+    </dl>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Report</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td>Risk (or RR/OR) in all four groups vs the doubly-unexposed</td><td>Lets anyone compute RERI and the multiplicative measure</td></tr>
+          <tr><td>Effect of A within each level of B, with CIs, as ratio and difference</td><td>Shows modification directly on both scales</td></tr>
+          <tr><td>RERI and ratio of RRs, with CIs</td><td>The two summary interaction measures</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Subgroup fishing. Test twenty subgroups and one will “differ” by chance. Pre-specify a few modifiers with a reason (biology, baseline risk, policy relevance), report all of them, and treat unplanned findings as hypotheses.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example</div>
+      <p>A cohort on diabetes and smoking for coronary disease might report: neither (reference), diabetes only RR 2.0, smoking only RR 2.0, both RR 5.0. Within non-smokers the diabetes RR is 2.0; within smokers it is 2.5. RERI = 5 − 2 − 2 + 1 = 2; ratio of RRs = 5 ÷ 4 = 1.25. Both scales show positive interaction, and the reader can see it (illustrative numbers).</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>A paper says “the effect of air pollution on asthma admissions did not differ by age (interaction p = 0.4)”, based on rate ratios. What two things would you want to know before believing the conclusion?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>First, the scale: equal rate ratios with very different baseline rates (children and older adults have higher asthma admission rates) mean different absolute effects. Second, the precision: a non-significant interaction test is often just low power, so look at the stratum-specific estimates and their intervals.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Two exposures each double risk, and together they quadruple it. Is there interaction?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>None on the multiplicative scale (2 × 2 = 4). On the additive scale, RERI = 4 − 2 − 2 + 1 = 1, so there is positive interaction: the pair causes more cases than the two separate excesses added together. Whenever both exposures have an effect, no interaction on one scale means interaction on the other.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A health department can fund a smoking-cessation programme for either asbestos-exposed workers or the general population. The RR for smoking and lung cancer is similar in both. Which group should it prioritise, and why?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The asbestos-exposed workers, if costs per quitter are similar. Their baseline lung cancer risk is much higher, so the same relative reduction prevents many more cases per person who quits. That is positive additive interaction between smoking and asbestos, and it is the scale on which cases are counted.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>After stratifying by sex, the RR is 1.4 in men and 1.4 in women, but the crude RR is 2.1. Effect modification, confounding, or both?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Confounding by sex, with no modification of the RR. The strata agree with each other but not with the crude, so report the adjusted RR of about 1.4. (Check the risk differences too: if baseline risks differ by sex, there may be modification on the additive scale.)</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Why is “sex modifies the effect of salt on blood pressure” a less demanding claim than “salt and potassium interact in their effect on blood pressure”?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Effect modification only needs the effect of salt to be unconfounded within each sex; sex itself is just a marker. Interaction is a claim about intervening on both salt and potassium, so confounding must be controlled for both exposures.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Lash, VanderWeele, Haneuse &amp; Rothman, <em>Modern Epidemiology</em>, 4th ed. (2021), chapter 26, “Analysis of Interaction”: scales, RERI, and the link to sufficient causes.</li>
+      <li>Knol &amp; VanderWeele, “Recommendations for presenting analyses of effect modification and interaction”, <em>International Journal of Epidemiology</em> (2012): what to put in the table.</li>
+      <li>VanderWeele, “On the distinction between interaction and effect modification”, <em>Epidemiology</em> (2009).</li>
+      <li>VanderWeele &amp; Knol, “A tutorial on interaction”, <em>Epidemiologic Methods</em> (2014): RERI, confidence intervals and estimation from logistic models.</li>
+      <li>Hammond, Selikoff &amp; Seidman, “Asbestos exposure, cigarette smoking and death rates”, <em>Annals of the New York Academy of Sciences</em> (1979): the asbestos–smoking example.</li>
+      <li>He, Li &amp; MacGregor, “Effect of longer term modest salt reduction on blood pressure”, <em>BMJ</em> (2013): blood pressure effects by hypertension status.</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="2-08-information-bias.html"><small>Previous</small>2.8 Information bias and misclassification</a>
+    <a class="next" href="2-10-causation.html"><small>Next</small>2.10 Causation</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

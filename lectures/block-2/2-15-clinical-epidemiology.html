@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>2.15 Clinical epidemiology · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/2-15.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-2">Block 2</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 2.15</p>
+  <h1>Clinical epidemiology: diagnostic accuracy and prognosis research</h1>
+  <div class="lecture-meta">
+    <span>Block 2 · Epidemiology</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>Clinical epidemiology asks two questions about individual patients: <strong>does this person have the disease now</strong> (diagnosis) and <strong>what will happen to them</strong> (prognosis). Both are answered with probabilities, and both are easy to overstate. A test’s accuracy depends on who it was studied in. A prediction model can rank patients well and still give them the wrong risks. This lecture gives you the tools to judge both, using AI-ECG models as the running example, since you will evaluate devices like them in Project 5B.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#design">Diagnostic accuracy studies</a></li>
+      <li><a href="#biases">Where diagnostic studies go wrong</a></li>
+      <li><a href="#lr">Likelihood ratios: from pre-test to post-test probability</a></li>
+      <li><a href="#progress">Prognosis research: the four PROGRESS questions</a></li>
+      <li><a href="#models">Developing and validating prediction models</a></li>
+      <li><a href="#calibration">Discrimination is not calibration</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="design">
+    <h2>1. Diagnostic accuracy studies</h2>
+    <p class="point">A diagnostic accuracy study gives the new test and a reference standard to the same patients, the ones the test is meant for, and cross-tabulates the results.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A cross-sectional study. Enrol consecutive patients in whom the diagnosis is genuinely uncertain. Apply the <em>index test</em> (the one being evaluated) and the <em>reference standard</em> (the best available way to find out who has the disease) to everyone. Each reading is made blind to the other.</dd>
+      <dt>Why it matters</dt>
+      <dd>Sensitivity, specificity and likelihood ratios are not fixed properties of a test. They describe how the test performed in one group of patients. If that group is unlike the patients you will use it on, the numbers will not carry over.</dd>
+      <dt>How to read it</dt>
+      <dd>Ask three questions first. Who was enrolled, and how? Did everyone get the same reference standard? Was anyone excluded after testing? Look at the accuracy figures only after that.</dd>
+      <dt>What a change means</dt>
+      <dd>Moving the threshold of a continuous test (or of an AI model’s score) trades sensitivity against specificity. The ROC curve shows every such trade. The study should state which threshold it used and whether that threshold was chosen in the same data.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · The diagnostic accuracy study and where bias enters</div>
+      <svg class="viz-svg" viewBox="0 0 640 450" role="img" aria-label="Four study steps on the left, joined by arrows: enrol consecutive patients with suspected disease; apply the index test, read blind; apply the reference standard to everyone; cross-tabulate into a two-by-two table. On the right, linked to each step, the bias that enters there: spectrum bias at enrolment, review bias at the index test, verification and incorporation bias at the reference standard, and the reporting and appraisal tools STARD and QUADAS-2 at the end.">
+        <defs><marker id="l215-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead accent"/></marker></defs>
+        <text x="160" y="20" text-anchor="middle" class="viz-bold">Study step</text>
+        <text x="487" y="20" text-anchor="middle" class="viz-bold">Where bias enters</text>
+        <g class="s1">
+          <rect x="16" y="34" width="288" height="70" rx="10" class="node-fill"/>
+          <rect x="16" y="134" width="288" height="70" rx="10" class="node-fill"/>
+          <rect x="16" y="234" width="288" height="104" rx="10" class="node-fill"/>
+          <rect x="16" y="370" width="288" height="70" rx="10" class="node-fill"/>
+        </g>
+        <g class="s3">
+          <rect x="340" y="34" width="294" height="70" rx="10" class="node"/>
+          <rect x="340" y="134" width="294" height="70" rx="10" class="node"/>
+          <rect x="340" y="234" width="294" height="104" rx="10" class="node"/>
+        </g>
+        <g class="s5"><rect x="340" y="370" width="294" height="70" rx="10" class="node"/></g>
+        <g text-anchor="middle">
+          <text x="160" y="58" class="viz-bold">1. Enrol</text>
+          <text x="160" y="78" class="viz-small">consecutive patients with suspected</text>
+          <text x="160" y="94" class="viz-small">disease, e.g. breathless adults</text>
+          <text x="160" y="158" class="viz-bold">2. Index test</text>
+          <text x="160" y="178" class="viz-small">the AI-ECG, read without knowing</text>
+          <text x="160" y="194" class="viz-small">the reference result</text>
+          <text x="160" y="266" class="viz-bold">3. Reference standard</text>
+          <text x="160" y="288" class="viz-small">echocardiogram in everyone,</text>
+          <text x="160" y="304" class="viz-small">whatever the AI-ECG said,</text>
+          <text x="160" y="320" class="viz-small">read without knowing the AI-ECG</text>
+          <text x="160" y="394" class="viz-bold">4. Cross-tabulate</text>
+          <text x="160" y="414" class="viz-small">2×2 table: sensitivity, specificity,</text>
+          <text x="160" y="430" class="viz-small">likelihood ratios</text>
+
+          <text x="487" y="58" class="viz-bold colour s3">Spectrum bias</text>
+          <text x="487" y="78" class="viz-small">obvious cases plus healthy controls</text>
+          <text x="487" y="94" class="viz-small">make any test look better</text>
+          <text x="487" y="158" class="viz-bold colour s3">Review bias</text>
+          <text x="487" y="178" class="viz-small">a reader who knows one result</text>
+          <text x="487" y="194" class="viz-small">tends to read the other to match</text>
+          <text x="487" y="256" class="viz-bold colour s3">Verification bias</text>
+          <text x="487" y="274" class="viz-small">only test-positives get the echo, or</text>
+          <text x="487" y="290" class="viz-small">negatives get a weaker reference</text>
+          <text x="487" y="310" class="viz-bold colour s3">Incorporation bias</text>
+          <text x="487" y="327" class="viz-small">the index test is part of the reference</text>
+          <text x="487" y="394" class="viz-bold">Report and appraise</text>
+          <text x="487" y="414" class="viz-small">report with STARD 2015;</text>
+          <text x="487" y="430" class="viz-small">appraise risk of bias with QUADAS-2</text>
+        </g>
+        <path d="M160,104 L160,130" class="edge accent" marker-end="url(#l215-arrow)"/>
+        <path d="M160,204 L160,230" class="edge accent" marker-end="url(#l215-arrow)"/>
+        <path d="M160,338 L160,366" class="edge accent" marker-end="url(#l215-arrow)"/>
+        <path d="M304,69 L340,69" class="edge" stroke-dasharray="4 4"/>
+        <path d="M304,169 L340,169" class="edge" stroke-dasharray="4 4"/>
+        <path d="M304,286 L340,286" class="edge" stroke-dasharray="4 4"/>
+        <path d="M304,405 L340,405" class="edge" stroke-dasharray="4 4"/>
+      </svg>
+      <figcaption>The left column is what a good study does at each step; the right column is what goes wrong when it does not. Every bias on the right tends to make the test look more accurate than it will be in practice.</figcaption>
+    </figure>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reading accuracy figures from a <em>two-gate</em> (case-control) design as if they applied in practice. Recruiting confirmed cases from one place and healthy controls from another removes the hard middle: the patients with mild disease and the patients with look-alike conditions. Lijmer and colleagues found that such designs overestimated diagnostic accuracy roughly threefold (relative diagnostic odds ratio about 3) compared with studies in a clinical population.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Testing a goalkeeper only on penalties from children and from professionals tells you little about how they handle a real match, where most shots are somewhere in between. A diagnostic test lives or dies in that in-between.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="biases">
+    <h2>2. Where diagnostic studies go wrong</h2>
+    <p class="point">Most biases in diagnostic studies come from who gets enrolled and who gets the reference standard, and they usually flatter the test.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Bias</th><th>What happens</th><th>Which way it pushes</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Spectrum</strong></td><td>The patients studied are sicker or healthier than the intended users, often through a two-gate design</td><td>Usually inflates both sensitivity and specificity</td></tr>
+          <tr><td><strong>Partial verification</strong></td><td>Only some patients, often those who tested positive, get the reference standard, and the rest are dropped</td><td>Inflates sensitivity, deflates specificity</td></tr>
+          <tr><td><strong>Differential verification</strong></td><td>Test-positives get the full reference (angiography); test-negatives get a weaker one (follow-up)</td><td>Usually inflates accuracy; Lijmer’s estimate was about twofold</td></tr>
+          <tr><td><strong>Incorporation</strong></td><td>The index test is part of the reference, e.g. the ECG is one of the criteria for the final diagnosis</td><td>Inflates accuracy, sometimes badly</td></tr>
+          <tr><td><strong>Review</strong></td><td>Results are read with knowledge of the other test or the clinical picture</td><td>Inflates agreement between index and reference</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · One AI-ECG, two populations</div>
+      <p>Attia and colleagues trained a network to detect an ejection fraction of 35% or less from a 12-lead ECG. In 52,870 Mayo Clinic patients who also had an echocardiogram, the AUC was 0.93, with sensitivity 86% and specificity 86%; 7.8% had the condition. The same model was later tested in a Russian population cohort aged 35–69 (the Know Your Heart study, 4,277 people), where only 0.6% had low ejection fraction. The AUC fell to 0.82, and at the original threshold the sensitivity was 27% and the specificity 97%. Nothing was wrong with the model. A hospital population that was referred for echo is a different spectrum from a community cohort.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>“Sensitivity and specificity do not depend on prevalence, so they transfer.” The arithmetic is true; the practice is not. A change in prevalence usually comes with a change in case mix, milder disease and different look-alikes, and that moves sensitivity and specificity. The AI-ECG above is a clean demonstration.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>Spectrum bias is dataset shift by another name: the training and test sets were drawn from a different distribution of cases than deployment will see. Partial verification is a labelling problem: if only flagged cases get labels, the “negatives” in your test set are unlabelled, not negative. Both are reasons to distrust a held-out test set from the development hospital.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="lr">
+    <h2>3. Likelihood ratios: from pre-test to post-test probability</h2>
+    <p class="point">A likelihood ratio says how much a test result should move your belief, and the starting point, the pre-test probability, matters as much as the test.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>LR+ is how much more likely a positive result is in someone with the disease than in someone without: sensitivity ÷ (1 − specificity). LR− is the same for a negative result: (1 − sensitivity) ÷ specificity. An LR of 1 means the result tells you nothing.</dd>
+      <dt>Why it matters</dt>
+      <dd>Clinicians and patients want the post-test probability, “given this result, how likely is the disease?”. Sensitivity and specificity do not give that on their own. LRs do, once combined with the pre-test probability.</dd>
+      <dt>How to read it</dt>
+      <dd>As a rough guide, LRs above 10 or below 0.1 often change decisions, 5–10 and 0.1–0.2 moderately, 2–5 and 0.2–0.5 a little, and 1–2 or 0.5–1 rarely. For pre-test probabilities between about 10% and 90%, an LR of 2, 5 or 10 adds roughly 15, 30 or 45 percentage points, and 0.5, 0.2 or 0.1 subtracts the same.</dd>
+      <dt>What a change means</dt>
+      <dd>The same positive result means very different things at different starting points. That is why screening a low-risk population produces mostly false positives even with a good test.</dd>
+    </dl>
+
+    <p>The rule works on the odds scale:</p>
+    \[ \text{post-test odds} = \text{pre-test odds} \times LR \]
+    <p>The Fagan nomogram draws this on paper. Put a ruler on the pre-test probability on the left, pass it through the LR in the middle, and read the post-test probability on the right. It works because log-odds add, so the multiplication becomes a straight line.</p>
+
+    <div class="widget" data-widget="fagan">
+      <div class="widget-title">A Fagan nomogram you can move</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">The two lines show the same patient’s probability after a positive and after a negative AI-ECG. Start with the Mayo test-set figures, then switch the pre-test probability between population screening and a breathless patient. Then load the Russian-cohort LRs and see what a negative result is now worth.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Treating a positive screening result as a diagnosis. With an LR+ of 6 and a pre-test probability of 1%, a positive AI-ECG raises the probability of low ejection fraction to only about 6%. Most positives are false. That is still useful: it picks the people who most need an echocardiogram. It is not a diagnosis.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · What the negative result is worth</div>
+      <p>In a breathless patient with a 20% pre-test probability, a negative AI-ECG with the Mayo LR− of 0.16 takes the probability to about 4%, which may be low enough to defer an echo. With the Russian-cohort LR− of 0.75, the same negative result leaves it near 16%, barely changed. The decision a negative result supports depends on which population the LR came from.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>The LR is the Bayes factor, and the nomogram is a logistic model with a single feature: the log LR is added to the prior log-odds. Chaining tests by multiplying their LRs is the naive Bayes assumption of conditional independence. Two ECG criteria that both reflect a thick left ventricle are not independent, so multiplying their LRs overcounts the evidence. A multivariable model fitted on the right patients avoids that.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="progress">
+    <h2>4. Prognosis research: the four PROGRESS questions</h2>
+    <p class="point">“Prognosis research” covers four different questions, and mixing them up leads to the wrong study design and the wrong conclusion.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The PROGRESS series (2013) split prognosis research into four types: what usually happens to people with a condition; which single factors are associated with outcome; how to combine factors into an individual risk; and which factors predict who benefits from a treatment.</dd>
+      <dt>Why it matters</dt>
+      <dd>Each type needs different data and analysis. A prognostic factor study is not a causal study, and a model built for prediction is not built to explain.</dd>
+      <dt>How to read it</dt>
+      <dd>Identify which of the four questions a paper is answering before judging its methods. Many papers drift between them in the discussion section.</dd>
+    </dl>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Type</th><th>Question</th><th>Cardiac example</th></tr></thead>
+        <tbody>
+          <tr><td><strong>1. Overall prognosis</strong></td><td>What is the average outcome in people with this condition under current care?</td><td>Stroke rate per year in people with newly diagnosed AF</td></tr>
+          <tr><td><strong>2. Prognostic factors</strong></td><td>Is this factor associated with outcome, beyond the usual predictors?</td><td>Does NT-proBNP add information about death in heart failure?</td></tr>
+          <tr><td><strong>3. Prognostic models</strong></td><td>Given several factors, what is this person’s absolute risk?</td><td>CHA₂DS₂-VASc for stroke risk in AF</td></tr>
+          <tr><td><strong>4. Stratified medicine</strong></td><td>Does a factor predict who benefits from a treatment?</td><td>Does the benefit of anticoagulation vary with stroke-risk score?</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reading a prognostic factor as a treatment target. High NT-proBNP predicts death in heart failure because it reflects a strained heart, not because the molecule kills. Lowering it with a drug would not necessarily help. Turning “this predicts the outcome” into “changing this changes the outcome” needs the causal methods of Block 5.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Grey hair predicts death. It is an excellent prognostic factor and a useless treatment target. Hair dye does not extend life.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="models">
+    <h2>5. Developing and validating prediction models</h2>
+    <p class="point">A prediction model is only as good as its performance in new patients, and the usual reason it fails there is overfitting or a different population.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>Development</strong>: fit a model to predict an outcome from predictors available at the moment of prediction. <strong>Internal validation</strong>: estimate how optimistic that fit is, using bootstrapping or cross-validation in the same data. <strong>External validation</strong>: test the frozen model in new data from another time, place or setting. <strong>Updating</strong>: recalibrate or refit it for the new setting.</dd>
+      <dt>Why it matters</dt>
+      <dd>A model fitted with too many predictors for its number of events learns the noise in its development data. Its predictions are then too extreme in new patients. Riley and colleagues (2020) give formulas for the minimum sample size that keeps this in check, based on the number of predictors, the outcome rate and the expected model fit.</dd>
+      <dt>How to read it</dt>
+      <dd>Trust an external validation more than an internal one, and internal validation more than the apparent performance in the development data. Ask whether the validation population matches yours.</dd>
+      <dt>What a change means</dt>
+      <dd>If a model ranks patients well in a new setting but its risks are off, it often needs only recalibration, not a new model. Refitting from scratch throws away what transferred.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Choosing predictors that are not available at the time of prediction. A model to predict in-hospital death at admission that includes “transferred to ICU” or “length of stay” will look superb and be useless, since those are known only later.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">In the Gulf</div>
+      <p>Most cardiovascular risk scores in use in the Gulf were developed in North American or European cohorts. The WHO’s 2019 cardiovascular risk charts were recalibrated separately for 21 world regions because absolute risk differs so much between them. Before using any imported score to set treatment thresholds in a Saudi clinic, ask for a local calibration check. A model can rank Saudi patients perfectly well and still misstate their absolute risk.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>Clinical prediction adds two rules to what you know. First, leakage is often clinical rather than technical: a troponin ordered because the doctor already suspected infarction carries the doctor’s judgement into the model. Second, a random train–test split from one hospital is internal validation. Clinical evaluation expects temporal or geographical validation, and for deployment, a check that predictions are calibrated in the new site.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="calibration">
+    <h2>6. Discrimination is not calibration</h2>
+    <p class="point">Discrimination asks whether the model ranks people correctly; calibration asks whether its risks are right. A model can score well on one and badly on the other.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>Discrimination</strong> is measured by the C-statistic (the AUC for a binary outcome): the probability that a random patient with the outcome got a higher predicted risk than a random patient without it. <strong>Calibration</strong> compares predicted with observed risk. It is summarised by <em>calibration-in-the-large</em> (is the average prediction right?) and the <em>calibration slope</em> (are predictions too extreme or too modest?), and best seen in a calibration plot.</dd>
+      <dt>Why it matters</dt>
+      <dd>Treatment thresholds use absolute risk: start a statin at 10%, anticoagulate above a stroke risk. A model that predicts 20% for people whose true risk is 10% will overtreat, however good its AUC.</dd>
+      <dt>How to read it</dt>
+      <dd>A calibration slope below 1 means the predictions are too extreme, the usual sign of overfitting. A curve lying entirely above the diagonal means the model underestimates risk throughout, the usual sign of a new population with a higher baseline risk.</dd>
+      <dt>What a change means</dt>
+      <dd>Any transformation that keeps the order of predictions leaves the C-statistic unchanged. You cannot detect miscalibration from the AUC.</dd>
+    </dl>
+
+    <div class="widget" data-widget="calibration">
+      <div class="widget-title">Break the calibration, keep the AUC</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Start well calibrated. Then try “Overfitted”: predictions are too extreme, the curve is flatter than the diagonal, and the slope drops below 1. Try “New population”: every prediction is too low. Watch the C-statistic throughout.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reporting only the AUC. Van Calster and colleagues called calibration “the Achilles heel of predictive analytics” because it is so often left out. TRIPOD+AI (2024), the reporting guideline for prediction models including machine-learning ones, expects calibration to be reported alongside discrimination. PROBAST is the matching tool for judging a published model’s risk of bias.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · The question after accuracy</div>
+      <p>Good discrimination and calibration still do not show that patients benefit. The EAGLE trial randomised 120 primary care teams to receive AI-ECG results or not, covering 22,641 adults. New diagnoses of low ejection fraction rose from 1.6% to 2.1% (odds ratio 1.32). That is an <em>impact</em> study, the step after validation, and the one most AI tools never take. You will return to it in Lectures 5.13 and 5.15.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>A weather forecaster discriminates well if it rains more on the days she gives higher chances. She is calibrated if, on the days she says 30%, it rains about 30% of the time. A forecaster who says 90% on every rainy day and 60% on every dry one ranks perfectly and is badly calibrated.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>A new point-of-care troponin was studied in 200 patients with angiographically confirmed infarction and 200 healthy blood donors. Sensitivity 98%, specificity 99%. What do you expect in an emergency department?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Lower accuracy, probably much lower. This is a two-gate design with an extreme spectrum. The ED has small infarcts, which lower sensitivity, and patients with raised troponin from other causes such as renal failure, myocarditis or sepsis, which lower specificity. None of those were in the study.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Your health system wants to run an AI-ECG on every adult’s routine ECG to detect low ejection fraction. A colleague says a positive result means the patient “probably has heart failure”. How do you respond?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>At a low pre-test probability, a positive result raises the probability only to single figures, even with an LR+ of 6. Most positives will be false. The result is a reason to order an echocardiogram, not a diagnosis. Also check that the LRs came from a population like yours.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>An imported cardiovascular risk score is validated in Saudi patients: C-statistic 0.80, but it predicts about half the events that actually occur. Should you discard it?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Not necessarily. Its ranking transfers well. The problem is calibration-in-the-large, which recalibrating the intercept to local event rates can fix. Until then, do not use its absolute risks for treatment thresholds, because it will undertreat.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A model developed on 80 events with 25 candidate predictors has a calibration slope of 0.65 on internal validation. What does that tell you?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>It is overfitted. Its predictions are too extreme, so high risks are overstated and low risks understated, and it will do worse again externally. The fixes are fewer predictors, penalised estimation (shrinkage) or more data. A sample-size calculation before development would have flagged the problem.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A cohort study finds that AF patients with a high AI-ECG “age gap” (ECG age above actual age) have higher mortality, adjusted for the usual risk factors. Which PROGRESS question does this answer, and what can you not conclude?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>A prognostic factor question (type 2): the marker adds information. You cannot conclude that lowering the ECG age would reduce mortality. Whether it improves an existing model is a type 3 question that needs model comparison, and whether it guides treatment is type 4.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Lijmer et al., “Empirical evidence of design-related bias in studies of diagnostic tests”, <em>JAMA</em> (1999).</li>
+      <li>Whiting et al., “QUADAS-2: a revised tool for the quality assessment of diagnostic accuracy studies”, <em>Annals of Internal Medicine</em> (2011); Bossuyt et al., “STARD 2015”, <em>BMJ</em> (2015).</li>
+      <li>Attia et al., “Screening for cardiac contractile dysfunction using an artificial intelligence-enabled electrocardiogram”, <em>Nature Medicine</em> (2019).</li>
+      <li>Attia, Tseng, Benavente et al., “External validation of a deep learning electrocardiogram algorithm to detect ventricular dysfunction”, <em>International Journal of Cardiology</em> (2021).</li>
+      <li>Yao et al., “Artificial intelligence-enabled electrocardiograms for identification of patients with low ejection fraction: a pragmatic, randomized clinical trial” (EAGLE), <em>Nature Medicine</em> (2021).</li>
+      <li>Jaeschke, Guyatt &amp; Sackett, “Users’ guides to the medical literature III: how to use an article about a diagnostic test. B”, <em>JAMA</em> (1994); McGee, “Simplifying likelihood ratios”, <em>Journal of General Internal Medicine</em> (2002).</li>
+      <li>The PROGRESS series (2013): Hemingway et al. (<em>BMJ</em>), Riley et al. (<em>PLoS Medicine</em>), Steyerberg et al. (<em>PLoS Medicine</em>), Hingorani et al. (<em>BMJ</em>).</li>
+      <li>Riley et al., “Calculating the sample size required for developing a clinical prediction model”, <em>BMJ</em> (2020).</li>
+      <li>Van Calster et al., “Calibration: the Achilles heel of predictive analytics”, <em>BMC Medicine</em> (2019).</li>
+      <li>Collins et al., “TRIPOD+AI statement”, <em>BMJ</em> (2024); Wolff et al., “PROBAST”, <em>Annals of Internal Medicine</em> (2019).</li>
+      <li>WHO CVD Risk Chart Working Group, “World Health Organization cardiovascular disease risk charts: revised models to estimate risk in 21 global regions”, <em>Lancet Global Health</em> (2019).</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="2-14-measurement-validity-reliability.html"><small>Previous</small>2.14 Measurement: validity, reliability and agreement</a>
+    <a class="next" href="2-16-pharmacoepidemiology-intro.html"><small>Next</small>2.16 Pharmacoepidemiology: an introduction</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

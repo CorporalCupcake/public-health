@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>2.2 Cohort studies · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/2-02.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-2">Block 2</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 2.2</p>
+  <h1>Cohort studies</h1>
+  <div class="lecture-meta">
+    <span>Block 2 · Epidemiology</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>A cohort study classifies people by exposure and follows them forward to see who develops the outcome. It is the observational design closest to a trial, and the one most of your later work uses: Project 3 is a historical cohort built from NHANES with linked death records, and Project 5A emulates a trial inside hospital records. This lecture covers how cohorts are built, which comparison group to choose, and the two follow-up problems that most often break them: <strong>loss to follow-up</strong> and <strong>immortal time</strong>.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#idea">The cohort idea</a></li>
+      <li><a href="#timing">Prospective and historical cohorts</a></li>
+      <li><a href="#open-closed">Open and closed cohorts</a></li>
+      <li><a href="#comparison">Choosing the comparison group</a></li>
+      <li><a href="#followup">Loss to follow-up</a></li>
+      <li><a href="#immortal">Immortal time bias</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="idea">
+    <h2>1. The cohort idea</h2>
+    <p class="point">Start with people who do not yet have the outcome, sort them by exposure, and count new cases in each group over time.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A <strong>cohort</strong> is a group of people followed over time. Everyone starts free of the outcome. Exposure is measured at the start (and sometimes updated), and new cases are counted as they occur. The result is a risk or rate in each exposure group, compared as a ratio or difference (Lecture 2.1).</dd>
+      <dt>Why it matters</dt>
+      <dd>Exposure is recorded before the outcome, so the time order is clear. You get absolute risks, not just ratios. One cohort can study many outcomes of the same exposure: the British Doctors Study looked at smoking and dozens of causes of death.</dd>
+      <dt>How to tell a good one</dt>
+      <dd>A clear <strong>time zero</strong> (the moment follow-up starts, the same for exposed and unexposed), exposure measured well before outcomes, complete and equal follow-up in both groups, and outcomes ascertained the same way whatever the exposure.</dd>
+      <dt>What it costs</dt>
+      <dd>Rare outcomes need very large cohorts; long latency needs long follow-up. That is why case-control designs exist (Lecture 2.3).</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Thinking that following people forward makes the result causal. The time order is right, but exposure was not assigned at random: smokers differ from non-smokers in many ways. A cohort fixes the timing problem, not the confounding problem (Lecture 2.6).</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example</div>
+      <p>The British Doctors Study sent a questionnaire on smoking to UK doctors in 1951 and then tracked their deaths through official records for 50 years. It showed that smoking raised death rates from lung cancer, heart disease and many other causes, and that stopping smoking cut the excess. It is still the template for a simple, cheap, well-followed cohort.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Planting seedlings in sunny and shady corners of a garden and checking which ones flower. You record the corner before you know the result, so you can’t be fooled by hindsight. But if the sunny corner also has better soil, sunshine gets the credit for the soil.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="timing">
+    <h2>2. Prospective and historical cohorts</h2>
+    <p class="point">“Prospective” and “retrospective” describe when the investigator arrives, not which way the logic runs: both measure exposure before outcome.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>In a <strong>prospective</strong> cohort the investigator measures exposure now and waits for outcomes. In a <strong>historical</strong> (retrospective) cohort the exposure and outcomes are already in records when the study begins: employment files, hospital records, a past survey linked to death registers. An <strong>ambidirectional</strong> cohort uses past exposure and keeps following into the future.</dd>
+      <dt>Why it matters</dt>
+      <dd>Historical cohorts are fast and cheap, but you are stuck with what was recorded, for someone else’s purpose. Prospective cohorts let you measure exactly what you need (24-hour urine instead of a food questionnaire), at the price of years of waiting.</dd>
+      <dt>How to read it</dt>
+      <dd>Judge a historical cohort by its records: was exposure recorded before anyone knew the outcome, the same way for everyone? If yes, it can be as valid as a prospective one.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · Three cohort timings</div>
+      <svg class="viz-svg" viewBox="0 0 640 336" role="img" aria-label="Timeline with today marked. Prospective: exposure measured today, outcomes later. Historical: exposure and outcomes both already in records. Ambidirectional: exposure in the past, outcomes before and after today.">
+        <defs><marker id="l22-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead accent"/></marker></defs>
+        <text x="20" y="20" class="viz-small viz-muted">← past</text>
+        <text x="630" y="20" text-anchor="end" class="viz-small viz-muted">future →</text>
+        <text x="330" y="20" text-anchor="middle" class="viz-small viz-bold">Today: the investigator starts</text>
+
+        <text x="20" y="54" class="viz-bold">Prospective</text>
+        <g class="s1"><rect x="340" y="62" width="130" height="48" rx="8" class="node-fill"/></g>
+        <text x="405" y="82" text-anchor="middle" class="viz-small viz-bold">Exposure</text>
+        <text x="405" y="99" text-anchor="middle" class="viz-small">measured now</text>
+        <path d="M470,86 L506,86" class="edge accent" marker-end="url(#l22-arrow)"/>
+        <g class="s3"><rect x="510" y="62" width="120" height="48" rx="8" class="node"/></g>
+        <text x="570" y="82" text-anchor="middle" class="viz-small viz-bold">Outcomes</text>
+        <text x="570" y="99" text-anchor="middle" class="viz-small">as they happen</text>
+
+        <text x="20" y="144" class="viz-bold">Historical (retrospective)</text>
+        <g class="s1"><rect x="20" y="152" width="130" height="48" rx="8" class="node-fill"/></g>
+        <text x="85" y="172" text-anchor="middle" class="viz-small viz-bold">Exposure</text>
+        <text x="85" y="189" text-anchor="middle" class="viz-small">in old records</text>
+        <path d="M150,176 L186,176" class="edge accent" marker-end="url(#l22-arrow)"/>
+        <g class="s3"><rect x="190" y="152" width="126" height="48" rx="8" class="node"/></g>
+        <text x="253" y="172" text-anchor="middle" class="viz-small viz-bold">Outcomes</text>
+        <text x="253" y="189" text-anchor="middle" class="viz-small">already recorded</text>
+
+        <text x="20" y="234" class="viz-bold">Ambidirectional</text>
+        <g class="s1"><rect x="20" y="242" width="130" height="48" rx="8" class="node-fill"/></g>
+        <text x="85" y="262" text-anchor="middle" class="viz-small viz-bold">Exposure</text>
+        <text x="85" y="279" text-anchor="middle" class="viz-small">in old records</text>
+        <path d="M150,266 L186,266" class="edge accent" marker-end="url(#l22-arrow)"/>
+        <g class="s3"><rect x="190" y="242" width="440" height="48" rx="8" class="node"/></g>
+        <text x="485" y="262" text-anchor="middle" class="viz-small viz-bold">Outcomes</text>
+        <text x="485" y="279" text-anchor="middle" class="viz-small">some already recorded, more still to come</text>
+
+        <line x1="330" x2="330" y1="28" y2="296" class="edge strong" stroke-dasharray="5 4"/>
+        <text x="20" y="324" class="viz-small viz-muted">In all three, exposure comes before outcome. Only the investigator’s arrival moves.</text>
+      </svg>
+      <figcaption>The arrow always runs from exposure to outcome. A historical cohort is still a cohort; what changes is that the data were collected before anyone asked your question.</figcaption>
+    </figure>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Calling any study that uses old data “retrospective” and so a case-control study, or assuming it must be weaker. The design is defined by how people are selected (by exposure, or by outcome), not by when the data were collected.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Project 3</div>
+      <p>NHANES examined and surveyed participants years ago, including urine samples, and the participants have since been linked to US death records. Project 3 treats the survey as baseline and the linked deaths as follow-up: a historical cohort. Its strengths and limits come from that: exposure was measured once, by a standard protocol, before anyone knew who would die; but it was measured once, and for NHANES’s purposes, not yours.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="open-closed">
+    <h2>3. Open and closed cohorts</h2>
+    <p class="point">A closed cohort has fixed membership and gives risks; an open cohort lets people in and out and gives rates.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th></th><th>Closed (fixed)</th><th>Open (dynamic)</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Membership</strong></td><td>Defined once, by an event; nobody joins later</td><td>Defined by a state (living in a region, being insured); people join and leave</td></tr>
+          <tr><td><strong>Natural measure</strong></td><td>Risk over a fixed period</td><td>Rate per person-time</td></tr>
+          <tr><td><strong>Examples</strong></td><td>A birth cohort; a trial; everyone admitted with a first heart attack in 2024</td><td>A national health insurance database; residents of a city</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <dl class="facets">
+      <dt>Why it matters</dt>
+      <dd>The membership rule decides the right measure. Computing a simple risk in an open cohort treats people who joined last month like people followed for years.</dd>
+      <dt>How to read it</dt>
+      <dd>Most electronic health record (EHR) and registry studies are open cohorts. Look for person-time, rates and survival methods. If a paper reports a plain percentage for an open cohort, ask how long each person was followed.</dd>
+      <dt>What a change means</dt>
+      <dd>A closed cohort ages as one block, so its rates change with age and time together. An open cohort can stay roughly steady in age as new people replace those who leave.</dd>
+    </dl>
+
+    <div class="callout gulf">
+      <div class="callout-title">Example · Hajj</div>
+      <p>Pilgrims arriving for Hajj form a natural closed cohort: a defined group, a fixed window of a few weeks, and acute outcomes such as heat illness or respiratory infection. A risk (“share who developed heat illness during Hajj”) is the natural measure. A Saudi city’s insured residents, followed over years in health records, are an open cohort, and need rates.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="comparison">
+    <h2>4. Choosing the comparison group</h2>
+    <p class="point">The unexposed group should show what would have happened to the exposed if they had not been exposed; the closer to that, the better.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>An <strong>internal</strong> comparison uses unexposed people from the same cohort (non-smoking doctors). An <strong>external</strong> comparison uses rates from another population, usually the general population, summarised as a <strong>standardised mortality ratio</strong> (SMR: observed deaths ÷ deaths expected at general-population rates). Some studies use both.</dd>
+      <dt>Why it matters</dt>
+      <dd>Every difference between the groups other than the exposure ends up in your estimate. Internal comparisons share recruitment, measurement and follow-up, so they usually differ less.</dd>
+      <dt>How to read it</dt>
+      <dd>An SMR of 1 means deaths as expected for the general population. In a working population an SMR below 1 is normal and does not mean the job is healthy.</dd>
+      <dt>What a change means</dt>
+      <dd>Switching from an external to an internal comparison often moves an occupational SMR from below 1 to above 1. The job didn’t change; the comparison did.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap · the healthy worker effect</div>
+      <p>Comparing workers with the general population. People need to be fairly healthy to get and keep a job; the general population includes people too ill to work. So workers have lower death rates even if their job harms them, and a real hazard can be hidden. Compare exposed workers with less-exposed workers in the same workforce.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">Example · Gulf workforces</div>
+      <p>A study of cardiovascular deaths among oil-and-gas workers in the Gulf that compared them with national mortality would almost certainly find an SMR below 1. Migrant workers add a second layer: health screening before a work visa, and the tendency for sick workers to return home, both remove ill people from the cohort and its death records. Within-workforce comparisons (by job, heat exposure or shift pattern) are the honest design.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>This is selection on a variable related to the outcome, like training a model only on customers who stayed and testing it on everyone. The training population was filtered by health, so its baseline is not the general population’s. Lecture 2.7 treats it as selection bias.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="followup">
+    <h2>5. Loss to follow-up</h2>
+    <p class="point">Losing people costs precision; it causes bias only when who is lost depends on both exposure and outcome.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>People who move away, stop attending or leave the health system before the study ends. Their outcome after leaving is unknown. In a rate analysis they are <strong>censored</strong>: they contribute person-time up to the day they leave.</dd>
+      <dt>Why it matters</dt>
+      <dd>Analyses assume that censored people would have had the same outcome rate as those who stayed (<strong>non-informative censoring</strong>). If sicker exposed people drop out more, the exposed group looks healthier than it is.</dd>
+      <dt>How to read it</dt>
+      <dd>Look at how many were lost and, more importantly, whether loss differed by exposure. A common rule of thumb starts worrying above 20% lost; 5% differential loss with a strong link to the outcome can matter more than 20% balanced loss.</dd>
+      <dt>What a change means</dt>
+      <dd>Equal loss of similar people in both groups mostly widens the confidence interval of a ratio, though each group’s absolute risk can still be off. Differential loss, where the lost people differ in risk, moves the ratio itself.</dd>
+    </dl>
+
+    <div class="widget" data-widget="loss-followup">
+      <div class="widget-title">When does loss to follow-up bias the risk ratio?</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Set how many people each group loses and how risky the lost people are. Compare the risk ratio among those who stayed with the true one. Try equal loss first, then lose more of the exposed.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>“The people lost had similar baseline characteristics, so there is no bias.” Similar age and sex at baseline do not tell you their outcomes after they left. The worry is what happened next, which is exactly what you didn’t see.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · from your ECG work</div>
+      <p>A cohort of patients with a new arrhythmia, followed in one hospital’s records. Patients who get sicker may be transferred to a tertiary centre and vanish from the records just before they would have died. If the arrhythmia raises the chance of transfer, the arrhythmia group will look safer than it is.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="immortal">
+    <h2>6. Immortal time bias</h2>
+    <p class="point">If people must survive for a while to be counted as exposed, and that waiting time is credited to the exposed group, a useless treatment looks protective.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>Immortal time</strong> is follow-up during which, by the way the groups were defined, the outcome could not happen. Example: “users” are people who filled a prescription within a year of discharge. To fill it, they had to be alive. If follow-up starts at discharge and the whole time is labelled “user”, the users get a stretch of guaranteed survival that non-users don’t.</dd>
+      <dt>Why it matters</dt>
+      <dd>It is the most common serious error in observational drug studies, and it always favours the treatment. EHR and claims studies (Project 5A, Block 5) are full of exposures that start after time zero.</dd>
+      <dt>How to spot it</dt>
+      <dd>Ask: was exposure status decided using information from <em>after</em> follow-up began? If yes, check how the time before exposure was counted.</dd>
+      <dt>How to fix it</dt>
+      <dd>Count the waiting time as unexposed (a time-varying exposure), start follow-up at a fixed landmark after which exposure is known, or emulate a trial with one shared time zero (Lecture 5.9). Lecture 5.3 covers this and the other time-related biases in depth.</dd>
+    </dl>
+
+    <div class="widget" data-widget="immortal-time">
+      <div class="widget-title">Make a useless drug look protective</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">4,000 patients after a hospital discharge; some fill a prescription after a wait. The drug does nothing unless you change the true effect. Switch between the two analyses and watch where the amber waiting time is counted.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>“Ever-treated versus never-treated” from the start of follow-up. It sounds natural and is almost always wrong when treatment starts later. The longer and more variable the wait to treatment, the bigger the spurious benefit.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example</div>
+      <p>A 2001 study reported that actors who won an Oscar lived nearly four years longer than nominees who didn’t. But to win, an actor must survive to the ceremony, and the analysis credited winners with their pre-award years. A reanalysis counting winners as “winners” only from the day they won found an advantage of about a year, with a confidence interval including zero (Sylvestre, Huszti &amp; Hanley, 2006).</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>This is look-ahead leakage. A feature (“will be treated”) is defined using the future and then used as if known at time zero. The fix is the same as in time-series ML: only use information available at the moment you start the clock.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>“Members of the over-90s club live longer than average.” Of course: you had to reach 90 to join. Membership didn’t cause the years; the years caused membership.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>A study links a 2010 national survey of salt intake to deaths up to 2025, and the authors call it “retrospective”. A colleague says that makes it a case-control study. Is that right?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>No. People were classified by exposure (salt intake in 2010) and followed to the outcome, so it is a cohort, a historical one. “Retrospective” only means the data existed before the study began. A case-control study selects people by outcome.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>An occupational cohort of desalination plant workers has an all-cause SMR of 0.8 compared with the national population. Does the work protect them?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Not shown. The healthy worker effect alone can produce an SMR well below 1: people must be healthy enough to be hired and to stay employed. Compare workers with different levels of the exposure of interest within the same workforce before concluding anything.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Two cohorts each lose 15% of participants. In one, loss is the same in exposed and unexposed; in the other, the exposed lose 25% and the unexposed 5%. Which worries you more, and what extra information would you want?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The second: differential loss can bias the comparison, while equal loss mainly costs precision. You would want to know whether the reasons for leaving are linked to the outcome (illness, transfer, death outside the area), and a sensitivity analysis assuming the lost had higher or lower risk.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>An EHR study compares heart failure patients who started a new drug within 6 months of diagnosis with those who never started it, following both from diagnosis. The drug users have 30% lower mortality. What is the first thing you check?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Immortal time. Users had to survive until they started the drug, up to 6 months, and that time seems to be counted as “user” time. Ask whether the analysis treated pre-treatment time as unexposed, used a landmark, or emulated a trial with a common time zero. If not, much or all of the 30% could be bias.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Why might a prospective cohort be worth its cost when a historical one using existing records could answer the same question in a month?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Because you control measurement. A prospective cohort can measure the exposure properly (24-hour urine rather than a questionnaire), repeat it, record confounders you care about, and define outcomes in advance. A historical cohort is limited to what someone else recorded for another purpose. Whether that matters depends on how good the old records are for your question.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Lash, VanderWeele, Haneuse &amp; Rothman, <em>Modern Epidemiology</em>, 4th ed. (2021): the chapter on cohort studies. Time zero, open and closed cohorts, comparison groups.</li>
+      <li>Doll, Peto, Boreham &amp; Sutherland, “Mortality in relation to smoking: 50 years’ observations on male British doctors”, <em>BMJ</em> (2004).</li>
+      <li>McMichael, “Standardized mortality ratios and the ‘healthy worker effect’: scratching beneath the surface”, <em>Journal of Occupational Medicine</em> (1976).</li>
+      <li>Suissa, “Immortal time bias in pharmacoepidemiology”, <em>American Journal of Epidemiology</em> (2008): how it arises and how to fix it.</li>
+      <li>Redelmeier &amp; Singh, “Survival in Academy Award-winning actors and actresses”, <em>Annals of Internal Medicine</em> (2001); and Sylvestre, Huszti &amp; Hanley, “Do Oscar winners live longer than less successful peers? A reanalysis of the evidence”, <em>Annals of Internal Medicine</em> (2006).</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="2-01-measures-of-frequency-and-association.html"><small>Previous</small>2.1 Measures of frequency and association</a>
+    <a class="next" href="2-03-case-control-studies.html"><small>Next</small>2.3 Case-control studies</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

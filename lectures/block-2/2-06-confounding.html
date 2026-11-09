@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>2.6 Confounding · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/2-06.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-2">Block 2</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 2.6</p>
+  <h1>Confounding</h1>
+  <div class="lecture-meta">
+    <span>Block 2 · Epidemiology</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p><strong>Confounding</strong> is a mixing of effects: the exposure looks harmful or protective partly because of a third factor that causes both it and the outcome. You find confounders by drawing the causal story, not by trawling the data, and you remove them by comparing like with like. Get this right and you know what to adjust for in Project 3 and what bias to look for in every observational study Project 2 pools. Get it wrong and adjustment itself can create bias.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#what">What confounding is</a></li>
+      <li><a href="#causal">A causal idea, not a statistical one</a></li>
+      <li><a href="#adjust">Four ways to compare like with like</a></li>
+      <li><a href="#residual">Residual and unmeasured confounding</a></li>
+      <li><a href="#indication">Confounding by indication</a></li>
+      <li><a href="#overadjust">What not to adjust for</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="what">
+    <h2>1. What confounding is</h2>
+    <p class="point">A confounder is a common cause of the exposure and the outcome; it opens a non-causal “backdoor” path that makes them move together.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The exposed and unexposed differ in some other way that also affects the outcome, so the crude comparison mixes the exposure’s effect with that other factor’s effect. In a <strong>causal diagram</strong> (a DAG: directed acyclic graph, arrows mean “causes”), a confounder sends arrows into both the exposure and the outcome.</dd>
+      <dt>Why it matters</dt>
+      <dd>It is the main reason observational associations differ from what trials find. Randomisation works because it breaks every arrow into the exposure, so no common cause can remain, measured or not.</dd>
+      <dt>How to read it</dt>
+      <dd>Compare the crude estimate with the adjusted one. If they differ, the adjustment variable was mixing effects (assuming it really is a confounder). The direction can go either way: confounding can create, hide, exaggerate or even reverse an effect.</dd>
+      <dt>What a change means</dt>
+      <dd>A crude RR of 1.8 that falls to 1.1 after adjusting for smoking means most of the apparent effect was smoking. An RR that rises after adjustment means the confounder was masking a real effect.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · A confounder opens a backdoor path</div>
+      <svg class="viz-svg" viewBox="0 0 640 236" role="img" aria-label="DAG: smoking causes coffee drinking and lung cancer; the arrow from coffee to lung cancer is the question being asked">
+        <defs>
+          <marker id="l26-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead accent"/></marker>
+          <marker id="l26-arrow-m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead"/></marker>
+        </defs>
+        <g class="s4"><rect x="250" y="20" width="140" height="44" rx="10" class="node-fill"/></g>
+        <g class="s2"><rect x="50" y="160" width="140" height="44" rx="10" class="node-fill"/></g>
+        <g class="s3"><rect x="450" y="160" width="140" height="44" rx="10" class="node-fill"/></g>
+        <g text-anchor="middle">
+          <text x="320" y="47" class="viz-bold">Smoking</text>
+          <text x="120" y="187" class="viz-bold">Coffee</text>
+          <text x="520" y="187" class="viz-bold">Lung cancer</text>
+        </g>
+        <path d="M280,64 L170,156" class="edge accent" marker-end="url(#l26-arrow)"/>
+        <path d="M360,64 L470,156" class="edge accent" marker-end="url(#l26-arrow)"/>
+        <path d="M194,182 L444,182" class="edge" stroke-dasharray="6 5" marker-end="url(#l26-arrow-m)"/>
+        <text x="212" y="108" text-anchor="end" class="viz-small">smokers drink more coffee</text>
+        <text x="428" y="108" class="viz-small">smoking causes lung cancer</text>
+        <text x="320" y="174" text-anchor="middle" class="viz-small viz-muted">the question: any effect?</text>
+        <text x="320" y="228" text-anchor="middle" class="viz-small colour s1">backdoor path: coffee ← smoking → lung cancer (open until you adjust for smoking)</text>
+      </svg>
+      <figcaption>Teal arrows form the backdoor path. Coffee and lung cancer are associated in crude data even if coffee does nothing. Comparing coffee drinkers with non-drinkers <em>within</em> smoking groups closes the path.</figcaption>
+    </figure>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Thinking confounding needs a sinister hidden variable. The common causes are usually ordinary: age, sex, income, education, smoking, how sick someone already is. Check those first in every paper.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Ice-cream sales and drownings rise together. Banning ice cream won’t save swimmers: hot weather drives both. Weather is the confounder; compare days of the same temperature and the link disappears.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="causal">
+    <h2>2. A causal idea, not a statistical one</h2>
+    <p class="point">No test on the data can tell you whether a variable is a confounder; that judgement comes from what causes what.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The textbook checklist says a confounder must (1) be associated with the exposure, (2) affect the outcome independently of the exposure, and (3) not lie on the causal path from exposure to outcome. The third condition is about causal order, which data alone cannot reveal. A DAG makes all three explicit.</dd>
+      <dt>Why it matters</dt>
+      <dd>Variables that pass the first two tests can be mediators or colliders, and adjusting for them adds bias (section 6). Purely data-driven selection, such as stepwise regression or “keep anything with p &lt; 0.2”, cannot tell these apart.</dd>
+      <dt>How to read it</dt>
+      <dd>A good methods section names its adjustment set and justifies it, ideally with a DAG. The “change-in-estimate” rule (keep a variable if it moves the estimate by more than about 10%) is a rough screen among variables you have already judged to be possible confounders, not a way to find them.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>“We adjusted for every variable available.” More adjustment is not safer. Adjusting for consequences of the exposure removes part of the effect; adjusting for consequences of both exposure and outcome invents associations. Choose variables for their causal role, not their availability.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>Feature selection for prediction and covariate selection for causal estimation are different problems. A feature can improve prediction precisely because it is a consequence of the outcome (or of the exposure), and that is exactly what you must not adjust for. SHAP values and feature importance describe the fitted model, not causes. To read an exposure’s coefficient causally, the other covariates must be chosen by the DAG.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="adjust">
+    <h2>3. Four ways to compare like with like</h2>
+    <p class="point">Every adjustment method does the same thing: it compares exposed and unexposed people who share the same confounder values.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Method</th><th>How it works</th><th>Strength</th><th>Cost</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Restriction</strong></td><td>Study only one level of the confounder (e.g. never-smokers)</td><td>Simple; removes that confounder completely</td><td>Fewer people; results may not apply to others</td></tr>
+          <tr><td><strong>Stratification</strong></td><td>Estimate within each level, then pool, e.g. by Mantel–Haenszel (a weighted average of the stratum estimates)</td><td>Transparent; you can see each stratum</td><td>Runs out of data with many confounders</td></tr>
+          <tr><td><strong>Matching</strong></td><td>Pick comparison people with the same confounder values</td><td>Efficient for strong confounders, especially in case-control studies</td><td>Matched factors must still be handled in the analysis (Lecture 2.3)</td></tr>
+          <tr><td><strong>Regression</strong></td><td>Include confounders as covariates in a model</td><td>Handles many confounders at once</td><td>Relies on the model’s form; easy to over-adjust</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <dl class="facets">
+      <dt>Why it matters</dt>
+      <dd>All four only remove confounding by variables you measured, and measured well. Propensity scores and g-methods (Block 4) extend the same idea; they do not escape that limit.</dd>
+      <dt>How to read it</dt>
+      <dd>If stratum-specific estimates are similar, a single adjusted estimate summarises them well. If they differ a lot, the exposure’s effect depends on the third variable: that is effect modification (Lecture 2.9), and you should report the strata separately.</dd>
+      <dt>What a change means</dt>
+      <dd>In the extreme, the crude association can point the opposite way from every stratum. This is <strong>Simpson’s paradox</strong>, and it is just strong confounding.</dd>
+    </dl>
+
+    <div class="widget" data-widget="confounding-strata">
+      <div class="widget-title">Crude versus stratified</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">The exposure has the same true effect in both strata. Make the confounder more common among the exposed and more harmful, and watch the crude RR drift away from the truth. Press “Simpson’s paradox” to see a protective exposure look harmful.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example</div>
+      <p>A classic kidney-stone study (Charig and colleagues, 1986) compared open surgery with a newer keyhole procedure. Overall, keyhole looked better: 83% success against 78%. Yet open surgery did better for small stones (93% against 87%) and for large stones (73% against 69%). Surgeons had sent the hard cases, large stones, to open surgery. Stone size caused both the treatment choice and the outcome.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Concluding from Simpson’s paradox that you should always trust the stratified result. You should trust it when the stratifying variable is a confounder, as stone size was. If it were a consequence of treatment, the crude result would be the right one. The data look identical either way; only the causal story decides.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="residual">
+    <h2>4. Residual and unmeasured confounding</h2>
+    <p class="point">Adjustment removes only the confounding you measured accurately; what is left over is residual confounding, and it biases most observational studies a little and some a lot.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Three sources: confounders never measured; confounders measured crudely (smoking as yes/no; income as three bands); and categories too broad to make people within them comparable.</dd>
+      <dt>Why it matters</dt>
+      <dd>It is the usual explanation when an observational benefit vanishes in a trial. Effects of the size typical in nutrition and lifestyle epidemiology (RR 0.8–1.2) can be produced by residual confounding alone.</dd>
+      <dt>How to read it</dt>
+      <dd>Ask how well the main confounders were measured, not just whether they appear in the model. Ask how big an unmeasured confounder would have to be to explain the result away; Lecture 2.13 turns this into numbers (for example the E-value).</dd>
+      <dt>What a change means</dt>
+      <dd>If adjusting for a crude version of a confounder moves the estimate a lot, a better-measured version would probably move it further. The adjusted estimate is a waypoint, not the destination.</dd>
+    </dl>
+
+    <div class="callout example">
+      <div class="callout-title">Example</div>
+      <p>Observational studies, notably the Nurses’ Health Study, found that women taking postmenopausal hormone therapy had less coronary heart disease. The Women’s Health Initiative trial (2002) found no such protection and an early excess of coronary events. Women who chose hormones were healthier and better-off in ways adjustment didn’t fully capture. Later re-analyses showed that how the observational data were analysed also mattered (Block 4).</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">Example · GCC surveys</div>
+      <p>In Gulf populations, nationality is a powerful confounder. Expatriate workers differ from citizens in age, sex, income, diet, occupation and access to care, and their share varies hugely between cities, employers and survey samples. Comparing salt intake or diabetes between two places without accounting for nationality (and age and sex) can mostly measure the workforce mix. A single “expatriate” flag is also crude: nationality and occupation groups within it differ widely.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reading “adjusted for socioeconomic status” as “confounding by socioeconomic status is solved”. One crude proxy, such as education in three bands, leaves much of it behind.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="indication">
+    <h2>5. Confounding by indication</h2>
+    <p class="point">Doctors give treatments for reasons, and those reasons predict the outcome, so treated and untreated patients are rarely comparable.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The <em>indication</em> (why the treatment was given), or its absence, is a common cause of treatment and outcome. Sicker patients get more treatment and die more, so treatments look harmful. Patients too frail for a treatment are left untreated and die more, so the treatment looks miraculous.</dd>
+      <dt>Why it matters</dt>
+      <dd>It is the central problem in pharmacoepidemiology (Lecture 2.16, Block 5) and in any analysis of electronic health records, where treatment is never random.</dd>
+      <dt>How to read it</dt>
+      <dd>Be suspicious of drug effects that are much larger than in trials, in either direction. Better designs compare active treatments given for the same indication, and new users with new users.</dd>
+    </dl>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Project 5A</div>
+      <p>In hospitalised patients with new atrial fibrillation, clinicians tend to withhold anticoagulation from patients who are bleeding, frail or near the end of life. Those patients also die sooner. A naive comparison in MIMIC-IV could make anticoagulation look strongly protective against death. Target trial emulation (Block 5) is designed to handle exactly this.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>Caruana and colleagues described a pneumonia mortality model that learned asthma <em>lowered</em> the risk of death. Asthmatic patients with pneumonia were sent straight to intensive care, and the extra care lowered their death rate. The model was right about the data and dangerous as a guide to triage. Prediction models trained on treated patients learn treatment policy as if it were biology.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="overadjust">
+    <h2>6. What not to adjust for</h2>
+    <p class="point">Adjust for common causes; do not adjust for mediators (if you want the total effect) or for colliders.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A <strong>mediator</strong> lies on the path from exposure to outcome. Adjusting for it removes the part of the effect that flows through it, leaving only the “direct” remainder. A <strong>collider</strong> is caused by both exposure and outcome (or their causes); adjusting for it creates an association that isn’t there (Lecture 2.7). Both are forms of <em>overadjustment</em>.</dd>
+      <dt>Why it matters</dt>
+      <dd>Overadjustment is common and silent: the model runs, the interval may even narrow, and the effect shrinks towards the null or shifts. Reviewers and journals rarely catch it without a DAG.</dd>
+      <dt>How to read it</dt>
+      <dd>For each covariate, ask: could the exposure have caused it? If yes, it is a mediator or a descendant of the exposure; leave it out of a total-effect model. Only the exposure’s coefficient is meant to be causal; the confounders’ coefficients usually aren’t (the “Table 2 fallacy”).</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · Same three variables, three different roles</div>
+      <svg class="viz-svg" viewBox="0 0 640 214" role="img" aria-label="Three small DAGs. Confounder: age causes salt and stroke; adjust. Mediator: salt causes blood pressure which causes stroke; don't adjust for the total effect. Collider: salt and stroke both cause hospital admission; don't adjust.">
+        <defs>
+          <marker id="l26-arrow2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead"/></marker>
+          <marker id="l26-arrow2a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead accent"/></marker>
+        </defs>
+        <g text-anchor="middle">
+          <text x="110" y="20" class="viz-bold">Confounder</text>
+          <text x="320" y="20" class="viz-bold">Mediator</text>
+          <text x="530" y="20" class="viz-bold">Collider</text>
+        </g>
+        <!-- nodes: E at cx-65, D at cx+65 (y 125-155); third node at cx (y 55-85) -->
+        <g class="s5">
+          <rect x="13" y="125" width="64" height="30" rx="8" class="node"/><rect x="143" y="125" width="64" height="30" rx="8" class="node"/>
+          <rect x="223" y="125" width="64" height="30" rx="8" class="node"/><rect x="353" y="125" width="64" height="30" rx="8" class="node"/>
+          <rect x="433" y="125" width="64" height="30" rx="8" class="node"/><rect x="563" y="125" width="64" height="30" rx="8" class="node"/>
+        </g>
+        <g class="s4"><rect x="70" y="50" width="80" height="34" rx="8" class="node-fill"/></g>
+        <g class="s2"><rect x="280" y="50" width="80" height="34" rx="8" class="node-fill"/></g>
+        <g class="s3"><rect x="490" y="50" width="80" height="34" rx="8" class="node-fill"/></g>
+        <g text-anchor="middle" class="viz-small">
+          <text x="45" y="144">Salt</text><text x="175" y="144">Stroke</text>
+          <text x="255" y="144">Salt</text><text x="385" y="144">Stroke</text>
+          <text x="465" y="144">Salt</text><text x="595" y="144">Stroke</text>
+          <text x="110" y="71" class="viz-bold">Age</text>
+          <text x="320" y="71" class="viz-bold">BP</text>
+          <text x="530" y="71" class="viz-bold">Admitted</text>
+        </g>
+        <!-- confounder arrows -->
+        <path d="M95,84 L60,121" class="edge accent" marker-end="url(#l26-arrow2a)"/>
+        <path d="M125,84 L160,121" class="edge accent" marker-end="url(#l26-arrow2a)"/>
+        <!-- mediator arrows -->
+        <path d="M270,121 L304,88" class="edge accent" marker-end="url(#l26-arrow2a)"/>
+        <path d="M335,84 L370,121" class="edge accent" marker-end="url(#l26-arrow2a)"/>
+        <!-- collider arrows -->
+        <path d="M480,121 L514,88" class="edge accent" marker-end="url(#l26-arrow2a)"/>
+        <path d="M580,121 L546,88" class="edge accent" marker-end="url(#l26-arrow2a)"/>
+        <!-- question arrows -->
+        <path d="M77,140 L139,140" class="edge" stroke-dasharray="5 4" marker-end="url(#l26-arrow2)"/>
+        <path d="M287,140 L349,140" class="edge" stroke-dasharray="5 4" marker-end="url(#l26-arrow2)"/>
+        <path d="M497,140 L559,140" class="edge" stroke-dasharray="5 4" marker-end="url(#l26-arrow2)"/>
+        <g text-anchor="middle">
+          <text x="110" y="186" class="viz-bold colour s1">Adjust</text>
+          <text x="110" y="204" class="viz-small viz-muted">closes a backdoor path</text>
+          <text x="320" y="186" class="viz-bold colour s3">Don’t adjust</text>
+          <text x="320" y="204" class="viz-small viz-muted">removes the effect you want</text>
+          <text x="530" y="186" class="viz-bold colour s3">Don’t adjust</text>
+          <text x="530" y="204" class="viz-small viz-muted">opens a false path (2.7)</text>
+        </g>
+      </svg>
+      <figcaption>Dashed arrows are the effect being asked about. The third variable could be associated with both salt and stroke in all three cases; only the direction of the arrows tells you whether to adjust. (Age affecting salt intake is for illustration.)</figcaption>
+    </figure>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Project 3</div>
+      <p>Project 3 asks whether the urinary sodium-to-potassium ratio predicts cardiovascular death in NHANES. Much of salt’s effect is thought to run through blood pressure. Adjust for blood pressure and you estimate the effect <em>not</em> through blood pressure, which is a different and much smaller question. For the total effect, adjust for age, sex, smoking and socioeconomic position, and leave blood pressure out (or report both models, labelled clearly).</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reading the adjusted model’s other coefficients as effects. In a model built to estimate salt’s effect on stroke, the coefficient for smoking may be adjusted for things on smoking’s own causal path, and smoking’s own confounders were never chosen for it. It is usually not the effect of smoking. Report only the exposure’s estimate as causal.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>A cohort finds people who take vitamin supplements have 20% lower mortality, adjusted for age and sex. A trial of the same supplement finds no effect. What is the most likely explanation, and what would you have wanted adjusted?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Confounding by health-related behaviour and socioeconomic position: supplement users tend to smoke less, exercise more, earn more and see doctors more. Age and sex adjustment leaves all of that. Better measurement of these factors would shrink the gap, but residual confounding of 20% is entirely plausible.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A colleague selects confounders by keeping every variable associated with both exposure and outcome at p &lt; 0.05. What can go wrong?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Mediators and colliders are associated with both and will be kept, adding bias. Real confounders with weak associations in a small sample may be dropped. Confounding is a causal property; select by a DAG built from subject knowledge, then use data only to refine.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>The crude OR is 2.5. Within each of three age groups it is close to 1.0. Within each of three blood-pressure groups it is close to 1.0. In which case would you conclude the exposure probably has no effect?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Age: it cannot be caused by the exposure, so it is a candidate confounder and the stratified result is the one to trust. Blood pressure might be a mediator: if the exposure raises blood pressure, stratifying on it removes the very effect you want. Same numbers, different conclusion, decided by the causal order.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>An EHR study finds that patients prescribed a new heart-failure drug have higher mortality than those not prescribed it. Before calling the drug harmful, what would you check?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Confounding by indication: the drug may be given to sicker patients. Check whether the comparison group had the same indication and severity, whether an active comparator was used, and whether new users were compared with new users. Without these, the association mostly reflects who gets the drug.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Stratum-specific RRs are 0.6 among men and 1.8 among women. Should you report a single Mantel–Haenszel RR?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>No. The strata disagree, which points to effect modification by sex (Lecture 2.9), not just confounding. A single pooled number would average two different effects into one that describes neither group. Report them separately, and check whether the difference could be chance.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Lash, VanderWeele, Haneuse &amp; Rothman, <em>Modern Epidemiology</em>, 4th edition (2021): the chapters on confounding and on causal diagrams, and on stratified analysis (Mantel–Haenszel).</li>
+      <li>Greenland, Pearl &amp; Robins, “Causal diagrams for epidemiologic research”, <em>Epidemiology</em> (1999): DAGs and backdoor paths.</li>
+      <li>Schisterman, Cole &amp; Platt, “Overadjustment bias and unnecessary adjustment in epidemiologic studies”, <em>Epidemiology</em> (2009). Westreich &amp; Greenland, “The Table 2 fallacy”, <em>American Journal of Epidemiology</em> (2013).</li>
+      <li>Charig, Webb, Payne &amp; Wickham, “Comparison of treatment of renal calculi by open surgery, percutaneous nephrolithotomy, and extracorporeal shockwave lithotripsy”, <em>BMJ</em> (1986); Julious &amp; Mullee, “Confounding and Simpson’s paradox”, <em>BMJ</em> (1994).</li>
+      <li>Caruana et al., “Intelligible models for healthcare: predicting pneumonia risk and hospital 30-day readmission”, <em>KDD</em> (2015). Hernán et al., “Observational studies analyzed like randomized experiments”, <em>Epidemiology</em> (2008): hormone therapy revisited.</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="2-05-random-error.html"><small>Previous</small>2.5 Random error</a>
+    <a class="next" href="2-07-selection-and-collider-bias.html"><small>Next</small>2.7 Selection bias and collider bias</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

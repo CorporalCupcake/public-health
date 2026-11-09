@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>2.10 Causation · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/2-10.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-2">Block 2</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 2.10</p>
+  <h1>Causation: Bradford Hill and modern causal thinking</h1>
+  <div class="lecture-meta">
+    <span>Block 2 · Epidemiology</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>“X causes Y” means: if X had been different, Y would have been different. Every causal tool in epidemiology is a way of approximating that unobservable comparison. This lecture gives you the definition (<strong>potential outcomes</strong>), a model of how causes combine (<strong>causal pies</strong>), a checklist for judging a body of evidence (<strong>Bradford Hill</strong>), and a drawing tool for assumptions (<strong>DAGs</strong>, taken further in Block 4). Projects 1 and 8 rest on a causal chain from salt to blood pressure to cardiovascular events, so you will need to defend it.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#counterfactual">What “cause” means</a></li>
+      <li><a href="#exchange">From people to populations</a></li>
+      <li><a href="#pies">Causal pies</a></li>
+      <li><a href="#hill">Bradford Hill’s viewpoints</a></li>
+      <li><a href="#dags">DAGs: drawing your assumptions</a></li>
+      <li><a href="#triangulation">Triangulation</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="counterfactual">
+    <h2>1. What “cause” means</h2>
+    <p class="point">An exposure causes an outcome in a person if their outcome would have been different had their exposure been different, everything else held the same.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Each person has two <strong>potential outcomes</strong>: \(Y(1)\), what would happen if exposed, and \(Y(0)\), what would happen if not. The individual causal effect is the difference. We only ever see one of the two: the one matching what actually happened. The other is the <em>counterfactual</em>.</dd>
+      <dt>Why it matters</dt>
+      <dd>It turns “causation” from a philosophical word into a quantity with a definition. It also tells you what any study is trying to estimate, and so what could go wrong.</dd>
+      <dt>How to read it</dt>
+      <dd>Because individual effects are unobservable, epidemiology targets the <strong>average causal effect</strong>: the risk if everyone were exposed minus the risk if no one were.</dd>
+    </dl>
+
+    \[ \text{ACE} = \Pr[Y(1)=1] - \Pr[Y(0)=1] \]
+
+    <dl class="facets">
+      <dt>What a change means</dt>
+      <dd>An ACE of −5 percentage points means that treating everyone would leave 5 fewer people per 100 with the outcome than treating no one. It does not tell you which 5, or whether some people were harmed and more were helped.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Talking about the effect of something you cannot imagine intervening on. “The effect of obesity” is vague: obesity from diet, from exercise, from surgery, or from genes? Each has a different counterfactual and possibly a different effect. A well-defined causal question names the intervention, even if only hypothetically.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>The road not taken. You took the motorway and arrived late. Would the back roads have been faster? You can never drive both on the same morning. Causal inference is the science of estimating the other road from other drivers’ mornings.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="exchange">
+    <h2>2. From people to populations</h2>
+    <p class="point">Comparing exposed with unexposed people estimates the causal effect only if the two groups are <em>exchangeable</em>: had they swapped exposures, they would have had each other’s outcomes.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The unexposed group stands in for the missing counterfactual of the exposed group. That works when the groups are alike in everything that affects the outcome. Randomisation makes this true on average. In observational data you hope adjustment makes it true within strata (<em>conditional exchangeability</em>).</dd>
+      <dt>Why it matters</dt>
+      <dd>Confounding (Lecture 2.6) is simply a lack of exchangeability. Selection bias (Lecture 2.7) is a lack of exchangeability created by who got into the analysis.</dd>
+      <dt>How to read it</dt>
+      <dd>Ask: “if the treated had not been treated, would their risk equal the untreated group’s risk?” If doctors chose who to treat on prognosis, the answer is no.</dd>
+      <dt>What a change means</dt>
+      <dd>Moving from “doctors choose” to “coin flips choose” turns an association into a causal estimate, at the cost of chance error, which shrinks as the sample grows.</dd>
+    </dl>
+
+    <div class="widget" data-widget="potential-outcomes">
+      <div class="widget-title">Potential outcomes for 16 patients</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">God’s view shows both outcomes for each patient. Switch to what the study sees, then change who gets treated. Watch the observed difference move while the true effect stays fixed.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Believing a large sample fixes confounding. It shrinks random error, not bias. If doctors treat the sickest, a million patients give a very precise wrong answer.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>A predictive model fits \(\Pr[Y \mid X]\) and is rewarded for exploiting any association, confounded or not. In ICU data, “received a vasopressor” predicts death, because the sickest get vasopressors. A model can be excellent at prediction and useless as a guide to action. Causal questions need \(\Pr[Y(x)]\): what happens if we <em>set</em> X. Shifting the inputs by intervention is a distribution shift that a predictive model was never trained on.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="pies">
+    <h2>3. Causal pies</h2>
+    <p class="point">Most diseases need several component causes acting together; any complete set is a <em>sufficient cause</em>, and blocking any one component prevents every case that set would cause.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Rothman’s <strong>sufficient-component cause model</strong>. Draw each sufficient cause as a pie. Its slices are <em>component causes</em>. Disease occurs when every slice of at least one pie is present. A component found in every pie is a <em>necessary cause</em> (the tubercle bacillus for tuberculosis).</dd>
+      <dt>Why it matters</dt>
+      <dd>It explains three things that puzzle newcomers. Why most smokers never get lung cancer: the other slices are missing. Why the “strength” of a cause varies between populations: it depends on how common its partner components are. And why attributable fractions add up to more than 100%.</dd>
+      <dt>How to read it</dt>
+      <dd>A component in pies that cause many cases is a high-leverage target. Each case can be prevented by removing any one slice of its pie, so the same case is “attributable” to several causes at once.</dd>
+      <dt>What a change means</dt>
+      <dd>If a partner component becomes more common (say, a new co-exposure spreads), the measured RR for a cause rises even though its biology hasn’t changed.</dd>
+    </dl>
+
+    <div class="widget" data-widget="causal-pies">
+      <div class="widget-title">Remove a component, prevent a pie</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">One hundred cases arise from three sufficient causes. Remove components and see which pies can no longer complete. Then compare the fractions preventable by each component alone with their sum.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example</div>
+      <p>Phenylketonuria (PKU) needs two components: an inherited enzyme deficiency and dietary phenylalanine. It is often called “genetic”, yet it is fully preventable by diet, which is why newborns are screened. Both components are 100% attributable: remove either and no case occurs. Asking how much is “due to genes” and how much “due to environment” has no answer.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Expecting causes to share out the burden. Attributable fractions overlap because one case can need several components; summing them to “100% explained” is a category error (Lecture 1.7 made the same point for GBD risk factors). The pies also connect to Lecture 2.9: two components in the same pie produce additive interaction. A RERI above 1 (or above 0, if neither exposure ever prevents disease) shows that some cases need both exposures together.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="hill">
+    <h2>4. Bradford Hill’s viewpoints</h2>
+    <p class="point">Hill’s nine viewpoints are prompts for judging whether an association is causal, not a scoring system: only temporality is required.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>In 1965 Austin Bradford Hill listed nine aspects of an association to consider before calling it causal. He wrote that none of them “can bring indisputable evidence for or against the cause-and-effect hypothesis and none can be required as a sine qua non”.</dd>
+      <dt>Why it matters</dt>
+      <dd>Guideline panels, GBD’s risk-outcome selection and expert reviews still structure causal judgements around them. Used well, they make you look for evidence beyond one study. Used badly, they become a tick-box.</dd>
+      <dt>How to read it</dt>
+      <dd>Today, read each viewpoint as a question about bias: could confounding, selection or measurement error explain this feature of the evidence?</dd>
+    </dl>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Viewpoint</th><th>Ask</th><th>Modern caveat</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Temporality</strong></td><td>Does the cause come before the effect?</td><td>The only necessary one. Watch reverse causation: illness lowers salt intake (Lecture 1.9)</td></tr>
+          <tr><td><strong>Experiment</strong></td><td>Does removing the exposure reduce disease?</td><td>The strongest when available: trials, natural experiments</td></tr>
+          <tr><td><strong>Strength</strong></td><td>Is the association large?</td><td>Large effects are harder to explain by confounding, but weak effects can be causal (second-hand smoke)</td></tr>
+          <tr><td><strong>Consistency</strong></td><td>Seen across populations and designs?</td><td>A shared bias replicates too; inconsistency may be real effect modification</td></tr>
+          <tr><td><strong>Biological gradient</strong></td><td>More exposure, more disease?</td><td>Confounders can have gradients; true curves can be J-shaped or have thresholds</td></tr>
+          <tr><td><strong>Plausibility, coherence</strong></td><td>Is there a mechanism; does it fit what else we know?</td><td>Limited by current biology</td></tr>
+          <tr><td><strong>Specificity, analogy</strong></td><td>One cause, one disease? Similar causes known?</td><td>The weakest: smoking causes many diseases; analogies can be found for anything</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Counting criteria met (“seven of nine, so causal”). The viewpoints are not independent and not equally weighted. A strong, consistent, dose-responsive association can still be confounded, as the observational studies of hormone replacement therapy and heart disease were before trials reversed them.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">Example · Projects 1 and 8</div>
+      <p>The salt chain passes Hill’s most demanding tests. <em>Experiment</em>: trials show salt reduction lowers blood pressure, and trials of blood pressure lowering prevent strokes and heart attacks. <em>Gradient</em>: cohorts with repeated 24-hour urines show a steady sodium–risk gradient. <em>Temporality</em> is where spot-urine cohorts fail, because illness lowers intake before death. Write your Project 1 justification in this structure.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="dags">
+    <h2>5. DAGs: drawing your assumptions</h2>
+    <p class="point">A directed acyclic graph (DAG) is a diagram of what causes what; it tells you which variables to adjust for and, just as important, which not to.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Nodes are variables; arrows are direct causal effects; no loops. An association between exposure and outcome can flow along any path between them. A causal path follows arrows forward. A <em>backdoor</em> path starts with an arrow into the exposure and carries confounding.</dd>
+      <dt>Why it matters</dt>
+      <dd>It replaces “adjust for everything associated with both” (which can introduce bias) with a rule: block every backdoor path, and don’t adjust for mediators or colliders. You met colliders in Lecture 2.7.</dd>
+      <dt>How to read it</dt>
+      <dd>Missing arrows are the strong claims. Every arrow you leave out asserts that one variable has no direct effect on another. Reviewers should argue with those.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · Three structures, three adjustment decisions</div>
+      <svg class="viz-svg" viewBox="0 0 640 230" role="img" aria-label="Three small DAGs. Confounder: L causes A and Y, and A causes Y; adjust for L. Mediator: A causes M, which causes Y; do not adjust for M when you want the total effect. Collider: A and Y both cause C; do not adjust for C.">
+        <defs><marker id="l210-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead"/></marker>
+        <marker id="l210-arrow-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead accent"/></marker></defs>
+        <g text-anchor="middle">
+          <text x="105" y="18" class="viz-bold">Confounder</text>
+          <text x="320" y="18" class="viz-bold">Mediator</text>
+          <text x="535" y="18" class="viz-bold">Collider</text>
+        </g>
+        <!-- Confounder panel -->
+        <g class="s2"><rect x="83" y="34" width="44" height="30" rx="8" class="node-fill"/></g>
+        <g class="s1"><rect x="18" y="124" width="44" height="30" rx="8" class="node-fill"/><rect x="148" y="124" width="44" height="30" rx="8" class="node-fill"/></g>
+        <path d="M95,64 L52,120" class="edge" marker-end="url(#l210-arrow)"/>
+        <path d="M115,64 L158,120" class="edge" marker-end="url(#l210-arrow)"/>
+        <path d="M62,139 L144,139" class="edge accent" marker-end="url(#l210-arrow-a)"/>
+        <!-- Mediator panel -->
+        <g class="s1"><rect x="233" y="124" width="44" height="30" rx="8" class="node-fill"/><rect x="363" y="124" width="44" height="30" rx="8" class="node-fill"/></g>
+        <g class="s4"><rect x="298" y="34" width="44" height="30" rx="8" class="node-fill"/></g>
+        <path d="M262,120 L305,68" class="edge accent" marker-end="url(#l210-arrow-a)"/>
+        <path d="M335,68 L378,120" class="edge accent" marker-end="url(#l210-arrow-a)"/>
+        <!-- Collider panel -->
+        <g class="s1"><rect x="448" y="34" width="44" height="30" rx="8" class="node-fill"/><rect x="578" y="34" width="44" height="30" rx="8" class="node-fill"/></g>
+        <g class="s3"><rect x="513" y="124" width="44" height="30" rx="8" class="node-fill"/></g>
+        <path d="M477,64 L520,120" class="edge" marker-end="url(#l210-arrow)"/>
+        <path d="M593,64 L550,120" class="edge" marker-end="url(#l210-arrow)"/>
+        <g text-anchor="middle" class="viz-bold">
+          <text x="105" y="54">L</text><text x="40" y="144">A</text><text x="170" y="144">Y</text>
+          <text x="320" y="54">M</text><text x="255" y="144">A</text><text x="385" y="144">Y</text>
+          <text x="470" y="54">A</text><text x="600" y="54">Y</text><text x="535" y="144">C</text>
+        </g>
+        <g text-anchor="middle">
+          <text x="105" y="184" class="viz-small">Adjust for L</text>
+          <text x="105" y="201" class="viz-small viz-muted">blocks the backdoor path</text>
+          <text x="105" y="218" class="viz-small viz-muted">age → salt, age → BP</text>
+          <text x="320" y="184" class="viz-small">Don’t adjust for M</text>
+          <text x="320" y="201" class="viz-small viz-muted">if you want the total effect</text>
+          <text x="320" y="218" class="viz-small viz-muted">salt → BP → stroke</text>
+          <text x="535" y="184" class="viz-small">Don’t adjust for C</text>
+          <text x="535" y="201" class="viz-small viz-muted">opens a spurious path</text>
+          <text x="535" y="218" class="viz-small viz-muted">A, Y → hospital admission</text>
+        </g>
+      </svg>
+      <figcaption>A is the exposure, Y the outcome. Teal arrows are the causal paths of interest. The same statistical move, “adjust for the third variable”, is right in the first panel and wrong in the other two. Only a causal diagram tells them apart; the data alone cannot.</figcaption>
+    </figure>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Drawing the DAG after the analysis to justify the adjustment set you already used. Draw it first, from subject knowledge, and let it choose the covariates. Block 4 covers d-separation and the backdoor criterion properly.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="triangulation">
+    <h2>6. Triangulation</h2>
+    <p class="point">The most convincing causal evidence comes from several approaches with different, unrelated biases that point the same way.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Lawlor, Tilling and Davey Smith’s idea: deliberately combine designs whose main sources of bias differ (cohorts, trials, natural experiments, Mendelian randomisation, negative controls), and state for each the direction its bias would push.</dd>
+      <dt>Why it matters</dt>
+      <dd>Ten cohorts that share the same confounding agree for the wrong reason. Two designs with opposite biases that agree are much harder to explain away. It is Hill’s “consistency” made rigorous.</dd>
+      <dt>How to read it</dt>
+      <dd>Agreement across designs with different biases: stronger case. Disagreement: find the design whose bias best explains the split.</dd>
+      <dt>What a change means</dt>
+      <dd>When a new design with a different bias profile disagrees with established cohorts, the question is not “which is right on average” but “which bias is more plausible here”.</dd>
+    </dl>
+
+    <div class="callout example">
+      <div class="callout-title">Example</div>
+      <p>Alcohol and heart disease. Many cohorts found lower risk in moderate drinkers than in abstainers, a J-curve. Mendelian randomisation, using gene variants that make drinking unpleasant (in a European cohort meta-analysis, Holmes and colleagues, 2014; and in the China Kadoorie Biobank, Millwood and colleagues, 2019), found no protection from moderate drinking. The cohorts’ likely bias (former drinkers who quit through illness counted as abstainers, healthier lifestyles among moderate drinkers) does not affect MR. Lecture 2.19 covers MR.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Calling more of the same design “triangulation”. Five more case-control studies with the same recall bias add precision to a biased estimate, not new evidence.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>An observational study finds patients given a new heart-failure drug die more often than those not given it. Before concluding the drug is harmful, what is the first question to ask, in potential-outcomes language?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Are the treated and untreated exchangeable? Would the treated patients, had they not received the drug, have had the same death risk as the untreated? If doctors gave it to sicker patients, the untreated group is a poor stand-in for the treated group’s counterfactual, and the comparison mixes drug effect with prognosis (confounding by indication).</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A colleague says “70% of lung cancer is due to smoking, so at most 30% can be due to radon.” What’s wrong?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Causes are not shares of a fixed pie. Smoking and radon can be components of the same sufficient cause, so a case can be prevented by removing either. Attributable fractions for different causes overlap and can add to more than 100%.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A cohort shows a strong, consistent, dose-dependent link between a vitamin level and lower mortality, with a plausible mechanism. A large trial of the supplement shows no effect. How do you reconcile them using Hill’s viewpoints?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Strength, consistency, gradient and plausibility can all be produced by confounding (healthier people have higher levels) or reverse causation (illness lowers levels). “Experiment” is the viewpoint least vulnerable to those biases, so the trial carries more weight, unless it tested the wrong dose, population or duration. Counting viewpoints met would have misled you.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Your Project 1 model adjusts the salt–stroke effect for blood pressure “to control for it”. Why is that a mistake for a policy model?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Blood pressure is a mediator: salt raises blood pressure, which causes stroke. Adjusting for it removes the main pathway and estimates only the effect not through blood pressure, roughly the opposite of what the policy question needs. For the total effect of a salt policy, don’t condition on the mediator.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Why does a randomised trial with 40 people sometimes show the wrong sign, while a confounded study with 400,000 people reliably shows the wrong sign?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The small trial has exchangeability on average but large chance imbalances: its error is random and shrinks with size. The big study lacks exchangeability: its error is systematic and doesn’t shrink with size. Bigger samples cure noise, not bias.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Lash, VanderWeele, Haneuse &amp; Rothman, <em>Modern Epidemiology</em>, 4th ed. (2021), chapter 2 “Causal Inference and Scientific Reasoning” and chapter 3 “Formal Causal Models”: potential outcomes, sufficient causes, DAGs.</li>
+      <li>Hill, “The environment and disease: association or causation?”, <em>Proceedings of the Royal Society of Medicine</em> (1965): the nine viewpoints, in his own words.</li>
+      <li>Rothman, “Causes”, <em>American Journal of Epidemiology</em> (1976): the sufficient-component cause model.</li>
+      <li>Hernán &amp; Robins, <em>Causal Inference: What If</em> (Chapman &amp; Hall/CRC, 2020; free online), chapters 1–3: potential outcomes, exchangeability, randomisation.</li>
+      <li>Lawlor, Tilling &amp; Davey Smith, “Triangulation in aetiological epidemiology”, <em>International Journal of Epidemiology</em> (2016).</li>
+      <li>Holmes et al., “Association between alcohol and cardiovascular disease: Mendelian randomisation analysis based on individual participant data”, <em>BMJ</em> (2014); Millwood et al., “Conventional and genetic evidence on alcohol and vascular disease aetiology”, <em>The Lancet</em> (2019).</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="2-09-effect-modification.html"><small>Previous</small>2.9 Effect modification and interaction</a>
+    <a class="next" href="2-11-screening-and-diagnostic-tests.html"><small>Next</small>2.11 Screening and diagnostic tests</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

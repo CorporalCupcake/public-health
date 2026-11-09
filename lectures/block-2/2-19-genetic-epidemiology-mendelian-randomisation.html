@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>2.19 Genetic epidemiology and Mendelian randomisation · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/2-19.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-2">Block 2</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 2.19</p>
+  <h1>Genetic epidemiology and Mendelian randomisation</h1>
+  <div class="lecture-meta">
+    <span>Block 2 · Epidemiology</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>Genes enter epidemiology in two ways. As <strong>predictors</strong>: heritability and polygenic scores ask how much genetic variation explains disease, and how well we can predict from it. As <strong>tools for causal inference</strong>: Mendelian randomisation uses genetic variants as natural experiments to test whether an exposure causes disease. The aim here is to read both kinds of paper critically: what the numbers mean, the three assumptions MR stands on, and why scores built in Europeans travel poorly to the Gulf.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#heritability">Heritability: what it does and does not mean</a></li>
+      <li><a href="#pgs">GWAS and polygenic scores</a></li>
+      <li><a href="#mr">Mendelian randomisation: nature’s randomised trial</a></li>
+      <li><a href="#assumptions">The three instrument assumptions</a></li>
+      <li><a href="#pleiotropy">Pleiotropy and the sensitivity methods</a></li>
+      <li><a href="#examples">What MR has taught, and how to read an MR paper</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="heritability">
+    <h2>1. Heritability: what it does and does not mean</h2>
+    <p class="point">Heritability is the share of the <em>variation</em> in a trait, in one population at one time, that is associated with genetic differences; it says nothing about how fixed the trait is in a person.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A ratio of variances, usually estimated by comparing identical and non-identical twins, or from genome-wide data in unrelated people. Height’s heritability is around 80% in twin studies of well-fed populations.</dd>
+      <dt>Why it matters</dt>
+      <dd>It sets a ceiling on how much a genetic predictor could ever explain, and it is constantly misquoted in the press as “X% genetic”.</dd>
+      <dt>How to read it</dt>
+      <dd>High heritability means that, in this environment, people differ mostly because of their genes. It does not mean the trait cannot change, or that the population average is genetically set.</dd>
+      <dt>What a change means</dt>
+      <dd>Heritability rises when the environment becomes more equal, because less of the remaining variation is environmental. Equalising nutrition can make height <em>more</em> heritable.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>“Height is 80% heritable, so diet cannot change it.” Average adult height rose by more than 15 cm in some countries across the twentieth century, including Iranian men and South Korean women (NCD Risk Factor Collaboration, 2016). Genes explain who is taller <em>within</em> a generation; the environment moved the whole distribution. This is Rose’s distinction (Lecture 1.2) between causes of cases and causes of incidence.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Plant the same seed mix in two fields, one fertile and one poor. Within each field, height differences are mostly genetic. Between the fields, the difference is all soil.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="pgs">
+    <h2>2. GWAS and polygenic scores</h2>
+    <p class="point">Most common diseases are shaped by thousands of variants with tiny effects; a polygenic score adds them up into one number, and it predicts best in people whose ancestry matches the data it was built from.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A <strong>genome-wide association study</strong> (GWAS) tests millions of single-letter variants (SNPs) one at a time for association with a trait, using a very strict significance threshold (5 × 10⁻⁸) because of the multiple testing. A <strong>polygenic score</strong> (PGS) is a weighted sum of a person’s risk alleles, with weights taken from a GWAS.</dd>
+      <dt>Why it matters</dt>
+      <dd>For coronary disease, people in the top few percent of a polygenic score can carry risk comparable to a single strong monogenic variant. That has led to proposals to add scores to clinical risk tools (Lecture 2.17).</dd>
+      <dt>How to read it</dt>
+      <dd>Each GWAS hit is usually tiny (odds ratios of 1.05–1.2 per allele) and marks a region, not necessarily the causal gene. A PGS is judged like any prediction model: how much it adds to discrimination and calibration over age, sex and standard risk factors. The added C-statistic for heart disease is usually small.</dd>
+      <dt>What a change means</dt>
+      <dd>Larger GWAS find more hits and better weights. Height now has more than 12,000 independent signals from about 5 million people (Yengo and colleagues, 2022), and its score explains far more variation than a decade ago, in European-ancestry people.</dd>
+    </dl>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>A PGS is a sparse linear model with millions of features, trained on one distribution. Its weights partly encode the correlation structure between SNPs (linkage disequilibrium) and allele frequencies of the training population. Apply it to a population with different LD and frequencies and you have covariate shift: accuracy drops and calibration breaks. The fix is the same as in ML: more diverse training data.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Assuming a PGS works equally well everywhere. About 79% of GWAS participants were of European ancestry when Martin and colleagues (2019) checked, and scores built from UK Biobank were about 2 times less accurate in East Asian and 4.5 times less accurate in African-ancestry people. Arab populations are a very small share of GWAS data, so expect worse performance and check before using one.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">Example · Gulf genomes</div>
+      <p>Saudi Arabia’s Human Genome Program began in 2013 at KACST, aiming to sequence 100,000 genomes; the Qatar Genome Programme began in 2015 and sequences samples from Qatar Biobank. A key local feature is <strong>consanguinity</strong>: a national survey found 56% of Saudi marriages were between relatives, a third between first cousins (El-Mouzan and colleagues, 2007). That raises the frequency of recessive disease, which is why these programmes and premarital screening focus on rare recessive variants. Local genomes are also what will make polygenic scores usable for Gulf populations.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="mr">
+    <h2>3. Mendelian randomisation: nature’s randomised trial</h2>
+    <p class="point">Because alleles are dealt out at conception, a variant that changes an exposure splits people into groups that differ in that exposure but, ideally, in nothing else; comparing their outcomes estimates the exposure’s causal effect.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>An instrumental variable (IV) analysis with genetic variants as the instrument. Carriers of an LDL-lowering variant have had lower LDL since birth. If LDL causes heart disease, carriers should have less of it, by an amount proportional to their LDL difference.</dd>
+      <dt>Why it matters</dt>
+      <dd>Observational associations are confounded by lifestyle and wealth (Lecture 2.6), and reverse causation is common. Genes are fixed at conception, so disease cannot change them, and they are largely unrelated to social factors.</dd>
+      <dt>How to read it</dt>
+      <dd>The basic estimate, the <strong>Wald ratio</strong>, scales the variant’s effect on the outcome by its effect on the exposure:</dd>
+    </dl>
+
+    \[ \hat\beta_{\text{MR}} = \frac{\text{effect of variant on outcome}}{\text{effect of variant on exposure}} \]
+
+    <dl class="facets">
+      <dt>What a change means</dt>
+      <dd>If a variant lowers LDL by 0.1 mmol/L and heart disease odds by 5%, the implied effect is about 40% lower odds per mmol/L of lifelong LDL. With many variants, the ratios are combined by <strong>inverse-variance weighting</strong> (IVW). Most MR now uses <em>two-sample</em> designs: variant–exposure effects from one published GWAS, variant–outcome effects from another.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · Mendelian randomisation and its three assumptions</div>
+      <svg class="viz-svg" viewBox="0 0 640 286" role="img" aria-label="DAG: genetic variant G causes exposure X, which may cause outcome Y. Confounders U affect X and Y. Assumption 1: G affects X. Assumption 2: no path between G and U, shown crossed out. Assumption 3: no direct path from G to Y, shown crossed out.">
+        <defs>
+          <marker id="l219-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead"/></marker>
+          <marker id="l219-arrow-acc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead accent"/></marker>
+        </defs>
+        <g class="s1"><rect x="20" y="124" width="130" height="52" rx="10" class="node-fill"/></g>
+        <g class="s4"><rect x="255" y="124" width="130" height="52" rx="10" class="node-fill"/></g>
+        <g class="s3"><rect x="490" y="124" width="130" height="52" rx="10" class="node-fill"/></g>
+        <g class="s5"><rect x="362" y="14" width="150" height="52" rx="10" class="node"/></g>
+        <g text-anchor="middle">
+          <text x="85" y="146" class="viz-bold">Genetic variant</text>
+          <text x="85" y="164" class="viz-small viz-muted">G</text>
+          <text x="320" y="146" class="viz-bold">Exposure X</text>
+          <text x="320" y="164" class="viz-small viz-muted">e.g. LDL cholesterol</text>
+          <text x="555" y="146" class="viz-bold">Outcome Y</text>
+          <text x="555" y="164" class="viz-small viz-muted">e.g. heart disease</text>
+          <text x="437" y="36" class="viz-bold">Confounders U</text>
+          <text x="437" y="54" class="viz-small viz-muted">diet, wealth, smoking</text>
+        </g>
+        <!-- allowed paths -->
+        <path d="M150,150 L251,150" class="edge accent" marker-end="url(#l219-arrow-acc)"/>
+        <text x="200" y="140" class="viz-small viz-bold colour s1" text-anchor="middle">1 · relevance</text>
+        <path d="M385,150 L486,150" class="edge strong" marker-end="url(#l219-arrow)"/>
+        <text x="437" y="194" class="viz-small" text-anchor="middle">causal effect we want</text>
+        <path d="M410,66 L346,121" class="edge" marker-end="url(#l219-arrow)"/>
+        <path d="M464,66 L528,121" class="edge" marker-end="url(#l219-arrow)"/>
+        <!-- forbidden paths -->
+        <path d="M85,122 C85,60 200,43 358,43" class="edge" stroke-dasharray="5 5" marker-end="url(#l219-arrow)"/>
+        <g class="s3">
+          <path d="M154,51 L170,67 M170,51 L154,67" class="stroke"/>
+          <path d="M314,224 L330,240 M330,224 L314,240" class="stroke"/>
+        </g>
+        <text x="178" y="94" class="viz-small viz-bold colour s3">2 · independence:</text>
+        <text x="178" y="110" class="viz-small">no G–U link</text>
+        <path d="M85,178 C85,250 555,250 555,180" class="edge" stroke-dasharray="5 5" marker-end="url(#l219-arrow)"/>
+        <text x="322" y="272" class="viz-small" text-anchor="middle"><tspan class="viz-bold colour s3">3 · exclusion:</tspan> G affects Y only through X (no pleiotropy)</text>
+      </svg>
+      <figcaption>Solid arrows are allowed. The crossed dashed paths must not exist. Only assumption 1 can be checked directly in data; 2 and 3 are argued from biology and probed with sensitivity analyses.</figcaption>
+    </figure>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>This is the instrumental-variable estimator from econometrics, with genes in place of Angrist and Krueger’s quarter of birth. With one instrument it is the Wald ratio; with many it is two-stage least squares, and IVW on summary statistics approximates it. Lecture 4.9 covers IVs in policy evaluation.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reading an MR estimate as the effect of a drug or a diet change. It estimates the effect of a lifelong, small difference in exposure. Lifelong LDL lowering showed about three times the benefit per mmol/L seen in statin trials started later in life (Ference and colleagues, 2012). MR gets the direction right more often than the size of a short-term intervention.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="assumptions">
+    <h2>4. The three instrument assumptions</h2>
+    <p class="point">MR is only as good as its instruments: they must move the exposure, be unrelated to confounders, and affect the outcome only through the exposure.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Assumption</th><th>Plain meaning</th><th>How it fails</th><th>What to look for</th></tr></thead>
+        <tbody>
+          <tr><td><strong>1. Relevance</strong></td><td>The variant really changes the exposure</td><td>Weak instruments: few or small genetic effects</td><td>F-statistic well above 10; variance explained</td></tr>
+          <tr><td><strong>2. Independence</strong></td><td>The variant is not linked to confounders</td><td>Population stratification (ancestry linked to both gene and outcome); family effects</td><td>Ancestry-matched samples, principal components, within-family designs</td></tr>
+          <tr><td><strong>3. Exclusion</strong></td><td>The variant affects the outcome only via the exposure</td><td>Pleiotropy: the gene does other things too</td><td>Biology of the gene; MR-Egger, weighted median</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <dl class="facets">
+      <dt>Why it matters</dt>
+      <dd>Unlike a trial, nothing guarantees these assumptions. Assumptions 2 and 3 cannot be proven from data, only made more or less plausible.</dd>
+      <dt>How to read it</dt>
+      <dd>The best instruments sit in or near a gene whose protein directly sets the exposure, such as <em>HMGCR</em> (the statin target) or <em>PCSK9</em> for LDL. Scores of hundreds of SNPs from a GWAS are stronger but more likely to include pleiotropic ones.</dd>
+      <dt>What a change means</dt>
+      <dd>Weak instruments bias a two-sample estimate towards the null, and a one-sample estimate towards the confounded observational answer. A low F-statistic is a warning in both directions.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Thinking that genes are “random” in every sense. Alleles are randomised within families at conception, but across a population they track ancestry, and ancestry tracks geography, diet and wealth. In a population with recent mixing or strong regional structure, ignoring ancestry can break assumption 2.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="pleiotropy">
+    <h2>5. Pleiotropy and the sensitivity methods</h2>
+    <p class="point">Pleiotropy, when a variant affects the outcome through another route, is the main threat to MR; sensitivity methods trade some precision for robustness to it.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>Horizontal pleiotropy</strong>: the variant affects the outcome by a path that bypasses the exposure (breaks assumption 3). <em>Vertical</em> pleiotropy, where the variant’s other effects lie downstream of the exposure, is harmless. If pleiotropic effects average zero (<em>balanced</em>), IVW is noisy but roughly unbiased. If they lean one way (<em>directional</em>), IVW is biased.</dd>
+      <dt>Why it matters</dt>
+      <dd>With hundreds of SNPs, some are almost certainly pleiotropic. A credible MR paper shows that its answer survives methods with different assumptions.</dd>
+      <dt>How to read it</dt>
+      <dd>Plot each SNP’s effect on the outcome against its effect on the exposure. If all SNPs are valid, the points fall along a line through the origin whose slope is the causal effect.</dd>
+    </dl>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Method</th><th>Assumes</th><th>Cost</th></tr></thead>
+        <tbody>
+          <tr><td><strong>IVW</strong></td><td>All SNPs valid, or pleiotropy balanced</td><td>Most precise; biased by directional pleiotropy</td></tr>
+          <tr><td><strong>MR-Egger</strong></td><td>Pleiotropic effects unrelated to instrument strength (InSIDE); lets the line miss the origin, and the intercept measures directional pleiotropy</td><td>Much less precise; sensitive to outliers</td></tr>
+          <tr><td><strong>Weighted median</strong></td><td>At least half the weight comes from valid SNPs</td><td>Fails when most SNPs are invalid</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="widget" data-widget="mr-sim">
+      <div class="widget-title">Mendelian randomisation: when it works and when it fails</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Start with confounding and no pleiotropy: the observational estimate is biased but IVW finds the truth. Then add directional pleiotropy and raise the share of invalid SNPs. Watch IVW drift, the Egger intercept move away from zero, and the weighted median hold until more than half the SNPs are invalid.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reading a null MR-Egger intercept as proof of no pleiotropy. The intercept is imprecise and only detects <em>directional</em> pleiotropy that meets InSIDE. Agreement across IVW, Egger and weighted median is reassuring; it is not proof.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Asking twenty witnesses. If a few lie in random directions, the average is still close (IVW). If several lie the same way, the average moves; the middle witness (weighted median) is safe as long as most are honest.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="examples">
+    <h2>6. What MR has taught, and how to read an MR paper</h2>
+    <p class="point">MR’s biggest contributions have been in telling apart risk factors that cause disease from those that only predict it.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Question</th><th>Observational studies</th><th>MR</th></tr></thead>
+        <tbody>
+          <tr><td>Does HDL protect the heart?</td><td>Higher HDL, less heart disease</td><td>Variants that raise only HDL do not lower heart attack risk (Voight and colleagues, 2012). HDL-raising drug trials also failed.</td></tr>
+          <tr><td>Does LDL cause heart disease?</td><td>Higher LDL, more heart disease</td><td>Yes: many LDL-lowering variants, including in <em>PCSK9</em>, lower risk in proportion to LDL (Ference and colleagues, 2012). <em>PCSK9</em> genetics led to a new drug class.</td></tr>
+          <tr><td>Does moderate drinking prevent stroke?</td><td>A U-shape: moderate drinkers had the lowest risk</td><td>No: in China Kadoorie Biobank, East Asian <em>ALDH2</em> and <em>ADH1B</em> variants that reduce drinking showed stroke risk rising steadily with genetically predicted intake (Millwood and colleagues, 2019).</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · a built-in negative control</div>
+      <p>In the China Kadoorie Biobank, few women drank, whatever their genotype. The alcohol-lowering variants did not track stroke in women. If the variants had raised stroke risk by another route (pleiotropy), it should have shown in women too. That gap is strong evidence that the effect in men runs through alcohol.</p>
+    </div>
+
+    <dl class="facets">
+      <dt>How to read an MR paper</dt>
+      <dd>Check, in order: (1) instrument source and strength; (2) whether exposure and outcome GWAS are from the same ancestry and do not overlap heavily; (3) the biology of the main variants; (4) agreement across IVW, Egger and weighted median; (5) whether the exposure is something you could actually change. STROBE-MR is the reporting checklist (Lecture 2.20).</dd>
+      <dt>What a change means</dt>
+      <dd>A causal MR result for a biomarker makes it a plausible drug target. A null MR result for a well-measured, strongly instrumented exposure is strong evidence against causation, as for HDL.</dd>
+    </dl>
+
+    <div class="callout gulf">
+      <div class="callout-title">Example · MR in the Gulf</div>
+      <p>Almost all instruments come from European GWAS. Using them in Gulf data risks weak instruments and different linkage patterns, and pooling European exposure GWAS with Gulf outcome data breaks the same-population assumption of two-sample MR. As Saudi and Qatari genome programmes link to health records, locally derived instruments will make Gulf-specific MR possible, for example for vitamin D or BMI and diabetes.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Treating MR as automatic proof because it uses genes. Thousands of two-sample MR papers are now produced from public GWAS with little thought about the biology. Ask the same question as for any study: which assumption is weakest here, and how would it bias the answer?</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>A report says type 2 diabetes is “70% heritable”, so lifestyle campaigns are pointless. What is wrong?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Heritability describes the share of variation between people in one population and environment. It says nothing about whether changing the environment moves the average. Diabetes prevalence has risen fast in the Gulf within one or two generations, far too fast for genes; that rise is environmental, and the same environment can be changed.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A polygenic score for coronary disease adds 0.02 to the C-statistic in UK Biobank. A company proposes it for Saudi primary care. What do you ask?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Whether it has been validated in Arab or Saudi populations, with discrimination and calibration reported. Scores lose accuracy in ancestries unlike their training data, and a 0.02 gain in Europeans may vanish. Also whether it changes decisions beyond what a calibrated clinical score already does, and at what cost.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>An MR study finds that genetically higher BMI raises depression risk. Name the assumption you would worry about most, and why.</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Exclusion (pleiotropy). Many BMI variants act in the brain, on appetite and reward, so they could affect mood directly rather than through BMI. Look for MR-Egger and weighted median agreement, and for analyses using variants with clearer biology. Population stratification and social effects of body size (stigma) also complicate the reading.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>IVW gives a clear harmful effect; MR-Egger gives a slope near zero with a positive intercept. How do you read this?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>It suggests directional pleiotropy may be driving the IVW result: once the line is allowed to miss the origin, the causal slope disappears. Egger is imprecise, so check the weighted median and look for outlying SNPs with known other effects. Be cautious about claiming causation.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Why is the HDL story the classic argument for MR, and what does it say about risk scores?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>HDL predicted heart disease strongly in cohorts, but variants raising HDL alone did not lower risk, and HDL-raising drugs failed in trials. MR flagged a predictor that was not a cause. A risk score can still use HDL to predict, but it is not a treatment target (Lecture 2.17).</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Davey Smith &amp; Ebrahim, “‘Mendelian randomization’: can genetic epidemiology contribute to understanding environmental determinants of disease?”, <em>International Journal of Epidemiology</em> (2003).</li>
+      <li>Burgess &amp; Thompson, <em>Mendelian Randomization: Methods for Causal Inference Using Genetic Variants</em> (2nd edition, 2021): assumptions, IVW and robust methods.</li>
+      <li>Bowden, Davey Smith &amp; Burgess, “Mendelian randomization with invalid instruments: effect estimation and bias detection through Egger regression”, <em>International Journal of Epidemiology</em> (2015); Bowden, Davey Smith, Haycock &amp; Burgess, “Consistent estimation in Mendelian randomization with some invalid instruments using a weighted median estimator”, <em>Genetic Epidemiology</em> (2016).</li>
+      <li>Voight et al., “Plasma HDL cholesterol and risk of myocardial infarction: a mendelian randomisation study”, <em>The Lancet</em> (2012); Ference et al., “Effect of long-term exposure to lower low-density lipoprotein cholesterol beginning early in life on the risk of coronary heart disease”, <em>Journal of the American College of Cardiology</em> (2012).</li>
+      <li>Millwood et al., “Conventional and genetic evidence on alcohol and vascular disease aetiology: a prospective study of 500 000 men and women in China”, <em>The Lancet</em> (2019).</li>
+      <li>Martin, Kanai, Kamatani, Okada, Neale &amp; Daly, “Clinical use of current polygenic risk scores may exacerbate health disparities”, <em>Nature Genetics</em> (2019).</li>
+      <li>El-Mouzan, Al-Salloum, Al-Herbish, Qurachi &amp; Al-Omar, “Regional variations in the prevalence of consanguinity in Saudi Arabia”, <em>Saudi Medical Journal</em> (2007).</li>
+      <li>Skrivankova et al., “Strengthening the reporting of observational studies in epidemiology using Mendelian randomization: the STROBE-MR statement”, <em>JAMA</em> (2021).</li>
+      <li>NCD Risk Factor Collaboration, “A century of trends in adult human height”, <em>eLife</em> (2016); Yengo et al., “A saturated map of common genetic variants associated with human height”, <em>Nature</em> (2022).</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="2-18-life-course-social-epidemiology.html"><small>Previous</small>2.18 Life-course and social epidemiology</a>
+    <a class="next" href="2-20-critical-appraisal.html"><small>Next</small>2.20 Critical appraisal</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

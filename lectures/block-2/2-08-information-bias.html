@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>2.8 Information bias and misclassification · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/2-08.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-2">Block 2</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 2.8</p>
+  <h1>Information bias and misclassification</h1>
+  <div class="lecture-meta">
+    <span>Block 2 · Epidemiology</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p><strong>Information bias</strong> comes from measuring exposure, outcome or confounders wrongly. For yes/no variables it is called <strong>misclassification</strong>, and its effect depends on one question: is the error the same in the groups you compare (<em>non-differential</em>) or not (<em>differential</em>)? Non-differential error usually weakens associations; differential error can push them anywhere. Project 2 rests on choosing 24-hour urine over weaker measures for exactly this reason, and Lecture 2.13 turns these ideas into corrections.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#test">Every measurement is a diagnostic test</a></li>
+      <li><a href="#types">Non-differential and differential</a></li>
+      <li><a href="#null">Why non-differential error usually weakens effects</a></li>
+      <li><a href="#exceptions">When “toward the null” fails</a></li>
+      <li><a href="#recall">Recall and detection bias</a></li>
+      <li><a href="#outcome">Outcome misclassification and noisy labels</a></li>
+      <li><a href="#continuous">Continuous exposures: regression dilution</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="test">
+    <h2>1. Every measurement is a diagnostic test</h2>
+    <p class="point">A questionnaire, a record or a lab value classifies people as exposed or not, and like any test it has a sensitivity and a specificity.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>Sensitivity</strong> (Se): the share of truly exposed people recorded as exposed. <strong>Specificity</strong> (Sp): the share of truly unexposed people recorded as unexposed. Errors run both ways: missed exposures (false negatives) and false alarms (false positives). The recorded prevalence mixes the two:</dd>
+    </dl>
+
+    \[ p_{\text{recorded}} = \text{Se} \times p_{\text{true}} \;+\; (1 - \text{Sp}) \times (1 - p_{\text{true}}) \]
+
+    <dl class="facets">
+      <dt>Why it matters</dt>
+      <dd>This one line drives everything in this lecture. Plug in Se and Sp for cases and controls (or exposed and unexposed) and you can see what misclassification does to any table. It is the core of quantitative bias analysis (Lecture 2.13).</dd>
+      <dt>How to read it</dt>
+      <dd>Above about 0.9 for both is good for self-report. For a rare exposure, specificity matters most: a 5% false-positive rate among the many unexposed can swamp the true exposed. For a common exposure, sensitivity matters more.</dd>
+      <dt>What a change means</dt>
+      <dd>With 10% truly exposed, Se 0.8 and Sp 0.95, the recorded prevalence is 12.5%, and over a third of those recorded as exposed are not.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · From true to recorded exposure</div>
+      <svg class="viz-svg" viewBox="0 0 640 236" role="img" aria-label="Flow from truly exposed and truly unexposed to recorded exposed and recorded unexposed. Truly exposed go to recorded exposed with probability Se and to recorded unexposed with 1 minus Se. Truly unexposed go to recorded unexposed with Sp and to recorded exposed with 1 minus Sp.">
+        <defs>
+          <marker id="l28-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead accent"/></marker>
+          <marker id="l28-arrow-m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead"/></marker>
+        </defs>
+        <g text-anchor="middle">
+          <text x="110" y="16" class="viz-small viz-muted">TRUTH</text>
+          <text x="530" y="16" class="viz-small viz-muted">WHAT THE DATA SAY</text>
+        </g>
+        <g class="s2">
+          <rect x="20" y="28" width="180" height="52" rx="10" class="node-fill"/>
+          <rect x="440" y="28" width="180" height="52" rx="10" class="node-fill"/>
+        </g>
+        <g class="s5">
+          <rect x="20" y="160" width="180" height="52" rx="10" class="node"/>
+          <rect x="440" y="160" width="180" height="52" rx="10" class="node"/>
+        </g>
+        <g text-anchor="middle">
+          <text x="110" y="51" class="viz-bold">Truly exposed</text>
+          <text x="110" y="69" class="viz-small viz-muted">share p</text>
+          <text x="110" y="183" class="viz-bold">Truly unexposed</text>
+          <text x="110" y="201" class="viz-small viz-muted">share 1 − p</text>
+          <text x="530" y="51" class="viz-bold">Recorded exposed</text>
+          <text x="530" y="69" class="viz-small viz-muted">true + false positives</text>
+          <text x="530" y="183" class="viz-bold">Recorded unexposed</text>
+          <text x="530" y="201" class="viz-small viz-muted">true + false negatives</text>
+        </g>
+        <path d="M200,54 L436,54" class="edge accent" marker-end="url(#l28-arrow)"/>
+        <path d="M200,186 L436,186" class="edge accent" marker-end="url(#l28-arrow)"/>
+        <path d="M200,74 L436,168" class="edge" marker-end="url(#l28-arrow-m)"/>
+        <path d="M200,166 L436,72" class="edge" marker-end="url(#l28-arrow-m)"/>
+        <text x="318" y="46" text-anchor="middle" class="viz-small colour s1">sensitivity, Se</text>
+        <text x="318" y="204" text-anchor="middle" class="viz-small colour s1">specificity, Sp</text>
+        <g class="s3">
+          <rect x="216" y="85" width="108" height="20" rx="6" class="node"/>
+          <rect x="216" y="135" width="108" height="20" rx="6" class="node"/>
+        </g>
+        <text x="270" y="99" text-anchor="middle" class="viz-small colour s3">missed: 1 − Se</text>
+        <text x="270" y="149" text-anchor="middle" class="viz-small colour s3">false alarm: 1 − Sp</text>
+      </svg>
+      <figcaption>Teal arrows are correct classifications; grey crossing arrows are errors. The recorded exposed group is a blend of truly exposed people and false alarms from the (usually much larger) unexposed group.</figcaption>
+    </figure>
+
+    <div class="callout gulf">
+      <div class="callout-title">Example · Self-reported diabetes</div>
+      <p>Asking “has a doctor told you that you have diabetes?” has high specificity but limited sensitivity: it misses everyone with undiagnosed diabetes. In the 2013 Saudi Health Interview Survey, more than half of adults whose measured HbA1c indicated diabetes had never been told they had it (El Bcheraoui and colleagues, 2014). A study using self-report as its diabetes variable has low sensitivity, and the miss rate is not random: younger people, men and those with less contact with health services are less often diagnosed.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Taking a validated questionnaire’s Se and Sp from another population. Accuracy depends on the people and the setting: a food questionnaire validated in Europe may not capture Gulf dishes, and a diagnosis code validated in one hospital may be used differently in another.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="types">
+    <h2>2. Non-differential and differential</h2>
+    <p class="point">What matters most is not how much error there is, but whether it differs between the groups being compared.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Type</th><th>Meaning</th><th>Typical cause</th><th>Usual effect</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Non-differential</strong></td><td>Exposure error is the same in cases and non-cases (or outcome error the same in exposed and unexposed)</td><td>A crude instrument used the same way on everyone</td><td>Toward the null, for a binary variable with independent errors</td></tr>
+          <tr><td><strong>Differential</strong></td><td>Error rates differ between the groups</td><td>Measurement after the outcome; knowledge of exposure when assessing outcome</td><td>Either direction; unpredictable without numbers</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <dl class="facets">
+      <dt>Why it matters</dt>
+      <dd>Non-differential error is the price of a crude tool; differential error is a flaw in design. Case-control studies that ask about past exposures after diagnosis are most at risk of the second.</dd>
+      <dt>How to read it</dt>
+      <dd>Ask when and how each variable was measured, and whether whoever measured it knew the other. Exposure recorded before the outcome happened (prospectively, or from old records) is usually non-differential. Exposure recalled after diagnosis may not be.</dd>
+    </dl>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>A blurry camera photographs everyone equally badly: faces are harder to tell apart, but no one is framed. A camera that blurs only one team’s players is a different problem: it can make either team look better.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="null">
+    <h2>3. Why non-differential error usually weakens effects</h2>
+    <p class="point">If everyone is misclassified at the same rates, some exposed people end up in the unexposed group and vice versa, making the groups more alike and the association weaker.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Misclassification mixes the groups. The “exposed” group now contains some unexposed people with lower risk; the “unexposed” group contains some exposed people with higher risk. The contrast shrinks toward no effect (RR or OR toward 1).</dd>
+      <dt>Why it matters</dt>
+      <dd>Weak associations measured with crude tools may hide strong true ones. A null result from a poor measure is weak evidence of no effect (Lecture 2.5).</dd>
+      <dt>How to read it</dt>
+      <dd>Poor specificity hurts more than poor sensitivity when the exposure is rare. With Se + Sp = 1 the measurement is no better than a coin toss and any association vanishes.</dd>
+      <dt>What a change means</dt>
+      <dd>In the default setting below, Se 0.8 and Sp 0.9 in everyone turn a true OR of 2.67 into an observed OR of about 1.9: over a third of the excess odds disappears.</dd>
+    </dl>
+
+    <div class="widget" data-widget="misclass-2x2">
+      <div class="widget-title">Misclassifying exposure in a case-control study</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">In non-differential mode, lower sensitivity or specificity and watch the observed OR slide toward 1. Then switch to differential mode, or try the presets, and push it away from the null or across it.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>“Misclassification was non-differential, so our estimate is conservative and the true effect is larger.” The toward-the-null rule is about the <em>average</em> over many studies. In any one study, random error can put the estimate on either side. And the rule only holds under the conditions in section 4.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>This is label noise on an input. Random flips in a binary feature weaken its learned association with the target, the same attenuation you see when you add noise to a feature and watch its coefficient shrink. Flips whose rate depends on the target are a different beast: they can inflate the feature’s apparent importance.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="exceptions">
+    <h2>4. When “toward the null” fails</h2>
+    <p class="point">The weakening rule is narrower than most people think; outside its conditions, non-differential error can bias away from the null too.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Situation</th><th>What can happen</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td><strong>More than two exposure levels</strong></td><td>Middle categories can be biased in either direction, even with non-differential error</td><td>Low, medium, high salt: medium can absorb high-risk people and look worse than it is</td></tr>
+          <tr><td><strong>Dependent errors</strong></td><td>Errors in exposure and outcome are linked</td><td>Both from one interview: people who over-report diet also over-report symptoms</td></tr>
+          <tr><td><strong>Misclassified confounders</strong></td><td>Adjustment is incomplete, so residual confounding remains (Lecture 2.6), in any direction</td><td>Smoking recorded as yes/no only</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <dl class="facets">
+      <dt>Why it matters</dt>
+      <dd>Authors often wave away measurement error as “conservative”. That claim needs the conditions to hold, and the reader should check them.</dd>
+      <dt>How to read it</dt>
+      <dd>Ask: is the exposure binary? Were exposure and outcome measured independently? Were the confounders measured well? If any answer is no, the direction of bias is open.</dd>
+    </dl>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="recall">
+    <h2>5. Recall and detection bias</h2>
+    <p class="point">The commonest differential errors come from asking about the past after the outcome, and from looking harder for disease in the exposed.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>Recall bias</strong>: cases, searching for an explanation of their illness, remember or report past exposures differently from controls. <strong>Interviewer bias</strong>: interviewers who know who is a case probe harder. <strong>Detection bias</strong>: exposed people are examined more often, so their disease is found more often (differential outcome misclassification).</dd>
+      <dt>Why it matters</dt>
+      <dd>These biases usually inflate associations, and they look exactly like real effects. Reported odds ratios of 1.5–2 from interview-based case-control studies deserve a hard look at how exposure was assessed.</dd>
+      <dt>How to read it</dt>
+      <dd>Look for defences: exposure taken from records made before the outcome; blinded interviewers; structured questions; controls with a different illness (so both groups have a reason to search their memory); outcome assessment blind to exposure.</dd>
+    </dl>
+
+    <div class="callout example">
+      <div class="callout-title">Example</div>
+      <p>Mothers of babies born with malformations often think hard about everything they took in pregnancy; mothers of healthy babies have less reason to. The same medicine can be reported more completely by case mothers, producing an association from memory alone. Studies have checked this by comparing interview answers with prescription or antenatal records.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>Detection bias is leakage’s cousin. In EHR data, a test is ordered <em>because</em> the clinician suspects the disease, so “test ordered” or “number of lab values” predicts the diagnosis without telling you anything about causes. Features measured more intensively in one group than another carry information about who was looked at, not just about who is sick.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Assuming recall bias always inflates. If cases under-report a stigmatised exposure (such as alcohol in settings where it is socially sensitive) more than controls, the bias runs toward the null or beyond. Think about which group has the stronger reason to misreport, and in which direction.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="outcome">
+    <h2>6. Outcome misclassification and noisy labels</h2>
+    <p class="point">For outcomes, specificity is usually what matters: missing some cases equally in all groups leaves a risk ratio unbiased, but false cases dilute it.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Outcomes recorded wrongly: deaths coded to the wrong cause, events identified from billing codes, self-reported diagnoses. A useful rule: if specificity is perfect and sensitivity is the same in exposed and unexposed, the <em>risk ratio</em> is unbiased (both risks shrink by the same factor), though the risk difference shrinks.</dd>
+      <dt>Why it matters</dt>
+      <dd>Administrative and EHR studies define outcomes by codes. Choosing a strict definition (high specificity, e.g. a principal diagnosis code plus a confirming test) often protects the ratio better than a broad one, even though it misses cases.</dd>
+      <dt>How to read it</dt>
+      <dd>Look for a validation study of the outcome definition and its <em>positive predictive value</em> (the share of coded cases that are real). Below about 80% for a rare outcome, expect noticeable dilution of ratio measures.</dd>
+    </dl>
+
+    <div class="callout gulf">
+      <div class="callout-title">Example · Administrative data in the GCC</div>
+      <p>Insurance claims and hospital information systems across the Gulf code diagnoses with ICD-10, often for billing. Coding practice can differ between hospitals, between public and private sectors and over time. Before using a code-based outcome, look for a validation of that definition in the same setting, or validate it yourself on a sample of charts, and check that coding practice doesn’t differ by the exposure, for example between insurance types.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>ICD codes as training labels are noisy labels. Noise in the <em>training</em> labels mostly costs accuracy. Noise in the <em>test</em> labels biases the evaluation itself: a model can look worse than it is (when it is right and the label is wrong) or better (when it learns the coders’ habits). Projects 5B and 7 depend on getting the reference standard right (Lectures 2.11 and 2.14).</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="continuous">
+    <h2>7. Continuous exposures: regression dilution</h2>
+    <p class="point">Random error in a continuous exposure flattens the slope of its association with the outcome; this is the continuous version of non-differential misclassification.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Lecture 1.8 showed it for salt: one 24-hour urine is a noisy measure of usual intake, so the slope of risk on intake is flattened toward zero. The same happens with a single blood pressure reading or one dietary recall.</dd>
+      <dt>Why it matters</dt>
+      <dd>Uncorrected slopes understate how much risk would change if the usual exposure changed, which is what policy models (Project 1) need. Repeat measures on a subsample allow a correction.</dd>
+      <dt>How to read it</dt>
+      <dd>The attenuation depends on the share of the measured variance that is real between-person difference. If half the variance is day-to-day noise, the observed slope is about half the true one.</dd>
+      <dt>What a change means</dt>
+      <dd>Categorising a noisy continuous exposure into thirds or fifths doesn’t remove the problem; it adds the multi-category issues of section 4.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Correcting for regression dilution when the error isn’t random. Spot-urine equations (Lecture 1.8) have errors that depend on age, sex and body size, which are also risk factors. Their error is not the simple noise the standard correction assumes, and can bend the shape of the curve.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>A cohort measures diet once at baseline with a food questionnaire and finds no association between fruit intake and stroke, OR 0.95 (0.80–1.13). The authors conclude fruit doesn’t protect. What would you point out?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>A single questionnaire measures usual intake poorly. If the error is non-differential, it biases toward the null, so a modest true effect could appear as none. Combined with an interval that includes a 20% reduction, the result is inconclusive, not evidence of no effect.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A case-control study of a birth defect asks mothers about a medicine taken during pregnancy, 6 months after delivery. OR 1.9. What bias concerns you, and what design would reduce it?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Recall bias: case mothers may report exposures more completely, inflating the OR. Use prescription or antenatal records made before the outcome was known, or controls with a different malformation, so both groups have a similar reason to search their memories.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>An author writes: “Exposure misclassification was non-differential, so our OR of 1.4 underestimates the true effect.” What is wrong with this claim?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Three things. The rule describes the expected direction, not what happened in one study; chance can put a single estimate either side. It holds for a binary exposure with errors independent of other errors; with several exposure categories or dependent errors it can fail. And it says nothing about how big the bias is. A bias analysis (Lecture 2.13) is the honest way to make the claim.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>An EHR study defines myocardial infarction either by any MI code (broad) or by a principal-diagnosis MI code plus a raised troponin (strict). Which definition would you prefer for estimating a risk ratio, and why?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Usually the strict one. It misses some MIs (lower sensitivity), but if the miss rate is similar in exposed and unexposed, the risk ratio is barely affected. The broad definition adds false MIs (lower specificity), which dilute both risks with non-events and pull the ratio toward 1. Check the positive predictive value of each definition.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A survey in a Gulf country finds that self-reported diabetes is linked to higher salt intake among nationals but not among expatriates. Before interpreting this as effect modification, what information problem would you consider?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Self-reported diabetes depends on having been diagnosed, which depends on access to care. If expatriates are less often diagnosed, the diabetes variable has lower sensitivity in that group, so its association is diluted there. The difference could be differential misclassification by nationality rather than a real difference in effect.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Lash, VanderWeele, Haneuse &amp; Rothman, <em>Modern Epidemiology</em>, 4th edition (2021): the chapter on measurement error and misclassification.</li>
+      <li>Lash, Fox &amp; Fink, <em>Applying Quantitative Bias Analysis to Epidemiologic Data</em> (Springer, 2009; 2nd edition by Fox, MacLehose &amp; Lash, 2021): the misclassification chapters, which use the Se/Sp formula in section 1 to back-correct 2×2 tables.</li>
+      <li>Jurek, Greenland, Maldonado &amp; Church, “Proper interpretation of non-differential misclassification effects: expectations vs observations”, <em>International Journal of Epidemiology</em> (2005). Dosemeci, Wacholder &amp; Lubin, “Does nondifferential misclassification of exposure always bias a true effect toward the null value?”, <em>American Journal of Epidemiology</em> (1990).</li>
+      <li>Hernán &amp; Cole, “Invited commentary: causal diagrams and measurement bias”, <em>American Journal of Epidemiology</em> (2009): dependent and differential error drawn as DAGs.</li>
+      <li>El Bcheraoui et al., “Status of the diabetes epidemic in the Kingdom of Saudi Arabia, 2013”, <em>International Journal of Public Health</em> (2014): undiagnosed diabetes in a national survey with HbA1c.</li>
+      <li>MacMahon, Peto, Cutler et al., “Blood pressure, stroke, and coronary heart disease. Part 1”, <em>The Lancet</em> (1990): regression dilution and its correction (see Lecture 1.8).</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="2-07-selection-and-collider-bias.html"><small>Previous</small>2.7 Selection bias and collider bias</a>
+    <a class="next" href="2-09-effect-modification.html"><small>Next</small>2.9 Effect modification and interaction</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>
