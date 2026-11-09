@@ -11,6 +11,8 @@
   <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
   <script defer src="../../assets/js/math.js"></script>
   <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/1-10.js"></script>
 </head>
 <body>
 <header class="site-header">
@@ -137,6 +139,11 @@
       <dd>Raising the rate hurts interventions whose benefits come late. Prevention pays up front and gains decades later, so a higher rate makes it look worse. Going from 3% to 0% can make a salt policy look much better.</dd>
     </dl>
 
+    <div class="widget" data-widget="discounting">
+      <div class="widget-title">What future health is worth today</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Two programmes each gain 10 QALYs: treatment now, prevention 30 years from now. Move the discount rate and watch the later gains shrink.</p>
+    </div>
+
     <div class="callout trap">
       <div class="callout-title">Trap</div>
       <p>Mixing discounted and undiscounted numbers. GBD reports DALYs <em>without</em> discounting; WHO-CHOICE and most economic evaluations discount at 3%. If you take DALYs straight from GBD and costs from a discounted model, the ratio is wrong. In Project 1, report undiscounted health for comparison with GBD, and discount both costs and DALYs for the economic results.</p>
@@ -183,7 +190,40 @@
       </table>
     </div>
 
+    <div class="widget" data-widget="ce-plane">
+      <div class="widget-title">The cost-effectiveness plane</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">It starts at the NMB example in section 6: 100 DALYs averted for SAR 2 million more. Move the threshold to 15,000, then drag the point into each quadrant.</p>
+    </div>
+
     <p>With several options, sort them by cost, drop any that are dominated, and also drop any that are <strong>extendedly dominated</strong>: options beaten by a mix of their neighbours, which shows up as an ICER higher than the next, more effective option’s. What remains is the efficiency frontier, where each step up costs more per unit of health than the last.</p>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · Building the efficiency frontier</div>
+      <svg class="viz-svg" viewBox="0 0 640 350" role="img" aria-label="Five options on the cost-effectiveness plane. B is dominated by A, D is extendedly dominated by a mix of A and C, and the frontier runs from no policy through A and C to E.">
+        <defs><marker id="l110-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead"/></marker></defs>
+        <!-- axes -->
+        <path d="M70,300 L622,300" class="edge" marker-end="url(#l110-arrow)"/>
+        <path d="M70,300 L70,22" class="edge" marker-end="url(#l110-arrow)"/>
+        <text x="345" y="340" text-anchor="middle" class="viz-label">Health gained (DALYs averted vs no policy)</text>
+        <text x="40" y="165" text-anchor="middle" class="viz-label" transform="rotate(-90 40 165)">Extra cost</text>
+        <!-- frontier -->
+        <path d="M70,300 L217,270 L414,180 L561,60" class="edge accent"/>
+        <text x="500" y="140" class="viz-small colour s1 viz-bold">Efficiency frontier</text>
+        <text x="500" y="156" class="viz-small viz-muted">steeper each step:</text>
+        <text x="500" y="171" class="viz-small viz-muted">a higher ICER</text>
+        <!-- options -->
+        <g class="s1"><circle cx="70" cy="300" r="6" class="dot"/><circle cx="217" cy="270" r="6" class="dot"/><circle cx="414" cy="180" r="6" class="dot"/><circle cx="561" cy="60" r="6" class="dot"/></g>
+        <text x="70" y="318" text-anchor="middle" class="viz-small">No policy</text>
+        <text x="225" y="292" class="viz-bold">A</text>
+        <text x="404" y="170" text-anchor="end" class="viz-bold">C</text>
+        <text x="549" y="64" text-anchor="end" class="viz-bold">E</text>
+        <g class="s3"><circle cx="168" cy="210" r="6" class="dot"/></g>
+        <text x="157" y="214" text-anchor="end" class="viz-small"><tspan class="viz-bold">B</tspan>: dominated</text>
+        <g class="s2"><circle cx="291" cy="204" r="6" class="dot"/></g>
+        <text x="291" y="188" text-anchor="middle" class="viz-small"><tspan class="viz-bold">D</tspan>: extendedly dominated</text>
+      </svg>
+      <figcaption>Illustrative options. B costs more than A and gains less, so it is dominated. D sits above the line from A to C, so a mix of A and C would beat it: it is extendedly dominated. The rest form the frontier. The threshold then picks the furthest step whose ICER is still below it.</figcaption>
+    </figure>
 
     <div class="callout trap">
       <div class="callout-title">Trap</div>

@@ -11,6 +11,8 @@
   <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
   <script defer src="../../assets/js/math.js"></script>
   <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/1-05.js"></script>
 </head>
 <body>
 <header class="site-header">
@@ -104,6 +106,11 @@
       <dd>A one-year rise in e<sub>0</sub> means the whole schedule of death rates fell enough to add a year to the average lifetime. Where it came from matters. Saving one infant adds a whole lifetime; delaying one death at 80 adds a few years. So e<sub>0</sub> moves a lot when child deaths fall and little when old-age deaths fall.</dd>
     </dl>
 
+    <div class="widget" data-widget="life-table">
+      <div class="widget-title">A life table you can change</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">100,000 newborns meet the death rates you set. Move the under-5 slider, then the 60+ slider, and compare how far e₀ moves. Then pick the historic preset and switch to “Deaths at each age”.</p>
+    </div>
+
     <div class="callout trap">
       <div class="callout-title">Trap</div>
       <p>“Life expectancy used to be 35, so people died at 35.” In populations with very high infant and child mortality, most adults who survived childhood lived into their 50s, 60s and beyond. The low average came from the many deaths in the first years of life. The most common age at death among adults was always far above e<sub>0</sub>.</p>
@@ -135,6 +142,46 @@
       <dt>What a change means</dt>
       <dd>A sharp one-year drop in period life expectancy means that year had unusually high death rates. It does not mean babies born that year will live shorter lives, unless the high rates persist.</dd>
     </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · Period slice versus cohort path</div>
+      <svg class="viz-svg" viewBox="0 0 640 320" role="img" aria-label="Lexis diagram with calendar year across and age up. A period life table is a vertical slice through one year at every age. A cohort born in 1960 is a diagonal line, ageing one year per calendar year; after the present its path needs forecast death rates.">
+        <!-- future region -->
+        <rect x="460" y="30" width="150" height="240" class="fill-soft s5"/>
+        <!-- grid -->
+        <g>
+          <line x1="70" x2="610" y1="216.7" y2="216.7" class="viz-grid"/><line x1="70" x2="610" y1="163.3" y2="163.3" class="viz-grid"/>
+          <line x1="70" x2="610" y1="110" y2="110" class="viz-grid"/><line x1="70" x2="610" y1="56.7" y2="56.7" class="viz-grid"/>
+          <text x="62" y="270" text-anchor="end" dominant-baseline="middle" class="viz-tick">0</text>
+          <text x="62" y="216.7" text-anchor="end" dominant-baseline="middle" class="viz-tick">20</text>
+          <text x="62" y="163.3" text-anchor="end" dominant-baseline="middle" class="viz-tick">40</text>
+          <text x="62" y="110" text-anchor="end" dominant-baseline="middle" class="viz-tick">60</text>
+          <text x="62" y="56.7" text-anchor="end" dominant-baseline="middle" class="viz-tick">80</text>
+          <text x="70" y="288" text-anchor="middle" class="viz-tick">1960</text>
+          <text x="190" y="288" text-anchor="middle" class="viz-tick">1980</text>
+          <text x="310" y="288" text-anchor="middle" class="viz-tick">2000</text>
+          <text x="430" y="288" text-anchor="middle" class="viz-tick">2020</text>
+          <text x="550" y="288" text-anchor="middle" class="viz-tick">2040</text>
+          <line x1="70" x2="610" y1="270" y2="270" class="viz-axis"/><line x1="70" x2="70" y1="270" y2="30" class="viz-axis"/>
+          <text x="340" y="313" text-anchor="middle" class="viz-label">Calendar year</text>
+          <text x="20" y="150" text-anchor="middle" class="viz-label" transform="rotate(-90 20 150)">Age</text>
+        </g>
+        <text x="460" y="22" text-anchor="middle" class="viz-small viz-muted">now</text>
+        <!-- period slice -->
+        <rect x="453" y="30" width="7" height="240" class="fill s2"/>
+        <text x="444" y="236" text-anchor="end" class="viz-small viz-bold colour s2">Period: one year’s rates,</text>
+        <text x="444" y="252" text-anchor="end" class="viz-small colour s2">applied at every age</text>
+        <!-- cohort path -->
+        <path d="M70,270 L460,96.7" class="stroke s1"/>
+        <path d="M460,96.7 L610,30" class="stroke dashed s1"/>
+        <text x="90" y="104" class="viz-small viz-bold colour s1">Cohort born 1960:</text>
+        <text x="90" y="120" class="viz-small colour s1">the same people, one year</text>
+        <text x="90" y="136" class="viz-small colour s1">older each calendar year</text>
+        <text x="535" y="236" text-anchor="middle" class="viz-small viz-muted">Future rates</text>
+        <text x="535" y="252" text-anchor="middle" class="viz-small viz-muted">must be forecast</text>
+      </svg>
+      <figcaption>Period life expectancy reads one vertical slice: every age in the same year. A cohort moves along a diagonal, meeting each year’s rates as it ages. For anyone still alive, part of that path lies in the future, so cohort figures need forecasts.</figcaption>
+    </figure>
 
     <div class="callout trap">
       <div class="callout-title">Trap</div>

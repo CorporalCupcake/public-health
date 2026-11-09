@@ -11,6 +11,8 @@
   <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
   <script defer src="../../assets/js/math.js"></script>
   <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/1-02.js"></script>
 </head>
 <body>
 <header class="site-header">
@@ -108,6 +110,11 @@
       <dd>The more the risk is spread across the whole range (a continuous risk factor like blood pressure, salt or cholesterol), the bigger the share from the middle. When risk is concentrated in a rare, sharply defined group (a single-gene disorder), the high-risk group holds most cases and targeting works well.</dd>
     </dl>
 
+    <div class="widget" data-widget="rose-cases">
+      <div class="widget-title">Where the strokes come from</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">The same town of 100,000, with blood pressure on a smooth curve. Drag the cut-off that defines “high”. At 140 mmHg it matches the table above.</p>
+    </div>
+
     <div class="callout trap">
       <div class="callout-title">Trap</div>
       <p>Thinking that a strong relative risk in the top group means most cases are there. Relative risk tells you how much riskier one person is. The share of cases also depends on how many people are in each group. A rare exposure with a big relative risk can cause fewer cases than a common one with a small relative risk.</p>
@@ -159,22 +166,6 @@
     <h2>4. The whole distribution moves</h2>
     <p class="point">Populations shift as a whole: when the average goes down, the number of people in the high-risk tail goes down with it.</p>
 
-    <figure>
-      <svg viewBox="0 0 560 200" role="img" aria-label="Two bell curves of blood pressure. The second is shifted slightly to the left. The shaded area above a cut-off line is much smaller for the shifted curve.">
-        <path d="M384,170 L384,112 L392,119 L400,126 L407,132 L415,138 L423,143 L431,147 L439,151 L446,154 L454,157 L462,160 L470,162 L478,163 L485,165 L493,166 L501,167 L509,168 L517,168 L524,169 L532,169 L540,169 L540,170 Z" style="fill: var(--pitfall); opacity: 0.18"/>
-        <path d="M384,170 L384,144 L392,148 L400,152 L407,155 L415,158 L423,160 L431,162 L439,164 L446,165 L454,166 L462,167 L470,168 L478,168 L485,169 L493,169 L501,169 L509,169 L517,170 L524,170 L532,170 L540,170 L540,170 Z" style="fill: var(--accent); opacity: 0.45"/>
-        <path d="M20,168 L33,167 L46,166 L59,164 L72,161 L85,157 L98,152 L111,146 L124,138 L137,128 L150,117 L163,104 L176,90 L189,76 L202,62 L215,49 L228,38 L241,29 L254,23 L267,20 L280,21 L293,26 L306,34 L319,44 L332,57 L345,71 L358,85 L371,99 L384,112 L397,124 L410,134 L423,143 L436,150 L449,155 L462,160 L475,163 L488,165 L501,167 L514,168 L527,169 L540,169" style="fill: none; stroke: var(--pitfall); stroke-width: 2; stroke-dasharray: 6 4"/>
-        <path d="M20,163 L33,160 L46,156 L59,151 L72,144 L85,136 L98,126 L111,114 L124,101 L137,88 L150,73 L163,59 L176,47 L189,36 L202,27 L215,22 L228,20 L241,22 L254,27 L267,36 L280,47 L293,59 L306,73 L319,88 L332,101 L345,114 L358,126 L371,136 L384,144 L397,151 L410,156 L423,160 L436,163 L449,166 L462,167 L475,168 L488,169 L501,169 L514,170 L527,170 L540,170" style="fill: none; stroke: var(--accent); stroke-width: 2.5"/>
-        <line x1="20" y1="170" x2="540" y2="170" style="stroke: var(--muted); stroke-width: 1"/>
-        <line x1="384" y1="12" x2="384" y2="170" style="stroke: var(--muted); stroke-width: 1; stroke-dasharray: 3 3"/>
-        <text x="390" y="22" style="fill: var(--muted); font-size: 13px">“High” cut-off</text>
-        <text x="280" y="192" text-anchor="middle" style="fill: var(--muted); font-size: 13px">Blood pressure →</text>
-        <text x="300" y="45" style="fill: var(--pitfall); font-size: 13px">Before</text>
-        <text x="120" y="45" style="fill: var(--accent); font-size: 13px">After shift</text>
-      </svg>
-      <figcaption>Illustrative. Moving the whole curve left by half a standard deviation cuts the share above the cut-off from about 9% to about 3%. Nobody was “treated”; the tail shrank because the curve moved.</figcaption>
-    </figure>
-
     <dl class="facets">
       <dt>What it is</dt>
       <dd>Rose and Day used data from Intersalt, a study of 52 populations in 32 countries. Populations with a higher mean blood pressure, body weight, alcohol or salt intake had more people at the extreme, and the link was very close. The tail is not a separate group; it is the end of one curve.</dd>
@@ -185,6 +176,11 @@
       <dt>What a change means</dt>
       <dd>A population mean moving the wrong way, even slightly, signals a disproportionate rise in the number of people who will need treatment. A mean moving the right way does the opposite, at no screening cost.</dd>
     </dl>
+
+    <div class="widget" data-widget="rose-shift">
+      <div class="widget-title">Shift the whole curve</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Move everyone’s blood pressure by the same amount. Try −7 mmHg, about half a standard deviation: the number above 140 falls by almost two-thirds. Then compare the strokes prevented with the change in one person’s risk.</p>
+    </div>
 
     <div class="callout trap">
       <div class="callout-title">Trap</div>

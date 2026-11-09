@@ -11,6 +11,8 @@
   <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
   <script defer src="../../assets/js/math.js"></script>
   <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/1-03.js"></script>
 </head>
 <body>
 <header class="site-header">
@@ -63,6 +65,83 @@
       <dd>Link and Phelan called social conditions <em>fundamental causes</em>: money, knowledge and power let people avoid whatever the risk of the day is. When one route to disease is closed, the health gap between groups tends to reopen through another.</dd>
     </dl>
 
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · The causes of the causes</div>
+      <svg class="viz-svg" viewBox="0 0 640 358" role="img" aria-label="Three causal chains read left to right, from upstream determinant to exposure, intermediate risk factor and disease: bakery and manufacturer recipes to salt intake, blood pressure, stroke and heart disease; drink price and marketing to sugary drink intake, weight and blood glucose, type 2 diabetes; climate, outdoor jobs and work rules to heat stress, dehydration, heat stroke. Social determinants run under every row.">
+        <defs>
+          <marker id="l3-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead"/></marker>
+          <marker id="l3-arrow-acc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead accent"/></marker>
+        </defs>
+        <text x="90" y="18" text-anchor="middle" class="viz-small viz-bold">Upstream determinant</text>
+        <text x="90" y="34" text-anchor="middle" class="viz-small viz-muted">the causes of the causes</text>
+        <text x="256" y="18" text-anchor="middle" class="viz-small viz-bold">Exposure</text>
+        <text x="256" y="34" text-anchor="middle" class="viz-small viz-muted">what reaches the person</text>
+        <text x="406" y="18" text-anchor="middle" class="viz-small viz-bold">Intermediate</text>
+        <text x="406" y="34" text-anchor="middle" class="viz-small viz-muted">risk factor in the body</text>
+        <text x="556" y="18" text-anchor="middle" class="viz-small viz-bold">Disease</text>
+        <text x="556" y="34" text-anchor="middle" class="viz-small viz-muted">the outcome</text>
+        <!-- row -->
+        <g class="s4"><rect x="10" y="52" width="160" height="60" rx="10" class="node-fill"/></g>
+        <g class="s5"><rect x="192" y="52" width="128" height="60" rx="10" class="node"/></g>
+        <g class="s5"><rect x="342" y="52" width="128" height="60" rx="10" class="node"/></g>
+        <g class="s3"><rect x="492" y="52" width="128" height="60" rx="10" class="node-fill"/></g>
+        <text x="90" y="69" text-anchor="middle" class="viz-small viz-muted">Commercial</text>
+        <text x="90" y="86" text-anchor="middle" class="viz-small">Recipes of bakeries and</text>
+        <text x="90" y="101" text-anchor="middle" class="viz-small">food manufacturers</text>
+        <text x="256" y="86" text-anchor="middle" class="viz-small">Salt intake</text>
+        <text x="406" y="86" text-anchor="middle" class="viz-small">Blood pressure</text>
+        <text x="556" y="79" text-anchor="middle" class="viz-small">Stroke, heart</text>
+        <text x="556" y="94" text-anchor="middle" class="viz-small">disease</text>
+        <path d="M172,82 L189,82" class="edge" marker-end="url(#l3-arrow)"/>
+        <path d="M322,82 L339,82" class="edge" marker-end="url(#l3-arrow)"/>
+        <path d="M472,82 L489,82" class="edge" marker-end="url(#l3-arrow)"/>
+        <!-- row -->
+        <g class="s4"><rect x="10" y="122" width="160" height="60" rx="10" class="node-fill"/></g>
+        <g class="s5"><rect x="192" y="122" width="128" height="60" rx="10" class="node"/></g>
+        <g class="s5"><rect x="342" y="122" width="128" height="60" rx="10" class="node"/></g>
+        <g class="s3"><rect x="492" y="122" width="128" height="60" rx="10" class="node-fill"/></g>
+        <text x="90" y="139" text-anchor="middle" class="viz-small viz-muted">Commercial</text>
+        <text x="90" y="156" text-anchor="middle" class="viz-small">Price and marketing</text>
+        <text x="90" y="171" text-anchor="middle" class="viz-small">of drinks</text>
+        <text x="256" y="149" text-anchor="middle" class="viz-small">Sugary drink</text>
+        <text x="256" y="164" text-anchor="middle" class="viz-small">intake</text>
+        <text x="406" y="149" text-anchor="middle" class="viz-small">Weight, blood</text>
+        <text x="406" y="164" text-anchor="middle" class="viz-small">glucose</text>
+        <text x="556" y="149" text-anchor="middle" class="viz-small">Type 2 diabetes,</text>
+        <text x="556" y="164" text-anchor="middle" class="viz-small">tooth decay</text>
+        <path d="M172,152 L189,152" class="edge" marker-end="url(#l3-arrow)"/>
+        <path d="M322,152 L339,152" class="edge" marker-end="url(#l3-arrow)"/>
+        <path d="M472,152 L489,152" class="edge" marker-end="url(#l3-arrow)"/>
+        <!-- row -->
+        <g class="s4"><rect x="10" y="192" width="160" height="60" rx="10" class="node-fill"/></g>
+        <g class="s5"><rect x="192" y="192" width="128" height="60" rx="10" class="node"/></g>
+        <g class="s5"><rect x="342" y="192" width="128" height="60" rx="10" class="node"/></g>
+        <g class="s3"><rect x="492" y="192" width="128" height="60" rx="10" class="node-fill"/></g>
+        <text x="90" y="209" text-anchor="middle" class="viz-small viz-muted">Environmental</text>
+        <text x="90" y="226" text-anchor="middle" class="viz-small">Climate; outdoor jobs;</text>
+        <text x="90" y="241" text-anchor="middle" class="viz-small">work rules</text>
+        <text x="256" y="219" text-anchor="middle" class="viz-small">Hours of</text>
+        <text x="256" y="234" text-anchor="middle" class="viz-small">heat stress</text>
+        <text x="406" y="219" text-anchor="middle" class="viz-small">Core temperature,</text>
+        <text x="406" y="234" text-anchor="middle" class="viz-small">dehydration</text>
+        <text x="556" y="219" text-anchor="middle" class="viz-small">Heat exhaustion,</text>
+        <text x="556" y="234" text-anchor="middle" class="viz-small">heat stroke</text>
+        <path d="M172,222 L189,222" class="edge" marker-end="url(#l3-arrow)"/>
+        <path d="M322,222 L339,222" class="edge" marker-end="url(#l3-arrow)"/>
+        <path d="M472,222 L489,222" class="edge" marker-end="url(#l3-arrow)"/>
+        <!-- social determinants under every row -->
+        <g class="s1"><rect x="10" y="262" width="610" height="44" rx="10" class="node-fill"/></g>
+        <text x="24" y="280" class="viz-small"><tspan class="viz-bold">Social determinants:</tspan> income, education, occupation, nationality</text>
+        <text x="24" y="296" class="viz-small viz-muted">They run under every row, deciding who gets each exposure and who can avoid it.</text>
+        <!-- direction -->
+        <text x="315" y="326" text-anchor="middle" class="viz-small viz-muted">Keep asking “and what caused that?”</text>
+        <path d="M620,334 L14,334" class="edge accent" marker-end="url(#l3-arrow-acc)"/>
+        <text x="10" y="352" class="viz-small viz-muted">Upstream: a policy here reaches more people and more diseases</text>
+        <text x="620" y="352" text-anchor="end" class="viz-small viz-muted">Downstream: acts on the body</text>
+      </svg>
+      <figcaption>Read each row left to right, from the determinant to the disease. Policies usually act on the left; evidence on health effects mostly covers the links on the right (section 5).</figcaption>
+    </figure>
+
     <div class="callout trap">
       <div class="callout-title">Trap</div>
       <p>Concluding that an upstream factor “has no effect” because it vanishes after adjusting for the risk factors it works through. If income raises stroke risk <em>via</em> blood pressure, smoking and diet, then adjusting for those removes the pathway, not the cause. You have estimated the effect of income that doesn’t go through those routes, which is a different question.</p>
@@ -108,6 +187,11 @@
       <dt>What a change means</dt>
       <dd>If every group improves but the slope steepens, the better-off gained more: the average hides a widening gap. If the slope flattens while all groups improve, the policy helped the worse-off most, which is the pattern structural policies tend to produce.</dd>
     </dl>
+
+    <div class="widget" data-widget="social-gradient">
+      <div class="widget-title">Same average gain, opposite effect on the gap</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Five income groups, poorest to richest. Switch between two salt policies and watch the average and the slope.</p>
+    </div>
 
     <div class="callout trap">
       <div class="callout-title">Trap</div>

@@ -11,6 +11,8 @@
   <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
   <script defer src="../../assets/js/math.js"></script>
   <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/1-09.js"></script>
 </head>
 <body>
 <header class="site-header">
@@ -62,6 +64,46 @@
       <dt>How to judge it</dt>
       <dd>A chain is only as strong as its weakest link, and only valid if the mediator carries the effect. Ask of each link: what design supports it, and is the effect consistent across studies?</dd>
     </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · The chain and the evidence for each link</div>
+      <svg class="viz-svg" viewBox="0 0 640 320" role="img" aria-label="Sodium intake leads to systolic blood pressure, which leads to cardiovascular events. Link 1 rests on trials, link 2 on cohorts and drug trials. A dashed direct arrow from sodium to events rests on SSaSS and 24-hour urine cohorts. Potassium lowers blood pressure from below.">
+        <defs>
+          <marker id="l19-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead accent"/></marker>
+          <marker id="l19-arrow-m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead"/></marker>
+        </defs>
+        <!-- direct evidence, over the top -->
+        <text x="320" y="20" text-anchor="middle" class="viz-small viz-bold">Direct evidence on outcomes</text>
+        <text x="320" y="37" text-anchor="middle" class="viz-small viz-muted">SSaSS trial · 24-hour urine cohorts (Ma et al.)</text>
+        <path d="M80,122 C80,46 560,46 560,118" class="edge" stroke-dasharray="6 5" marker-end="url(#l19-arrow-m)"/>
+        <!-- the chain -->
+        <g class="s2"><rect x="10" y="124" width="140" height="64" rx="10" class="node-fill"/></g>
+        <text x="80" y="151" text-anchor="middle" class="viz-bold">Sodium intake</text>
+        <text x="80" y="170" text-anchor="middle" class="viz-small viz-muted">salt, g/day</text>
+        <g class="s4"><rect x="250" y="124" width="140" height="64" rx="10" class="node-fill"/></g>
+        <text x="320" y="151" text-anchor="middle" class="viz-bold">Systolic BP</text>
+        <text x="320" y="170" text-anchor="middle" class="viz-small viz-muted">the mediator</text>
+        <g class="s3"><rect x="490" y="124" width="140" height="64" rx="10" class="node-fill"/></g>
+        <text x="560" y="146" text-anchor="middle" class="viz-bold">CVD events</text>
+        <text x="560" y="164" text-anchor="middle" class="viz-small">stroke, heart disease,</text>
+        <text x="560" y="180" text-anchor="middle" class="viz-small">heart failure, kidney</text>
+        <path d="M150,156 L246,156" class="edge accent" marker-end="url(#l19-arrow)"/>
+        <path d="M390,156 L486,156" class="edge accent" marker-end="url(#l19-arrow)"/>
+        <!-- evidence for each link -->
+        <text x="200" y="214" text-anchor="middle" class="viz-small viz-bold">Link 1 · trials</text>
+        <text x="200" y="231" text-anchor="middle" class="viz-small viz-muted">Cochrane review, DASH-Sodium</text>
+        <text x="200" y="248" text-anchor="middle" class="viz-small">≈1 mmHg per g of salt/day</text>
+        <text x="440" y="214" text-anchor="middle" class="viz-small viz-bold">Link 2 · cohorts + trials</text>
+        <text x="440" y="231" text-anchor="middle" class="viz-small viz-muted">PSC cohorts, BPLTTC trials</text>
+        <text x="440" y="248" text-anchor="middle" class="viz-small">5 mmHg ≈ 10% fewer events</text>
+        <!-- potassium -->
+        <g class="s1"><rect x="250" y="266" width="140" height="48" rx="10" class="node"/></g>
+        <text x="320" y="286" text-anchor="middle" class="viz-bold">Potassium ↑</text>
+        <text x="320" y="304" text-anchor="middle" class="viz-small viz-muted">lowers BP</text>
+        <path d="M320,266 L320,192" class="edge" marker-end="url(#l19-arrow-m)"/>
+      </svg>
+      <figcaption>Each link is tested with the design that suits it: short trials for salt → blood pressure, huge cohorts and drug trials for blood pressure → events. The dashed arrow is the direct outcome evidence that closes the chain (section 4). Potassium pushes on the same mediator from the other side (section 6).</figcaption>
+    </figure>
 
     <div class="callout trap">
       <div class="callout-title">Trap</div>
@@ -116,6 +158,11 @@
       <dt>What a change means</dt>
       <dd>Put the two links together: a 5 g/day salt cut gives roughly 5 mmHg, which gives roughly 10% fewer major cardiovascular events at steady state. This is a rough chain for intuition; Project 1 does it properly by age, sex and disease.</dd>
     </dl>
+
+    <div class="widget" data-widget="salt-calculator">
+      <div class="widget-title">A rough salt-reduction calculator</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Pick a salt cut and a group. The chain turns grams into mmHg (link 1), then mmHg into fewer major cardiovascular events (link 2).</p>
+    </div>
 
     <div class="callout trap">
       <div class="callout-title">Trap</div>
@@ -238,6 +285,11 @@
       <dt>What a change means</dt>
       <dd>Each gram of salt a day removed from the average lowers average systolic pressure by roughly 1 mmHg (section 2). That is the number to keep in your head when you read any salt policy.</dd>
     </dl>
+
+    <div class="widget" data-widget="salt-units">
+      <div class="widget-title">Salt and sodium converter</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Pick the unit a paper or label uses, set the value, and read it in the other units and against WHO’s target.</p>
+    </div>
 
     <div class="callout trap">
       <div class="callout-title">Trap</div>

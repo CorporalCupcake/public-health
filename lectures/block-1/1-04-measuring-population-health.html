@@ -11,6 +11,8 @@
   <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
   <script defer src="../../assets/js/math.js"></script>
   <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/1-04.js"></script>
 </head>
 <body>
 <header class="site-header">
@@ -95,6 +97,38 @@
       <dd>Prevalence rises if incidence rises <em>or</em> if people survive longer with the disease. Falling incidence is good news. Rising prevalence can be good or bad news, and you need incidence and survival to tell which.</dd>
     </dl>
 
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · Incidence fills, prevalence is the level</div>
+      <svg class="viz-svg" viewBox="0 0 640 330" role="img" aria-label="A bathtub: new cases (incidence) flow in from a tap, the water in the tub is prevalence, and recovery and death drain it">
+        <defs><marker id="l14-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead accent"/></marker></defs>
+        <!-- inflow -->
+        <g class="s2"><rect x="20" y="28" width="160" height="56" rx="10" class="node-fill"/></g>
+        <text x="100" y="52" text-anchor="middle" class="viz-bold">Incidence</text>
+        <text x="100" y="71" text-anchor="middle" class="viz-small">new cases per year</text>
+        <text x="100" y="104" text-anchor="middle" class="viz-small viz-muted">prevention turns</text>
+        <text x="100" y="119" text-anchor="middle" class="viz-small viz-muted">this tap down</text>
+        <path d="M180,56 C240,56 270,70 300,128" class="edge accent" marker-end="url(#l14-arrow)"/>
+        <!-- tub -->
+        <polygon points="237.1,140 482.9,140 470,230 250,230" class="fill-soft s1"/>
+        <path d="M230,90 L250,230 L470,230 L490,90" class="edge strong"/>
+        <text x="360" y="176" text-anchor="middle" class="viz-bold">Prevalence</text>
+        <text x="360" y="196" text-anchor="middle" class="viz-small">people living with it now</text>
+        <!-- formula -->
+        <text x="630" y="40" text-anchor="end" class="viz-small viz-muted">In a stable population:</text>
+        <text x="630" y="60" text-anchor="end" class="viz-small">prevalence ≈ incidence × duration</text>
+        <!-- outflows -->
+        <path d="M290,232 L290,262" class="edge accent" marker-end="url(#l14-arrow)"/>
+        <path d="M430,232 L430,262" class="edge accent" marker-end="url(#l14-arrow)"/>
+        <g class="s1"><rect x="225" y="266" width="130" height="50" rx="10" class="node"/></g>
+        <text x="290" y="296" text-anchor="middle" class="viz-bold">Recovery or cure</text>
+        <g class="s5"><rect x="365" y="266" width="130" height="50" rx="10" class="node-fill"/></g>
+        <text x="430" y="296" text-anchor="middle" class="viz-bold">Death</text>
+        <text x="508" y="286" class="viz-small viz-muted">better survival</text>
+        <text x="508" y="302" class="viz-small viz-muted">slows this drain</text>
+      </svg>
+      <figcaption>Incidence fills the tub; recovery and death drain it; prevalence is the level. The level rises if more people get the disease or if fewer leave by dying, which is why better treatment raises prevalence.</figcaption>
+    </figure>
+
     <div class="callout trap">
       <div class="callout-title">Trap</div>
       <p>Reading rising prevalence as failure. Better treatment raises prevalence, because people who used to die now live with the disease. Improved survival after heart attack enlarges the pool of people with heart disease, even when fewer new heart attacks happen.</p>
@@ -176,6 +210,11 @@
       <dt>What a change means</dt>
       <dd>A falling age-standardised rate means risk at a given age is falling, whatever the ageing of the population is doing. If the crude rate rises while the age-standardised rate falls, ageing is outrunning the improvement in risk.</dd>
     </dl>
+
+    <div class="widget" data-widget="age-standardisation">
+      <div class="widget-title">Crude versus age-standardised rates</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">This starts with the two towns from section 3. Move a town’s share aged 50+ and watch its crude rate move while its standardised rate stays put. Then try “Young town with higher risk”.</p>
+    </div>
 
     <div class="table-wrap">
       <table>

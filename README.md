@@ -15,6 +15,8 @@ assets/
   css/style.css          shared styles (mobile, dark mode, print)
   js/math.js             maths rendering setup
   js/progress.js         mark-as-done (saved in the browser)
+  js/viz.js              tiny chart/diagram kit for interactive widgets (no dependencies)
+  js/widgets/N-MM.js     one file of interactive widgets per lecture
   vendor/katex/          KaTeX 0.16.22 (MIT), bundled so maths renders offline
 ```
 
@@ -36,4 +38,5 @@ Open `index.html` in a browser. Each lecture has collapsible exercise answers, a
 
 1. Copy `lectures/_template.html` to `lectures/block-N/N-MM-short-slug.html`.
 2. Write it. For maths, use `\( … \)` inline and `\[ … \]` for display equations.
-3. Run `python3 build.py` to link it from the index.
+3. For diagrams, use inline SVG in `<figure class="diagram">`. For an interactive, add `<div class="widget" data-widget="name">`, load `viz.js` and `widgets/N-MM.js` with `defer`, and register the widget with `Viz.register("name", fn)`. See lecture 1.11 for an example.
+4. Run `python3 build.py` to link it from the index.

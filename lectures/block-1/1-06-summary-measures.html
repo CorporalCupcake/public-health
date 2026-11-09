@@ -11,6 +11,8 @@
   <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
   <script defer src="../../assets/js/math.js"></script>
   <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/1-06.js"></script>
 </head>
 <body>
 <header class="site-header">
@@ -61,6 +63,39 @@
       <dt>How to tell</dt>
       <dd>Ask which way the number points. If more is worse, it counts loss (DALYs, YLL, YLD). If more is better, it counts health (HALE, QALYs).</dd>
     </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · One life on one scale</div>
+      <svg class="viz-svg" viewBox="0 0 640 290" role="img" aria-label="One person's health over their life: full health until a stroke at 55, reduced health until death at 68, then the years a reference life table expected. Health lived is shaded teal; health lost to illness (YLD) is amber; years lost to early death (YLL) are red.">
+        <!-- axes -->
+        <line x1="70" x2="600" y1="240" y2="240" class="viz-axis"/><line x1="70" x2="70" y1="240" y2="80" class="viz-axis"/>
+        <text x="62" y="80" text-anchor="end" dominant-baseline="middle" class="viz-tick">full</text>
+        <text x="62" y="96" text-anchor="end" dominant-baseline="middle" class="viz-tick">health</text>
+        <text x="62" y="240" text-anchor="end" dominant-baseline="middle" class="viz-tick">dead</text>
+        <text x="600" y="258" text-anchor="end" class="viz-label">Age →</text>
+        <!-- health lived -->
+        <rect x="70" y="80" width="286" height="160" class="fill-soft s1"/>
+        <rect x="356" y="144" width="67.6" height="96" class="fill-soft s1"/>
+        <text x="213" y="166" text-anchor="middle" class="viz-small">years lived in full health</text>
+        <!-- YLD and YLL -->
+        <rect x="356" y="80" width="67.6" height="64" class="fill s2"/>
+        <text x="389.8" y="117" text-anchor="middle" class="viz-bold">YLD</text>
+        <text x="389.8" y="196" text-anchor="middle" class="viz-small">ill</text>
+        <rect x="423.6" y="80" width="104" height="160" class="fill s3"/>
+        <text x="475.6" y="165" text-anchor="middle" class="viz-bold">YLL</text>
+        <path d="M70,80 L356,80 L356,144 L423.6,144 L423.6,240" class="stroke s1"/>
+        <!-- descriptions above -->
+        <text x="70" y="30" class="viz-bold">DALYs = YLL + YLD</text>
+        <text x="418" y="64" text-anchor="end" class="viz-small colour s2">health lost while ill (YLD)</text>
+        <text x="430" y="64" text-anchor="start" class="viz-small colour s3">years lost to early death (YLL)</text>
+        <!-- events -->
+        <line x1="356" x2="356" y1="240" y2="246" class="viz-axis"/><line x1="423.6" x2="423.6" y1="240" y2="246" class="viz-axis"/><line x1="527.6" x2="527.6" y1="240" y2="262" class="viz-axis"/>
+        <text x="352" y="258" text-anchor="end" class="viz-small">stroke at 55</text>
+        <text x="427" y="258" text-anchor="start" class="viz-small">death at 68</text>
+        <text x="527.6" y="278" text-anchor="middle" class="viz-small viz-muted">68 + reference life expectancy at 68</text>
+      </svg>
+      <figcaption>One person: full health until a stroke at 55, then living with a disability weight of 0.4 until death at 68. Teal is health lived, the territory of HALE and QALYs. Amber (YLD) and red (YLL) are health lost, which together make the DALYs. Illustrative numbers.</figcaption>
+    </figure>
 
     <div class="callout trap">
       <div class="callout-title">Trap</div>
@@ -149,6 +184,11 @@
       <dt>What a change means</dt>
       <dd>“DALYs averted” is the health gain of an intervention: DALYs without it minus DALYs with it. A fall in age-standardised DALY rates means healthier lives at a given age; a rise in DALY counts can be pure population growth and ageing.</dd>
     </dl>
+
+    <div class="widget" data-widget="daly-profile">
+      <div class="widget-title">One person’s DALYs</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Set when illness starts, how severe it is and when death comes, and read off YLL, YLD and DALYs. Try later death with more years ill, as better stroke care would bring. Then switch the life table, and the view to QALYs.</p>
+    </div>
 
     <div class="table-wrap">
       <table>

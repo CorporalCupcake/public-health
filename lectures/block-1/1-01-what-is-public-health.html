@@ -11,6 +11,8 @@
   <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
   <script defer src="../../assets/js/math.js"></script>
   <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/1-01.js"></script>
 </head>
 <body>
 <header class="site-header">
@@ -104,6 +106,37 @@
       <dd>The three form a loop. Checking compliance (assurance) produces new data, which feeds the next assessment. The US expands the same three jobs into a finer list, the “10 Essential Public Health Services”.</dd>
     </dl>
 
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · The three core functions form a loop</div>
+      <svg class="viz-svg" viewBox="0 0 640 248" role="img" aria-label="Loop of three core functions: assessment produces evidence for policy development, policy produces a rule for assurance, and assurance produces compliance data that feeds the next assessment">
+        <defs><marker id="l1-loop-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead accent"/></marker></defs>
+        <g class="s4"><rect x="20" y="142" width="190" height="96" rx="12" class="node-fill"/></g>
+        <text x="115" y="166" text-anchor="middle" class="viz-bold">Assessment</text>
+        <text x="115" y="186" text-anchor="middle" class="viz-small viz-muted">produces data</text>
+        <text x="115" y="206" text-anchor="middle" class="viz-small">Survey of salt intake</text>
+        <text x="115" y="222" text-anchor="middle" class="viz-small">from 24-hour urine</text>
+        <g class="s2"><rect x="225" y="10" width="190" height="96" rx="12" class="node-fill"/></g>
+        <text x="320" y="34" text-anchor="middle" class="viz-bold">Policy development</text>
+        <text x="320" y="54" text-anchor="middle" class="viz-small viz-muted">produces a decision or rule</text>
+        <text x="320" y="74" text-anchor="middle" class="viz-small">Set a maximum salt</text>
+        <text x="320" y="90" text-anchor="middle" class="viz-small">content for bread</text>
+        <g class="s1"><rect x="430" y="142" width="190" height="96" rx="12" class="node-fill"/></g>
+        <text x="525" y="166" text-anchor="middle" class="viz-bold">Assurance</text>
+        <text x="525" y="186" text-anchor="middle" class="viz-small viz-muted">produces delivery, enforcement</text>
+        <text x="525" y="206" text-anchor="middle" class="viz-small">Inspect bakeries and</text>
+        <text x="525" y="222" text-anchor="middle" class="viz-small">test bread for compliance</text>
+        <path d="M115,140 C115,90 160,58 221,58" class="edge accent" marker-end="url(#l1-loop-arrow)"/>
+        <text x="104" y="98" text-anchor="end" class="viz-small viz-muted">evidence</text>
+        <path d="M419,58 C480,58 525,90 525,138" class="edge accent" marker-end="url(#l1-loop-arrow)"/>
+        <text x="536" y="98" text-anchor="start" class="viz-small viz-muted">a rule to</text>
+        <text x="536" y="113" text-anchor="start" class="viz-small viz-muted">carry out</text>
+        <path d="M428,190 L214,190" class="edge accent" marker-end="url(#l1-loop-arrow)"/>
+        <text x="320" y="180" text-anchor="middle" class="viz-small viz-muted">compliance checks produce data</text>
+        <text x="320" y="208" text-anchor="middle" class="viz-small viz-muted">that feeds the next assessment</text>
+      </svg>
+      <figcaption>Salt policy going round the loop once. When a policy fails, find the box where it broke: each needs a different fix.</figcaption>
+    </figure>
+
     <div class="callout trap">
       <div class="callout-title">Trap</div>
       <p>Treating a published policy as the finish line. Carrying it out is the assurance job, and that is often where things break. This is why Project 1 models salt limits at both measured and full compliance, and why Project 9 asks why the gap exists.</p>
@@ -141,6 +174,61 @@
       <dt>What a shift means</dt>
       <dd>Moving effort earlier widens reach and shrinks the benefit to each person. Moving it later concentrates the benefit in people who are already ill. This trade-off is the heart of Rose’s prevention paradox (Lecture 1.2).</dd>
     </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · The levels of prevention along a disease’s course</div>
+      <svg class="viz-svg" viewBox="0 0 640 300" role="img" aria-label="Timeline of a disease: risk factor appears, disease starts, symptoms appear. Primordial prevention acts before the risk factor, primary before the disease, secondary before symptoms, tertiary once the disease is established. Quaternary prevention spans the whole course.">
+        <defs>
+          <marker id="l1-tl-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0L10,5L0,10Z" class="arrowhead accent"/></marker>
+          <marker id="l1-tl-arrow-m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0L10,5L0,10Z" class="arrowhead"/></marker>
+        </defs>
+        <!-- time axis and milestones -->
+        <text x="14" y="26" class="viz-small viz-muted">Time →</text>
+        <path d="M14,44 L626,44" class="edge accent" marker-end="url(#l1-tl-arrow)"/>
+        <g class="s5"><circle cx="164" cy="44" r="5" class="node"/><circle cx="317" cy="44" r="5" class="node"/><circle cx="470" cy="44" r="5" class="node"/></g>
+        <text x="164" y="28" text-anchor="middle" class="viz-small viz-bold">Risk factor appears</text>
+        <text x="317" y="28" text-anchor="middle" class="viz-small viz-bold">Disease starts</text>
+        <text x="470" y="28" text-anchor="middle" class="viz-small viz-bold">Symptoms appear</text>
+        <text x="87" y="66" text-anchor="middle" class="viz-small viz-muted">No risk factor yet</text>
+        <text x="240" y="66" text-anchor="middle" class="viz-small viz-muted">Risk, no disease</text>
+        <text x="393" y="66" text-anchor="middle" class="viz-small viz-muted">Disease, no symptoms</text>
+        <text x="547" y="66" text-anchor="middle" class="viz-small viz-muted">Disease established</text>
+        <!-- the four timed levels -->
+        <g class="s1"><rect x="14" y="78" width="147" height="110" rx="10" class="node-fill"/></g>
+        <g class="s4"><rect x="167" y="78" width="147" height="110" rx="10" class="node-fill"/></g>
+        <g class="s2"><rect x="320" y="78" width="147" height="110" rx="10" class="node-fill"/></g>
+        <g class="s3"><rect x="473" y="78" width="147" height="110" rx="10" class="node-fill"/></g>
+        <text x="87" y="100" text-anchor="middle" class="viz-bold">Primordial</text>
+        <text x="87" y="120" text-anchor="middle" class="viz-small">Stop the risk factor</text>
+        <text x="87" y="135" text-anchor="middle" class="viz-small">arising at all</text>
+        <text x="87" y="160" text-anchor="middle" class="viz-small viz-muted">Less salt in the</text>
+        <text x="87" y="175" text-anchor="middle" class="viz-small viz-muted">food supply</text>
+        <text x="240" y="100" text-anchor="middle" class="viz-bold">Primary</text>
+        <text x="240" y="120" text-anchor="middle" class="viz-small">Stop the disease</text>
+        <text x="240" y="135" text-anchor="middle" class="viz-small">starting</text>
+        <text x="240" y="160" text-anchor="middle" class="viz-small viz-muted">Vaccination; treating</text>
+        <text x="240" y="175" text-anchor="middle" class="viz-small viz-muted">high BP to prevent stroke</text>
+        <text x="393" y="100" text-anchor="middle" class="viz-bold">Secondary</text>
+        <text x="393" y="120" text-anchor="middle" class="viz-small">Catch it early, while</text>
+        <text x="393" y="135" text-anchor="middle" class="viz-small">it can still be changed</text>
+        <text x="393" y="160" text-anchor="middle" class="viz-small viz-muted">Screening for diabetes</text>
+        <text x="393" y="175" text-anchor="middle" class="viz-small viz-muted">or breast cancer</text>
+        <text x="547" y="100" text-anchor="middle" class="viz-bold">Tertiary</text>
+        <text x="547" y="120" text-anchor="middle" class="viz-small">Limit damage, disability</text>
+        <text x="547" y="135" text-anchor="middle" class="viz-small">and recurrence</text>
+        <text x="547" y="160" text-anchor="middle" class="viz-small viz-muted">Cardiac rehabilitation</text>
+        <text x="547" y="175" text-anchor="middle" class="viz-small viz-muted">after a heart attack</text>
+        <!-- quaternary spans the whole course -->
+        <g class="s5"><rect x="14" y="198" width="606" height="48" rx="10" class="node" stroke-dasharray="6 5"/></g>
+        <text x="28" y="218" class="viz-small"><tspan class="viz-bold">Quaternary, at any point:</tspan> protect people from too much medicine</text>
+        <text x="28" y="235" class="viz-small viz-muted">Not screening healthy people with tests that mostly find harmless abnormalities</text>
+        <!-- the trade-off -->
+        <path d="M18,266 L616,266" class="edge" marker-start="url(#l1-tl-arrow-m)" marker-end="url(#l1-tl-arrow-m)"/>
+        <text x="14" y="288" class="viz-small viz-muted">Earlier: reaches many people, small gain for each</text>
+        <text x="620" y="288" text-anchor="end" class="viz-small viz-muted">Later: fewer people, large gain for each</text>
+      </svg>
+      <figcaption>The milestones belong to one named disease. Name a different disease and the same intervention can move to a different box (see the trap below).</figcaption>
+    </figure>
 
     <div class="callout trap">
       <div class="callout-title">Trap</div>
@@ -207,6 +295,11 @@
           <tr><td>Diabetes screening in primary care</td><td>Assurance (a service is delivered)</td><td>Secondary</td><td>Healthcare public health</td></tr>
         </tbody>
       </table>
+    </div>
+
+    <div class="widget" data-widget="classify-intervention">
+      <div class="widget-title">Tag an intervention with each lens</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Each example comes from this lecture. Pick an answer for each lens to get instant feedback, then move to the next example.</p>
     </div>
 
     <div class="callout trap">

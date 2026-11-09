@@ -416,6 +416,123 @@ ol.lecture-list li:last-child { border-bottom: 0; }
 }
 .progress-bar > span { display: block; height: 100%; background: var(--accent); }
 
+/* ---------- Diagrams & interactive widgets ---------- */
+.diagram, .widget {
+  margin: 1.75rem 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  padding: 1rem 1.1rem 1.1rem;
+}
+.diagram > figcaption, .widget-caption {
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-top: 0.6rem;
+}
+.widget-title {
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+}
+.widget-title::before { content: "▶ Try it · "; }
+.diagram-title {
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  margin-bottom: 0.5rem;
+}
+.viz-svg { width: 100%; height: auto; display: block; overflow: visible; font-family: var(--font-ui); }
+.viz-svg text { fill: var(--text); font-size: 13px; }
+.viz-tick { fill: var(--muted) !important; font-size: 11.5px !important; }
+.viz-label { fill: var(--muted) !important; font-size: 12px !important; }
+.viz-grid { stroke: var(--border); stroke-width: 1; }
+.viz-axis { stroke: var(--muted); stroke-width: 1.2; }
+.viz-muted { fill: var(--muted) !important; }
+.viz-small { font-size: 11.5px !important; }
+.viz-bold { font-weight: 700; }
+
+/* Series colours: use on fill/stroke via classes */
+.s1 { --sc: var(--accent); }
+.s2 { --sc: var(--example); }
+.s3 { --sc: var(--pitfall); }
+.s4 { --sc: var(--gulf); }
+.s5 { --sc: var(--muted); }
+.viz-svg .fill { fill: var(--sc); fill-opacity: 0.85; stroke: none; }
+.viz-svg .fill-soft { fill: var(--sc); fill-opacity: 0.25; stroke: none; }
+.viz-svg .stroke { stroke: var(--sc); stroke-width: 2.5; fill: none; }
+.viz-svg .stroke.dashed { stroke-dasharray: 6 5; }
+.viz-svg .dot { fill: var(--sc); }
+.viz-svg text.colour, .viz-svg tspan.colour { fill: var(--sc); }
+
+/* Static diagram building blocks: boxes, arrows */
+.viz-svg .node { fill: var(--bg); stroke: var(--sc, var(--muted)); stroke-width: 2; }
+.viz-svg .node-fill { fill: var(--sc); fill-opacity: 0.18; stroke: var(--sc); stroke-width: 2; }
+.viz-svg .edge { stroke: var(--muted); stroke-width: 1.8; fill: none; }
+.viz-svg .edge.strong { stroke: var(--text); }
+.viz-svg .edge.accent { stroke: var(--accent); stroke-width: 2.4; }
+.viz-svg .arrowhead { fill: var(--muted); }
+.viz-svg .arrowhead.accent { fill: var(--accent); }
+
+/* Controls */
+.widget-controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.6rem 1.4rem;
+  margin: 0.4rem 0 1rem;
+  font-family: var(--font-ui);
+}
+.widget-slider { display: flex; flex-direction: column; gap: 0.25rem; font-size: 0.88rem; }
+.widget-slider-head { display: flex; justify-content: space-between; gap: 0.5rem; }
+.widget-slider-label { color: var(--muted); }
+.widget-slider-value { font-weight: 700; font-variant-numeric: tabular-nums; color: var(--text); }
+.widget-slider input[type=range] { width: 100%; accent-color: var(--accent); height: 1.6rem; margin: 0; }
+.widget-toggle { display: inline-flex; border: 1px solid var(--border); border-radius: 999px; overflow: hidden; align-self: start; }
+.widget-toggle button, .widget-button {
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--muted);
+  background: transparent;
+  border: 0;
+  padding: 0.4rem 0.9rem;
+  cursor: pointer;
+}
+.widget-toggle button.on { background: var(--accent); color: var(--bg); }
+.widget-button { border: 1.5px solid var(--accent); color: var(--accent); border-radius: 999px; align-self: start; }
+.widget-button:hover { background: var(--accent-soft); }
+.widget-readouts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.6rem;
+  margin-top: 0.9rem;
+  font-family: var(--font-ui);
+}
+.widget-readout { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 0.5rem 0.7rem; }
+.widget-readout-value { font-size: 1.25rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.widget-readout-label { font-size: 0.78rem; color: var(--muted); line-height: 1.35; }
+.widget-readout.good .widget-readout-value { color: var(--accent); }
+.widget-readout.bad .widget-readout-value { color: var(--pitfall); }
+.widget-legend { display: flex; flex-wrap: wrap; gap: 0.3rem 1rem; font-family: var(--font-ui); font-size: 0.82rem; color: var(--muted); margin: 0.2rem 0 0.4rem; }
+.widget-legend-item { display: inline-flex; align-items: center; gap: 0.4rem; }
+.widget-legend .swatch { width: 0.9rem; height: 0.9rem; border-radius: 3px; background: var(--sc); display: inline-block; }
+.widget-legend .swatch.dashed { height: 0; border-top: 3px dashed var(--sc); background: none; border-radius: 0; }
+.widget-note { font-family: var(--font-ui); font-size: 0.85rem; color: var(--muted); margin: 0.6rem 0 0; }
+@media print { .widget-controls { display: none; } }
+/* Phones: keep diagram text readable by letting wide SVGs scroll sideways */
+@media (max-width: 600px) {
+  .diagram, .widget { overflow-x: auto; padding: 0.8rem; }
+  .viz-svg { min-width: 560px; }
+  .diagram, .widget { margin-left: -0.5rem; margin-right: -0.5rem; }
+}
+
 /* ---------- Mark as done ---------- */
 .done-bar { margin: 3rem 0 0; display: flex; justify-content: center; }
 .done-button {

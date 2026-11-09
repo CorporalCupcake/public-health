@@ -11,6 +11,8 @@
   <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
   <script defer src="../../assets/js/math.js"></script>
   <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/1-07.js"></script>
 </head>
 <body>
 <header class="site-header">
@@ -107,6 +109,11 @@
       </table>
     </div>
 
+    <div class="widget" data-widget="paf-levin">
+      <div class="widget-title">Prevalence × relative risk = PAF</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Each block’s area is its number of cases: width is how many people, height is their risk. Move the sliders and watch the red share of all cases. Compare a common weak risk with a rare strong one.</p>
+    </div>
+
     <div class="callout trap">
       <div class="callout-title">Trap</div>
       <p>Plugging an <strong>adjusted</strong> RR into Levin’s formula. Levin’s formula assumes the RR is the crude one for the same population; with confounding, mixing an adjusted RR with population prevalence gives a biased PAF. Two fixes: use the case-based version (the proportion of <em>cases</em> exposed times \((RR-1)/RR\)), which works with an adjusted RR, or compute the PAF by standardisation from a fitted model. Using an <strong>unadjusted</strong> RR is the opposite error: it counts confounding as causal effect.</p>
@@ -166,6 +173,11 @@
       <dd>For small shifts, doubling the shift roughly doubles the PIF. The shape of the shift matters too: moving the whole distribution down (population strategy) and trimming only the top tail (high-risk strategy) give different PIFs for the same average change.</dd>
     </dl>
 
+    <div class="widget" data-widget="pif-shift">
+      <div class="widget-title">A salt policy as a PIF</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">The grey curve is today’s salt intake. Set the policy’s cut and compliance to shift it, and compare the PIF (this shift) with the PAF (everyone at the TMREL). Then move the TMREL and watch which fraction changes.</p>
+    </div>
+
     <div class="callout gulf">
       <div class="callout-title">Example · Project 1</div>
       <p>The chain you will build: (1) the 2019 bread limit and the 2025 voluntary limits lower salt intake by an amount that depends on compliance; (2) trial evidence converts the salt change into a systolic blood pressure change (Lecture 1.9); (3) the blood pressure risk curve converts that into a PIF for each disease, age and sex; (4) the PIF times the GBD disease rates gives events averted. The multistate life table (Lecture 1.11) then spreads these over time. Running it at measured and at full compliance gives two PIFs, and the gap between them is the cost of the compliance shortfall.</p>
@@ -208,6 +220,67 @@
       <dt>What a change means</dt>
       <dd>When a GBD round changes a risk’s burden sharply, look first at step 2 (new risk curve) and step 4 (new TMREL), not at the disease rates.</dd>
     </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · The five GBD steps as a flow</div>
+      <svg class="viz-svg" viewBox="0 0 640 306" role="img" aria-label="Flow: pick pairs leads to risk curves; risk curves, exposure and the TMREL feed step 4, the PAF; the PAF times deaths and DALYs gives step 5, attributable burden">
+        <defs><marker id="l17-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead accent"/></marker></defs>
+        <!-- column A: steps 1-3 -->
+        <g class="s1">
+          <rect x="10" y="14" width="180" height="72" rx="10" class="node-fill"/>
+          <rect x="10" y="118" width="180" height="72" rx="10" class="node-fill"/>
+          <rect x="10" y="222" width="180" height="72" rx="10" class="node-fill"/>
+          <rect x="240" y="118" width="170" height="72" rx="10" class="node-fill"/>
+          <rect x="460" y="118" width="170" height="72" rx="10" class="node-fill"/>
+          <rect x="460" y="222" width="170" height="72" rx="10" class="node"/>
+        </g>
+        <g class="s5">
+          <rect x="240" y="14" width="170" height="72" rx="10" class="node"/>
+          <rect x="460" y="14" width="170" height="72" rx="10" class="node"/>
+        </g>
+        <g text-anchor="middle">
+          <text x="100" y="38" class="viz-bold">1. Pick pairs</text>
+          <text x="100" y="58" class="viz-small">convincing causal evidence</text>
+          <text x="100" y="75" class="viz-small viz-muted">sodium → BP → CVD</text>
+
+          <text x="100" y="142" class="viz-bold">2. Risk curves</text>
+          <text x="100" y="162" class="viz-small">RR at each exposure level</text>
+          <text x="100" y="179" class="viz-small viz-muted">RR of stroke per mmHg</text>
+
+          <text x="100" y="246" class="viz-bold">3. Exposure</text>
+          <text x="100" y="266" class="viz-small">full distribution, surveys</text>
+          <text x="100" y="283" class="viz-small viz-muted">Saudi sodium by age, sex</text>
+
+          <text x="325" y="38" class="viz-bold">TMREL</text>
+          <text x="325" y="58" class="viz-small">lowest-risk exposure</text>
+          <text x="325" y="75" class="viz-small viz-muted">e.g. SBP 110–115 mmHg</text>
+
+          <text x="325" y="142" class="viz-bold">4. TMREL and PAF</text>
+          <text x="325" y="162" class="viz-small">risk now vs risk at TMREL</text>
+          <text x="325" y="179" class="viz-small viz-muted">share of strokes: sodium</text>
+
+          <text x="545" y="38" class="viz-bold">Deaths and DALYs</text>
+          <text x="545" y="58" class="viz-small">for each cause, age, sex</text>
+          <text x="545" y="75" class="viz-small viz-muted">GBD cause estimates</text>
+
+          <text x="545" y="142" class="viz-bold">5. Burden</text>
+          <text x="545" y="162" class="viz-small">PAF × deaths and DALYs</text>
+          <text x="545" y="179" class="viz-small viz-muted">stroke DALYs from sodium</text>
+
+          <text x="545" y="246" class="viz-bold">Attributable burden</text>
+          <text x="545" y="266" class="viz-small">with an uncertainty interval</text>
+          <text x="545" y="283" class="viz-small viz-muted">built from all five steps</text>
+        </g>
+        <path d="M100,86 L100,114" class="edge accent" marker-end="url(#l17-arrow)"/>
+        <path d="M190,154 L236,154" class="edge accent" marker-end="url(#l17-arrow)"/>
+        <path d="M190,258 L325,258 L325,194" class="edge accent" marker-end="url(#l17-arrow)"/>
+        <path d="M325,86 L325,114" class="edge accent" marker-end="url(#l17-arrow)"/>
+        <path d="M410,154 L456,154" class="edge accent" marker-end="url(#l17-arrow)"/>
+        <path d="M545,86 L545,114" class="edge accent" marker-end="url(#l17-arrow)"/>
+        <path d="M545,190 L545,218" class="edge accent" marker-end="url(#l17-arrow)"/>
+      </svg>
+      <figcaption>Steps 1–3 and the TMREL are inputs; step 4 combines them into a PAF; step 5 scales it by the disease burden. When a GBD round moves a risk’s burden sharply, check steps 2 and 4 first. Wide Gulf intervals usually come from step 3.</figcaption>
+    </figure>
 
     <div class="callout trap">
       <div class="callout-title">Trap</div>

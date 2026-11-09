@@ -11,6 +11,8 @@
   <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
   <script defer src="../../assets/js/math.js"></script>
   <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/1-08.js"></script>
 </head>
 <body>
 <header class="site-header">
@@ -63,6 +65,11 @@
       <dt>What a change means</dt>
       <dd>Adding repeat days per person shrinks the day-to-day part and sharpens the picture of each person’s usual intake. Adding more people only sharpens the population mean.</dd>
     </dl>
+
+    <div class="widget" data-widget="usual-vs-measured">
+      <div class="widget-title">One day is not usual intake</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">The teal curve is usual intake. The amber curve is what a survey sees when it averages only a few days per person. Add days, or shrink the day-to-day swing, and watch the shaded tails.</p>
+    </div>
 
     <div class="callout trap">
       <div class="callout-title">Trap</div>
@@ -196,6 +203,27 @@
       <dd>Ask whether the error would cancel if you repeated the measurement many times on the same person. If yes, it is random. If it would persist (the person always forgets the salt they add), it is systematic.</dd>
     </dl>
 
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · Random vs systematic error</div>
+      <svg class="viz-svg" viewBox="0 0 640 282" role="img" aria-label="Two dartboards. Left: darts scattered around the bullseye, their average on target. Right: darts tightly clustered away from the bullseye, their average off target.">
+        <text x="160" y="18" text-anchor="middle" class="viz-bold">Random error</text>
+        <text x="480" y="18" text-anchor="middle" class="viz-bold">Systematic error</text>
+        <g class="s5"><circle cx="160" cy="130" r="95" class="node"/><circle cx="160" cy="130" r="65" class="node"/><circle cx="160" cy="130" r="35" class="node"/></g>
+        <g class="s1"><circle cx="160" cy="130" r="10" class="node-fill"/></g>
+        <g class="s5"><circle cx="480" cy="130" r="95" class="node"/><circle cx="480" cy="130" r="65" class="node"/><circle cx="480" cy="130" r="35" class="node"/></g>
+        <g class="s1"><circle cx="480" cy="130" r="10" class="node-fill"/></g>
+        <g class="s3"><circle cx="120" cy="108" r="5" class="dot"/><circle cx="195" cy="92" r="5" class="dot"/><circle cx="212" cy="148" r="5" class="dot"/><circle cx="142" cy="178" r="5" class="dot"/><circle cx="170" cy="100" r="5" class="dot"/><circle cx="105" cy="140" r="5" class="dot"/><circle cx="188" cy="170" r="5" class="dot"/><circle cx="130" cy="90" r="5" class="dot"/><circle cx="220" cy="118" r="5" class="dot"/><circle cx="118" cy="156" r="5" class="dot"/></g>
+        <g class="s3"><circle cx="515" cy="80" r="5" class="dot"/><circle cx="538" cy="74" r="5" class="dot"/><circle cx="544" cy="94" r="5" class="dot"/><circle cx="522" cy="101" r="5" class="dot"/><circle cx="528" cy="88" r="5" class="dot"/><circle cx="512" cy="91" r="5" class="dot"/><circle cx="539" cy="104" r="5" class="dot"/><circle cx="533" cy="69" r="5" class="dot"/><circle cx="518" cy="82" r="5" class="dot"/><circle cx="531" cy="98" r="5" class="dot"/></g>
+        <g class="s4"><path d="M152,122 L168,138 M152,138 L168,122" class="stroke" style="stroke-width:3.5"/></g>
+        <g class="s4"><path d="M520,80 L536,96 M520,96 L536,80" class="stroke" style="stroke-width:3.5"/></g>
+        <text x="160" y="252" text-anchor="middle" class="viz-small">Darts scatter around the bullseye.</text>
+        <text x="160" y="270" text-anchor="middle" class="viz-small viz-muted">Their average (✕) still lands on it.</text>
+        <text x="480" y="252" text-anchor="middle" class="viz-small">Darts cluster in the wrong spot.</text>
+        <text x="480" y="270" text-anchor="middle" class="viz-small viz-muted">More darts won’t move the average (✕).</text>
+      </svg>
+      <figcaption>Bullseye = true usual intake. Red dots = single measurements; ✕ = their average. Random error leaves the mean honest but widens the spread. Systematic error moves the mean, however many measurements you take.</figcaption>
+    </figure>
+
     <div class="callout trap">
       <div class="callout-title">Trap</div>
       <p>Thinking a large sample fixes measurement error. It fixes random error in a mean. It does nothing for systematic error, and nothing for the weakening of associations caused by random error in the exposure.</p>
@@ -222,6 +250,11 @@
       <dt>What a change means</dt>
       <dd>More collections per person reduce the noise and bring the observed slope closer to the true one. A study with several 24-hour urines per person should show a steeper sodium–disease slope than one with a single collection, if the effect is real.</dd>
     </dl>
+
+    <div class="widget" data-widget="reg-dilution">
+      <div class="widget-title">Watch a slope dilute</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Each dot is a person. The outcome depends on their usual salt intake, but we only see a measured value. Raise the day-to-day swing and watch the fitted line flatten; add urines per person and it recovers.</p>
+    </div>
 
     <div class="callout trap">
       <div class="callout-title">Trap</div>

@@ -11,6 +11,8 @@
   <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
   <script defer src="../../assets/js/math.js"></script>
   <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/1-11.js"></script>
 </head>
 <body>
 <header class="site-header">
@@ -87,6 +89,38 @@
       <dd>Time and repeated events. A chronic disease where people can have a stroke, recover, have another and die, year after year, makes the tree branch without end.</dd>
     </dl>
 
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · A decision tree</div>
+      <svg class="viz-svg" viewBox="0 0 640 300" role="img" aria-label="Decision tree: screen or don't screen, then defect present or absent, ending in four outcomes">
+        <defs><marker id="dt-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead"/></marker></defs>
+        <!-- decision -->
+        <rect x="20" y="132" width="36" height="36" class="node s4"/>
+        <text x="38" y="190" text-anchor="middle" class="viz-small viz-muted">Decide</text>
+        <path d="M56,150 L210,80" class="edge"/><path d="M56,150 L210,220" class="edge"/>
+        <text x="120" y="98" class="viz-small" text-anchor="middle">Screen</text>
+        <text x="120" y="210" class="viz-small" text-anchor="middle">Don’t screen</text>
+        <!-- chance -->
+        <circle cx="228" cy="80" r="18" class="node s2"/><circle cx="228" cy="220" r="18" class="node s2"/>
+        <path d="M246,80 L420,40" class="edge"/><path d="M246,80 L420,118" class="edge"/>
+        <path d="M246,220 L420,182" class="edge"/><path d="M246,220 L420,260" class="edge"/>
+        <text x="330" y="50" class="viz-small viz-muted" text-anchor="middle">defect (p)</text>
+        <text x="320" y="126" class="viz-small viz-muted" text-anchor="middle">no defect (1 − p)</text>
+        <text x="330" y="190" class="viz-small viz-muted" text-anchor="middle">defect (p)</text>
+        <text x="320" y="266" class="viz-small viz-muted" text-anchor="middle">no defect (1 − p)</text>
+        <!-- terminals -->
+        <g class="s1">
+          <polygon points="422,40 440,30 440,50" class="node-fill"/><polygon points="422,118 440,108 440,128" class="node-fill"/>
+          <polygon points="422,182 440,172 440,192" class="node-fill"/><polygon points="422,260 440,250 440,270" class="node-fill"/>
+        </g>
+        <text x="450" y="44" class="viz-small">Found early → early surgery</text>
+        <text x="450" y="122" class="viz-small">Healthy (cost of test only)</text>
+        <text x="450" y="186" class="viz-small">Found late → late surgery</text>
+        <text x="450" y="264" class="viz-small">Healthy (no cost)</text>
+      </svg>
+      <figcaption>Square = decision, circle = chance, triangle = outcome (with its cost and health). Each option’s value is the probability-weighted average of its outcomes. A real version would add test accuracy: false positives and missed cases.</figcaption>
+    </figure>
+
     <div class="callout trap">
       <div class="callout-title">Trap</div>
       <p>Using a tree for a chronic, recurring process. Either the tree becomes unreadable or, more often, the modeller cuts it short and silently drops the long-term consequences. If events recur over time, use a Markov model or life table.</p>
@@ -124,6 +158,12 @@
       <dt>What a change means</dt>
       <dd>An intervention works by changing an arrow. Lowering the well-to-stroke probability by 10% keeps more of the cohort in “well”, where costs are low and health is high, for every remaining cycle.</dd>
     </dl>
+
+
+    <div class="widget" data-widget="markov-cohort">
+      <div class="widget-title">A Markov cohort model</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">1,000 well people enter. Each year, a share moves along each arrow. Move the sliders to change the arrows, and the year slider to see where the cohort is at that point. Then switch to “With policy”.</p>
+    </div>
 
     <p>One detail: people move between states at any time during a cycle, not exactly at its start or end, so models apply a <strong>half-cycle correction</strong> that counts them as spending half the cycle in each state.</p>
 
@@ -190,6 +230,55 @@
       <dt>How to read the output</dt>
       <dd>Differences between the intervention and business-as-usual runs: deaths averted, life-years and health-adjusted life-years (HALYs, a QALY-like measure from disability weights) gained, and health care costs averted, by sex, age and year.</dd>
     </dl>
+
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · How a multistate life table models a salt policy</div>
+      <svg class="viz-svg" viewBox="0 0 660 330" role="img" aria-label="Flow from salt policy through intake, blood pressure and impact fractions into disease life tables, then the main life table and outputs">
+        <defs><marker id="pm-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead accent"/></marker></defs>
+        <!-- row 1: causal chain -->
+        <g class="s4"><rect x="10" y="20" width="130" height="54" rx="10" class="node-fill"/></g>
+        <text x="75" y="44" text-anchor="middle" class="viz-bold">Salt policy</text><text x="75" y="62" text-anchor="middle" class="viz-small viz-muted">bread limit</text>
+        <g class="s4"><rect x="180" y="20" width="130" height="54" rx="10" class="node-fill"/></g>
+        <text x="245" y="44" text-anchor="middle" class="viz-bold">Salt intake ↓</text><text x="245" y="62" text-anchor="middle" class="viz-small viz-muted">distribution shifts</text>
+        <g class="s4"><rect x="350" y="20" width="130" height="54" rx="10" class="node-fill"/></g>
+        <text x="415" y="44" text-anchor="middle" class="viz-bold">Blood pressure ↓</text><text x="415" y="62" text-anchor="middle" class="viz-small viz-muted">Lecture 1.9</text>
+        <g class="s2"><rect x="520" y="20" width="130" height="54" rx="10" class="node-fill"/></g>
+        <text x="585" y="44" text-anchor="middle" class="viz-bold">PIF per disease</text><text x="585" y="62" text-anchor="middle" class="viz-small viz-muted">Lecture 1.7</text>
+        <path d="M140,47 L176,47" class="edge accent" marker-end="url(#pm-arrow)"/>
+        <path d="M310,47 L346,47" class="edge accent" marker-end="url(#pm-arrow)"/>
+        <path d="M480,47 L516,47" class="edge accent" marker-end="url(#pm-arrow)"/>
+        <!-- disease tables -->
+        <path d="M585,74 L585,110 L110,110 L110,128" class="edge accent" marker-end="url(#pm-arrow)"/>
+        <path d="M585,110 L330,110 L330,128" class="edge accent" marker-end="url(#pm-arrow)" />
+        <text x="470" y="104" text-anchor="middle" class="viz-small viz-muted">incidence ↓ in each disease</text>
+        <g class="s3"><rect x="10" y="132" width="200" height="96" rx="10" class="node"/></g>
+        <text x="110" y="152" text-anchor="middle" class="viz-bold">Stroke table</text>
+        <g class="s3"><rect x="230" y="132" width="200" height="96" rx="10" class="node"/></g>
+        <text x="330" y="152" text-anchor="middle" class="viz-bold">Heart disease table</text>
+        <g class="viz-small">
+          <text x="40" y="190" text-anchor="middle">Well</text><text x="110" y="190" text-anchor="middle">Diseased</text><text x="180" y="190" text-anchor="middle">Dead</text>
+          <text x="260" y="190" text-anchor="middle">Well</text><text x="330" y="190" text-anchor="middle">Diseased</text><text x="400" y="190" text-anchor="middle">Dead</text>
+        </g>
+        <path d="M58,186 L80,186" class="edge" marker-end="url(#pm-arrow)"/><path d="M140,186 L162,186" class="edge" marker-end="url(#pm-arrow)"/>
+        <path d="M278,186 L300,186" class="edge" marker-end="url(#pm-arrow)"/><path d="M360,186 L382,186" class="edge" marker-end="url(#pm-arrow)"/>
+        <text x="220" y="215" text-anchor="middle" class="viz-small viz-muted">each is a small Markov model</text>
+        <!-- main table -->
+        <path d="M110,228 L110,262" class="edge accent" marker-end="url(#pm-arrow)"/>
+        <path d="M330,228 L330,262" class="edge accent" marker-end="url(#pm-arrow)"/>
+        <g class="s1"><rect x="10" y="266" width="420" height="54" rx="10" class="node-fill"/></g>
+        <text x="220" y="290" text-anchor="middle" class="viz-bold">Main life table (whole population by sex and age)</text>
+        <text x="220" y="308" text-anchor="middle" class="viz-small viz-muted">fewer disease deaths → lower all-cause mortality; less illness → fewer YLDs</text>
+        <!-- outputs -->
+        <path d="M430,293 L486,293" class="edge accent" marker-end="url(#pm-arrow)"/>
+        <g class="s1"><rect x="490" y="232" width="160" height="88" rx="10" class="node"/></g>
+        <text x="570" y="256" text-anchor="middle" class="viz-bold">Outputs</text>
+        <text x="570" y="276" text-anchor="middle" class="viz-small">deaths averted</text>
+        <text x="570" y="293" text-anchor="middle" class="viz-small">HALYs gained</text>
+        <text x="570" y="310" text-anchor="middle" class="viz-small">costs averted</text>
+      </svg>
+      <figcaption>Run it twice, business as usual and with the policy, and subtract. Measured and full compliance are just two different PIFs entering at the top right.</figcaption>
+    </figure>
 
     <div class="table-wrap">
       <table>
