@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>3.3 GLMs for health data · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/3-03.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-3">Block 3</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 3.3</p>
+  <h1>GLMs for health data; Poisson and negative binomial models for rates with offsets</h1>
+  <div class="lecture-meta">
+    <span>Block 3 · Biostatistics core</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>You already know GLM theory. What health data adds is a set of choices that reviewers check: which <strong>measure</strong> you report (risk ratio, odds ratio, rate ratio), whether rates carry <strong>person-time</strong> as an offset, whether the variance is honest (<strong>overdispersion</strong>, robust standard errors), and whether the model fits. Project 3 needs all of them: cardiovascular deaths per person-year by sodium-to-potassium ratio, and prevalence ratios for common outcomes such as hypertension.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#choose">Start from the measure you want to report</a></li>
+      <li><a href="#binary">Binary outcomes: risk ratios, not odds ratios</a></li>
+      <li><a href="#offset">Rates: Poisson with a person-time offset</a></li>
+      <li><a href="#overdispersion">Overdispersion</a></li>
+      <li><a href="#zeros">Too many zeros</a></li>
+      <li><a href="#robust">Robust (sandwich) standard errors</a></li>
+      <li><a href="#fit">Checking fit and reporting</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="choose">
+    <h2>1. Start from the measure you want to report</h2>
+    <p class="point">Pick the family and link from the effect measure your readers need, then check the variance; never let the software default pick your measure.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The <strong>link</strong> sets the scale on which covariates add up, so it fixes what an exponentiated coefficient means: a log link gives ratios of means (risk, rate or prevalence ratios), a logit link gives odds ratios, an identity link gives differences. The <strong>family</strong> sets how the variance grows with the mean, which drives the standard errors.</dd>
+      <dt>Why it matters</dt>
+      <dd>The link decides the answer’s meaning; the variance decides its honesty. You can get a correct point estimate with the wrong family (Poisson for a binary outcome) as long as you repair the variance with robust standard errors (section 6).</dd>
+      <dt>How to read it</dt>
+      <dd>In a methods section, look for three things stated plainly: family, link and how standard errors were computed. If the paper reports “relative risk” from a logistic model, the words and the model disagree.</dd>
+    </dl>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Outcome</th><th>Usual model</th><th>exp(coefficient) is</th></tr></thead>
+        <tbody>
+          <tr><td>Binary, common</td><td>Log-binomial, or Poisson with robust SEs (“modified Poisson”)</td><td>Risk or prevalence ratio</td></tr>
+          <tr><td>Binary, rare; case-control</td><td>Logistic</td><td>Odds ratio (≈ risk ratio only when rare)</td></tr>
+          <tr><td>Events over person-time</td><td>Poisson or negative binomial, offset log(person-time)</td><td>Rate ratio</td></tr>
+          <tr><td>Skewed positive (costs, length of stay)</td><td>Gamma, log link</td><td>Ratio of means</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · Which GLM?</div>
+      <svg class="viz-svg" viewBox="0 0 640 448" role="img" aria-label="Decision flowchart. Binary outcomes: if common or a risk ratio is wanted, use modified Poisson or log-binomial; otherwise logistic. Counts or rates: Poisson with a log person-time offset, then check dispersion; if overdispersed use negative binomial or quasi-Poisson; if more zeros than predicted, zero-inflated or hurdle. Continuous: linear if symmetric, gamma with log link if skewed positive. Time to event with censoring: Cox model.">
+        <defs>
+          <marker id="l33-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead"/></marker>
+        </defs>
+        <!-- top question -->
+        <g class="s5"><rect x="130" y="6" width="380" height="40" rx="10" class="node"/></g>
+        <text x="320" y="31" text-anchor="middle" class="viz-bold">What is the outcome? What will you report?</text>
+        <path d="M200,46 L120,72" class="edge" marker-end="url(#l33-arrow)"/>
+        <path d="M320,46 L320,72" class="edge" marker-end="url(#l33-arrow)"/>
+        <path d="M440,46 L520,72" class="edge" marker-end="url(#l33-arrow)"/>
+        <!-- column heads -->
+        <g class="s1">
+          <rect x="7" y="76" width="200" height="30" rx="8" class="node-fill"/>
+          <rect x="220" y="76" width="200" height="30" rx="8" class="node-fill"/>
+          <rect x="433" y="76" width="200" height="30" rx="8" class="node-fill"/>
+        </g>
+        <g text-anchor="middle" class="viz-bold">
+          <text x="107" y="96">Binary (yes / no)</text>
+          <text x="320" y="96">Count or rate</text>
+          <text x="533" y="96">Continuous or time</text>
+        </g>
+
+        <!-- Binary column -->
+        <path d="M107,106 L107,120" class="edge" marker-end="url(#l33-arrow)"/>
+        <g class="s5"><rect x="7" y="122" width="200" height="54" rx="8" class="node"/></g>
+        <g text-anchor="middle" class="viz-small">
+          <text x="107" y="140">Outcome common (over</text>
+          <text x="107" y="155">about 10%), or you want</text>
+          <text x="107" y="170">a risk ratio?</text>
+        </g>
+        <path d="M70,176 L58,202" class="edge" marker-end="url(#l33-arrow)"/>
+        <path d="M144,176 L156,202" class="edge" marker-end="url(#l33-arrow)"/>
+        <text x="52" y="194" text-anchor="end" class="viz-small viz-muted">yes</text>
+        <text x="162" y="194" class="viz-small viz-muted">no</text>
+        <g class="s2"><rect x="7" y="206" width="98" height="74" rx="8" class="node-fill"/></g>
+        <g class="s5"><rect x="111" y="206" width="96" height="74" rx="8" class="node-fill"/></g>
+        <g text-anchor="middle" class="viz-small">
+          <text x="56" y="224">Modified</text>
+          <text x="56" y="239">Poisson or</text>
+          <text x="56" y="254">log-binomial</text>
+          <text x="56" y="270" class="viz-bold">→ RR</text>
+          <text x="159" y="224">Logistic</text>
+          <text x="159" y="239">(or case-</text>
+          <text x="159" y="254">control)</text>
+          <text x="159" y="270" class="viz-bold">→ OR</text>
+        </g>
+
+        <!-- Count column -->
+        <path d="M320,106 L320,120" class="edge" marker-end="url(#l33-arrow)"/>
+        <g class="s2"><rect x="220" y="122" width="200" height="44" rx="8" class="node-fill"/></g>
+        <g text-anchor="middle" class="viz-small">
+          <text x="320" y="140">Poisson, offset log(person-time)</text>
+          <text x="320" y="156" class="viz-bold">→ rate ratio</text>
+        </g>
+        <path d="M320,166 L320,182" class="edge" marker-end="url(#l33-arrow)"/>
+        <g class="s5"><rect x="220" y="184" width="200" height="32" rx="8" class="node"/></g>
+        <text x="320" y="204" text-anchor="middle" class="viz-small">Pearson χ²/df well above 1?</text>
+        <path d="M320,216 L320,236" class="edge" marker-end="url(#l33-arrow)"/>
+        <text x="328" y="231" class="viz-small viz-muted">yes</text>
+        <g class="s3"><rect x="220" y="238" width="200" height="44" rx="8" class="node-fill"/></g>
+        <g text-anchor="middle" class="viz-small">
+          <text x="320" y="256">Negative binomial or</text>
+          <text x="320" y="272">quasi-Poisson (or robust SEs)</text>
+        </g>
+        <path d="M320,282 L320,300" class="edge" marker-end="url(#l33-arrow)"/>
+        <g class="s5"><rect x="220" y="302" width="200" height="32" rx="8" class="node"/></g>
+        <text x="320" y="322" text-anchor="middle" class="viz-small">More zeros than NB predicts?</text>
+        <path d="M320,334 L320,352" class="edge" marker-end="url(#l33-arrow)"/>
+        <text x="328" y="347" class="viz-small viz-muted">yes</text>
+        <g class="s4"><rect x="220" y="354" width="200" height="32" rx="8" class="node-fill"/></g>
+        <text x="320" y="374" text-anchor="middle" class="viz-small">Zero-inflated or hurdle model</text>
+
+        <!-- Continuous / time column -->
+        <path d="M533,106 L533,120" class="edge" marker-end="url(#l33-arrow)"/>
+        <g class="s5"><rect x="433" y="122" width="200" height="44" rx="8" class="node-fill"/></g>
+        <g text-anchor="middle" class="viz-small">
+          <text x="533" y="140">Roughly symmetric</text>
+          <text x="533" y="156"><tspan class="viz-bold">→ linear</tspan> (mean difference)</text>
+        </g>
+        <g class="s2"><rect x="433" y="184" width="200" height="60" rx="8" class="node-fill"/></g>
+        <g text-anchor="middle" class="viz-small">
+          <text x="533" y="202">Skewed, positive (costs,</text>
+          <text x="533" y="217">length of stay) → Gamma,</text>
+          <text x="533" y="233" class="viz-bold">log link: ratio of means</text>
+        </g>
+        <g class="s4"><rect x="433" y="262" width="200" height="60" rx="8" class="node-fill"/></g>
+        <g text-anchor="middle" class="viz-small">
+          <text x="533" y="280">Time to event, censored</text>
+          <text x="533" y="295">follow-up → Cox model</text>
+          <text x="533" y="311" class="viz-bold">→ hazard ratio (3.6)</text>
+        </g>
+
+        <!-- banner -->
+        <g class="s5"><rect x="7" y="404" width="626" height="38" rx="8" class="node"/></g>
+        <text x="320" y="427" text-anchor="middle" class="viz-small">Any column: clustered data → cluster-robust SEs, GEE or mixed models (3.8); survey data → design-based SEs (3.4)</text>
+      </svg>
+      <figcaption>Each path ends in the measure you will report. If the count model passes the dispersion check, keep Poisson. The 10% line for “common” is a rule of thumb: the OR–RR gap grows smoothly with risk (Lecture 2.1).</figcaption>
+    </figure>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Fitting logistic regression because the outcome is binary, then writing “exposed people were 2.4 times as likely”. That sentence describes a risk ratio. Either report odds honestly or fit a model that gives the risk ratio.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="binary">
+    <h2>2. Binary outcomes: risk ratios, not odds ratios</h2>
+    <p class="point">For common outcomes the odds ratio sits further from 1 than the risk ratio, and readers will read it as a risk ratio; fit a model that reports the risk ratio directly.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Two ways to get risk (or prevalence) ratios with covariates. <strong>Log-binomial</strong>: binomial family, log link; exact but often fails to converge, because fitted risks must stay below 1. <strong>Modified Poisson</strong>: Poisson family, log link, on the 0/1 outcome, with robust standard errors (Zou 2004). The Poisson variance is wrong for binary data, but the coefficients are consistent and the sandwich fixes the standard errors.</dd>
+      <dt>Why it matters</dt>
+      <dd>Hypertension, obesity, diabetes in older adults, statin use: the outcomes in Project 3 and most survey analyses are common. Lecture 2.1 showed an OR of about 0.6 that was really an RR of about 0.93.</dd>
+      <dt>How to read it</dt>
+      <dd>If the outcome is under about 10% in every group, OR and RR are close and logistic is fine. Above that, expect the OR to exaggerate: an OR of 2.0 with a baseline risk of 30% is an RR of about 1.5.</dd>
+      <dt>What a change means</dt>
+      <dd>Switching from logistic to modified Poisson pulls estimates towards 1 for common outcomes. That is not a loss of effect; it is the effect stated on the scale people actually read.</dd>
+    </dl>
+
+<pre><code>library(sandwich); library(lmtest)
+# Prevalence ratio of hypertension by Na/K ratio quartile
+m_rr <- glm(htn ~ nak_q + age + sex, family = poisson, data = adults)
+ci   <- coefci(m_rr, vcov. = vcovHC(m_rr, type = "HC0"))  # robust CIs
+exp(cbind(PR = coef(m_rr), ci))                           # prevalence ratios</code></pre>
+    <p>The first line fits a Poisson model to the 0/1 outcome. <code>vcovHC</code> builds the sandwich variance and <code>coefci</code> uses it for the intervals; exponentiating gives prevalence ratios. In NHANES you would use <code>svyglm(..., family = quasipoisson())</code> instead, which gives design-based (already sandwich-type) standard errors (Lecture 3.4).</p>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Poisson on a binary outcome with model-based standard errors. The Poisson variance (equal to the mean) is larger than the binomial one, so the intervals come out too wide. The point estimate is fine; the inference is not. Always pair it with robust SEs.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">Example · GCC surveys</div>
+      <p>Diabetes and obesity are common among Saudi and other Gulf adults, so cross-sectional studies that report logistic ORs for them overstate the prevalence ratios. When you appraise or pool such studies, check the baseline prevalence before reading an OR of 2 as “twice as common”.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>Logistic loss is right for classification and calibrated probabilities. For effect estimation the problem is not the model but the scale of the reported contrast. You can also keep the logistic model and report marginal risk ratios by standardisation: predict everyone’s risk with exposure set to 1 and to 0, then compare the averages (the g-formula, Block 4). In Python: <code>statsmodels</code> GLM with <code>family=Poisson()</code> and <code>cov_type="HC0"</code>.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="offset">
+    <h2>3. Rates: Poisson with a person-time offset</h2>
+    <p class="point">A count means nothing until you divide it by the person-time that produced it; the offset does that division inside the model.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>An <strong>offset</strong> is a covariate with its coefficient fixed at 1. With log person-time as the offset, the model describes the log <em>rate</em>, and each exponentiated coefficient is a <strong>rate ratio</strong>:
+        \[ \log \mathbb{E}[\text{events}] = \log(\text{person-time}) + \beta_0 + \beta_1 x \]</dd>
+      <dt>Why it matters</dt>
+      <dd>Regions, clinics and exposure groups differ in size and in how long people were followed. Without the offset the model explains the counts, and the biggest groups have the most events whatever their risk.</dd>
+      <dt>How to read it</dt>
+      <dd>A rate ratio of 1.3 for the top Na/K quartile means 30% more cardiovascular deaths per person-year than the reference quartile, at the same covariate values. Poisson regression on individual follow-up gives the same estimates as on data collapsed into covariate cells with summed events and person-years, so large cohorts can be aggregated.</dd>
+      <dt>What a change means</dt>
+      <dd>Adding the offset changes a coefficient by exactly the extent to which person-time differs between the groups it compares. If adding it barely moves anything, the groups had similar person-time.</dd>
+    </dl>
+
+    <div class="widget" data-widget="offset-demo">
+      <div class="widget-title">Why rates need person-time</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Six regions; the three high-salt regions have a higher true death rate. Change how many people live in them and compare the model without an offset (counts) with the model with log(person-years) as offset (rates).</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">Example · Saudi regions</div>
+      <p>In the 2022 census, Riyadh region had about 8.6 million residents and Al-Baha about 0.34 million, roughly 25 times fewer. Any count of strokes, road deaths or admissions will be far larger in Riyadh. Comparing regions, or modelling a regional policy, needs population (person-years) as the offset, and usually age as a covariate, because the regions’ age and nationality mix also differs.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Putting population or follow-up time in as an ordinary covariate, or weighting by it. A free coefficient on log(person-time) answers a different question (does the rate change with group size?) and can soak up part of the exposure effect. Use an offset unless you have a reason to think rates truly scale with size.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>Gradient boosting has the same idea: with a Poisson objective, pass log exposure as the starting score (<code>base_margin</code> in XGBoost, <code>init_score</code> in LightGBM). Leaving it out means the model learns exposure size, not risk. A Poisson model on finely split follow-up time is also how Cox models connect to GLMs (Lecture 3.6).</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="overdispersion">
+    <h2>4. Overdispersion</h2>
+    <p class="point">Real health counts are usually more variable than Poisson allows; ignore that and every interval is too narrow.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Poisson assumes the variance equals the mean. <strong>Overdispersion</strong> means the variance is larger, usually because units differ in ways the model does not capture (unmeasured risk, clustering, outbreaks). The coefficients stay roughly right; the standard errors are too small.</dd>
+      <dt>Why it matters</dt>
+      <dd>Confidence intervals that should cover the truth 95% of the time may cover it 70% of the time. Spurious “significant” differences between regions or hospitals follow.</dd>
+      <dt>How to read it</dt>
+      <dd>The <strong>dispersion statistic</strong>, Pearson χ² divided by residual degrees of freedom, should be near 1. At 2, Poisson standard errors are about \(\sqrt{2} \approx 1.4\) times too small. Values well above 2 are common for counts by hospital, region or day.</dd>
+      <dt>What a change means</dt>
+      <dd>Moving from Poisson to negative binomial usually leaves rate ratios similar and widens intervals. If the rate ratios move a lot, the two models weight units differently and the mean model may be wrong (section 7).</dd>
+    </dl>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Fix</th><th>Variance assumed</th><th>Use when</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Quasi-Poisson</strong></td><td>φ × mean: SEs scaled by √φ</td><td>Simple, robust default; no likelihood, so no AIC</td></tr>
+          <tr><td><strong>Negative binomial</strong></td><td>mean + mean²/θ</td><td>Extra variation grows with the mean; you want a likelihood, predictions, AIC</td></tr>
+          <tr><td><strong>Poisson + robust SEs</strong></td><td>Any (estimated from residuals)</td><td>Enough units; you care about the rate ratio, not the count distribution</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="widget" data-widget="overdispersion">
+      <div class="widget-title">Poisson versus negative binomial under overdispersion</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Thirty high-salt and thirty low-salt clinics; the true rate ratio is 1.5. Raise the extra variation and watch the Poisson intervals keep their width while missing the truth more often.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Treating negative binomial as a cure for a bad model. Overdispersion is often a symptom: a missing confounder, a missing time trend, or clustering. Look at residuals against covariates and time before reaching for a new family.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Raindrops on paving stones land at random: Poisson. Drips from trees land in clumps under each tree: overdispersed. Counting more stones under the same few trees doesn’t make your estimate as precise as it would be with scattered rain.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="zeros">
+    <h2>5. Too many zeros</h2>
+    <p class="point">Many zeros are not the same as too many zeros; reach for zero-inflated models only when a separate process makes some people unable to have any events.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>Zero-inflated</strong> models mix a “never” group (structural zeros) with a count model. <strong>Hurdle</strong> models split the question into “any events?” (logistic) and “how many, if any?” (truncated count).</dd>
+      <dt>Why it matters</dt>
+      <dd>A low-mean Poisson or a negative binomial already produces lots of zeros. Zero-inflated models add parameters that are hard to interpret and easy to overfit.</dd>
+      <dt>How to read it</dt>
+      <dd>Compare observed zeros with the zeros the negative binomial predicts (section 7). If they match, stop. If not, and there is a clear structural reason, a hurdle model is usually easier to explain.</dd>
+    </dl>
+
+    <div class="callout example">
+      <div class="callout-title">Example</div>
+      <p>Cigarettes smoked per day in a national survey: never-smokers are structural zeros; a smoker who smoked none yesterday is a sampling zero. A hurdle model (who smokes, then how much) maps onto that story directly. Cardiovascular deaths per clinic per year have no such “immune” group, so many zeros there just mean a low rate.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Choosing zero-inflated Poisson because Poisson fits badly and there are many zeros. The usual problem is overdispersion, which a plain negative binomial handles. Compare against negative binomial, not against Poisson.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="robust">
+    <h2>6. Robust (sandwich) standard errors</h2>
+    <p class="point">Sandwich standard errors protect your intervals when the variance model is wrong; they do nothing for coefficients that are biased.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The sandwich estimator measures the spread of the estimates from the residuals themselves rather than from the family’s variance formula. The <strong>cluster-robust</strong> version adds up residuals within clusters (clinic, household, person with repeated visits), allowing correlation inside each one.</dd>
+      <dt>Why it matters</dt>
+      <dd>It makes modified Poisson valid, it is an alternative to quasi-Poisson for overdispersion, and it is the engine of GEE (Lecture 3.8) and of design-based survey variance (Lecture 3.4).</dd>
+      <dt>How to read it</dt>
+      <dd>If robust and model-based SEs agree, the variance model was fine. If robust SEs are much larger, there is overdispersion or clustering; trust the robust ones and ask why.</dd>
+      <dt>What a change means</dt>
+      <dd>Robust SEs twice the model-based ones mean the model-based intervals were half as wide as they should be, so the “significant” findings need re-checking.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Two over-claims. “Robust SEs make the model robust”: they do not fix a wrong mean model, an omitted confounder or a missing offset. And “cluster-robust always works”: with few clusters (a few dozen or fewer) it underestimates the variance; use small-sample corrections (Lecture 3.8).</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>A sandwich SE is a speedometer that measures speed from the road passing by, not from what the engine manual says. It tells you honestly how fast you are going; it doesn’t tell you whether you are on the right road.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="fit">
+    <h2>7. Checking fit and reporting</h2>
+    <p class="point">Check three things before you report a count model: dispersion, residual patterns, and whether the model reproduces the observed counts, zeros included.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>Dispersion</strong>: Pearson χ²/df near 1. <strong>Residuals</strong>: Pearson or deviance residuals are hard to read for small counts; <em>randomised quantile residuals</em> (the DHARMa package simulates them) should look uniform if the model is right. <strong>Observed vs expected counts</strong>: a rootogram or a simple table of how many 0s, 1s, 2s the model predicts.</dd>
+      <dt>Why it matters</dt>
+      <dd>Reviewers ask how you handled overdispersion and why you chose the family. A short fit paragraph in the methods, with a residual plot in the supplement, pre-empts most of those comments.</dd>
+      <dt>How to read it</dt>
+      <dd>Poisson and negative binomial can be compared by AIC (quasi-Poisson has no likelihood). A curve in residuals against a covariate means a non-linear effect (try a spline); a trend against time means a missing time term.</dd>
+    </dl>
+
+<pre><code>library(MASS); library(DHARMa)
+# Cardiovascular deaths per person-year, by Na/K ratio quartile
+m_p  <- glm(cvd ~ nak_q + age_grp + sex + offset(log(pyears)),
+            family = poisson, data = cells)
+sum(residuals(m_p, "pearson")^2) / df.residual(m_p)   # dispersion
+m_nb <- glm.nb(cvd ~ nak_q + age_grp + sex + offset(log(pyears)), data = cells)
+AIC(m_p, m_nb)
+res <- simulateResiduals(m_nb); plot(res)  # uniform if the model fits
+testZeroInflation(res)                     # observed vs simulated zeros
+exp(cbind(RR = coef(m_nb), confint(m_nb))) # rate ratios with profile CIs</code></pre>
+    <p>The data here are covariate cells with summed deaths and person-years. The script fits Poisson, computes the dispersion statistic, refits as negative binomial, compares the two, checks simulated residuals and zeros, and reports rate ratios.</p>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Project 3</div>
+      <p>The primary Project 3 model is survival-based (Lectures 3.6–3.7), but a Poisson rate model of cardiovascular deaths per person-year by Na/K quartile is a useful check: it gives rate ratios that should sit close to the hazard ratios. Remember what the exposure is: NHANES urinary sodium and potassium come from a single spot urine, not a 24-hour collection, so the ratio is a noisy marker of usual intake (Lecture 2.14), and the rate ratios will be attenuated by that noise, not fixed by any choice of family.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Using the residual deviance as a goodness-of-fit test when counts are small. Its χ² approximation breaks down with many low expected counts, so a “non-significant” deviance does not prove fit. Use the dispersion statistic, simulated residuals and observed-versus-expected counts together.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>A cross-sectional study reports an adjusted odds ratio of 2.2 for obesity among adults who drink sugary drinks daily, with obesity prevalence around 35%. A news story says daily drinkers are “more than twice as likely to be obese”. What is wrong, and what would you ask the authors for?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Obesity is common, so the OR is further from 1 than the prevalence ratio; the true ratio is probably nearer 1.5–1.6. Ask for prevalence ratios from a log-binomial or modified Poisson model (with robust SEs), or marginal standardisation from the logistic model.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A colleague models monthly hospital admissions for heart failure by region with Poisson regression and includes region population as a covariate. The coefficient for population is 0.6 on the log scale. What would you change, and why?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Use log(population, or person-months) as an offset. As a free covariate it estimates how counts scale with size, and it can absorb part of any exposure linked to region size. The offset makes the model about rates, which is the question.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Your Poisson model has a dispersion statistic of 4. Switching to negative binomial leaves the rate ratios almost unchanged but doubles their standard errors. Which result do you report, and what does the doubling tell you?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Report the negative binomial (or quasi-Poisson or robust) intervals. A dispersion of 4 means the Poisson SEs were about √4 = 2 times too small, which is what you saw. The stable rate ratios suggest the mean model is fine and the problem was only the variance; still check residuals for a missing covariate.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A paper fits a zero-inflated Poisson to the number of emergency visits per person per year, justifying it by “60% of people had zero visits”. Is that justification enough?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>No. A negative binomial with a low mean can easily produce 60% zeros. The comparison should be against negative binomial, checking whether it under-predicts zeros, and there should be a story for a structural “never” group. Without both, the extra component is likely overfitting.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Robust SEs from a model of clinic-level counts are 30% larger than model-based ones, and there are only 12 clinics. How confident are you in the robust SEs?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Not very. With 12 clusters the sandwich itself is unstable and tends to be too small. Use a small-sample correction, a mixed model, or report the result as uncertain (Lecture 3.8). The gap between the two SEs says the variance model was wrong; it does not say the robust value is right.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Kirkwood &amp; Sterne, <em>Essential Medical Statistics</em>, 2nd edition (2003): the chapters on logistic regression, rates and Poisson regression.</li>
+      <li>Agresti, <em>Foundations of Linear and Generalized Linear Models</em> (2015): the chapters on count data, overdispersion and negative binomial models.</li>
+      <li>Zou, “A modified Poisson regression approach to prospective studies with binary data”, <em>American Journal of Epidemiology</em> (2004).</li>
+      <li>Ver Hoef &amp; Boveng, “Quasi-Poisson vs. negative binomial regression: how should we model overdispersed count data?”, <em>Ecology</em> (2007).</li>
+      <li>Zeileis, Kleiber &amp; Jackman, “Regression models for count data in R”, <em>Journal of Statistical Software</em> (2008); Kleiber &amp; Zeileis, “Visualizing count data regressions using rootograms”, <em>The American Statistician</em> (2016).</li>
+      <li>Zeileis, “Object-oriented computation of sandwich estimators”, <em>Journal of Statistical Software</em> (2006); documentation for the R packages sandwich, MASS and DHARMa.</li>
+      <li>General Authority for Statistics (GASTAT), Saudi Census 2022: population by administrative region.</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="3-02-r-for-health-data.html"><small>Previous</small>3.2 Statistical computing in R</a>
+    <a class="next" href="3-04-complex-survey-design.html"><small>Next</small>3.4 Complex survey design</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

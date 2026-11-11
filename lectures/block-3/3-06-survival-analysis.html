@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>3.6 Survival analysis · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/3-06.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-3">Block 3</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 3.6</p>
+  <h1>Survival analysis: Kaplan-Meier, Cox models, checking proportional hazards</h1>
+  <div class="lecture-meta">
+    <span>Block 3 · Biostatistics core</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>Survival analysis is regression for <strong>time until an event</strong> when some people’s times are only partly seen. You already know the likelihood. What decides whether a survival paper is right is everything around it: when the clock starts, what it counts (years on study or years of age), who is still being watched, and whether one hazard ratio can honestly summarise the whole follow-up. Project 3 is a survival analysis of NHANES participants linked to death records, so every choice here becomes a sentence in its methods section.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#censoring">Censoring and the assumption behind it</a></li>
+      <li><a href="#timescale">Choosing the clock: study time, age and delayed entry</a></li>
+      <li><a href="#km">Kaplan-Meier curves and the log-rank test</a></li>
+      <li><a href="#hazard">What a hazard ratio does and does not mean</a></li>
+      <li><a href="#cox">The Cox model and time-varying covariates</a></li>
+      <li><a href="#phcheck">Checking proportional hazards</a></li>
+      <li><a href="#phfails">When proportional hazards fails</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="censoring">
+    <h2>1. Censoring and the assumption behind it</h2>
+    <p class="point">A censored person tells you “no event up to here”; survival methods use that partial information, but only give the right answer if being censored has nothing to do with the risk of the event.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>Right censoring</strong>: follow-up stops before the event, because the study ended (<em>administrative</em> censoring) or the person was lost. <strong>Interval censoring</strong>: the event happened between two visits, time unknown (e.g. diabetes found at a 3-yearly check). <strong>Left truncation</strong> (delayed entry) is different: people only enter the data if they survived to some point, covered in section 2.</dd>
+      <dt>Why it matters</dt>
+      <dd>Every survival method assumes <strong>non-informative censoring</strong>: at any time, people who are censored have the same future risk as those still followed who look like them on the covariates. If the sickest drop out, the survivors look healthier than the cohort really is, and the curves are too optimistic.</dd>
+      <dt>How to read it</dt>
+      <dd>Ask why each kind of censoring happens. Administrative censoring at a fixed date is usually harmless. Drop-out because of illness, moving into care, or withdrawing after a side effect is the worrying kind. The assumption cannot be tested from the data; it is argued from how the study works.</dd>
+      <dt>What a change means</dt>
+      <dd>Censoring that rises from 5% to 30% does not by itself bias anything, but it widens intervals and makes any informative part more damaging. Report how many were censored, when, and why.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Treating deaths from other causes as ordinary censoring and then reading 1 − KM as “the risk of cardiovascular death”. A person who died of cancer will never have a cardiovascular death, so they are not like the people still followed. That is a <em>competing event</em>, not censoring, and it is the whole subject of Lecture 3.7.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Censoring in Project 3</div>
+      <p>NHANES participants are matched to the National Death Index, so nobody is “lost” in the usual sense: anyone not found dead is assumed alive at the end of follow-up, which is 31 December 2019 in the current public-use linked mortality files. Almost all censoring is administrative, which makes the non-informative assumption easy to defend. The weak points are elsewhere: deaths missed by the linkage, and deaths from other causes. NCHS also changed the follow-up time or cause of death to synthetic values for some records in the public-use files to protect identities; vital status itself was not changed.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Counting how long light bulbs last when the shop closes at six. A bulb still on at closing time is not a failure and not useless: you know it lasted at least that long. But if staff quietly removed the flickering ones earlier, the bulbs left would make the brand look better than it is.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="timescale">
+    <h2>2. Choosing the clock: study time, age and delayed entry</h2>
+    <p class="point">The time scale decides who is compared with whom at each death; for cohorts recruited across a wide range of ages, such as NHANES, age is often the better clock.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>On <strong>time on study</strong>, everyone starts at zero on the day of their exam; age goes in as a covariate. On <strong>age as the time scale</strong>, each person enters the analysis at their age at the exam and leaves at their age at death or censoring. Entering late is called <strong>delayed entry</strong> or <strong>left truncation</strong>: a person examined at 62 contributes nothing before 62, because we only see people who survived to be examined.</dd>
+      <dt>Why it matters</dt>
+      <dd>A Cox model compares each person who dies with everyone still at risk at that moment on the chosen clock. On study time, a death in year 5 is compared with people of any age who are in their fifth year. On the age scale, a death at 60 is compared only with others who are 60 and under observation. Age, the strongest risk factor for death, is then controlled exactly and without a functional form.</dd>
+      <dt>How to read it</dt>
+      <dd>Korn, Graubard and Midthune recommended age as the time scale for follow-up of a survey, using NHANES I follow-up as their example. Later simulation and empirical work found that time on study gives very similar hazard ratios <em>if</em> baseline age is modelled flexibly. Both appear in NHANES mortality papers. State which you used and, ideally, show the other as a sensitivity analysis.</dd>
+      <dt>What a change means</dt>
+      <dd>If the hazard ratio moves noticeably when you switch clocks, the age adjustment on study time was probably too crude (e.g. linear age when risk rises exponentially), or the exposure is strongly tied to age or birth cohort. Investigate before choosing the answer you prefer.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · The same five NHANES participants on two clocks</div>
+      <svg class="viz-svg" viewBox="0 0 640 452" role="img" aria-label="Five participants shown twice. Top panel, time on study: every line starts at zero. A dies of cardiovascular disease at year 9, B is alive at the end of follow-up at year 15, C dies of a non-cardiovascular cause at year 2, D is alive at year 20, E dies of cardiovascular disease at year 5. When E dies, A, B and D are at risk, aged 49 to 67. Bottom panel, age as time scale: lines start at each person's age at the exam, 45, 62, 70, 44 and 55, with dashed lines before entry. When E dies at 60, only D is also at risk, also aged 60.">
+        <!-- Panel A: time on study -->
+        <text x="10" y="30" class="viz-bold">A. Time on study (years since the NHANES exam)</text>
+        <line x1="272.1" y1="40" x2="272.1" y2="172" class="edge accent" stroke-dasharray="5 4"/>
+        <text x="278" y="50" class="viz-small colour s1">when E dies: A, B, D also at risk, aged 49 to 67</text>
+        <g class="viz-small">
+          <text x="10" y="68">A · exam 2001, age 45</text>
+          <text x="10" y="92">B · exam 2005, age 62</text>
+          <text x="10" y="116">C · exam 2015, age 70</text>
+          <text x="10" y="140">D · exam 1999, age 44</text>
+          <text x="10" y="164">E · exam 2011, age 55</text>
+        </g>
+        <g class="s5">
+          <line x1="165" y1="64" x2="357.9" y2="64" class="edge strong"/>
+          <line x1="165" y1="88" x2="486.4" y2="88" class="edge strong"/>
+          <line x1="165" y1="112" x2="207.9" y2="112" class="edge strong"/>
+          <line x1="165" y1="136" x2="593.6" y2="136" class="edge strong"/>
+          <line x1="165" y1="160" x2="272.1" y2="160" class="edge strong"/>
+        </g>
+        <g class="s3"><circle cx="357.9" cy="64" r="5.5" class="dot"/><circle cx="272.1" cy="160" r="5.5" class="dot"/></g>
+        <g class="s2"><rect x="202.4" y="106.5" width="11" height="11" class="fill"/></g>
+        <g class="s5"><circle cx="486.4" cy="88" r="5" class="node"/><circle cx="593.6" cy="136" r="5" class="node"/></g>
+        <line x1="165" y1="180" x2="615" y2="180" class="viz-axis"/>
+        <g class="viz-tick" text-anchor="middle">
+          <text x="165" y="196">0</text><text x="272.1" y="196">5</text><text x="379.3" y="196">10</text><text x="486.4" y="196">15</text><text x="593.6" y="196">20</text>
+        </g>
+
+        <!-- Panel B: age as time scale -->
+        <text x="10" y="236" class="viz-bold">B. Age as the time scale (years of age)</text>
+        <line x1="415" y1="246" x2="415" y2="366" class="edge accent" stroke-dasharray="5 4"/>
+        <text x="421" y="256" class="viz-small colour s1">when E dies at 60: only D also at risk</text>
+        <g class="viz-small">
+          <text x="10" y="274">A</text>
+          <text x="10" y="298">B</text>
+          <text x="10" y="322">C</text>
+          <text x="10" y="346">D</text>
+          <text x="10" y="370">E</text>
+        </g>
+        <g class="edge" stroke-dasharray="3 4" stroke-width="1.2">
+          <line x1="165" y1="270" x2="265" y2="270"/>
+          <line x1="165" y1="294" x2="435" y2="294"/>
+          <line x1="165" y1="318" x2="515" y2="318"/>
+          <line x1="165" y1="342" x2="255" y2="342"/>
+          <line x1="165" y1="366" x2="365" y2="366"/>
+        </g>
+        <g class="s5">
+          <line x1="265" y1="270" x2="355" y2="270" class="edge strong"/>
+          <line x1="435" y1="294" x2="585" y2="294" class="edge strong"/>
+          <line x1="515" y1="318" x2="535" y2="318" class="edge strong"/>
+          <line x1="255" y1="342" x2="455" y2="342" class="edge strong"/>
+          <line x1="365" y1="366" x2="415" y2="366" class="edge strong"/>
+          <line x1="265" y1="263" x2="265" y2="277" class="edge strong"/>
+          <line x1="435" y1="287" x2="435" y2="301" class="edge strong"/>
+          <line x1="515" y1="311" x2="515" y2="325" class="edge strong"/>
+          <line x1="255" y1="335" x2="255" y2="349" class="edge strong"/>
+          <line x1="365" y1="359" x2="365" y2="373" class="edge strong"/>
+        </g>
+        <g class="s3"><circle cx="355" cy="270" r="5.5" class="dot"/><circle cx="415" cy="366" r="5.5" class="dot"/></g>
+        <g class="s2"><rect x="529.5" y="312.5" width="11" height="11" class="fill"/></g>
+        <g class="s5"><circle cx="585" cy="294" r="5" class="node"/><circle cx="455" cy="342" r="5" class="node"/></g>
+        <line x1="165" y1="386" x2="615" y2="386" class="viz-axis"/>
+        <g class="viz-tick" text-anchor="middle">
+          <text x="215" y="402">40</text><text x="315" y="402">50</text><text x="415" y="402">60</text><text x="515" y="402">70</text><text x="615" y="402">80</text>
+        </g>
+
+        <!-- Legend -->
+        <g class="viz-small">
+          <circle cx="16" cy="426" r="5.5" class="dot s3"/><text x="28" y="430">CVD death (the event)</text>
+          <rect x="182" y="420.5" width="11" height="11" class="fill s2"/><text x="200" y="430">other death (competing event, Lecture 3.7)</text>
+          <circle cx="16" cy="446" r="5" class="node s5"/><text x="28" y="450">alive on 31 Dec 2019 (censored)</text>
+          <line x1="236" y1="446" x2="262" y2="446" class="edge" stroke-dasharray="3 4" stroke-width="1.2"/><text x="270" y="450">before the exam: not observed (delayed entry)</text>
+        </g>
+      </svg>
+      <figcaption>On study time, E’s death is compared with people aged 49 to 67, so age must be adjusted for in the model. On the age scale, E is compared only with people of the same age, and each person counts only from the age at which they were examined.</figcaption>
+    </figure>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Using age as the time scale but starting everyone at birth. That counts years before the exam as “at risk” when the person could not have died in the data (they had to survive to be examined): immortal time again (Lecture 2.2). In R the fix is the counting-process form, <code>Surv(age_at_exam, age_at_exit, event)</code>, which tells the model when each person entered.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Delayed entry as a sensitivity analysis</div>
+      <p>Your exposure, the urinary sodium-to-potassium ratio, comes from a single spot urine sample, not a 24-hour collection (Lecture 2.14). People who are already ill eat less, so their urine may look “low sodium” shortly before they die. A standard check is to start follow-up two years after the exam (delayed entry at year 2, dropping people who died earlier). If the hazard ratio changes a lot, early deaths from existing illness were driving it.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>Choosing the time scale is choosing the matching key in a matched design: each death becomes a case, matched to everyone at risk at the same value of the clock. Age as time scale is matching exactly on age, instead of putting age into the model as a feature and hoping its shape is right.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="km">
+    <h2>3. Kaplan-Meier curves and the log-rank test</h2>
+    <p class="point">A Kaplan-Meier curve is a chain of conditional survival probabilities, recalculated at each death among those still being watched; read it together with the numbers at risk beneath it.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>At each death, the curve drops by the share of the people still at risk who died. Censored people leave the risk set quietly, without a drop. The survival probability at any time is the product of all the “survived this step” fractions so far. The <strong>log-rank test</strong> compares observed with expected deaths in each group at every death time, pooled over follow-up.</dd>
+      <dt>Why it matters</dt>
+      <dd>It is the standard first picture of any time-to-event study, and it assumes nothing about the shape of the hazard. Most survival claims a reader remembers come from the curve, not the table.</dd>
+      <dt>How to read it</dt>
+      <dd>Read the <strong>numbers at risk</strong> first. Where they are small, each death makes a big step and the curve is unreliable: Pocock, Clayton and Altman suggested stopping the plot once only about 10–20% of patients remain in follow-up. Look at the vertical gap at a time that matters clinically, not at where the curves end. Curves that cross, or diverge only late, mean one hazard ratio will not summarise them well (section 7).</dd>
+      <dt>What a change means</dt>
+      <dd>A gap that widens steadily on the survival scale is what proportional hazards looks like. A gap that opens early and stays constant means the effect happened early and then stopped. The log-rank test has most power when hazards are proportional, and little when curves cross.</dd>
+    </dl>
+
+    <div class="widget" data-widget="km-builder">
+      <div class="widget-title">Build a Kaplan-Meier plot</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Start with the small trial and press “New random sample” a few times: watch how far the tails wander and how wide the Cox interval is. Then try the big trial, and heavy drop-out (the tails thin out sooner). Under “No true effect”, see how often the curves still look different.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reading the end of the tail. A curve that ends at 40% after a flat stretch with three people at risk is not evidence that 40% are cured; one more death would drop it sharply. KMunicate (Morris and colleagues, 2019) found readers preferred plots with confidence bands and a table of numbers at risk, censored and with events under the axis. Ask for those when you review, and draw them in Project 3.</p>
+    </div>
+
+    <pre><code>library(survival)
+km &lt;- survfit(Surv(years, died) ~ nak_group, data = d)
+summary(km, times = c(5, 10))            # survival at fixed times, with CIs
+survdiff(Surv(years, died) ~ nak_group, data = d)   # log-rank test
+library(survey)                          # Project 3: use the design (Lecture 3.4)
+svykm(Surv(years, died) ~ nak_group, design = des)</code></pre>
+    <p><code>survfit</code> builds the curves; <code>summary(..., times =)</code> reads them at chosen times; <code>survdiff</code> runs the log-rank test. In NHANES, <code>svykm</code> gives curves that use the survey weights, so they describe the US population rather than the sample.</p>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>A climbing route with stages. The chance of reaching the summit is the chance of passing stage 1, times the chance of passing stage 2 given you passed stage 1, and so on. Climbers who turn back for the weather (censored) are not failures; they just stop counting in the stages they never reached.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="hazard">
+    <h2>4. What a hazard ratio does and does not mean</h2>
+    <p class="point">A hazard is an event rate among people still event-free right now; a hazard ratio compares those rates, which is not the same as comparing risks.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The <strong>hazard</strong> at time \(t\) is the instantaneous rate of the event among those still at risk at \(t\), in events per person-time. The <strong>hazard ratio</strong> (HR) is the ratio of two hazards, for example per doubling of the sodium-to-potassium ratio, or treated versus control.</dd>
+      <dt>Why it matters</dt>
+      <dd>It is the default output of a Cox model and the number most papers lead with. But patients and policymakers care about risk (“what fraction will have died by 10 years?”) and time (“how much longer will I live?”), and the HR answers neither directly.</dd>
+      <dt>How to read it</dt>
+      <dd>HR 0.7: at any moment, among people still alive, the treated die at 70% of the control rate. When events are rare (under about 10–15% by the end) the HR is close to the risk ratio. When they are common it is not: the risk ratio is pulled towards 1 because everyone eventually dies.</dd>
+      <dt>What a change means</dt>
+      <dd>An HR moving from 1.2 to 2 takes the exposed from a 20% higher rate to double the rate, at every moment. What that means for absolute risk depends on the baseline hazard: an HR of 2 for a rare cause of death may add a fraction of a percentage point over 10 years; for a common one, several points.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>“HR 0.5 means half as many people die.” Over long follow-up with a common outcome, an HR of 0.5 can go with a 10-year risk ratio of 0.6 or 0.7, and over a lifetime everyone dies in both groups. Report absolute risks or survival at fixed times alongside the HR (Lecture 2.17 made the same point for risk scores).</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · The built-in selection bias of hazard ratios</div>
+      <p>Hernán (2010), “The hazards of hazard ratios”, points out that a period-specific HR compares the people who are still alive in each group, and after the first deaths those survivors are no longer comparable, even in a randomised trial. If treatment kills the most susceptible early, the treated survivors are a hardier group, and later HRs look protective even when the treatment does no good to anyone. He used the Women’s Health Initiative trial of oestrogen plus progestin, where the HR for coronary heart disease was highest in the first year and fell over follow-up. His advice: report survival curves and risks at fixed times, which keep the randomised comparison intact.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>The hazard is the event density divided by the share still event-free: the same object as the per-step “probability of churn given not churned yet” in a discrete-time model. A discrete-time survival model is just logistic regression on person-period rows, and a Cox model is its continuous-time limit with the baseline left unspecified.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="cox">
+    <h2>5. The Cox model and time-varying covariates</h2>
+    <p class="point">The Cox model estimates hazard ratios without ever estimating the baseline hazard, by comparing, at each death, the person who died with everyone still at risk.</p>
+
+    \[ h(t \mid x) = h_0(t)\, e^{\beta x} \]
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The hazard for a person with covariates \(x\) is an unspecified baseline hazard \(h_0(t)\), which can have any shape over time, multiplied by \(e^{\beta x}\). So \(e^{\beta}\) is the HR per unit of \(x\), assumed the same at every time: the <strong>proportional hazards</strong> assumption.</dd>
+      <dt>Why it matters</dt>
+      <dd>Leaving the baseline free is why it is the workhorse: you need no assumption about how mortality changes with time or age. It handles delayed entry and covariates that change during follow-up, and the survey package fits it with survey weights and design-based standard errors.</dd>
+      <dt>How to read it</dt>
+      <dd>Report the HR per a meaningful unit (per doubling, per standard deviation, or by quartile), with its CI. A continuous exposure such as the sodium-to-potassium ratio should be checked for non-linearity with splines before you report a single per-unit HR. To get absolute risks, combine the HRs with the estimated baseline (<code>survfit</code> on the fitted model).</dd>
+      <dt>What a change means</dt>
+      <dd>Adding a confounder that moves the HR from 1.40 to 1.15 means much of the crude association ran through that variable. Ties in event times (NHANES follow-up is in whole months) are handled by the Efron method, the default in R.</dd>
+    </dl>
+
+    <pre><code>library(survival); library(survey)
+d$age_exit &lt;- d$age_exam + d$PERMTH_EXM / 12      # months from exam to exit
+d$cvd &lt;- d$MORTSTAT == 1 &amp; d$UCOD_LEADING == "001" # heart disease; see 3.7
+des &lt;- svydesign(ids = ~SDMVPSU, strata = ~SDMVSTRA, weights = ~wt_pooled,
+                 nest = TRUE, data = d)
+fit &lt;- svycoxph(Surv(age_exam, age_exit, cvd) ~ log2(nak) + sex + race +
+                  smoker + bmi + egfr, design = subset(des, eligible))
+summary(fit)   # exp(coef) = HR per doubling of the Na/K ratio</code></pre>
+    <p>This uses age as the time scale with delayed entry at the exam age. <code>PERMTH_EXM</code> is the follow-up in months from the exam in the linked mortality file. The design is subset, not the data, so the standard errors stay correct (Lecture 3.4). Treating other deaths as censored here gives a <em>cause-specific</em> HR, which Lecture 3.7 explains.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Covariate type</th><th>Example</th><th>How to enter it</th></tr></thead>
+        <tbody>
+          <tr><td>Fixed at baseline</td><td>Na/K ratio at the exam, sex</td><td>One row per person</td></tr>
+          <tr><td>Changes during follow-up</td><td>Starting a statin, new diabetes, repeated eGFR</td><td>Split follow-up into (start, stop] rows with <code>tmerge()</code>; each row carries the value at that time</td></tr>
+          <tr><td>Effect changes with time</td><td>HR that fades after 5 years</td><td>A time-varying <em>coefficient</em> (section 7), not a time-varying covariate</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Coding a covariate measured during follow-up as if it were known at baseline (“ever used a statin”). People must survive to start the drug, so the exposed group gets guaranteed survival time: immortal time bias (Lectures 2.2 and 5.3). Enter it as time-varying. And be careful adjusting for time-varying covariates that are themselves affected by earlier exposure: that needs the g-methods of Block 4.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">Gulf example</div>
+      <p>Saudi or Emirati registries with repeated HbA1c and blood pressure readings are natural for time-varying covariates; NHANES is not, because exposure and covariates are measured once, at the exam. That is a real limitation of Project 3 to state openly: one spot urine sample stands in for decades of diet, and its noise pulls the HR towards 1 (regression dilution).</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="phcheck">
+    <h2>6. Checking proportional hazards</h2>
+    <p class="point">Proportional hazards means the HR is flat over time; check it by plotting how the estimated effect changes with time, not just by reading a p-value.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>Scaled Schoenfeld residuals</strong> show, at each death, how far the person who died differs on a covariate from what the model expected. Plotted against time and smoothed, they trace how the coefficient changes over time: a flat line means PH holds. <code>cox.zph</code> plots them and gives a test per covariate and overall (Grambsch and Therneau). <strong>Log-log plots</strong> (log of minus log survival against log time, one curve per group) should show roughly parallel curves under PH.</dd>
+      <dt>Why it matters</dt>
+      <dd>If the HR changes over time, the single Cox HR is a weighted average whose weights depend on when deaths happen and on censoring. It may still be a useful summary, or it may hide effects that run in opposite directions.</dd>
+      <dt>How to read it</dt>
+      <dd>Look at the size and shape of the drift, not the p-value. In a large cohort like NHANES, a trivial drift will be “significant”; in a small trial, a large one may not be. A smooth line moving from log HR 0.4 to 0.1 is a fading effect. A line crossing zero is a reversal, and needs one of the fixes in section 7.</dd>
+      <dt>What a change means</dt>
+      <dd>On the age time scale, non-proportionality means the HR changes with age, which is often real and interesting (many risk factors matter less at older ages). Report the age-specific HRs rather than hiding them.</dd>
+    </dl>
+
+    <pre><code>fit0 &lt;- coxph(Surv(age_exam, age_exit, cvd) ~ log2(nak) + sex + smoker + egfr,
+              data = d, weights = wt_pooled)
+zp &lt;- cox.zph(fit0)
+zp                 # test per covariate and a global test
+plot(zp[1]); abline(h = coef(fit0)[1], lty = 2)   # beta(t) for Na/K vs the Cox average</code></pre>
+    <p><code>cox.zph</code> runs on a <code>coxph</code> fit; with survey data, use it as a diagnostic picture, not a design-based test. The dashed line is the single Cox estimate: compare the smoothed curve with it.</p>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>“The global PH test was not significant, so the assumption holds.” Absence of evidence again (Lecture 2.5). With few events the test has little power, and crossing hazards can average out in a global test. Always look at the plot.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="phfails">
+    <h2>7. When proportional hazards fails</h2>
+    <p class="point">When the HR changes over time, either model the change or switch to a summary that does not need proportional hazards, such as survival at fixed times or the restricted mean survival time.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Three standard fixes. <strong>Stratify</strong> on a covariate that violates PH but is not of interest (e.g. sex): each stratum gets its own baseline hazard and no HR for it. <strong>Time-varying coefficient</strong>: let the exposure’s HR differ by period of follow-up (split time with <code>survSplit</code>) or as a smooth function of time. <strong>Change the summary</strong>: the <strong>restricted mean survival time</strong> (RMST) is the average event-free time up to a chosen horizon \(\tau\), the area under the survival curve.</dd>
+      <dt>Why it matters</dt>
+      <dd>With crossing hazards, a single HR near 1 can sit on top of a large early harm and a large late benefit. RMST and landmark survival describe what actually happened, in units patients understand: months of life, or percentage alive at 5 years.</dd>
+      <dt>How to read it</dt>
+      <dd>An RMST difference of +3 months to 10 years means the treated lived, on average, 3 months longer within those 10 years. Choose \(\tau\) in advance, at a time where enough people are still at risk in both groups. Report the period-specific HRs if you split time.</dd>
+      <dt>What a change means</dt>
+      <dd>Moving \(\tau\) changes the RMST difference: a treatment with early harm and late benefit loses at short horizons and gains at long ones. That is information, not a flaw.</dd>
+    </dl>
+
+    \[ \text{RMST}(\tau) = \int_0^{\tau} S(t)\, dt \]
+
+    <div class="widget" data-widget="ph-violation">
+      <div class="widget-title">One hazard ratio, two very different curves</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">The default is surgery-like: three times the hazard in the first 18 months, then less than half. The Cox HR is about 1, “no effect”. Read survival at 1 year and at 10 years, and the RMST. Then move τ from 10 down to 2, and compare with the proportional scenario.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Concluding “no effect” from an HR of 1.0 when the curves cross. The right reading is “the effect changes over time”: the treated do worse early and better later. Which matters more is a value judgement for patients, and RMST at a pre-specified horizon makes the trade explicit.</p>
+    </div>
+
+    <pre><code>ds &lt;- survSplit(Surv(years, cvd) ~ ., data = d, cut = 5, episode = "period")
+coxph(Surv(tstart, years, cvd) ~ log2(nak):strata(period) + sex + smoker, data = ds)
+library(survRM2)                       # RMST difference with a CI
+rmst2(d$years, d$cvd, arm = d$high_nak, tau = 10)</code></pre>
+    <p>The first two lines split follow-up at year 5 and fit a separate Na/K HR for years 0–5 and after 5 (a classic check for reverse causation from early illness). <code>rmst2</code> compares RMST up to 10 years between two groups; <code>arm</code> must be coded 0/1.</p>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Why trials now report RMST</div>
+      <p>Uno and colleagues (2014) argued that RMST should be reported routinely beside the HR, because it does not depend on proportional hazards and gives an absolute, clinically readable difference. Delayed benefit, as with some cancer immunotherapies, is the common case where PH fails in trials; in cohorts, early follow-up dominated by people already ill is the common case.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>A time-varying coefficient is an interaction between the feature and time; stratifying is giving each stratum its own intercept function. RMST is just the expectation of \(\min(T, \tau)\): a truncated mean, estimable without any model. Survival forests and DeepSurv-type models (Python: <code>lifelines</code>, <code>scikit-survival</code>) relax PH too, but give up the single interpretable HR.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>In a cohort of heart-failure patients, those who stop attending clinic are censored at their last visit. A colleague says censoring is only 12%, so it cannot matter. What do you say?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The amount matters less than the reason. Patients who stop attending may be too ill to come, or may have died elsewhere; if so, censoring is informative and survival is overestimated. Check whether censored patients were sicker at their last visit, and try linkage to death records or a sensitivity analysis that assumes worse outcomes for those censored.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>You analyse NHANES on time on study with age as a linear covariate and get HR 1.35; on the age time scale you get HR 1.12. Which do you believe, and what do you check?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Suspect the time-on-study model: mortality rises roughly exponentially with age, so linear age leaves residual confounding by age, and the exposure probably varies with age. Refit time on study with splines for baseline age (and perhaps birth cohort). If it then agrees with the age-scale result, report the age-scale model and show the other as a sensitivity analysis.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A Kaplan-Meier plot shows the treated curve flattening at 55% from year 6 to year 9, while the control curve keeps falling. The table shows 8 treated patients at risk at year 7. What can you conclude about long-term benefit?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Very little. With 8 at risk, one or two deaths would change the tail a lot, and the flat stretch may simply mean no deaths happened to occur among a handful of people. Compare survival at a time where numbers are still large, with confidence intervals, and do not describe a plateau as a cure.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A trial reports HR 0.95 (95% CI 0.80–1.12) for a new surgical approach, and the curves cross at 2 years. The press release says “no difference in survival”. Is that fair?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>No. Crossing curves mean the effect changes over time, and one HR averages early harm with later benefit (or the reverse). Ask for survival at 1 and 5 years and the RMST at a pre-specified horizon. Patients may reasonably choose differently depending on whether they weigh early risk or long-term gain.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>In Project 3, the HR for the highest versus lowest Na/K quartile is 1.40 over the whole follow-up, but 1.90 in the first 2 years and 1.20 afterwards. How do you interpret and report this?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The early excess is consistent with reverse causation: people already ill eat differently, which shows up in a single spot urine shortly before death. Report the period-specific HRs, use the result after excluding the first 2 years as the main or key sensitivity analysis, and avoid presenting 1.40 as a constant causal effect. Also note that the later HR is probably diluted towards 1 by the noise of one spot sample.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Kirkwood &amp; Sterne, <em>Essential Medical Statistics</em> (2nd ed., Blackwell, 2003), chapters 26–27: survival analysis, Kaplan-Meier, log-rank, Cox regression.</li>
+      <li>Therneau &amp; Grambsch, <em>Modeling Survival Data: Extending the Cox Model</em> (Springer, 2000); and the <code>survival</code> package vignettes, especially “Using time dependent covariates and time dependent coefficients in the Cox model” (Therneau, Crowson &amp; Atkinson).</li>
+      <li>Korn, Graubard &amp; Midthune, “Time-to-event analysis of longitudinal follow-up of a survey: choice of the time-scale”, <em>American Journal of Epidemiology</em> (1997). Thiébaut &amp; Bénichou, “Choice of time-scale in Cox’s model analysis of epidemiologic cohort data: a simulation study”, <em>Statistics in Medicine</em> (2004). Pencina, Larson &amp; D’Agostino, “Choice of time scale and its effect on significance of predictors in longitudinal studies”, <em>Statistics in Medicine</em> (2007).</li>
+      <li>Hernán, “The hazards of hazard ratios”, <em>Epidemiology</em> (2010).</li>
+      <li>Pocock, Clayton &amp; Altman, “Survival plots of time-to-event outcomes in clinical trials: good practice and pitfalls”, <em>Lancet</em> (2002). Morris et al., “Proposals on Kaplan–Meier plots in medical research and a survey of stakeholder views: KMunicate”, <em>BMJ Open</em> (2019).</li>
+      <li>Grambsch &amp; Therneau, “Proportional hazards tests and diagnostics based on weighted residuals”, <em>Biometrika</em> (1994).</li>
+      <li>Uno et al., “Moving beyond the hazard ratio in quantifying the between-group difference in survival analysis”, <em>Journal of Clinical Oncology</em> (2014). Royston &amp; Parmar, “Restricted mean survival time: an alternative to the hazard ratio for the design and analysis of randomized trials with a time-to-event outcome”, <em>BMC Medical Research Methodology</em> (2013).</li>
+      <li>Lumley, <em>Complex Surveys: A Guide to Analysis Using R</em> (Wiley, 2010): survival analysis with <code>svycoxph</code> and <code>svykm</code>.</li>
+      <li>NCHS, Codebook for the 2019 Public-Use Linked Mortality Files, and the linked mortality files web pages (follow-up to 31 December 2019; perturbation of public-use records).</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="3-05-missing-data-multiple-imputation.html"><small>Previous</small>3.5 Missing data and multiple imputation</a>
+    <a class="next" href="3-07-competing-risks-multistate.html"><small>Next</small>3.7 Competing risks and multistate models</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

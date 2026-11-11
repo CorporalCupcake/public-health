@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>3.9 Time series for health data · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/3-09.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-3">Block 3</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 3.9</p>
+  <h1>Time series for health data: seasonality, autocorrelation, ARIMA</h1>
+  <div class="lecture-meta">
+    <span>Block 3 · Biostatistics core</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>A monthly count of admissions is not a set of independent rows. It has a trend, a season, and a memory: this month resembles last month. Ignore the season and you mistake summer for a policy effect. Ignore the memory and your confidence intervals are far too narrow. This lecture gives you the toolkit that interrupted time series (Lecture 4.7) and the heat-trend analysis of Project 6 are built on, with the Gulf’s two calendars as a running complication.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#components">Trend, season and noise</a></li>
+      <li><a href="#calendar">Two calendars: summer heat and Ramadan</a></li>
+      <li><a href="#autocorr">Autocorrelation and why OLS standard errors are wrong</a></li>
+      <li><a href="#acf">Reading the ACF and PACF; stationarity</a></li>
+      <li><a href="#arima">ARIMA and SARIMA</a></li>
+      <li><a href="#counts">Count series: Poisson regression with seasonality</a></li>
+      <li><a href="#forecast">Forecasting is not explanation</a></li>
+      <li><a href="#its">Preview: interrupted time series</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="components">
+    <h2>1. Trend, season and noise</h2>
+    <p class="point">Most health series are a slow trend, plus a repeating season, plus a remainder that is not pure noise; separate the three before you interpret anything.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The <em>trend</em> is the long-run level: population growth, ageing, changes in coding. The <em>season</em> is a pattern that repeats with a fixed period: winter flu, summer heat, school terms, weekends. The <em>remainder</em> is what is left, and in health data it usually has memory (autocorrelation).</dd>
+      <dt>Why it matters</dt>
+      <dd>Each component can impersonate an effect. A rising trend makes any “after” period look worse than “before”. A season makes any change that starts in spring look like it worked by summer.</dd>
+      <dt>How to read it</dt>
+      <dd>Plot the raw series first, over several full cycles. Then look at the remainder’s autocorrelation: if it still shows peaks at 12 and 24 months, the season is not fully removed; if it decays slowly, the trend is not.</dd>
+      <dt>What a change means</dt>
+      <dd>A seasonal amplitude of 80 admissions on a base of 500 means summer months run about 30% above winter. Any before–after comparison shorter than a year is then mostly measuring the calendar.</dd>
+    </dl>
+
+    <div class="widget" data-widget="ts-decompose">
+      <div class="widget-title">Build a health time series</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">The series is simulated from the sliders; the teal line is a regression fit of a linear trend plus two seasonal harmonics. Switch the ACF between the raw series and the residuals. Then raise the autocorrelation and watch the residual ACF fill up even though the fit looks just as good.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reading a rising count as rising risk. Counts rise when the population grows, and Gulf populations have grown fast. Model the rate, with population as an offset (Lecture 3.3). Then check for artefacts: a switch of coding system, a new hospital joining the reporting network, or a change in case definition produces a step that looks like an epidemic.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>The sea at a harbour wall: the tide is the season, rising sea level is the trend, and the waves are the remainder. Waves are not independent either; a big one tends to follow a big one.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="calendar">
+    <h2>2. Two calendars: summer heat and Ramadan</h2>
+    <p class="point">In the Gulf, health activity follows two calendars: the solar one (heat, school year) and the lunar Hijri one (Ramadan, Eid, Hajj), which drifts about 11 days earlier every Gregorian year.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The Hijri year has 354 or 355 days, so each Islamic month starts about 11 days earlier in the Gregorian calendar each year, and makes a full lap of the seasons in about 33 years. Ramadan, the Eid holidays and Hajj move with it.</dd>
+      <dt>Why it matters</dt>
+      <dd>Month-of-year terms or Fourier terms with a 12-month period capture solar seasons only. A Ramadan effect lands in a different Gregorian month each year, so it spreads across those terms, inflates the residual variance, and can be confused with a policy that started in the same months.</dd>
+      <dt>How to read it</dt>
+      <dd>Add a Ramadan indicator (the share of days in each week or month that fall in Ramadan), and similar ones for Eid and Hajj where relevant. Because the overlap with summer changes from year to year, a long enough series can separate the Ramadan effect from the heat effect.</dd>
+      <dt>What a change means</dt>
+      <dd>Over a short series the two are tangled: from 2010 to 2016 Ramadan fell in high summer, so in those years a “summer” term partly measures Ramadan and vice versa.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · Ramadan drifting through the Gregorian year</div>
+      <svg class="viz-svg" viewBox="0 0 640 284" role="img" aria-label="Rows for 2010, 2014, 2018, 2022, 2026 and 2030 show when Ramadan falls in the Gregorian year. In 2010 it starts around 11 August, inside the shaded June-to-September summer heat band; by 2014 late June, 2018 mid May, 2022 early April, 2026 mid February, and 2030 early January and again late December. A dashed arrow joins the start dates, moving about 11 days earlier each year.">
+        <defs><marker id="l39-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead accent"/></marker></defs>
+        <rect x="309.3" y="34" width="177.1" height="218" class="fill-soft s3"/>
+        <text x="397.8" y="24" text-anchor="middle" class="viz-small viz-bold colour s3">Peak summer heat (Jun–Sep)</text>
+        <g class="viz-grid">
+          <line x1="90" x2="90" y1="34" y2="252"/><line x1="135" x2="135" y1="34" y2="252"/><line x1="175.7" x2="175.7" y1="34" y2="252"/><line x1="220.7" x2="220.7" y1="34" y2="252"/><line x1="264.2" x2="264.2" y1="34" y2="252"/><line x1="309.3" x2="309.3" y1="34" y2="252"/><line x1="352.8" x2="352.8" y1="34" y2="252"/><line x1="397.8" x2="397.8" y1="34" y2="252"/><line x1="442.8" x2="442.8" y1="34" y2="252"/><line x1="486.4" x2="486.4" y1="34" y2="252"/><line x1="531.4" x2="531.4" y1="34" y2="252"/><line x1="575" x2="575" y1="34" y2="252"/><line x1="620" x2="620" y1="34" y2="252"/>
+        </g>
+        <g class="viz-tick" text-anchor="middle">
+          <text x="112.5" y="270">Jan</text><text x="155.3" y="270">Feb</text><text x="198.2" y="270">Mar</text><text x="242.5" y="270">Apr</text><text x="286.8" y="270">May</text><text x="331" y="270">Jun</text><text x="375.3" y="270">Jul</text><text x="420.3" y="270">Aug</text><text x="464.6" y="270">Sep</text><text x="508.9" y="270">Oct</text><text x="553.2" y="270">Nov</text><text x="597.5" y="270">Dec</text>
+        </g>
+        <g text-anchor="end" class="viz-bold">
+          <text x="80" y="62">2010</text><text x="80" y="98">2014</text><text x="80" y="134">2018</text><text x="80" y="170">2022</text><text x="80" y="206">2026</text><text x="80" y="242">2030</text>
+        </g>
+        <g class="fill s1">
+          <rect x="412.4" y="48" width="42.1" height="20" rx="3"/>
+          <rect x="348.5" y="84" width="42.1" height="20" rx="3"/>
+          <rect x="286" y="120" width="42.1" height="20" rx="3"/>
+          <rect x="222.1" y="156" width="42.1" height="20" rx="3"/>
+          <rect x="159.7" y="192" width="42.1" height="20" rx="3"/>
+          <rect x="95.8" y="228" width="42.1" height="20" rx="3"/>
+          <rect x="611.3" y="228" width="8.7" height="20" rx="2"/>
+        </g>
+        <g class="viz-small">
+          <text x="462" y="62">from ~11 Aug</text>
+          <text x="398" y="98">~28 Jun</text>
+          <text x="336" y="134">~16 May</text>
+          <text x="272" y="170">~2 Apr</text>
+          <text x="209" y="206">~18 Feb</text>
+          <text x="145" y="242">~5 Jan</text>
+          <text x="604" y="242" text-anchor="end">and ~26 Dec</text>
+        </g>
+        <path d="M400,58 L106,224" class="edge accent" stroke-dasharray="5 4" marker-end="url(#l39-arrow)"/>
+        <text x="620" y="190" text-anchor="end" class="viz-small viz-bold">≈ 11 days earlier every year;</text>
+        <text x="620" y="207" text-anchor="end" class="viz-small viz-bold">a full lap in ≈ 33 years</text>
+      </svg>
+      <figcaption>Approximate Ramadan start dates (Umm al-Qura calendar; the actual start can differ by a day with moon sighting). A 12-month seasonal term cannot follow this drift: Ramadan needs its own term, built from the Hijri calendar.</figcaption>
+    </figure>
+
+    <div class="callout gulf">
+      <div class="callout-title">In the Gulf</div>
+      <p>Both calendars show up in real data. In a Riyadh tertiary hospital, emergency attendances shifted toward the night shift during Ramadan, after people broke their fast, with no significant change in admissions or triage acuity (Butt et al. 2016). In Kuwait, time series analyses of daily deaths found sharply higher mortality on extreme-heat days, with non-Kuwaiti men, most of whom work outdoors, among the most vulnerable (Alahmad et al. 2019, 2020). A Gulf series therefore needs a solar season, a Ramadan term, and often temperature itself as a covariate.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Evaluating a policy whose start date happened to coincide with Ramadan or the Eid holidays, using a model with month terms only. The change in activity around the holiday becomes part of the “policy effect”. Always list the Hijri events inside your pre- and post-periods.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="autocorr">
+    <h2>3. Autocorrelation and why OLS standard errors are wrong</h2>
+    <p class="point">When each month resembles the last, a series of 60 months carries far less information than 60 independent observations, and ordinary regression does not know that.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><em>Autocorrelation</em> is the correlation of a series with its own past. The simplest model is AR(1): this month’s residual is \(\phi\) times last month’s plus fresh noise. \(\phi = 0\) is independence; \(\phi\) near 1 is a series that wanders and takes a long time to forget a shock.</dd>
+      <dt>Why it matters</dt>
+      <dd>Positive autocorrelation makes OLS standard errors too small, so trends and intervention effects look more certain than they are. It can also produce trends out of nothing: a strongly autocorrelated series wanders, and ordinary regression reads the wander as a trend.</dd>
+      <dt>How to read it</dt>
+      <dd>Lag-1 autocorrelation of residuals around 0.1 is minor; 0.3–0.5 is common in monthly health series and matters; above 0.7 changes conclusions.</dd>
+      <dt>What a change means</dt>
+      <dd>For a trend or a mean, the variance is inflated by roughly the factor below. \(\phi = 0.5\) inflates it about threefold, so the true standard error is about 1.7 times the naive one. At \(\phi = 0.8\) it is about 3 times.</dd>
+    </dl>
+
+    \[ \text{variance inflation} \approx \frac{1+\phi}{1-\phi} \]
+
+    <div class="widget" data-widget="ar1-se">
+      <div class="widget-title">Naive vs honest confidence intervals</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">The series has no true trend at all. Raise the autocorrelation and draw new series: the fitted line wanders, the naive interval stays narrow, and the share of “significant” trends climbs far above 5%.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Checking only the Durbin–Watson statistic. It tests lag 1 only, and is not valid with a lagged outcome in the model. Look at the residual ACF and PACF out to at least two seasonal cycles, and use the Ljung–Box or Breusch–Godfrey test if you want a number.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Three fixes</div>
+      <p>For a regression on time: (1) keep OLS estimates but use autocorrelation-robust (Newey–West) standard errors, <code>lmtest::coeftest(m, vcov = sandwich::NeweyWest)</code>; (2) fit a regression with ARIMA errors, which models the autocorrelation directly, <code>forecast::Arima(y, xreg = X, order = c(1, 0, 0))</code>; (3) for counts, add the season and covariates first. Often, as Bhaskaran and colleagues note, these explain most of the apparent autocorrelation.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="acf">
+    <h2>4. Reading the ACF and PACF; stationarity</h2>
+    <p class="point">The ACF and PACF are the fingerprints of a series: a few shapes tell you whether to difference, which ARIMA terms to try, and whether a season is left over.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The <em>ACF</em> plots the correlation between the series and itself shifted by 1, 2, 3… steps. The <em>PACF</em> plots the same correlation after removing the effect of the shorter lags. A series is <em>stationary</em> if its mean, variance and autocorrelation do not change over time: no trend and no changing spread.</dd>
+      <dt>Why it matters</dt>
+      <dd>ARIMA models need a stationary series. A trending series has to be <em>differenced</em> (modelled as month-to-month change) or detrended first, or every correlation is dominated by the trend.</dd>
+      <dt>How to read it</dt>
+      <dd>Bars inside the dashed band (about ±2/√n) are consistent with zero. Look at the shape, not single bars: one in twenty will poke out by chance.</dd>
+      <dt>What a change means</dt>
+      <dd>After one difference, an ACF that drops quickly to zero means you are done. A large negative spike at lag 1 means you have over-differenced.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · ACF and PACF reading guide</div>
+      <svg class="viz-svg" viewBox="0 0 640 412" role="img" aria-label="Four rows of bar charts showing autocorrelation (ACF) and partial autocorrelation (PACF) for lags 1 to 24. AR(1): ACF fades geometrically, PACF has one spike at lag 1. MA(1): ACF has one spike at lag 1, PACF fades with alternating sign. Trend: ACF stays high and decays very slowly, PACF has one large spike at lag 1. Unmodelled seasonality: ACF is a wave with peaks at lags 12 and 24.">
+        <text x="8" y="18" class="viz-bold">Pattern</text>
+        <text x="284" y="18" text-anchor="middle" class="viz-bold colour s1">ACF</text>
+        <text x="524" y="18" text-anchor="middle" class="viz-bold colour s4">PACF</text>
+        <text x="8" y="62" class="viz-bold">AR(1)</text><text x="8" y="80" class="viz-small viz-muted">ACF fades away; PACF</text><text x="8" y="96" class="viz-small viz-muted">cuts off after lag 1</text>
+        <line x1="176" x2="392" y1="76.0" y2="76.0" class="viz-axis"/>
+        <line x1="176" x2="392" y1="69.7" y2="69.7" class="viz-grid" stroke-dasharray="3 3"/><line x1="176" x2="392" y1="82.3" y2="82.3" class="viz-grid" stroke-dasharray="3 3"/>
+        <g class="fill s1"><rect x="178.0" y="51.5" width="5" height="24.5"/><rect x="187.0" y="58.9" width="5" height="17.1"/><rect x="196.0" y="64.0" width="5" height="12.0"/><rect x="205.0" y="67.6" width="5" height="8.4"/><rect x="214.0" y="70.1" width="5" height="5.9"/><rect x="223.0" y="71.9" width="5" height="4.1"/><rect x="232.0" y="73.1" width="5" height="2.9"/><rect x="241.0" y="74.0" width="5" height="2.0"/><rect x="250.0" y="74.6" width="5" height="1.4"/><rect x="259.0" y="75.0" width="5" height="1.0"/><rect x="268.0" y="75.3" width="5" height="0.7"/><rect x="277.0" y="75.5" width="5" height="0.5"/><rect x="286.0" y="75.7" width="5" height="0.4"/><rect x="295.0" y="75.8" width="5" height="0.4"/><rect x="304.0" y="75.8" width="5" height="0.4"/><rect x="313.0" y="75.9" width="5" height="0.4"/><rect x="322.0" y="75.9" width="5" height="0.4"/><rect x="331.0" y="75.9" width="5" height="0.4"/><rect x="340.0" y="76.0" width="5" height="0.4"/><rect x="349.0" y="76.0" width="5" height="0.4"/><rect x="358.0" y="76.0" width="5" height="0.4"/><rect x="367.0" y="76.0" width="5" height="0.4"/><rect x="376.0" y="76.0" width="5" height="0.4"/><rect x="385.0" y="76.0" width="5" height="0.4"/></g>
+        <line x1="416" x2="632" y1="76.0" y2="76.0" class="viz-axis"/>
+        <line x1="416" x2="632" y1="69.7" y2="69.7" class="viz-grid" stroke-dasharray="3 3"/><line x1="416" x2="632" y1="82.3" y2="82.3" class="viz-grid" stroke-dasharray="3 3"/>
+        <g class="fill s4"><rect x="418.0" y="51.5" width="5" height="24.5"/><rect x="427.0" y="76.0" width="5" height="0.4"/><rect x="436.0" y="76.0" width="5" height="0.4"/><rect x="445.0" y="76.0" width="5" height="0.4"/><rect x="454.0" y="76.0" width="5" height="0.4"/><rect x="463.0" y="76.0" width="5" height="0.4"/><rect x="472.0" y="76.0" width="5" height="0.4"/><rect x="481.0" y="76.0" width="5" height="0.4"/><rect x="490.0" y="76.0" width="5" height="0.4"/><rect x="499.0" y="76.0" width="5" height="0.4"/><rect x="508.0" y="76.0" width="5" height="0.4"/><rect x="517.0" y="76.0" width="5" height="0.4"/><rect x="526.0" y="76.0" width="5" height="0.4"/><rect x="535.0" y="76.0" width="5" height="0.4"/><rect x="544.0" y="76.0" width="5" height="0.4"/><rect x="553.0" y="76.0" width="5" height="0.4"/><rect x="562.0" y="76.0" width="5" height="0.4"/><rect x="571.0" y="76.0" width="5" height="0.4"/><rect x="580.0" y="76.0" width="5" height="0.4"/><rect x="589.0" y="76.0" width="5" height="0.4"/><rect x="598.0" y="76.0" width="5" height="0.4"/><rect x="607.0" y="76.0" width="5" height="0.4"/><rect x="616.0" y="76.0" width="5" height="0.4"/><rect x="625.0" y="76.0" width="5" height="0.4"/></g>
+        <text x="8" y="146" class="viz-bold">MA(1)</text><text x="8" y="164" class="viz-small viz-muted">ACF cuts off after lag 1;</text><text x="8" y="180" class="viz-small viz-muted">PACF fades away</text>
+        <line x1="176" x2="392" y1="160.0" y2="160.0" class="viz-axis"/>
+        <line x1="176" x2="392" y1="153.7" y2="153.7" class="viz-grid" stroke-dasharray="3 3"/><line x1="176" x2="392" y1="166.3" y2="166.3" class="viz-grid" stroke-dasharray="3 3"/>
+        <g class="fill s1"><rect x="178.0" y="143.6" width="5" height="16.4"/><rect x="187.0" y="160.0" width="5" height="0.4"/><rect x="196.0" y="160.0" width="5" height="0.4"/><rect x="205.0" y="160.0" width="5" height="0.4"/><rect x="214.0" y="160.0" width="5" height="0.4"/><rect x="223.0" y="160.0" width="5" height="0.4"/><rect x="232.0" y="160.0" width="5" height="0.4"/><rect x="241.0" y="160.0" width="5" height="0.4"/><rect x="250.0" y="160.0" width="5" height="0.4"/><rect x="259.0" y="160.0" width="5" height="0.4"/><rect x="268.0" y="160.0" width="5" height="0.4"/><rect x="277.0" y="160.0" width="5" height="0.4"/><rect x="286.0" y="160.0" width="5" height="0.4"/><rect x="295.0" y="160.0" width="5" height="0.4"/><rect x="304.0" y="160.0" width="5" height="0.4"/><rect x="313.0" y="160.0" width="5" height="0.4"/><rect x="322.0" y="160.0" width="5" height="0.4"/><rect x="331.0" y="160.0" width="5" height="0.4"/><rect x="340.0" y="160.0" width="5" height="0.4"/><rect x="349.0" y="160.0" width="5" height="0.4"/><rect x="358.0" y="160.0" width="5" height="0.4"/><rect x="367.0" y="160.0" width="5" height="0.4"/><rect x="376.0" y="160.0" width="5" height="0.4"/><rect x="385.0" y="160.0" width="5" height="0.4"/></g>
+        <line x1="416" x2="632" y1="160.0" y2="160.0" class="viz-axis"/>
+        <line x1="416" x2="632" y1="153.7" y2="153.7" class="viz-grid" stroke-dasharray="3 3"/><line x1="416" x2="632" y1="166.3" y2="166.3" class="viz-grid" stroke-dasharray="3 3"/>
+        <g class="fill s4"><rect x="418.0" y="143.6" width="5" height="16.4"/><rect x="427.0" y="160.0" width="5" height="9.9"/><rect x="436.0" y="153.5" width="5" height="6.5"/><rect x="445.0" y="160.0" width="5" height="4.4"/><rect x="454.0" y="157.0" width="5" height="3.0"/><rect x="463.0" y="160.0" width="5" height="2.1"/><rect x="472.0" y="158.5" width="5" height="1.5"/><rect x="481.0" y="160.0" width="5" height="1.0"/><rect x="490.0" y="159.3" width="5" height="0.7"/><rect x="499.0" y="160.0" width="5" height="0.5"/><rect x="508.0" y="159.6" width="5" height="0.4"/><rect x="517.0" y="160.0" width="5" height="0.4"/><rect x="526.0" y="159.8" width="5" height="0.4"/><rect x="535.0" y="160.0" width="5" height="0.4"/><rect x="544.0" y="159.9" width="5" height="0.4"/><rect x="553.0" y="160.0" width="5" height="0.4"/><rect x="562.0" y="160.0" width="5" height="0.4"/><rect x="571.0" y="160.0" width="5" height="0.4"/><rect x="580.0" y="160.0" width="5" height="0.4"/><rect x="589.0" y="160.0" width="5" height="0.4"/><rect x="598.0" y="160.0" width="5" height="0.4"/><rect x="607.0" y="160.0" width="5" height="0.4"/><rect x="616.0" y="160.0" width="5" height="0.4"/><rect x="625.0" y="160.0" width="5" height="0.4"/></g>
+        <text x="8" y="230" class="viz-bold">Trend, not stationary</text><text x="8" y="248" class="viz-small viz-muted">ACF dies very slowly:</text><text x="8" y="264" class="viz-small viz-muted">difference it first</text>
+        <line x1="176" x2="392" y1="244.0" y2="244.0" class="viz-axis"/>
+        <line x1="176" x2="392" y1="237.7" y2="237.7" class="viz-grid" stroke-dasharray="3 3"/><line x1="176" x2="392" y1="250.3" y2="250.3" class="viz-grid" stroke-dasharray="3 3"/>
+        <g class="fill s1"><rect x="178.0" y="210.0" width="5" height="34.0"/><rect x="187.0" y="210.9" width="5" height="33.1"/><rect x="196.0" y="211.8" width="5" height="32.2"/><rect x="205.0" y="212.8" width="5" height="31.2"/><rect x="214.0" y="214.0" width="5" height="30.0"/><rect x="223.0" y="215.3" width="5" height="28.7"/><rect x="232.0" y="216.6" width="5" height="27.4"/><rect x="241.0" y="217.9" width="5" height="26.1"/><rect x="250.0" y="219.0" width="5" height="25.0"/><rect x="259.0" y="220.2" width="5" height="23.8"/><rect x="268.0" y="221.3" width="5" height="22.7"/><rect x="277.0" y="222.5" width="5" height="21.5"/><rect x="286.0" y="223.5" width="5" height="20.5"/><rect x="295.0" y="224.6" width="5" height="19.4"/><rect x="304.0" y="225.7" width="5" height="18.3"/><rect x="313.0" y="226.6" width="5" height="17.4"/><rect x="322.0" y="227.6" width="5" height="16.4"/><rect x="331.0" y="228.4" width="5" height="15.6"/><rect x="340.0" y="229.2" width="5" height="14.8"/><rect x="349.0" y="230.0" width="5" height="14.0"/><rect x="358.0" y="230.7" width="5" height="13.3"/><rect x="367.0" y="231.2" width="5" height="12.8"/><rect x="376.0" y="231.9" width="5" height="12.1"/><rect x="385.0" y="232.7" width="5" height="11.3"/></g>
+        <line x1="416" x2="632" y1="244.0" y2="244.0" class="viz-axis"/>
+        <line x1="416" x2="632" y1="237.7" y2="237.7" class="viz-grid" stroke-dasharray="3 3"/><line x1="416" x2="632" y1="250.3" y2="250.3" class="viz-grid" stroke-dasharray="3 3"/>
+        <g class="fill s4"><rect x="418.0" y="210.0" width="5" height="34.0"/><rect x="427.0" y="244.0" width="5" height="0.7"/><rect x="436.0" y="242.9" width="5" height="1.1"/><rect x="445.0" y="244.0" width="5" height="2.7"/><rect x="454.0" y="244.0" width="5" height="3.4"/><rect x="463.0" y="244.0" width="5" height="3.5"/><rect x="472.0" y="244.0" width="5" height="0.4"/><rect x="481.0" y="243.7" width="5" height="0.4"/><rect x="490.0" y="241.7" width="5" height="2.3"/><rect x="499.0" y="244.0" width="5" height="1.4"/><rect x="508.0" y="243.4" width="5" height="0.6"/><rect x="517.0" y="244.0" width="5" height="2.1"/><rect x="526.0" y="243.0" width="5" height="1.0"/><rect x="535.0" y="244.0" width="5" height="2.5"/><rect x="544.0" y="242.6" width="5" height="1.4"/><rect x="553.0" y="243.6" width="5" height="0.4"/><rect x="562.0" y="244.0" width="5" height="0.7"/><rect x="571.0" y="240.6" width="5" height="3.4"/><rect x="580.0" y="244.0" width="5" height="0.4"/><rect x="589.0" y="244.0" width="5" height="1.7"/><rect x="598.0" y="243.6" width="5" height="0.4"/><rect x="607.0" y="242.5" width="5" height="1.5"/><rect x="616.0" y="244.0" width="5" height="2.5"/><rect x="625.0" y="244.0" width="5" height="2.1"/></g>
+        <text x="8" y="314" class="viz-bold">Unmodelled season</text><text x="8" y="332" class="viz-small viz-muted">ACF peaks at lags 12, 24:</text><text x="8" y="348" class="viz-small viz-muted">add seasonal terms</text>
+        <line x1="176" x2="392" y1="328.0" y2="328.0" class="viz-axis"/>
+        <line x1="176" x2="392" y1="321.7" y2="321.7" class="viz-grid" stroke-dasharray="3 3"/><line x1="176" x2="392" y1="334.3" y2="334.3" class="viz-grid" stroke-dasharray="3 3"/>
+        <g class="fill s1"><rect x="178.0" y="304.6" width="5" height="23.4"/><rect x="187.0" y="314.8" width="5" height="13.2"/><rect x="196.0" y="328.0" width="5" height="0.4"/><rect x="205.0" y="328.0" width="5" height="14.9"/><rect x="214.0" y="328.0" width="5" height="22.9"/><rect x="223.0" y="328.0" width="5" height="26.4"/><rect x="232.0" y="328.0" width="5" height="21.9"/><rect x="241.0" y="328.0" width="5" height="12.7"/><rect x="250.0" y="327.2" width="5" height="0.8"/><rect x="259.0" y="313.8" width="5" height="14.2"/><rect x="268.0" y="306.4" width="5" height="21.6"/><rect x="277.0" y="302.1" width="5" height="25.9"/><rect x="286.0" y="307.3" width="5" height="20.7"/><rect x="295.0" y="318.0" width="5" height="10.0"/><rect x="304.0" y="328.0" width="5" height="2.1"/><rect x="313.0" y="328.0" width="5" height="14.0"/><rect x="322.0" y="328.0" width="5" height="21.8"/><rect x="331.0" y="328.0" width="5" height="24.4"/><rect x="340.0" y="328.0" width="5" height="19.3"/><rect x="349.0" y="328.0" width="5" height="9.3"/><rect x="358.0" y="325.4" width="5" height="2.6"/><rect x="367.0" y="314.8" width="5" height="13.2"/><rect x="376.0" y="306.8" width="5" height="21.2"/><rect x="385.0" y="306.3" width="5" height="21.7"/></g>
+        <line x1="416" x2="632" y1="328.0" y2="328.0" class="viz-axis"/>
+        <line x1="416" x2="632" y1="321.7" y2="321.7" class="viz-grid" stroke-dasharray="3 3"/><line x1="416" x2="632" y1="334.3" y2="334.3" class="viz-grid" stroke-dasharray="3 3"/>
+        <g class="fill s4"><rect x="418.0" y="304.6" width="5" height="23.4"/><rect x="427.0" y="328.0" width="5" height="4.3"/><rect x="436.0" y="328.0" width="5" height="13.3"/><rect x="445.0" y="328.0" width="5" height="17.2"/><rect x="454.0" y="328.0" width="5" height="8.9"/><rect x="463.0" y="328.0" width="5" height="9.8"/><rect x="472.0" y="328.0" width="5" height="5.0"/><rect x="481.0" y="328.0" width="5" height="5.6"/><rect x="490.0" y="326.7" width="5" height="1.3"/><rect x="499.0" y="323.5" width="5" height="4.5"/><rect x="508.0" y="327.9" width="5" height="0.4"/><rect x="517.0" y="322.2" width="5" height="5.8"/><rect x="526.0" y="327.7" width="5" height="0.4"/><rect x="535.0" y="328.0" width="5" height="2.6"/><rect x="544.0" y="328.0" width="5" height="1.8"/><rect x="553.0" y="327.9" width="5" height="0.4"/><rect x="562.0" y="328.0" width="5" height="1.3"/><rect x="571.0" y="328.0" width="5" height="3.8"/><rect x="580.0" y="328.0" width="5" height="0.6"/><rect x="589.0" y="326.7" width="5" height="1.3"/><rect x="598.0" y="328.0" width="5" height="0.4"/><rect x="607.0" y="328.0" width="5" height="4.8"/><rect x="616.0" y="325.6" width="5" height="2.4"/><rect x="625.0" y="328.0" width="5" height="3.0"/></g>
+        <text x="180.5" y="386" text-anchor="middle" class="viz-tick">1</text>
+        <text x="279.5" y="386" text-anchor="middle" class="viz-tick">12</text>
+        <text x="387.5" y="386" text-anchor="middle" class="viz-tick">24</text>
+        <text x="284.0" y="404" text-anchor="middle" class="viz-label">lag</text>
+        <text x="420.5" y="386" text-anchor="middle" class="viz-tick">1</text>
+        <text x="519.5" y="386" text-anchor="middle" class="viz-tick">12</text>
+        <text x="627.5" y="386" text-anchor="middle" class="viz-tick">24</text>
+        <text x="524.0" y="404" text-anchor="middle" class="viz-label">lag</text>
+      </svg>
+      <figcaption>Rows 1–2 are theoretical patterns (\(\phi = 0.7\), \(\theta = 0.7\)); rows 3–4 are computed from simulated 10-year monthly series. Dashed lines: the approximate 95% band for 120 observations. For trends and seasons the PACF is not very informative until you have differenced or removed the season.</figcaption>
+    </figure>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Trusting one stationarity test. The augmented Dickey–Fuller test assumes non-stationarity and looks for evidence against it; the KPSS test assumes stationarity. With short health series both have little power. Use them with the plot, not instead of it.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="arima">
+    <h2>5. ARIMA and SARIMA</h2>
+    <p class="point">ARIMA describes a series by how much it remembers its own past values (AR), its past shocks (MA), and how many times it must be differenced to stop trending (I).</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Term</th><th>Plain meaning</th><th>Health-data reading</th></tr></thead>
+        <tbody>
+          <tr><td><strong>p</strong> (AR order)</td><td>This value depends on the last p values</td><td>A busy month for admissions is followed by a busy month</td></tr>
+          <tr><td><strong>d</strong> (differencing)</td><td>Model the change, d times</td><td>d = 1 removes a steady trend</td></tr>
+          <tr><td><strong>q</strong> (MA order)</td><td>A shock echoes for q steps, then stops</td><td>A reporting backlog cleared in the next month</td></tr>
+          <tr><td><strong>(P, D, Q)<sub>12</sub></strong></td><td>The same three, at the seasonal lag</td><td>This July resembles last July</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+<pre><code>library(forecast)
+y   &lt;- ts(adm$count, start = c(2015, 1), frequency = 12)  # monthly series
+fit &lt;- auto.arima(y)        # searches (p,d,q)(P,D,Q)[12] by AICc
+checkresiduals(fit)         # residual ACF + Ljung-Box: want no pattern left
+fc  &lt;- forecast(fit, h = 12)  # next 12 months, with prediction intervals
+plot(fc)</code></pre>
+    <p><code>ts</code> tells R the data are monthly, so seasonal lags are 12 apart. <code>auto.arima</code> picks the orders, <code>checkresiduals</code> checks that the residuals look like white noise, and <code>forecast</code> projects forward with intervals that widen with the horizon.</p>
+
+    <dl class="facets">
+      <dt>Why it matters</dt>
+      <dd>ARIMA is the standard baseline for forecasting a single health series, and its errors model is how you make a regression honest about autocorrelation.</dd>
+      <dt>How to read it</dt>
+      <dd>An ARIMA(1,1,1)(0,1,1)<sub>12</sub> means: difference once and once seasonally, then one AR term, one MA term and one seasonal MA term. Coefficients have no causal meaning; judge the model by its residuals and its out-of-sample forecasts.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Using a pure ARIMA to estimate an effect. ARIMA without regressors predicts; it does not explain. If you want the effect of temperature or a policy, put it in as a regressor (<code>xreg</code>), so ARIMA models only the leftover autocorrelation.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="counts">
+    <h2>6. Count series: Poisson regression with seasonality</h2>
+    <p class="point">For daily or monthly counts, the epidemiologist’s default is not ARIMA but a Poisson-type regression with smooth terms for season and trend, scaled for overdispersion.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A GLM (Lecture 3.3) of counts on time. Season is captured with <em>Fourier terms</em>: pairs of sine and cosine waves with a 12-month period (the first harmonic), 6-month period (the second), and so on. Each extra pair lets the seasonal shape be less like a pure wave. Overdispersion is handled with a scale parameter (quasi-Poisson) or a negative binomial model.</dd>
+      <dt>Why it matters</dt>
+      <dd>It keeps counts as counts, uses population offsets for rates, and gives rate ratios that epidemiologists read directly. Bhaskaran and colleagues’ tutorial (2013) uses this approach for daily deaths and ozone in London, comparing calendar-month strata, Fourier terms and splines for the long-term and seasonal pattern.</dd>
+      <dt>How to read it</dt>
+      <dd>Two harmonics capture most simple annual shapes; add more if residuals still show a seasonal pattern. A dispersion parameter of 1 is pure Poisson; health counts usually come out above 1, and the intervals widen by its square root (a dispersion of 4 doubles their width).</dd>
+      <dt>What a change means</dt>
+      <dd>Too few seasonal terms leave season in the residuals and can bias the effect of a seasonal exposure such as temperature. Too flexible a spline of time can soak up the very effect you are trying to measure.</dd>
+    </dl>
+
+<pre><code>adm$t &lt;- seq_len(nrow(adm))          # month index 1, 2, 3, ...
+m &lt;- glm(count ~ t +
+           sin(2*pi*t/12) + cos(2*pi*t/12) +   # 1st harmonic: annual wave
+           sin(4*pi*t/12) + cos(4*pi*t/12) +   # 2nd: lets the shape skew
+           ramadan_share + offset(log(pop)),
+         family = quasipoisson, data = adm)
+summary(m)$dispersion                 # &gt; 1 means overdispersion</code></pre>
+    <p>The model fits monthly admission rates (counts with a population offset) on a linear trend, two seasonal harmonics and the share of the month that falls in Ramadan. <code>quasipoisson</code> widens the intervals to match the real spread of the counts.</p>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reporting plain Poisson standard errors. Daily and monthly health counts are almost always more variable than Poisson allows, so plain Poisson intervals are too narrow. Check the dispersion and use quasi-Poisson or negative binomial; report which.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>Fourier terms are fixed basis functions, the same trick as random Fourier features or the positional encodings in a transformer: they turn a periodic input into something a linear model can fit. Choosing the number of harmonics is a bias–variance choice; residual diagnostics or AIC can guide it.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="forecast">
+    <h2>7. Forecasting is not explanation</h2>
+    <p class="point">A model that forecasts well can tell you nothing about causes, and a model that estimates an effect well may forecast badly; decide which job you are doing first.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><em>Forecasting</em> predicts future values: bed demand, flu peaks, the expected deaths in a heatwave. <em>Explanation</em> estimates the effect of something: a policy, a temperature rise, an exposure.</dd>
+      <dt>Why it matters</dt>
+      <dd>They are judged differently. Forecasts are judged by out-of-sample error at the horizon you care about. Effect estimates are judged by confounding control, correct standard errors and sensitivity analyses.</dd>
+      <dt>How to read it</dt>
+      <dd>For a forecast, ask for error on held-out <em>later</em> data, compared with a naive baseline (same month last year). For an effect, ask what the counterfactual is and how seasonality and autocorrelation were handled.</dd>
+    </dl>
+
+    <div class="callout example">
+      <div class="callout-title">Example</div>
+      <p>The US CDC’s FluSight challenge collects weekly influenza forecasts from many teams. Reich and colleagues (2019) assessed 22 models over seven seasons: over half beat a historical seasonal-average baseline, and reporting delays in some regions hurt accuracy. A forecasting study reports exactly this: performance against a simple baseline, on genuinely future data.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Choosing the model for an effect estimate by how well it fits or forecasts. A flexible trend that follows the data closely can forecast well precisely because it has absorbed the intervention’s effect. For explanation, fix the model’s structure (season, trend, covariates) from subject knowledge before looking at the effect.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>Random k-fold cross-validation leaks the future into training. Use rolling-origin evaluation: train up to month t, forecast t+1 to t+h, move t forward (<code>forecast::tsCV</code>, or scikit-learn’s <code>TimeSeriesSplit</code>). Watch for subtler leakage too: features computed with the whole series, such as a scaler or a smoothed trend. On sequence models: LSTMs and transformers shine when you have many related series and rich covariates. For one short monthly series, ARIMA or exponential smoothing is usually as good. In the M4 forecasting competition (Makridakis et al. 2018), pure machine-learning methods did poorly and the winner was a hybrid of exponential smoothing and a neural network.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="its">
+    <h2>8. Preview: interrupted time series</h2>
+    <p class="point">Interrupted time series compares what happened after an intervention with what the pre-intervention trend and season predict would have happened.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Segmented regression: a pre-intervention trend, plus a change in <em>level</em> at the intervention, plus a change in <em>slope</em> afterwards, with season and autocorrelation handled as in this lecture.</dd>
+      <dt>Why it matters</dt>
+      <dd>It is the main design for evaluating population-wide policies with no control group, such as a national tax, a smoking ban or a salt limit. It is the subject of Lecture 4.7, and an ingredient of Project 4.</dd>
+      <dt>How to read it</dt>
+      <dd>In the formula below, \(\beta_2\) is the immediate step and \(\beta_3\) the change in trend. A level drop with no slope change is a one-off shift; a slope change with no step is a gradual effect.</dd>
+    </dl>
+
+    \[ Y_t = \beta_0 + \beta_1 t + \beta_2 X_t + \beta_3 (t - T_0) X_t \]
+    <p>Here \(t\) is time, \(T_0\) the start of the intervention and \(X_t\) is 0 before it and 1 after. Add Fourier terms or month terms for season, and a Ramadan term in the Gulf.</p>
+
+    <div class="callout example">
+      <div class="callout-title">Example</div>
+      <p>Bernal, Cummins and Gasparrini’s tutorial (2017) works through the 2005 Italian ban on smoking in public places, using 59 months of admissions for acute coronary events in a Poisson model with a population offset. It shows each step from this lecture: a level change, a check for seasonality with Fourier terms, a scale for overdispersion, and a residual check for autocorrelation.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Treating the year before and the year after as the whole design. With only a few points either side, trend and season cannot be estimated, and any change can be regression to the mean or an ordinary seasonal swing. Project 4’s annual data have exactly this weakness, which is why it adds a comparison country and synthetic control.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>A hospital introduces a sepsis bundle in March and reports that sepsis deaths fell 25% from February to June. What is the first thing you ask?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>What happens between February and June in other years. Sepsis and respiratory deaths are seasonal, and February-to-June is a falling season in many places. Without several years of pre-intervention data to estimate the season and trend, the 25% may be the calendar, not the bundle.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A regression of monthly admissions on time over 60 months gives a significant upward trend (p = 0.02). The residual lag-1 autocorrelation is 0.7. What do you conclude?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Nothing yet. With \(\phi\) around 0.7 the true standard error is more than twice the naive one, so the p-value is far too small. Refit with Newey–West standard errors or ARIMA errors, after checking whether season explains part of the autocorrelation.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A Saudi analysis of monthly emergency visits from 2018 to 2023 includes month-of-year terms but nothing for Ramadan. Why might the residuals still look seasonal?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Ramadan moved from May to March over those years. Its effect falls in a different Gregorian month each year, so month terms cannot absorb it; it shows up as structured residuals. Add a Ramadan-days indicator (and Eid terms) built from the Hijri calendar.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A team forecasts weekly ED visits with a gradient-boosted model, reporting excellent accuracy from 10-fold cross-validation. What would you check?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Whether the folds were random. Random folds let the model see the weeks either side of each test week, which is leakage in an autocorrelated series. Ask for rolling-origin evaluation on later data, and a comparison with a seasonal naive forecast.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>An ACF of a monthly series decays very slowly from 0.95. Your colleague fits ARIMA(3,0,0). What would you do instead?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>A slow decay means the series is not stationary, usually a trend. Difference it (d = 1) or model the trend explicitly, then look at the ACF and PACF again. High-order AR terms on a trending series are patching over the non-stationarity.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Hyndman &amp; Athanasopoulos, <em>Forecasting: Principles and Practice</em> (OTexts, free online; 2nd ed. uses <code>forecast</code>, 3rd ed. uses <code>fable</code>). Decomposition, ACF, ARIMA and time series cross-validation.</li>
+      <li>Bhaskaran, Gasparrini, Hajat, Smeeth &amp; Armstrong, “Time series regression studies in environmental epidemiology”, <em>International Journal of Epidemiology</em> (2013).</li>
+      <li>Bernal, Cummins &amp; Gasparrini, “Interrupted time series regression for the evaluation of public health interventions: a tutorial”, <em>International Journal of Epidemiology</em> (2017), with its 2020 corrigendum to the model equation.</li>
+      <li>Kirkwood &amp; Sterne, <em>Essential Medical Statistics</em>, 2nd ed., chapters on Poisson regression and rates.</li>
+      <li>Butt et al., “Emergency department attendance patterns during Ramadan”, <em>Annals of Saudi Medicine</em> (2016).</li>
+      <li>Alahmad, Shakarchi, Alseaidan &amp; Fox, “The effects of temperature on short-term mortality risk in Kuwait: a time-series analysis”, <em>Environmental Research</em> (2019); Alahmad et al., “Extreme temperatures and mortality in Kuwait: who is vulnerable?”, <em>Science of the Total Environment</em> (2020).</li>
+      <li>Reich et al., “A collaborative multiyear, multimodel assessment of seasonal influenza forecasting in the United States”, <em>PNAS</em> (2019).</li>
+      <li>Makridakis, Spiliotis &amp; Assimakopoulos, “The M4 Competition: results, findings, conclusion and way forward”, <em>International Journal of Forecasting</em> (2018).</li>
+      <li>Newey &amp; West, “A simple, positive semi-definite, heteroskedasticity and autocorrelation consistent covariance matrix”, <em>Econometrica</em> (1987); Hyndman &amp; Khandakar, “Automatic time series forecasting: the forecast package for R”, <em>Journal of Statistical Software</em> (2008).</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="3-08-mixed-models-vs-gee.html"><small>Previous</small>3.8 Mixed models vs GEE</a>
+    <a class="next" href="../../index.html#block-4"><small>Next</small>Block 4 · Causal inference and policy evaluation</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

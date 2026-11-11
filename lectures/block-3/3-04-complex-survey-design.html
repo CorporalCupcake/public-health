@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>3.4 Complex survey design · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/3-04.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-3">Block 3</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 3.4</p>
+  <h1>Complex survey design: weights, strata, clusters, design effects</h1>
+  <div class="lecture-meta">
+    <span>Block 3 · Biostatistics core</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>National health surveys such as NHANES, WHO STEPS and the Saudi Health Interview Survey are not simple random samples. <strong>Weights</strong> fix who was over- or under-sampled, so ignoring them biases estimates. <strong>Clusters</strong> and <strong>strata</strong> change how precise the estimates are, so ignoring them gives wrong standard errors, usually too small. Project 3 is a survey-weighted cohort: every number in it, from Table 1 to the hazard ratios, must come from a design object, with the right weight, subsetted the right way.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#why">Why a survey is not a simple random sample</a></li>
+      <li><a href="#weights">Sampling weights</a></li>
+      <li><a href="#deff">Clusters, strata and the design effect</a></li>
+      <li><a href="#variance">Variance estimation: linearisation and replicate weights</a></li>
+      <li><a href="#subpop">Subpopulations: subset the design, not the data</a></li>
+      <li><a href="#nhanes">Choosing the weight and combining NHANES cycles</a></li>
+      <li><a href="#regression">Regression with survey data</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="why">
+    <h2>1. Why a survey is not a simple random sample</h2>
+    <p class="point">Three design features each break a different part of a naive analysis: weights affect the estimate, clusters and strata affect its standard error.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Most national surveys use a <strong>multistage</strong> design: divide the country into <strong>strata</strong> (regions, urban/rural), pick a few <strong>primary sampling units</strong> (PSUs, such as counties or census blocks) in each, then households within PSUs, then people within households. Some groups are deliberately sampled more (oversampling) so they can be studied on their own.</dd>
+      <dt>Why it matters</dt>
+      <dd>Visiting a few areas is far cheaper than scattering interviews across the country, and oversampling buys precision for small groups. The price is that people are no longer equally likely to be chosen, nor independent of each other.</dd>
+      <dt>How to read it</dt>
+      <dd>In a survey paper’s methods, look for the words “weighted”, “accounting for strata and clusters” and the software (R survey, Stata <code>svy</code>, SAS <code>PROC SURVEY</code>). Missing any of the three is a reviewer comment.</dd>
+    </dl>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Feature</th><th>Why it exists</th><th>If you ignore it</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Weights</strong></td><td>Unequal selection, non-response</td><td>Biased means, prevalences and sometimes associations</td></tr>
+          <tr><td><strong>Clusters (PSUs)</strong></td><td>Cheap fieldwork in few areas</td><td>Standard errors too small, often by a lot</td></tr>
+          <tr><td><strong>Strata</strong></td><td>Guarantee coverage of every region</td><td>Standard errors slightly too large (usually minor)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · Multistage sampling and where the weight comes from</div>
+      <svg class="viz-svg" viewBox="0 0 640 352" role="img" aria-label="Four stages: every stratum is sampled; within each stratum some PSUs are chosen with probability proportional to size; within a chosen PSU some households are chosen; within a household one adult is chosen. The design weight is one over the product of the selection probabilities, then adjusted for non-response and post-stratified to census totals.">
+        <defs>
+          <marker id="l34-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead accent"/></marker>
+        </defs>
+        <!-- stage labels -->
+        <g class="viz-bold">
+          <text x="6" y="49">1 · Strata</text>
+          <text x="6" y="119">2 · PSUs</text>
+          <text x="6" y="189">3 · Households</text>
+          <text x="6" y="259">4 · Person</text>
+        </g>
+        <!-- strata -->
+        <g class="s4">
+          <rect x="128" y="28" width="134" height="34" rx="8" class="node-fill"/>
+          <rect x="290" y="28" width="134" height="34" rx="8" class="node-fill"/>
+        </g>
+        <g text-anchor="middle" class="viz-small">
+          <text x="195" y="49">Stratum A (urban)</text>
+          <text x="357" y="49">Stratum B (rural)</text>
+        </g>
+        <!-- PSUs -->
+        <g class="s1">
+          <rect x="134" y="102" width="34" height="26" rx="5" class="node-fill"/>
+          <rect x="224" y="102" width="34" height="26" rx="5" class="node-fill"/>
+          <rect x="340" y="102" width="34" height="26" rx="5" class="node-fill"/>
+        </g>
+        <g class="s5">
+          <rect x="179" y="102" width="34" height="26" rx="5" class="node"/>
+          <rect x="296" y="102" width="34" height="26" rx="5" class="node"/>
+          <rect x="384" y="102" width="34" height="26" rx="5" class="node"/>
+        </g>
+        <path d="M170,62 L154,98" class="edge accent" marker-end="url(#l34-arrow)"/>
+        <path d="M220,62 L238,98" class="edge accent" marker-end="url(#l34-arrow)"/>
+        <path d="M357,62 L357,98" class="edge accent" marker-end="url(#l34-arrow)"/>
+        <!-- households under first PSU -->
+        <g class="s1">
+          <rect x="154" y="174" width="18" height="18" rx="3" class="node-fill"/>
+          <rect x="210" y="174" width="18" height="18" rx="3" class="node-fill"/>
+        </g>
+        <g class="s5">
+          <rect x="126" y="174" width="18" height="18" rx="3" class="node"/>
+          <rect x="182" y="174" width="18" height="18" rx="3" class="node"/>
+          <rect x="238" y="174" width="18" height="18" rx="3" class="node"/>
+        </g>
+        <path d="M148,128 L163,170" class="edge accent" marker-end="url(#l34-arrow)"/>
+        <path d="M162,128 L216,170" class="edge accent" marker-end="url(#l34-arrow)"/>
+        <!-- person in household -->
+        <path d="M163,192 L163,240" class="edge accent" marker-end="url(#l34-arrow)"/>
+        <g class="s5">
+          <circle cx="138" cy="256" r="7" class="node"/>
+          <circle cx="188" cy="256" r="7" class="node"/>
+        </g>
+        <g class="s2"><circle cx="163" cy="256" r="10" class="node-fill"/></g>
+        <text x="210" y="260" class="viz-small viz-muted">one of 3 adults</text>
+        <!-- right column: probabilities -->
+        <g class="viz-small">
+          <text x="450" y="42">Every stratum is sampled:</text>
+          <text x="450" y="58" class="viz-muted">strata are separate mini-surveys</text>
+          <text x="450" y="112">PSUs chosen, probability</text>
+          <text x="450" y="128" class="viz-muted">proportional to size: <tspan class="viz-bold colour s1">p₁</tspan></text>
+          <text x="450" y="182">Households within PSU:</text>
+          <text x="450" y="198" class="viz-muted">listed, then sampled: <tspan class="viz-bold colour s1">p₂</tspan></text>
+          <text x="450" y="252">One adult chosen at random:</text>
+          <text x="450" y="268" class="viz-muted">here <tspan class="viz-bold colour s1">p₃ = 1/3</tspan></text>
+        </g>
+        <line x1="6" y1="290" x2="634" y2="290" class="viz-grid"/>
+        <text x="320" y="314" text-anchor="middle" class="viz-bold">Design weight = 1 / (p₁ × p₂ × p₃)</text>
+        <text x="320" y="338" text-anchor="middle" class="viz-small viz-muted">then × non-response adjustment, then post-stratified to census totals by age, sex, ethnicity → final weight</text>
+      </svg>
+      <figcaption>Filled boxes were selected. People sampled from the same PSU share neighbourhood, services and often diet, so they are more alike than strangers: that is what clustering costs. A person chosen from a three-adult household stands for three adults, so their weight is three times that of a lone adult in the same household-sampling step.</figcaption>
+    </figure>
+
+    <div class="callout gulf">
+      <div class="callout-title">Example · Saudi Health Interview Survey 2013</div>
+      <p>The Saudi Ministry of Health and IHME ran a national multistage household survey covering all 13 regions: subregions and blocks chosen with probability proportional to size, households sampled within blocks, then one adult (15 or older) picked at random from the household. 10,735 people completed it. Its weights combined the household and within-household selection probabilities with an age–sex adjustment to the Saudi population, which is exactly the chain in the diagram.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>“It’s a large national sample, so it’s representative.” A national survey is representative only when analysed with its weights and design. Unweighted NHANES over-represents the groups it deliberately oversampled.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="weights">
+    <h2>2. Sampling weights</h2>
+    <p class="point">A person’s weight is the number of people in the population they stand for; it undoes unequal selection and non-response.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Three layers multiplied together. <strong>Design weight</strong>: 1 / probability of selection. <strong>Non-response adjustment</strong>: inflate the weights of respondents who resemble the non-respondents. <strong>Post-stratification</strong> (or calibration): scale weights so totals by age, sex and ethnicity match the census.</dd>
+      <dt>Why it matters</dt>
+      <dd>Oversampled groups are over-represented in the raw data. If they differ on the outcome, any unweighted mean or prevalence drifts towards them.</dd>
+      <dt>How to read it</dt>
+      <dd>Weights sum to the population size. A weight of 20,000 means this person represents 20,000 people. The more the weights vary, the more precision you lose: the weighting design effect is about 1 + (coefficient of variation of the weights)².</dd>
+      <dt>What a change means</dt>
+      <dd>If weighted and unweighted means differ a lot, the oversampled groups differ on the outcome, and the weights are doing real work. If they barely differ, weights cost precision but change little.</dd>
+    </dl>
+
+    <div class="widget" data-widget="survey-weights">
+      <div class="widget-title">Oversampling shifts a naive mean; weights restore it</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">One group makes up a small share of the population but is oversampled in the survey and has higher blood pressure. Increase the oversampling and compare the unweighted and weighted means with the truth.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · NHANES</div>
+      <p>NHANES deliberately oversamples. In 2011–2014 the oversampled groups were Hispanic, non-Hispanic Black and non-Hispanic Asian people, low-income non-Hispanic White and other people, and adults aged 80 and over; from 2015 the low-income cut-off rose from 130% to 185% of the poverty level. Because these groups differ in blood pressure, diet and mortality, unweighted NHANES estimates describe the sample, not the United States.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Passing survey weights to <code>lm(weights = )</code> or <code>glm(weights = )</code>. Those functions treat weights as precision or frequency weights: the point estimates match the survey ones, but the standard errors are wrong, sometimes wildly. Use <code>svyglm</code> on a design object.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">Example · Kuwait STEPS 2014</div>
+      <p>Kuwait’s 2014 STEPS survey (public-use microdata, the Project 3 fallback) drew Kuwaiti citizens aged 18–69 at random from the civil registry within eight sex-by-age strata. Its weights are the inverse of each person’s selection probability, adjusted to the population’s age–sex structure. Stratified sampling from a registry has no clustering, so its design effect comes mostly from unequal weights. Read each survey’s own design before reusing code written for another.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="deff">
+    <h2>3. Clusters, strata and the design effect</h2>
+    <p class="point">People in the same cluster resemble each other, so each extra person from the same cluster adds less new information; the design effect says how much less.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The <strong>design effect</strong> (Deff) is the variance of an estimate under the actual design divided by its variance under a simple random sample of the same size. For cluster sampling with \(m\) people per cluster and intra-cluster correlation \(\rho\) (how alike people in the same cluster are, 0 to 1):
+        \[ \text{Deff} \approx 1 + (m - 1)\,\rho \]</dd>
+      <dt>Why it matters</dt>
+      <dd>The <strong>effective sample size</strong> is n / Deff. A survey of 6,000 people with Deff 3 carries the information of 2,000 independent ones. Standard errors grow by √Deff.</dd>
+      <dt>How to read it</dt>
+      <dd>Deff near 1: little clustering. Deff of 1.5–3 is common in household health surveys. Even a tiny ρ matters with big clusters: ρ = 0.05 and 21 people per cluster gives Deff = 2.</dd>
+      <dt>What a change means</dt>
+      <dd>Halving people per cluster (and doubling clusters) cuts Deff, which is why survey designers trade fieldwork cost against cluster size. Stratification works the other way, nudging Deff below what clustering alone would give.</dd>
+    </dl>
+
+    <div class="widget" data-widget="survey-deff">
+      <div class="widget-title">Design effect: same n, less information</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">1,200 people measured for systolic blood pressure, either as a simple random sample or in clusters. Raise the intra-cluster correlation or the cluster size and watch the cluster-sample estimates spread out.</p>
+    </div>
+
+<pre><code>library(survey)
+options(survey.lonely.psu = "adjust")      # strata left with one PSU
+des <- svydesign(ids = ~SDMVPSU, strata = ~SDMVSTRA, weights = ~WTMEC2YR,
+                 nest = TRUE, data = nhanes)  # the FULL file, everyone
+svymean(~sbp, des, na.rm = TRUE, deff = TRUE)</code></pre>
+    <p><code>SDMVSTRA</code> and <code>SDMVPSU</code> are NHANES’s masked variance strata and PSUs (pseudo-strata and pseudo-PSUs that protect confidentiality). <code>nest = TRUE</code> says PSU numbers restart in each stratum. The last line gives the weighted mean, its design-based standard error and the design effect.</p>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Quoting “the survey’s design effect” as one number. Deff belongs to each estimate. Things that cluster by place (ethnicity, water supply, a regional diet) have big design effects; things that vary within every neighbourhood (sex, many biomarkers) have small ones. Regression coefficients usually have smaller design effects than means.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Asking ten members of one family what they eat tells you mostly about one kitchen. Ten strangers tell you about ten. Same number of interviews, very different information.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="variance">
+    <h2>4. Variance estimation: linearisation and replicate weights</h2>
+    <p class="point">Two ways to get design-based standard errors: Taylor linearisation uses strata and PSUs directly; replicate weights re-estimate the statistic many times with PSUs dropped or reweighted.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>Taylor linearisation</strong> approximates the statistic as a weighted sum and computes its variance from between-PSU variation within strata. It is the sandwich estimator of Lecture 3.3 applied to the design. <strong>Replicate weights</strong> (jackknife, balanced repeated replication, bootstrap) are columns of altered weights; the spread of the estimate across them is the variance.</dd>
+      <dt>Why it matters</dt>
+      <dd>Some data providers release replicate weights instead of strata and PSUs, to protect confidentiality. Replicates also handle awkward statistics (medians, percentiles, ratios) without new formulas.</dd>
+      <dt>How to read it</dt>
+      <dd>The two approaches usually agree closely. Use what the documentation recommends. The design degrees of freedom are roughly the number of PSUs minus the number of strata: for one two-year NHANES cycle that is about 15, not thousands, so intervals use t on few degrees of freedom.</dd>
+    </dl>
+
+<pre><code>rep_des <- as.svrepdesign(des, type = "JKn")   # jackknife replicates from PSUs
+svymean(~sbp, rep_des, na.rm = TRUE)            # compare with linearisation
+svyquantile(~sbp, des, quantiles = c(0.5, 0.9), na.rm = TRUE)</code></pre>
+    <p>The first line builds jackknife replicate weights by dropping one PSU at a time; the second re-estimates the mean with them. When a file ships its own replicate weights, build the design with <code>svrepdesign()</code> using the replicate type and scale stated in its documentation.</p>
+
+    <div class="callout key">
+      <div class="callout-title">Project 3 · the urine files</div>
+      <p>NHANES urinary sodium and potassium were measured on stored <strong>spot (casual) urine</strong> from special subsamples, not on 24-hour collections (the 2014 24-hour urine study was a separate one-year substudy). Each subsample file has its own weight and replicate weights: the 2010 file uses <code>WTNA</code>, with jackknife replicates recommended over linearisation; the 2013–2014 file uses <code>WT1YUR</code>. Their documentation also states that the NHANES III, 2010 and 2013–2014 urine electrolyte files are available only through NCHS Research Data Centers. Check access and the right weight in the week-33 feasibility count before designing around them.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Mixing a subsample weight with the full-sample replicate weights, or the other way round. NCHS notes this as a common processing error. The weight and its replicates come as a set.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="subpop">
+    <h2>5. Subpopulations: subset the design, not the data</h2>
+    <p class="point">To analyse adults, or women, or people with complete urine data, build the design on the full file and then subset the design object.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A <strong>domain</strong> (subpopulation) analysis keeps every PSU in the variance calculation and gives people outside the domain zero contribution. <code>subset(design, ...)</code> does this; filtering the data frame first does not.</dd>
+      <dt>Why it matters</dt>
+      <dd>The number of people in a domain who land in the sample is itself random, and that randomness belongs in the standard error. Filtering first also drops PSUs that happen to have no domain members, which leaves strata with one PSU and breaks the variance formula.</dd>
+      <dt>How to read it</dt>
+      <dd>Point estimates are identical either way; only the standard errors differ. If a paper says “we restricted the dataset to adults aged 20 and over and then applied survey weights”, ask how.</dd>
+    </dl>
+
+<pre><code>adults <- subset(des, RIDAGEYR >= 20 & !is.na(nak_ratio))
+svyby(~sbp, ~RIAGENDR, adults, svymean, na.rm = TRUE)   # mean SBP by sex
+svytable(~htn + RIAGENDR, adults)                       # weighted counts</code></pre>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p><code>filter(age >= 20)</code> before <code>svydesign()</code>. It runs without complaint, often gives nearly right answers in big domains, and goes wrong in small ones, which are exactly the subgroup analyses reviewers scrutinise. Excluding people with missing values is also a domain restriction, and if many are missing it is a missing-data problem too (Lecture 3.5).</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="nhanes">
+    <h2>6. Choosing the weight and combining NHANES cycles</h2>
+    <p class="point">Use the weight for the variable measured on the fewest people, and rescale weights when you pool cycles.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>NHANES releases several weights: interview (<code>WTINT2YR</code>), examination (<code>WTMEC2YR</code>), and subsample weights for fasting labs, dietary recalls or special urine tests. NCHS’s rule is the “least common denominator”: use the weight of the variable collected on the smallest number of people.</dd>
+      <dt>Why it matters</dt>
+      <dd>Each weight is built for the people who took part in that component. Using the exam weight on a subsample variable misrepresents who the subsample stands for.</dd>
+      <dt>How to read it</dt>
+      <dd>To pool two-year cycles from 2001–2002 on, divide each cycle’s two-year weight by the number of cycles. For analyses including 1999–2000, start from the four-year 1999–2002 weight (<code>WTMEC4YR</code>) and give it 2/n. The 2017–March 2020 pre-pandemic file covers 3.2 years, so combined with 2015–2016 the shares are 2/5.2 and 3.2/5.2. NCHS advises against pooling the August 2021–August 2023 cycle with earlier ones.</dd>
+    </dl>
+
+<pre><code>pooled <- bind_rows(n1516, n17p) |>
+  mutate(wt = if_else(cycle == "2015-2016",
+                      WTMEC2YR * 2 / 5.2,      # two-year cycle
+                      WTMECPRP * 3.2 / 5.2))   # 2017–Mar 2020 pre-pandemic
+des <- svydesign(ids = ~SDMVPSU, strata = ~SDMVSTRA, weights = ~wt,
+                 nest = TRUE, data = pooled)</code></pre>
+    <p>This stacks two releases, gives each its share of the 5.2 years, and builds one design. Masked strata numbers differ across cycles, so the strata stay distinct.</p>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Stacking cycles without rescaling. Means and their standard errors barely change, which hides the mistake, but population totals (“X million Americans”) double. And if the outcome changed over time, a pooled estimate describes an average period, not a year.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="regression">
+    <h2>7. Regression with survey data</h2>
+    <p class="point">Fit models on the design object; if weighted and unweighted coefficients disagree, treat it as a warning about your model, not a nuisance.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><code>svyglm</code> and <code>svycoxph</code> fit GLMs and Cox models with design-based standard errors. Use <code>quasibinomial()</code> or <code>quasipoisson()</code> families, since weighted data are not counts.</dd>
+      <dt>Why it matters</dt>
+      <dd>For descriptive estimates, weighting is not optional. For associations it is debated: an unweighted model adjusted for the design variables can be more precise, but only if it is correctly specified. Weighting targets the population-average association even when it is not.</dd>
+      <dt>How to read it</dt>
+      <dd>If weighted and unweighted coefficients differ markedly, the effect probably varies across the oversampled groups; look for an interaction (DuMouchel and Duncan’s point). Use Wald tests (<code>regTermTest</code>) rather than AIC or ordinary likelihood-ratio tests, which do not apply to weighted pseudo-likelihoods.</dd>
+    </dl>
+
+<pre><code>fit <- svyglm(htn ~ nak_q + RIDAGEYR + RIAGENDR, design = adults,
+              family = quasipoisson())
+exp(cbind(PR = coef(fit), confint(fit)))         # prevalence ratios
+cox <- svycoxph(Surv(fu_months, cvd_death) ~ nak_q + RIDAGEYR + RIAGENDR,
+                design = adults)                 # Project 3 main model shape
+regTermTest(cox, ~nak_q)                         # joint Wald test for quartiles</code></pre>
+    <p>The first model gives prevalence ratios with design-based (already robust) intervals, the modified Poisson of Lecture 3.3 for free. The second is the shape of the Project 3 survival model (Lecture 3.6); the last line tests all quartile terms together.</p>
+
+    <div class="callout gulf">
+      <div class="callout-title">Example · pooling Gulf STEPS surveys</div>
+      <p>The Project 3 fallback pools STEPS surveys from several GCC countries. Each survey keeps its own strata and PSUs: make stratum and PSU identifiers unique by country, and treat country as a stratum. Then decide what the weights should represent: each country’s population (a pooled “GCC adult” estimate dominated by Saudi Arabia) or each country equally. Say which, and why.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p><code>sample_weight</code> in scikit-learn gives weighted point estimates but no design-based uncertainty. Clustering also matters for validation: if people from the same PSU fall in both training and test folds, performance is optimistic. Split folds by PSU (grouped cross-validation), the survey version of patient-level splitting.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>A student analyses NHANES with <code>lm()</code>, unweighted, and finds a prevalence of hypertension 4 percentage points away from the CDC’s published figure for the same cycle. What is the most likely reason?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Oversampling. NHANES oversamples groups such as the oldest adults, non-Hispanic Black, Hispanic and Asian adults and low-income adults, whose hypertension prevalence differs from the population average (some higher, some lower). Unweighted, the sample over-represents them, so the estimate drifts towards their mix. The weights restore each group to its population share. (The <code>lm()</code> standard error would also be wrong, but that doesn’t move the estimate.)</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Two surveys each interview 5,000 people. One samples 250 villages with 20 people each, the other 1,000 villages with 5 each. For an outcome with intra-cluster correlation 0.1, which gives the narrower confidence interval, and by roughly how much?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The 1,000-village survey. Deff is about 1 + 19 × 0.1 = 2.9 versus 1 + 4 × 0.1 = 1.4, so effective samples are about 1,700 versus 3,600. The CI is about √(2.9/1.4) ≈ 1.4 times wider in the 250-village survey.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A paper restricts NHANES to adults with diabetes (n = 900), builds the survey design on that file and reports subgroup estimates by ethnicity. What would you ask?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Whether they subset the design rather than the data. Filtering first drops the domain-size randomness and may leave strata with a single PSU, so the standard errors are wrong, worst in the smallest ethnic groups. Ask for <code>subset(design, diabetes == 1)</code> and the design degrees of freedom.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>The weighted hazard ratio for the top Na/K quartile is 1.45; the unweighted one, adjusted for age, sex and ethnicity, is 1.15. Which do you believe?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Neither yet. A gap that large suggests the association differs across groups that were sampled at different rates, for example by ethnicity or income. Fit the interaction and report group-specific estimates if it holds. The weighted estimate is the population-average one; the unweighted one depends on the sample’s mix.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Your Project 3 analysis uses a urine variable from a subsample but the MEC examination weight, because “it is the main weight”. What is wrong?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The least-common-denominator rule: the subsample weight is built so that the subsample represents the population. The exam weight does not account for the extra subsampling step, so estimates are biased if the subsample selection was unequal, and its replicate weights do not match.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Lumley, <em>Complex Surveys: A Guide to Analysis Using R</em> (Wiley, 2010): chapters on designs, replicate weights, domains and regression. Documentation for the R survey package.</li>
+      <li>Kish, <em>Survey Sampling</em> (Wiley, 1965): design effects and the weighting effect 1 + CV².</li>
+      <li>National Center for Health Statistics, NHANES tutorials (Sample Design, Weighting, Variance Estimation modules) and <em>NHANES Analytic Guidelines, 2011–2016</em>; NHANES data documentation for the urine electrolyte files (NHANES III, 2010, 2013–2014).</li>
+      <li>DuMouchel &amp; Duncan, “Using sample survey weights in multiple regression analyses of stratified samples”, <em>Journal of the American Statistical Association</em> (1983).</li>
+      <li>El Bcheraoui et al., “Status of the diabetes epidemic in the Kingdom of Saudi Arabia, 2013”, <em>International Journal of Public Health</em> (2014): Saudi Health Interview Survey methods.</li>
+      <li>WHO NCD Microdata Repository: Kuwait STEPS 2014 study description (sampling and weights).</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="3-03-glms-for-rates.html"><small>Previous</small>3.3 GLMs for health data</a>
+    <a class="next" href="3-05-missing-data-multiple-imputation.html"><small>Next</small>3.5 Missing data and multiple imputation</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

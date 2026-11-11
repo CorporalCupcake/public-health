@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>3.1 Reproducible analysis pipelines · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/3-01.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-3">Block 3</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 3.1</p>
+  <h1>Reproducible analysis pipelines for health research</h1>
+  <div class="lecture-meta">
+    <span>Block 3 · Biostatistics core</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>A reproducible analysis is one where anyone with the data can rebuild every number in the paper with one command, and get the same answer. That takes five habits: raw data that are never edited, code under version control with no patient data in it, recorded package versions, a pipeline that knows what is out of date, and a manuscript whose numbers come straight from code. Add a dated analysis plan and a data-access log, and a reviewer can trust your result. You will set all of this up for Project 3 before running a single model.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#structure">One project, one folder, raw data read-only</a></li>
+      <li><a href="#git">Version control, and what never goes in it</a></li>
+      <li><a href="#renv">Environments: record the package versions</a></li>
+      <li><a href="#pipelines">Pipelines: let the computer track what is stale</a></li>
+      <li><a href="#quarto">Literate reporting: numbers flow from code to manuscript</a></li>
+      <li><a href="#seeds">Seeds and code review</a></li>
+      <li><a href="#plan">Pre-registered analysis plans</a></li>
+      <li><a href="#sharing">Credentialed data, access logs and sharing code</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="structure">
+    <h2>1. One project, one folder, raw data read-only</h2>
+    <p class="point">Keep each project in one self-contained folder where raw data go in untouched, and everything else is made by code.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A fixed layout: downloaded files in <code>data-raw/</code>, never edited; functions in <code>R/</code>; derived data and outputs written only by the pipeline; a README that says how to get the data and rebuild. Paths are relative to the project root, never <code>C:/Users/me/…</code>.</dd>
+      <dt>Why it matters</dt>
+      <dd>If every derived file can be deleted and rebuilt, you can always answer “where did this number come from?”. If someone edited a file by hand, you cannot.</dd>
+      <dt>How to read it</dt>
+      <dd>Good: you can delete <code>data/</code> and the outputs, run one command, and get them back. Bad: a file called <code>final_v3_fixed.csv</code> that nobody can regenerate.</dd>
+      <dt>What a change means</dt>
+      <dd>A correction to the data becomes a new raw file plus a line of code, never an edit. The history of what changed is then in the code.</dd>
+    </dl>
+
+<pre><code>project-3-nak/
+├── data-raw/          # NHANES files as downloaded; read-only
+├── data/              # derived data, written by the pipeline only
+├── R/                 # functions: clean_nhanes(), fit_cox(), make_table1()
+├── _targets.R         # the pipeline: which function makes which output
+├── analysis-plan.md   # dated and frozen before outcome models are run
+├── manuscript.qmd     # text, with numbers pulled from the pipeline
+├── renv.lock          # exact package versions
+└── README.md          # how to get the data and rebuild everything</code></pre>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Opening raw data in Excel “just to look”, then saving. Excel silently reformats: it has turned gene names such as SEPT2 into dates in published supplementary files, strips leading zeros from IDs, and reinterprets date formats. Treat raw files as read-only. Look at them in R.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>A kitchen with a recipe. You never alter the groceries; you change the recipe and cook again. Anyone with the same groceries and recipe gets the same dish.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="git">
+    <h2>2. Version control, and what never goes in it</h2>
+    <p class="point">Git records every change to your code; patient data, credentials and stored results must never enter it.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Git keeps a history of commits, each a snapshot of the code with a message saying why it changed. GitHub hosts a copy and adds review tools. A <code>.gitignore</code> file lists what git must never track.</dd>
+      <dt>Why it matters</dt>
+      <dd>You can see exactly which code produced the results you submitted, undo a bad change, and show reviewers the analysis evolved honestly. Tag the commit you submit (for example <code>v1.0-submitted</code>).</dd>
+      <dt>How to read it</dt>
+      <dd>Good: small commits with messages like “exclude pregnant participants, per plan section 3.2”. Bad: one commit called “stuff” the night before submission.</dd>
+      <dt>What a change means</dt>
+      <dd>Once a file is committed and pushed, assume it is public forever. Deleting it in a later commit leaves it in the history.</dd>
+    </dl>
+
+<pre><code># .gitignore: never commit data, results or secrets
+data-raw/
+data/
+_targets/        # the pipeline's stored results contain data
+*.csv
+*.rds
+*.parquet
+.Renviron        # API keys, database passwords
+.Rhistory
+.RData</code></pre>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>“The repository is private, so the data are safe.” A private repository is still a copy on someone else’s server, one setting away from public, and copying credentialed data there can breach its data use agreement. Keep patient-level data out of git entirely, including the pipeline’s cache, plots of individual records and printed data frames in notebooks.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>Same discipline as keeping training data and model weights out of a code repository. Track data versions by file hash instead: the pipeline below does this for you, as DVC does in Python projects.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="renv">
+    <h2>3. Environments: record the package versions</h2>
+    <p class="point">An analysis depends on package versions as much as on code, so record them per project with renv.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>renv gives each project its own package library and a lockfile, <code>renv.lock</code>, listing the exact version of every package and the R version used. The lockfile goes in git.</dd>
+      <dt>Why it matters</dt>
+      <dd>Packages change defaults. An update to a survey or imputation package can change a standard error or a pooled estimate without any change to your code. A lockfile lets you, a coauthor or a reviewer rebuild with the versions you used.</dd>
+      <dt>How to read it</dt>
+      <dd><code>renv::status()</code> reports whether the library and the lockfile agree. If they do not, either snapshot (you meant to upgrade) or restore (you did not).</dd>
+    </dl>
+
+<pre><code>renv::init()       # once: a project library plus renv.lock
+renv::snapshot()   # after installing or updating packages: record the versions
+renv::restore()    # on a new machine: install exactly the recorded versions</code></pre>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Believing the lockfile freezes everything. It records the R version but does not install R, and it does not capture system libraries or the operating system. For full rebuilds years later, add a container image (for example a rocker image with the same R version). For a paper, renv plus a note of R version and platform is usually enough.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>renv is the R equivalent of a virtual environment plus a lockfile (<code>venv</code> with <code>poetry.lock</code>, or a conda environment file).</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="pipelines">
+    <h2>4. Pipelines: let the computer track what is stale</h2>
+    <p class="point">A pipeline tool knows which outputs depend on which inputs, reruns only what a change invalidates, and refuses to let you report a stale result.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>You declare each step as a <em>target</em>: an output, the function that makes it, and what it needs. The tool builds a dependency graph (a DAG). The idea comes from Make, which rebuilds a file when its inputs are newer; snakemake does the same for Python. The R package targets goes further and compares hashes of the data and the code, not timestamps.</dd>
+      <dt>Why it matters</dt>
+      <dd>Project 3 has slow steps: 20 imputations, then Cox and competing-risks models on each. Rerunning everything after a typo fix wastes an hour, so people stop rerunning and end up reporting results from old code. A pipeline makes the honest path the fast path.</dd>
+      <dt>How to read it</dt>
+      <dd><code>tar_outdated()</code> lists what would rerun; <code>tar_visnetwork()</code> draws the graph with stale targets marked; <code>tar_make()</code> rebuilds them. “Everything up to date” means every output matches the current code and data.</dd>
+      <dt>What a change means</dt>
+      <dd>A change invalidates its target and everything downstream, and nothing else. A new data release reruns everything; a reworded paragraph reruns only the manuscript.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · The analysis pipeline, and what invalidates what</div>
+      <svg class="viz-svg" viewBox="0 0 640 452" role="img" aria-label="Six pipeline steps in a column joined by arrows: raw data, clean data, analysis dataset, models, tables and figures, manuscript. Beside each step, the kind of change that makes it and everything below it out of date: a new data release or corrected file; a recoding rule; an exclusion or a derived variable; a covariate, model choice or seed; a table layout or figure style; the wording.">
+        <defs>
+          <marker id="l31-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead accent"/></marker>
+        </defs>
+        <text x="140" y="20" text-anchor="middle" class="viz-bold">Pipeline step</text>
+        <text x="450" y="20" text-anchor="middle" class="viz-bold">A change here makes this step and all below it stale</text>
+        <g class="s4">
+          <rect x="30" y="34" width="220" height="52" rx="10" class="node-fill"/>
+        </g>
+        <g class="s1">
+          <rect x="30" y="104" width="220" height="52" rx="10" class="node-fill"/>
+          <rect x="30" y="174" width="220" height="52" rx="10" class="node-fill"/>
+          <rect x="30" y="244" width="220" height="52" rx="10" class="node-fill"/>
+          <rect x="30" y="314" width="220" height="52" rx="10" class="node-fill"/>
+        </g>
+        <g class="s2">
+          <rect x="30" y="384" width="220" height="52" rx="10" class="node-fill"/>
+        </g>
+        <g text-anchor="middle">
+          <text x="140" y="56" class="viz-bold">Raw data</text>
+          <text x="140" y="74" class="viz-small">NHANES files, mortality link</text>
+          <text x="140" y="126" class="viz-bold">Clean data</text>
+          <text x="140" y="144" class="viz-small">recode 7/9 to missing, merge</text>
+          <text x="140" y="196" class="viz-bold">Analysis dataset</text>
+          <text x="140" y="214" class="viz-small">exclusions, Na/K ratio, weights</text>
+          <text x="140" y="266" class="viz-bold">Models</text>
+          <text x="140" y="284" class="viz-small">imputation, Cox, Fine–Gray</text>
+          <text x="140" y="336" class="viz-bold">Tables and figures</text>
+          <text x="140" y="354" class="viz-small">Table 1, hazard ratios, CIF plot</text>
+          <text x="140" y="406" class="viz-bold">Manuscript</text>
+          <text x="140" y="424" class="viz-small">Quarto: text with live numbers</text>
+        </g>
+        <path d="M140,86 L140,100" class="edge accent" marker-end="url(#l31-arrow)"/>
+        <path d="M140,156 L140,170" class="edge accent" marker-end="url(#l31-arrow)"/>
+        <path d="M140,226 L140,240" class="edge accent" marker-end="url(#l31-arrow)"/>
+        <path d="M140,296 L140,310" class="edge accent" marker-end="url(#l31-arrow)"/>
+        <path d="M140,366 L140,380" class="edge accent" marker-end="url(#l31-arrow)"/>
+        <g class="viz-small">
+          <path d="M250,60 L290,60" class="edge" stroke-dasharray="4 4"/>
+          <path d="M250,130 L290,130" class="edge" stroke-dasharray="4 4"/>
+          <path d="M250,200 L290,200" class="edge" stroke-dasharray="4 4"/>
+          <path d="M250,270 L290,270" class="edge" stroke-dasharray="4 4"/>
+          <path d="M250,340 L290,340" class="edge" stroke-dasharray="4 4"/>
+          <path d="M250,410 L290,410" class="edge" stroke-dasharray="4 4"/>
+        </g>
+        <text x="300" y="56" class="viz-small">a new data release, or a corrected file</text>
+        <text x="300" y="72" class="viz-small viz-muted">reruns all six steps</text>
+        <text x="300" y="126" class="viz-small">a recoding rule, a merge key</text>
+        <text x="300" y="142" class="viz-small viz-muted">reruns five steps</text>
+        <text x="300" y="196" class="viz-small">an exclusion, a derived variable</text>
+        <text x="300" y="212" class="viz-small viz-muted">reruns four steps, including the slow models</text>
+        <text x="300" y="266" class="viz-small">a covariate, a model choice, the seed</text>
+        <text x="300" y="282" class="viz-small viz-muted">reruns models and everything that reports them</text>
+        <text x="300" y="336" class="viz-small">a table layout, a figure style</text>
+        <text x="300" y="352" class="viz-small viz-muted">seconds: models are reused</text>
+        <text x="300" y="406" class="viz-small">the wording</text>
+        <text x="300" y="422" class="viz-small viz-muted">only the manuscript re-renders</text>
+      </svg>
+      <figcaption>Changes flow downhill only. The further up the change, the more reruns, which is why the expensive decisions (exclusions, derived variables, models) belong in the analysis plan before you start.</figcaption>
+    </figure>
+
+<pre><code># _targets.R (shortened)
+library(targets)
+tar_option_set(packages = c("dplyr", "survey", "survival", "mice"))
+tar_source()                                    # load the functions in R/
+list(
+  tar_target(urine_file, "data-raw/urine_na_k.xpt", format = "file"),  # hashed; demo_file, mort_file alike
+  tar_target(clean,    clean_nhanes(urine_file, demo_file, mort_file)),
+  tar_target(analysis, make_analysis_data(clean)),
+  tar_target(imputed,  impute_nak(analysis, m = 20)),
+  tar_target(fit_cox,  fit_cox_mi(imputed)),
+  tar_target(table_hr, make_hr_table(fit_cox))
+)</code></pre>
+    <p>Each step is a function in <code>R/</code>, and each target names the function and its inputs. <code>format = "file"</code> makes targets hash the downloaded file, so a replaced file marks everything downstream as stale. The file names are placeholders; use the actual NHANES file names for your cycles.</p>
+
+    <div class="widget" data-widget="pipeline-stale">
+      <div class="widget-title">What needs rerunning?</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Click any box to “change” it (click again to undo) and watch which targets go stale, as <code>tar_outdated()</code> would report. Try the presets, then press Run <code>tar_make()</code> to bring everything up to date.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>The <code>run_all.R</code> script, or worse, an interactive session with objects from last Tuesday. A table rendered from an object in memory may have come from code you have since changed. Two less obvious gaps: targets does not notice a package update unless you ask it to track that package (<code>tar_option_set(imports = …)</code>), and it cannot see files your functions read without declaring them.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>This is the same idea as a DVC or Airflow pipeline, or a build cache: content-addressed outputs and a dependency graph. The difference is that targets tracks your R functions themselves, so editing a function invalidates exactly the targets that call it.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="quarto">
+    <h2>5. Literate reporting: numbers flow from code to manuscript</h2>
+    <p class="point">Every number in the paper should be computed where it appears, not typed in, so a reanalysis updates the text, the tables and the abstract together.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Quarto mixes prose with code chunks and renders to Word, PDF or HTML. Inline code drops a value into a sentence. Tables come from model objects via broom or gtsummary (Lecture 3.2).</dd>
+      <dt>Why it matters</dt>
+      <dd>Revisions change numbers. With hand-typed numbers, the abstract, the results and Table 2 drift apart, and reviewers notice. With computed numbers, they cannot.</dd>
+      <dt>How to read it</dt>
+      <dd>Good: you could search the manuscript source and find no hard-coded estimate. Acceptable: a Word draft for coauthors, generated from the Quarto source, never edited back by hand.</dd>
+    </dl>
+
+<pre><code>```{r}
+hr &lt;- targets::tar_read(table_hr)       # read the stored result, do not refit
+```
+Each unit higher Na/K ratio was associated with a hazard ratio of
+`r fmt_hr(hr, "nak")` for cardiovascular death.</code></pre>
+    <p>The chunk reads a finished result from the pipeline’s store; the inline expression formats it into the sentence (<code>fmt_hr()</code> is your own small helper). Rendering the manuscript can itself be the last target, so it goes stale when any result does.</p>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Fitting models inside the manuscript file. Rendering then takes an hour, so you stop rendering, and the document falls behind the analysis. Fit in the pipeline; the manuscript only reads and formats.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · The reviewer round</div>
+      <p>Reviewer 2 asks you to exclude participants with chronic kidney disease. You add one line to <code>make_analysis_data()</code>, run <code>tar_make()</code>, and the pipeline reruns the imputation, the models, the tables and the manuscript. Every number in the response letter now matches the revised paper. Without a pipeline, this is a week of careful copying, with errors.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="seeds">
+    <h2>6. Seeds and code review</h2>
+    <p class="point">Random steps need fixed seeds so results repeat exactly; a second pair of eyes catches what reruns never will.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A seed fixes the random number stream used by multiple imputation, bootstraps, cross-validation and simulations. Code review means someone else reads your code against the analysis plan before results are final.</dd>
+      <dt>Why it matters</dt>
+      <dd>Without a seed, the same code gives slightly different estimates each run, and nobody can tell a bug from noise. Without review, a correct pipeline faithfully reproduces a wrong analysis.</dd>
+      <dt>How to read it</dt>
+      <dd>Changing the seed should move estimates only in the last decimal. If a conclusion flips with the seed, the Monte Carlo error is too big: use more imputations or more bootstrap replicates.</dd>
+    </dl>
+
+<pre><code>imp &lt;- mice(analysis, m = 20, seed = 2026, printFlag = FALSE)  # the seed is part of the analysis</code></pre>
+    <p>Pass the seed to the function that uses it, rather than one <code>set.seed()</code> at the top of a script; in a pipeline, targets also gives each target its own reproducible seed.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>A reviewer of your code checks first</th><th>Because</th></tr></thead>
+        <tbody>
+          <tr><td>Every exclusion and derived variable matches the analysis plan</td><td>Most errors in health papers are in data preparation, not models</td></tr>
+          <tr><td>Survey codes for “refused” and “don’t know” (often 7/9, 77/99) are set to missing</td><td>Left in, they become extreme real values (Lecture 3.2)</td></tr>
+          <tr><td>Weights, strata and clusters are used in every estimate (Lecture 3.4)</td><td>Ignoring the design gives wrong standard errors, and often wrong estimates</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Trying seeds until the p-value drops under 0.05. It is a forking path like any other (Lecture 3.0, topic 9). Fix the seed in the analysis plan.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Code review is the second screener from Project 2, applied to code. Independent checking catches what the first person cannot see.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="plan">
+    <h2>7. Pre-registered analysis plans</h2>
+    <p class="point">Writing the analysis plan down, dated and frozen, before you look at the exposure–outcome results is what separates a test from a search.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A statistical analysis plan: the primary exposure and outcome definitions, the model, the covariates and why (from a DAG), the handling of missing data, survey design and competing risks, and the sensitivity analyses. Registered with a timestamp, for example on OSF Registries.</dd>
+      <dt>Why it matters</dt>
+      <dd>NHANES is public, so nobody can stop you peeking. The plan is your evidence that the main analysis was chosen before the answer was known. It also enforces the project rules: the reporting guideline (STROBE for Project 3) is followed from the protocol stage, not retrofitted.</dd>
+      <dt>How to read it</dt>
+      <dd>Feasibility counts before the plan are fine and required by the project rules (“data before design”): how many participants have urine sodium and potassium and linked mortality. Associations between exposure and outcome are not.</dd>
+      <dt>What a change means</dt>
+      <dd>Plans can change. Record each deviation in a table: what changed, when, why, and whether it was before or after seeing results. Report the planned analysis too.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>“Pre-registration is for trials.” Observational analyses of public data have more freedom to fork, not less: many exposure codings, covariate sets and cycle groupings, each defensible. The plan is the cheapest insurance against the garden of forking paths.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Project 3’s plan, in one line each</div>
+      <p>Exposure: spot-urine sodium-to-potassium ratio, continuous (spline) and in quartiles. Outcome: cardiovascular death from the linked mortality file, with non-cardiovascular death as a competing event. Design: survey weights, strata and PSUs. Missing covariates: multiple imputation, 20 datasets, seed fixed. Primary model and covariates justified by a DAG. Everything else is labelled sensitivity analysis.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="sharing">
+    <h2>8. Credentialed data, access logs and sharing code</h2>
+    <p class="point">For credentialed data such as MIMIC-IV, share the code and never the data; keep a log that shows you handled them as agreed.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>PhysioNet credentialed access is personal: you complete training, sign a data use agreement for each dataset, and may not share the data or try to re-identify anyone. Derived datasets count as sensitive too; PhysioNet asks that they be shared only through PhysioNet under the same agreement.</dd>
+      <dt>Why it matters</dt>
+      <dd>A breach ends your access and can end a project, and it is a breach of trust with the patients whose records these are. Project 5A depends on MIMIC-IV, so the habits start now.</dd>
+      <dt>How to read it</dt>
+      <dd>A data-access log is one row per event: date, dataset and version, who accessed it, where it is stored, what was extracted, and when copies were deleted. A short log is enough; it answers an auditor’s or coauthor’s question in a minute.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Pasting MIMIC rows into an online chatbot to debug a query. PhysioNet’s 2025 guidance says credentialed data must not go to services that retain it, recommends locally run models, and says not to use a service whose data practices you cannot verify. Debug with the open MIMIC-IV demo subset, the schema, or made-up rows.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">In the Gulf</div>
+      <p>Saudi Arabia’s Personal Data Protection Law came into force in September 2023, with full enforcement from September 2024, and treats health data as sensitive data with extra conditions on processing. When you later work with Saudi hospital or registry data, the same habits apply, with local law on top: data stay in approved storage, access is logged, and code is shared without data.</p>
+    </div>
+
+    <p><strong>Sharing code with the paper.</strong> At submission (alongside the medRxiv preprint, project rule 5), make the repository public, tag the submitted version, and archive it on Zenodo, which issues a DOI for each GitHub release. Include a licence, the lockfile, and a README that says how to obtain the data. For NHANES, a script can download the public files; for MIMIC, the README points to PhysioNet and the reader gets their own access.</p>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>The release-with-a-DOI habit is the same as publishing model weights with a model card: someone else can run exactly what you ran, and cite it.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>You fix a bug in <code>clean_nhanes()</code> that affected only participants with missing potassium. Which outputs must be rebuilt, and is there anything to do besides running <code>tar_make()</code>?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Everything downstream of the cleaned data: analysis dataset, imputations, models, tables, figures and manuscript. The pipeline finds these for you. Also record the fix in the commit message and, if results were already shared, tell coauthors which numbers moved and by how much.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A coauthor emails you a corrected mortality-linkage file as an Excel attachment. What do you do with it?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Save it unchanged as a new file in <code>data-raw/</code>, note where and when it came from, and point the pipeline at it (ideally after converting it to CSV with code, not by hand). Do not overwrite the old file or edit either one. The pipeline then marks everything downstream as stale.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Changing the imputation seed moves your hazard ratio from 1.18 (95% CI 1.01–1.38) to 1.15 (0.99–1.34). What does that tell you, and what should you do?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Monte Carlo error from too few imputations is large enough to matter near the threshold. Increase the number of imputations until the estimates are stable to the decimal you report. Do not pick the seed that gives the interval you prefer; the seed is fixed in the plan.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>After seeing results, you find that a spline for age fits much better than the linear term in your registered plan. Can you change it?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Yes, as a documented deviation. Record what changed, when and why, note that it was made after seeing results, and report the planned analysis alongside. Reviewers accept honest deviations; they distrust silent ones.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A colleague wants to put your Project 5A MIMIC extract in a private GitHub repository “so we can both work on it”. How do you respond?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>No. Each person needs their own PhysioNet credentialing and agreement, and the data should not leave approved storage. Share the code through git; each of you runs it against your own access. Log the decision.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Landau, “The targets R package: a dynamic Make-like function-oriented pipeline toolkit for reproducibility and high-performance computing”, <em>Journal of Open Source Software</em> (2021); and <em>The targets R Package User Manual</em> (books.ropensci.org/targets), including the chapter on packages and <code>imports</code>.</li>
+      <li>renv package documentation (rstudio.github.io/renv): introduction, lockfiles, <code>snapshot()</code> and <code>restore()</code>.</li>
+      <li>Quarto documentation (quarto.org): computations and inline code.</li>
+      <li>Wilson et al., “Good enough practices in scientific computing”, <em>PLoS Computational Biology</em> (2017); Sandve et al., “Ten simple rules for reproducible computational research”, <em>PLoS Computational Biology</em> (2013).</li>
+      <li>Ziemann, Eren &amp; El-Osta, “Gene name errors are widespread in the scientific literature”, <em>Genome Biology</em> (2016).</li>
+      <li>PhysioNet Credentialed Health Data Use Agreement; PhysioNet, “Use of MIMIC data with large language models and online services” (2025).</li>
+      <li>von Elm et al., “The STROBE statement”, <em>Lancet</em> (2007); Benchimol et al., “The RECORD statement”, <em>PLoS Medicine</em> (2015).</li>
+      <li>Saudi Data and AI Authority (SDAIA), Personal Data Protection Law and its implementing regulations.</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="3-00-diagnostic.html"><small>Previous</small>3.0 Biostatistics diagnostic</a>
+    <a class="next" href="3-02-r-for-health-data.html"><small>Next</small>3.2 Statistical computing in R</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

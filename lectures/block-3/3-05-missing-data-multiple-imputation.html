@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>3.5 Missing data and multiple imputation · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/3-05.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-3">Block 3</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 3.5</p>
+  <h1>Missing data and multiple imputation</h1>
+  <div class="lecture-meta">
+    <span>Block 3 · Biostatistics core</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>Every real health dataset has holes, and the default in every package is to drop incomplete rows silently. Whether that is harmless depends on <strong>why</strong> values are missing and on <strong>what</strong> you estimate. Multiple imputation (MI) fixes many cases, but only if the imputation model contains the outcome, the right auxiliary variables and the study design. Project 3 starts after this lecture and needs all of it: missing urine and covariate values, survey weights, a survival outcome, and a sensitivity analysis for data that are missing for reasons you cannot see.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#mechanisms">Why data are missing: MCAR, MAR, MNAR</a></li>
+      <li><a href="#cc">When complete-case analysis is fine</a></li>
+      <li><a href="#mice">Multiple imputation by chained equations</a></li>
+      <li><a href="#model">What goes in the imputation model</a></li>
+      <li><a href="#rubin">Rubin’s rules and how many imputations</a></li>
+      <li><a href="#derived">Ratios, transformations and interactions</a></li>
+      <li><a href="#survey-survival">MI with survey weights and survival outcomes</a></li>
+      <li><a href="#mnar">Sensitivity analysis for MNAR</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="mechanisms">
+    <h2>1. Why data are missing: MCAR, MAR, MNAR</h2>
+    <p class="point">The missingness mechanism is a claim about what predicts whether a value is missing; it decides which methods give unbiased answers.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>MCAR</strong> (missing completely at random): missingness is unrelated to anything, observed or not. <strong>MAR</strong> (missing at random): missingness depends only on things you observed; among people with the same observed values, those missing are like those not missing. <strong>MNAR</strong> (missing not at random): missingness depends on the missing value itself, or on something unobserved related to it.</dd>
+      <dt>Why it matters</dt>
+      <dd>Complete-case analysis is safe under MCAR and in some MAR and MNAR cases (section 2). Standard MI assumes MAR. Under MNAR, no method using the observed data alone is guaranteed to work; you need assumptions and sensitivity analysis.</dd>
+      <dt>How to read it</dt>
+      <dd>MAR is conditional: it is true or false <em>given the variables you use</em>. Adding a variable that predicts missingness can turn MNAR into (approximately) MAR. You can show data are not MCAR (missingness predicted by observed variables), but no test can tell MAR from MNAR.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · Missingness graphs (m-graphs)</div>
+      <svg class="viz-svg" viewBox="0 0 640 252" role="img" aria-label="Three small causal graphs. In each, age causes the sodium-to-potassium ratio, and R marks whether the ratio is missing. MCAR: nothing points to R. MAR: age points to R. MNAR: the ratio itself points to R.">
+        <defs>
+          <marker id="l35-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead"/></marker>
+          <marker id="l35-arrow-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead accent"/></marker>
+        </defs>
+        <g text-anchor="middle">
+          <text x="110" y="20" class="viz-bold">MCAR</text>
+          <text x="320" y="20" class="viz-bold">MAR</text>
+          <text x="530" y="20" class="viz-bold">MNAR</text>
+          <text x="110" y="40" class="viz-small viz-muted">a freezer fails at random</text>
+          <text x="320" y="40" class="viz-small viz-muted">older people give urine less often</text>
+          <text x="530" y="40" class="viz-small viz-muted">out-of-range values not reported</text>
+        </g>
+        <!-- nodes: age at c-60, ratio at c+60 (y 70-100), R at c (y 150-180) -->
+        <g class="s4">
+          <rect x="18" y="68" width="64" height="32" rx="8" class="node-fill"/>
+          <rect x="228" y="68" width="64" height="32" rx="8" class="node-fill"/>
+          <rect x="438" y="68" width="64" height="32" rx="8" class="node-fill"/>
+        </g>
+        <g class="s2">
+          <rect x="138" y="68" width="64" height="32" rx="8" class="node-fill" stroke-dasharray="5 3"/>
+          <rect x="348" y="68" width="64" height="32" rx="8" class="node-fill" stroke-dasharray="5 3"/>
+          <rect x="558" y="68" width="64" height="32" rx="8" class="node-fill" stroke-dasharray="5 3"/>
+        </g>
+        <g class="s5">
+          <rect x="70" y="148" width="80" height="32" rx="8" class="node"/>
+          <rect x="280" y="148" width="80" height="32" rx="8" class="node"/>
+          <rect x="490" y="148" width="80" height="32" rx="8" class="node"/>
+        </g>
+        <g text-anchor="middle" class="viz-small">
+          <text x="50" y="88">Age</text><text x="170" y="88">Na/K</text><text x="110" y="168">R missing?</text>
+          <text x="260" y="88">Age</text><text x="380" y="88">Na/K</text><text x="320" y="168">R missing?</text>
+          <text x="470" y="88">Age</text><text x="590" y="88">Na/K</text><text x="530" y="168">R missing?</text>
+        </g>
+        <path d="M82,84 L134,84" class="edge" marker-end="url(#l35-arrow)"/>
+        <path d="M292,84 L344,84" class="edge" marker-end="url(#l35-arrow)"/>
+        <path d="M502,84 L554,84" class="edge" marker-end="url(#l35-arrow)"/>
+        <path d="M268,100 L298,144" class="edge accent" marker-end="url(#l35-arrow-a)"/>
+        <path d="M582,100 L552,144" class="edge accent" marker-end="url(#l35-arrow-a)"/>
+        <g text-anchor="middle">
+          <text x="110" y="210" class="viz-bold colour s1">Complete cases: a random subset</text>
+          <text x="110" y="228" class="viz-small viz-muted">unbiased, just smaller</text>
+          <text x="320" y="210" class="viz-bold colour s2">Use age: in the model or MI</text>
+          <text x="320" y="228" class="viz-small viz-muted">ignore it and means are biased</text>
+          <text x="530" y="210" class="viz-bold colour s3">The data can’t fix it</text>
+          <text x="530" y="228" class="viz-small viz-muted">assume, then test sensitivity</text>
+        </g>
+      </svg>
+      <figcaption>Dashed boxes are partly observed. R is the indicator “Na/K is missing”. What matters is which arrows point into R. Age causing Na/K is shown for illustration.</figcaption>
+    </figure>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>“Little’s test was non-significant, so data are MCAR.” The test only checks whether missingness relates to <em>observed</em> variables, often with little power. It says nothing about MNAR. Argue the mechanism from how the data were collected.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Missing homework. The printer jammed at random: MCAR. Pupils with after-school jobs (which you know about) hand in less: MAR. Pupils who couldn’t do it don’t hand it in: MNAR, and the average of the handed-in work flatters the class.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="cc">
+    <h2>2. When complete-case analysis is fine</h2>
+    <p class="point">For regression coefficients, complete cases are unbiased whenever missingness does not depend on the outcome once the model’s covariates are accounted for, even if it depends strongly on those covariates.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Complete-case analysis (CC) uses only rows with every analysis variable observed. A regression estimates the outcome’s distribution <em>given</em> the covariates. If being complete depends only on the covariates, CC changes <em>which</em> covariate values you see, not how the outcome behaves at each value, so the slope is unbiased.</dd>
+      <dt>Why it matters</dt>
+      <dd>This holds even when a covariate is missing because of its own value (formally MNAR), as long as that has nothing to do with the outcome. In that case CC is unbiased and standard MI, which assumes MAR, can be biased. For means and prevalences, by contrast, CC is biased whenever missingness relates to the variable, under MAR included.</dd>
+      <dt>How to read it</dt>
+      <dd>Ask one question: given the covariates in my model, does the chance of being complete depend on the outcome? If no, CC regression is unbiased (MI may still add precision). If yes, CC is biased and MI with good predictors of missingness may fix it. One exception for logistic regression: if missingness depends only on the outcome, odds ratios stay unbiased (the case-control logic); only the intercept is wrong.</dd>
+    </dl>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Missingness in the outcome depends on…</th><th>CC mean</th><th>CC slope</th><th>MI using covariate and auxiliary</th></tr></thead>
+        <tbody>
+          <tr><td>Nothing (MCAR)</td><td>Unbiased</td><td>Unbiased</td><td>Unbiased</td></tr>
+          <tr><td>A covariate in the model (MAR)</td><td>Biased</td><td><strong>Unbiased</strong></td><td>Unbiased</td></tr>
+          <tr><td>An auxiliary not in the model (MAR)</td><td>Biased</td><td>Biased</td><td>Unbiased</td></tr>
+          <tr><td>The outcome itself (MNAR)</td><td>Biased</td><td>Biased</td><td>Biased</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="widget" data-widget="missing-mechanisms">
+      <div class="widget-title">MCAR, MAR, MNAR: complete cases versus imputation</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Systolic BP depends on a covariate X in the analysis model; an auxiliary Z, not in that model, also tracks BP. About 40% of BP values go missing, driven by nothing (MCAR), by X, by Z, or by BP itself (MNAR). Raise the strength and compare complete-case and imputed estimates with the full data.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Project 3</div>
+      <p>Suppose urine Na/K is missing more often in older participants. If age is in the Cox model, CC estimates of the Na/K hazard ratio are not biased by that. Now suppose it is missing more often in frail participants who skipped parts of the exam, and frailty is not in the model. Frailty predicts death, so missingness now depends on the outcome given the model’s covariates, and CC is biased. MI helps only if variables tracking frailty (self-rated health, prior cardiovascular disease, hospital use) are in the imputation model.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>“MI is always better than complete cases.” If only the outcome is missing and there are no useful auxiliary variables, MI reproduces CC with extra noise. If missingness in a covariate depends on its own value but not the outcome, CC is unbiased and MI under MAR may not be. Choose by the mechanism, not by fashion.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="mice">
+    <h2>3. Multiple imputation by chained equations</h2>
+    <p class="point">MI fills each hole several times with plausible values drawn from a model, analyses each completed dataset, and combines the results so the uncertainty about the missing values shows up in the standard errors.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>MICE</strong> (also called fully conditional specification) imputes one variable at a time from a regression on all the others, cycles through the variables, and repeats until the draws settle. Run it to get <em>m</em> completed datasets that differ where data were missing. <strong>Predictive mean matching</strong> (PMM), the default for numbers, borrows an observed value from a donor with a similar prediction, so imputations stay realistic.</dd>
+      <dt>Why it matters</dt>
+      <dd>It handles mixed variable types (binary, categorical, skewed) with a separate model for each, which is why it is the workhorse in epidemiology.</dd>
+      <dt>How to read it</dt>
+      <dd>Check the trace plots: the chains should mix with no trend. Compare imputed with observed distributions: under MAR they may legitimately differ (older people’s values are imputed as older people’s values), but implausible values flag a bad model.</dd>
+    </dl>
+
+<pre><code>library(mice)
+pred <- make.predictorMatrix(d)
+pred[, "SEQN"] <- 0                        # the ID is not a predictor
+imp <- mice(d, m = 30, predictorMatrix = pred, maxit = 20, seed = 2026)
+plot(imp)                                  # trace plots: chains should mix
+densityplot(imp, ~ log_nak)                # imputed vs observed
+fit <- with(imp, lm(sbp ~ log_nak + RIDAGEYR + RIAGENDR))
+summary(pool(fit), conf.int = TRUE)        # Rubin's rules</code></pre>
+    <p>This builds 30 completed datasets with every other variable as a predictor (except the ID), checks convergence and the imputed values, fits the analysis model in each dataset and pools the results.</p>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Single imputation: filling with the mean, the last value, or one regression prediction, then analysing as if the data were complete. Mean imputation shrinks variance and distorts associations; any single imputation treats guesses as data, so intervals are too narrow. The <em>missing-indicator method</em> (fill with 0, add a “was missing” dummy) is biased for confounders in observational studies.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>scikit-learn’s <code>IterativeImputer</code> is modelled on MICE, but by default it returns one deterministic imputation: fine for a prediction pipeline, wrong for inference. Flexible imputers (random forests, missForest) give accurate point predictions yet too little spread, which understates uncertainty unless they are used inside a proper MI loop. In MI the goal is plausible draws, not the best guess.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="model">
+    <h2>4. What goes in the imputation model</h2>
+    <p class="point">Put in everything the analysis uses, including the outcome, plus auxiliary variables that predict the missing values or their missingness.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Three groups. <strong>Analysis variables</strong>: exposure, outcome, confounders, in the same form the analysis uses them. <strong>Auxiliary variables</strong>: not in the analysis but correlated with the incomplete variable or with being missing. <strong>Design variables</strong>: survey weights, strata and clusters (section 7).</dd>
+      <dt>Why it matters</dt>
+      <dd>Imputed values only reflect relationships the imputation model contains. Leave the outcome out and you impute an exposure that is unrelated to the outcome, which drags the estimate towards no effect.</dd>
+      <dt>How to read it</dt>
+      <dd>A good methods paragraph lists the imputation model’s variables, says the outcome was included, names auxiliaries and states <em>m</em>. An imputation model simpler than the analysis model (missing interactions, missing non-linear terms) biases those terms towards zero.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>“Using the outcome to impute the exposure is circular.” It is not: the imputation draws exposures consistent with the observed joint distribution, which includes the outcome. Omitting it assumes the exposure–outcome association is zero for everyone with missing data, and that assumption is what biases the result.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Project 3 auxiliaries</div>
+      <p>For missing urine Na/K, the 24-hour dietary recall sodium and potassium are natural auxiliaries: imperfect, but correlated with urinary excretion. Blood pressure and antihypertensive use help too. Keep in mind what the imputed variable is: a single spot-urine ratio, a noisy marker of usual intake (Lecture 2.14). MI fills in missing spot values; it does nothing about the measurement error in the values you have.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="rubin">
+    <h2>5. Rubin’s rules and how many imputations</h2>
+    <p class="point">The pooled estimate is the average across imputations; its variance adds the ordinary sampling variance to the disagreement between imputations.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>With \(\bar W\) the average squared standard error within datasets and \(B\) the variance of the estimates between datasets, the total variance is
+        \[ T = \bar W + \left(1 + \tfrac{1}{m}\right) B \]
+        The \(1/m\) term pays for using a finite number of imputations.</dd>
+      <dt>Why it matters</dt>
+      <dd>\(B\) is the price of the missing data. If imputations disagree a lot, the data say little about the missing values and the interval widens to show it.</dd>
+      <dt>How to read it</dt>
+      <dd>The <strong>fraction of missing information</strong> is roughly the share of \(T\) due to \(B\). It is often smaller than the share of incomplete cases, because the other variables recover some information. A rule of thumb: <em>m</em> at least the percentage of incomplete cases (White, Royston and Wood), so 30% incomplete means about 30 imputations.</dd>
+      <dt>What a change means</dt>
+      <dd>Going from 5 to 50 imputations barely moves the point estimate but makes the standard error and p-value reproducible: rerun with a new seed and you get the same answer to the decimal you report.</dd>
+    </dl>
+
+    <div class="widget" data-widget="rubin-rules">
+      <div class="widget-title">Rubin’s rules: within, between and total variance</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Each grey line is one imputed dataset’s estimate and interval. Raise the between-imputation spread (more missing information) or the number of imputations, and watch the pooled interval against the over-confident single imputation.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Averaging the <em>m</em> datasets into one and analysing that. Averaged imputations behave like single regression imputation: the between-imputation variance disappears and the standard errors are too small. Pool the results, never the data.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="derived">
+    <h2>6. Ratios, transformations and interactions</h2>
+    <p class="point">When the analysis uses a derived variable such as the Na/K ratio, or an interaction, the imputation must respect it; otherwise the relationship you care about is diluted.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>Passive imputation</strong>: impute sodium and potassium, then recompute the ratio from them inside every iteration, so ratio and components always agree. <strong>“Just another variable”</strong>: impute the ratio (or log ratio) directly as its own variable, so its relationship with the outcome is modelled directly, at the cost of consistency with the components. <strong>Substantive-model-compatible FCS</strong> (the smcfcs package) imputes in a way that is consistent with the analysis model, including non-linear terms and interactions.</dd>
+      <dt>Why it matters</dt>
+      <dd>Passive imputation models Na and K but not the ratio’s link with the outcome, which can attenuate the ratio’s estimate. Simulation studies find no simple method is best everywhere; smcfcs is the principled option when the analysis has non-linear terms or interactions.</dd>
+      <dt>How to read it</dt>
+      <dd>For interactions (say Na/K × sex), impute separately within each sex or include the product terms in the imputation model. Otherwise the imputed data carry no interaction and the estimate shrinks towards none.</dd>
+    </dl>
+
+<pre><code>meth <- make.method(d)
+meth["nak_ratio"] <- "~ I(una / uk)"         # recomputed from imputed Na and K
+pred <- make.predictorMatrix(d)
+pred[c("una", "uk"), "nak_ratio"] <- 0        # Na and K are not imputed from the ratio
+imp <- mice(d, method = meth, predictorMatrix = pred, m = 30, seed = 2026)</code></pre>
+    <p>The <code>~ I(...)</code> method tells mice to compute the ratio rather than impute it. The predictor-matrix line stops a circular loop in which the ratio would help impute its own components.</p>
+
+    <div class="callout example">
+      <div class="callout-title">Example · why the ratio</div>
+      <p>One reason to use the sodium-to-potassium ratio from a spot urine is that both concentrations rise and fall with how dilute the sample is, so dilution largely cancels in the ratio. That makes the ratio a sensible exposure to analyse, and therefore a variable whose relationship with the outcome the imputation must preserve.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="survey-survival">
+    <h2>7. MI with survey weights and survival outcomes</h2>
+    <p class="point">The imputation model must carry the survey design and the survival outcome; for survival, use the event indicator and the cumulative hazard, not raw follow-up time.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>Surveys</strong>: include the weights (or the variables that build them) and the strata and PSUs as predictors when imputing, then analyse each completed dataset with the full survey design and pool with Rubin’s rules. <strong>Survival</strong>: White and Royston (2009) showed the outcome is best represented by the event indicator plus the Nelson–Aalen estimate of the cumulative hazard at each person’s follow-up time; in their simulations, using raw or log time instead performed worse.</dd>
+      <dt>Why it matters</dt>
+      <dd>Ignoring the design in imputation can bias estimates for oversampled groups. Ignoring the survival outcome, or entering it badly, attenuates hazard ratios, which is exactly the estimate Project 3 reports.</dd>
+      <dt>How to read it</dt>
+      <dd>The Nelson–Aalen approach is an approximation that works best when effects are modest and events are not very common. With competing risks (Lecture 3.7), include an indicator and a cumulative hazard for each cause, or use smcfcs, which supports competing-risks models.</dd>
+    </dl>
+
+<pre><code>d$H0 <- nelsonaalen(d, fu_months, cvd_death)   # Nelson–Aalen cumulative hazard
+pred <- make.predictorMatrix(d)
+pred[, c("SEQN", "fu_months")] <- 0   # H0 and the event indicator stand in for time
+imp <- mice(d, m = 30, predictorMatrix = pred, seed = 2026)  # d holds weights, strata
+library(survey); library(mitools)
+des <- svydesign(ids = ~SDMVPSU, strata = ~SDMVSTRA, weights = ~wt, nest = TRUE,
+                 data = imputationList(complete(imp, "all")))
+fits <- with(subset(des, RIDAGEYR >= 20),
+             svycoxph(Surv(fu_months, cvd_death) ~ nak_ratio + RIDAGEYR + RIAGENDR))
+summary(MIcombine(fits))                        # Rubin's rules, design-based SEs</code></pre>
+    <p>The first three lines add the cumulative hazard, stop raw time and the ID from acting as predictors, and impute with the design variables in the data. The rest builds one survey design over all 30 completed datasets, subsets it to adults, fits the survey-weighted Cox model in each, and pools.</p>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Imputing on the full file, then filtering each completed dataset to the analysis sample before building the design. That is the subsetting error of Lecture 3.4 repeated <em>m</em> times. Impute on everyone, build the design on each completed full file, then <code>subset()</code> the design.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">Example · Saudi and GCC surveys</div>
+      <p>The same recipe applies to the Saudi Health Interview Survey or a GCC STEPS file. Region is part of the sampling design, and measurement completeness often differs by region (blood or urine samples are harder to collect and transport from remote areas). Put region, the PSU identifiers and the weight in the imputation model; otherwise imputed values are pulled towards the regions with the most complete data.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="mnar">
+    <h2>8. Sensitivity analysis for MNAR</h2>
+    <p class="point">Because MAR can’t be checked, show how far the answer moves if missing people differ systematically from similar observed people.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>Delta adjustment</strong>: impute under MAR, then shift the imputed values by a chosen amount δ (“people with missing urine have Na/K about 10% higher than similar people with urine”), re-analyse and pool. Repeat over a range of δ. The <strong>tipping point</strong> is the δ at which the conclusion changes.</dd>
+      <dt>Why it matters</dt>
+      <dd>It turns an untestable assumption into a transparent statement reviewers can judge: “the hazard ratio stays above 1 unless missing participants’ ratios are more than 30% lower than observed participants like them.”</dd>
+      <dt>How to read it</dt>
+      <dd>Choose the δ range from evidence (who skips the exam, what non-responders are known to be like), not from what makes the result look stable. A large tipping point is reassuring; a small one means the result rests on MAR.</dd>
+    </dl>
+
+<pre><code>for (delta in c(-0.2, -0.1, 0, 0.1, 0.2)) {      # shifts on the log scale
+  post <- make.post(d)
+  post["log_nak"] <- paste("imp[[j]][, i] <- imp[[j]][, i] +", delta)
+  imp_d <- mice(d, predictorMatrix = pred, post = post, m = 30,
+                seed = 2026, printFlag = FALSE)
+  fit_d <- with(imp_d, coxph(Surv(fu_months, cvd_death) ~ log_nak + RIDAGEYR + RIAGENDR))
+  print(summary(pool(fit_d), conf.int = TRUE, exponentiate = TRUE)[1, ])
+}</code></pre>
+    <p>Each pass shifts every imputed log Na/K by δ (0.1 on the log scale is about 10% higher), re-imputes, refits and prints the pooled hazard ratio, so you can see where the conclusion tips. In the real analysis, swap <code>coxph</code> for the survey-weighted fit of section 7.</p>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Writing “missing data were handled by multiple imputation” as if that settles it. MI handles MAR. The paper should also say why MAR is plausible and show at least one MNAR sensitivity analysis for the main exposure.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>In a cohort, income is missing for 25% of participants, mostly those with high incomes. Income is a covariate in a Cox model for cardiovascular death; nothing about death predicts whether income is missing once the model’s covariates are known. Is complete-case analysis biased for the exposure’s hazard ratio?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>No. Missingness depends on income itself (MNAR for income), but not on the outcome given the covariates, so CC is unbiased for the coefficients, just less precise. Standard MI under MAR could actually be biased here unless something predicts the missing incomes well. CC would be biased for the mean income, though.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A colleague imputes missing urine Na/K using age, sex, BMI and blood pressure but leaves out death and follow-up “to avoid circularity”. What happens to the hazard ratio, and how would you fix it?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>It is biased towards 1, because imputed ratios carry no link with death. Add the event indicator and the Nelson–Aalen cumulative hazard to the imputation model (White and Royston 2009), not raw or log time.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Five imputations give hazard ratios of 1.21, 1.35, 1.18, 1.40 and 1.25, each with a standard error of about 0.08 on the log scale. Is five enough, and what does the spread tell you?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>On the log scale the five estimates have a standard deviation of about 0.07, close to the within-dataset standard error, so the between-imputation variance is roughly half the total: a lot of information is missing. Five is too few for a stable standard error and p-value; use at least as many imputations as the percentage of incomplete cases, and check the result is stable across seeds.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>The analysis model includes a Na/K × sex interaction, but the imputation model has only main effects. What will the interaction estimate look like, and what should change?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Shrunk towards zero, because imputed values were drawn as if the Na/K–outcome link were the same in both sexes. Impute separately by sex, add the product terms to the imputation model, or use smcfcs with the interaction in the substantive model.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A paper reports an MI result and adds: “Little’s test, p = 0.4, confirmed data were missing at random.” What two things are wrong?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Little’s test addresses MCAR, not MAR, and a non-significant result is not confirmation (it may simply lack power). MAR versus MNAR cannot be tested from the data. The paper should argue the mechanism from data collection and show a delta-adjustment sensitivity analysis.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>van Buuren, <em>Flexible Imputation of Missing Data</em>, 2nd edition (CRC, 2018; free online): mechanisms, MICE, passive imputation, the <code>post</code> argument for delta adjustment, number of imputations. Documentation for the R packages mice, mitools and smcfcs.</li>
+      <li>Rubin, <em>Multiple Imputation for Nonresponse in Surveys</em> (Wiley, 1987). Sterne et al., “Multiple imputation for missing data in epidemiological and clinical research: potential and pitfalls”, <em>BMJ</em> (2009).</li>
+      <li>White, Royston &amp; Wood, “Multiple imputation using chained equations: issues and guidance for practice”, <em>Statistics in Medicine</em> (2011). White &amp; Royston, “Imputing missing covariate values for the Cox model”, <em>Statistics in Medicine</em> (2009).</li>
+      <li>White &amp; Carlin, “Bias and efficiency of multiple imputation compared with complete-case analysis for missing covariate values”, <em>Statistics in Medicine</em> (2010). Bartlett, Harel &amp; Carpenter, “Asymptotically unbiased estimation of exposure odds ratios in complete records logistic regression”, <em>American Journal of Epidemiology</em> (2015). Hughes et al., “Accounting for missing data in statistical analyses: multiple imputation is not always the answer”, <em>International Journal of Epidemiology</em> (2019).</li>
+      <li>Moons et al., “Using the outcome for imputation of missing predictor values was preferred”, <em>Journal of Clinical Epidemiology</em> (2006). Seaman, Bartlett &amp; White, “Multiple imputation of missing covariates with non-linear effects and interactions: an evaluation of statistical methods”, <em>BMC Medical Research Methodology</em> (2012). Bartlett et al., “Multiple imputation of covariates by fully conditional specification: accommodating the substantive model”, <em>Statistical Methods in Medical Research</em> (2015).</li>
+      <li>Reiter, Raghunathan &amp; Kinney, “The importance of modeling the sampling design in multiple imputation for missing data”, <em>Survey Methodology</em> (2006). Mohan, Pearl &amp; Tian, “Graphical models for inference with missing data”, <em>NeurIPS</em> (2013).</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="3-04-complex-survey-design.html"><small>Previous</small>3.4 Complex survey design</a>
+    <a class="next" href="3-06-survival-analysis.html"><small>Next</small>3.6 Survival analysis</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

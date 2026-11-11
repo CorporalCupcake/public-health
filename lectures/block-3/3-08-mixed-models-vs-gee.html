@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>3.8 Mixed models vs GEE · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/3-08.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-3">Block 3</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 3.8</p>
+  <h1>Longitudinal and clustered data: mixed models vs GEE</h1>
+  <div class="lecture-meta">
+    <span>Block 3 · Biostatistics core</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>Health data come in clumps: visits within patients, patients within clinics, clinics within regions. Observations in a clump resemble each other, so treating them as independent gives you false precision. Mixed models and GEE both fix this, but they answer <strong>different questions</strong>. A mixed model describes what happens to an individual (or a hospital); GEE describes what happens to the population on average. For a logistic model those two numbers differ, and both are correct. This lecture is about choosing between them before you fit anything.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#clustering">Why clustering matters</a></li>
+      <li><a href="#random">Random intercepts and random slopes</a></li>
+      <li><a href="#pooling">Partial pooling: borrowing strength</a></li>
+      <li><a href="#marginal">Subject-specific vs population-averaged effects</a></li>
+      <li><a href="#gee">GEE: working correlation and robust standard errors</a></li>
+      <li><a href="#missing">Dropout and missing data</a></li>
+      <li><a href="#choose">Choosing, few clusters and cluster trials</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="clustering">
+    <h2>1. Why clustering matters</h2>
+    <p class="point">Twenty measurements from one patient are not twenty patients’ worth of information; ignore that and your standard errors shrink for no reason.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Data are <em>clustered</em> when observations share a unit that makes them alike: repeated visits of one person (longitudinal data), patients of one clinic, residents of one district. The <em>intraclass correlation</em> (ICC) measures how alike: the share of total variance that lies between clusters. ICC 0 means the cluster tells you nothing; ICC 1 means everyone in a cluster is identical.</dd>
+      <dt>Why it matters</dt>
+      <dd>Standard regression assumes every row is independent. With clustering, each extra row adds less than one row of information. For anything that varies <em>between</em> clusters (a clinic’s treatment arm, a region’s policy), ignoring clustering makes standard errors too small and p-values too optimistic.</dd>
+      <dt>How to read it</dt>
+      <dd>Patients within the same practice: ICCs are usually small. Across 31 primary care studies the median was 0.01 (Adams et al. 2004). Repeated measurements within the same person: usually large, because people differ far more from each other than from themselves next month.</dd>
+      <dt>What a change means</dt>
+      <dd>Small ICCs matter when clusters are big. The penalty grows with cluster size as well as ICC, which is the design effect you met in Lecture 3.4.</dd>
+    </dl>
+
+    \[ \text{DEFF} = 1 + (m-1)\,\rho \]
+    <p>Here \(m\) is the average cluster size and \(\rho\) the ICC. Divide your sample size by the design effect to get the effective sample size. With 50 patients per clinic and an ICC of 0.02, the design effect is about 2: your 5,000 patients carry the information of about 2,500 independent ones.</p>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · Three levels of clustering in a blood-pressure study</div>
+      <svg class="viz-svg" viewBox="0 0 640 300" role="img" aria-label="A tree with three levels. Top: two clinics, A and B. Middle: two patients under each clinic. Bottom: three visits under each patient. Left labels name the levels: clinic (level 3), patient (level 2), visit (level 1). Bottom note: visits of one patient are strongly correlated; patients of one clinic are weakly correlated.">
+        <g text-anchor="start">
+          <text x="8" y="52" class="viz-bold">Clinic</text>
+          <text x="8" y="70" class="viz-small viz-muted">level 3 · cluster</text>
+          <text x="8" y="142" class="viz-bold">Patient</text>
+          <text x="8" y="160" class="viz-small viz-muted">level 2</text>
+          <text x="8" y="226" class="viz-bold">Visit</text>
+          <text x="8" y="244" class="viz-small viz-muted">level 1 · each BP reading</text>
+        </g>
+        <path d="M280,64 L220,122 M280,64 L340,122 M500,64 L450,122 M500,64 L560,122" class="edge"/>
+        <path d="M220,150 L190,214 M220,150 L220,214 M220,150 L250,214 M340,150 L310,214 M340,150 L340,214 M340,150 L370,214 M450,150 L420,214 M450,150 L450,214 M450,150 L480,214 M560,150 L530,214 M560,150 L560,214 M560,150 L590,214" class="edge"/>
+        <g class="s4">
+          <rect x="220" y="30" width="120" height="34" rx="8" class="node-fill"/>
+          <rect x="440" y="30" width="120" height="34" rx="8" class="node-fill"/>
+        </g>
+        <g class="s1">
+          <rect x="182" y="122" width="76" height="28" rx="8" class="node-fill"/>
+          <rect x="302" y="122" width="76" height="28" rx="8" class="node-fill"/>
+          <rect x="412" y="122" width="76" height="28" rx="8" class="node-fill"/>
+          <rect x="522" y="122" width="76" height="28" rx="8" class="node-fill"/>
+        </g>
+        <g class="s5">
+          <circle cx="190" cy="224" r="10" class="node"/><circle cx="220" cy="224" r="10" class="node"/><circle cx="250" cy="224" r="10" class="node"/>
+          <circle cx="310" cy="224" r="10" class="node"/><circle cx="340" cy="224" r="10" class="node"/><circle cx="370" cy="224" r="10" class="node"/>
+          <circle cx="420" cy="224" r="10" class="node"/><circle cx="450" cy="224" r="10" class="node"/><circle cx="480" cy="224" r="10" class="node"/>
+          <circle cx="530" cy="224" r="10" class="node"/><circle cx="560" cy="224" r="10" class="node"/><circle cx="590" cy="224" r="10" class="node"/>
+        </g>
+        <g text-anchor="middle">
+          <text x="280" y="52" class="viz-bold">Clinic A</text>
+          <text x="500" y="52" class="viz-bold">Clinic B</text>
+          <text x="220" y="141">Patient 1</text><text x="340" y="141">Patient 2</text>
+          <text x="450" y="141">Patient 3</text><text x="560" y="141">Patient 4</text>
+          <text x="400" y="263" class="viz-small">visits of one patient: <tspan class="viz-bold colour s1">strongly alike</tspan></text>
+          <text x="400" y="284" class="viz-small">patients of one clinic: <tspan class="viz-bold colour s4">weakly alike</tspan> (ICC often around 0.01–0.05)</text>
+        </g>
+      </svg>
+      <figcaption>Each level adds its own source of similarity. A mixed model can give each level its own variance; GEE handles the correlation at one chosen level, usually the top one, with robust standard errors.</figcaption>
+    </figure>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>“Ignoring clustering always makes standard errors too small.” Only for effects that vary between clusters. For effects that vary <em>within</em> a cluster, such as change over time within a patient, each person acts as their own control. There, ignoring the correlation usually makes standard errors too <em>large</em>, which is why a paired t-test beats a two-sample one. Either way the naive answer is wrong.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>This is the same problem as leakage in cross-validation. If one patient’s visits land in both the training and test folds, the model is rewarded for recognising patients, not for generalising. Split by patient (scikit-learn’s <code>GroupKFold</code>), and by hospital if you want to claim the model transfers to new hospitals.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="random">
+    <h2>2. Random intercepts and random slopes</h2>
+    <p class="point">A mixed model gives every cluster its own starting level (random intercept) and, if needed, its own rate of change (random slope), drawn from a common distribution.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>“Mixed” means fixed effects plus random effects. Fixed effects are the average intercept and slopes you report. Random effects are each patient’s or clinic’s deviation from them, assumed to come from a normal distribution whose variance the model estimates. A random intercept lets levels differ; a random slope lets trajectories differ.</dd>
+      <dt>Why it matters</dt>
+      <dd>The random-effect variance is the clustering. Modelling it gives correct standard errors, uses every observation (patients with one visit still count), and tells you how much clusters differ, which is often a finding in its own right.</dd>
+      <dt>How to read it</dt>
+      <dd>Read the fixed effects like ordinary regression coefficients. Read the random-effect SD on the outcome scale: a between-patient intercept SD of 12 mmHg means about 95% of patients start within ±24 mmHg of the average. Compare it with the residual SD to see where the variation lives.</dd>
+      <dt>What a change means</dt>
+      <dd>If a random slope variance is large, the average slope describes few individuals. Leaving out a random slope that is really there makes the standard error of the average slope too small.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · Spaghetti plots: random intercepts vs random slopes</div>
+      <svg class="viz-svg" viewBox="0 0 640 270" role="img" aria-label="Two panels of systolic blood pressure over 12 months for eight patients. Left panel, random intercepts only: the patient lines are parallel, starting at different heights, all falling at the same rate as the bold average line. Right panel, random intercepts and slopes: the lines start at different heights and fall or rise at different rates, fanning around the bold average line.">
+        <text x="185" y="22" text-anchor="middle" class="viz-bold">Random intercepts</text>
+        <text x="505" y="22" text-anchor="middle" class="viz-bold">Random intercepts + slopes</text>
+        <g>
+          <line x1="70" x2="300" y1="220" y2="220" class="viz-axis"/><line x1="70" x2="70" y1="40" y2="220" class="viz-axis"/>
+          <line x1="390" x2="620" y1="220" y2="220" class="viz-axis"/><line x1="390" x2="390" y1="40" y2="220" class="viz-axis"/>
+          <line x1="70" x2="300" y1="154.5" y2="154.5" class="viz-grid"/><line x1="70" x2="300" y1="89.1" y2="89.1" class="viz-grid"/>
+          <line x1="390" x2="620" y1="154.5" y2="154.5" class="viz-grid"/><line x1="390" x2="620" y1="89.1" y2="89.1" class="viz-grid"/>
+          <text x="62" y="224" text-anchor="end" class="viz-tick">120</text><text x="62" y="158" text-anchor="end" class="viz-tick">140</text><text x="62" y="93" text-anchor="end" class="viz-tick">160</text>
+          <text x="382" y="224" text-anchor="end" class="viz-tick">120</text><text x="382" y="158" text-anchor="end" class="viz-tick">140</text><text x="382" y="93" text-anchor="end" class="viz-tick">160</text>
+          <text x="70" y="238" text-anchor="middle" class="viz-tick">0</text><text x="185" y="238" text-anchor="middle" class="viz-tick">6</text><text x="300" y="238" text-anchor="middle" class="viz-tick">12</text>
+          <text x="390" y="238" text-anchor="middle" class="viz-tick">0</text><text x="505" y="238" text-anchor="middle" class="viz-tick">6</text><text x="620" y="238" text-anchor="middle" class="viz-tick">12</text>
+          <text x="185" y="260" text-anchor="middle" class="viz-label">Months since enrolment</text>
+          <text x="505" y="260" text-anchor="middle" class="viz-label">Months since enrolment</text>
+          <text x="16" y="130" text-anchor="middle" class="viz-label" transform="rotate(-90 16 130)">Systolic BP (mmHg)</text>
+        </g>
+        <line x1="70.0" y1="167.6" x2="300.0" y2="199.1" class="stroke s5" stroke-width="1.4"/><circle cx="70.0" cy="169.5" r="2.6" class="dot s5"/><circle cx="127.5" cy="171.8" r="2.6" class="dot s5"/><circle cx="185.0" cy="185.0" r="2.6" class="dot s5"/><circle cx="242.5" cy="193.5" r="2.6" class="dot s5"/><circle cx="300.0" cy="205.8" r="2.6" class="dot s5"/>
+        <line x1="70.0" y1="151.3" x2="300.0" y2="182.7" class="stroke s5" stroke-width="1.4"/><circle cx="70.0" cy="152.8" r="2.6" class="dot s5"/><circle cx="127.5" cy="151.1" r="2.6" class="dot s5"/><circle cx="185.0" cy="163.9" r="2.6" class="dot s5"/><circle cx="242.5" cy="167.4" r="2.6" class="dot s5"/><circle cx="300.0" cy="180.9" r="2.6" class="dot s5"/>
+        <line x1="70.0" y1="138.2" x2="300.0" y2="169.6" class="stroke s5" stroke-width="1.4"/><circle cx="70.0" cy="135.3" r="2.6" class="dot s5"/><circle cx="127.5" cy="144.7" r="2.6" class="dot s5"/><circle cx="185.0" cy="165.9" r="2.6" class="dot s5"/><circle cx="242.5" cy="155.6" r="2.6" class="dot s5"/><circle cx="300.0" cy="166.0" r="2.6" class="dot s5"/>
+        <line x1="70.0" y1="128.4" x2="300.0" y2="159.8" class="stroke s5" stroke-width="1.4"/><circle cx="70.0" cy="124.8" r="2.6" class="dot s5"/><circle cx="127.5" cy="148.4" r="2.6" class="dot s5"/><circle cx="185.0" cy="156.6" r="2.6" class="dot s5"/><circle cx="242.5" cy="158.3" r="2.6" class="dot s5"/><circle cx="300.0" cy="163.2" r="2.6" class="dot s5"/>
+        <line x1="70.0" y1="118.5" x2="300.0" y2="150.0" class="stroke s5" stroke-width="1.4"/><circle cx="70.0" cy="116.3" r="2.6" class="dot s5"/><circle cx="127.5" cy="126.7" r="2.6" class="dot s5"/><circle cx="185.0" cy="130.5" r="2.6" class="dot s5"/><circle cx="242.5" cy="146.7" r="2.6" class="dot s5"/><circle cx="300.0" cy="147.7" r="2.6" class="dot s5"/>
+        <line x1="70.0" y1="108.7" x2="300.0" y2="140.1" class="stroke s5" stroke-width="1.4"/><circle cx="70.0" cy="105.9" r="2.6" class="dot s5"/><circle cx="127.5" cy="121.3" r="2.6" class="dot s5"/><circle cx="185.0" cy="112.1" r="2.6" class="dot s5"/><circle cx="242.5" cy="128.3" r="2.6" class="dot s5"/><circle cx="300.0" cy="131.5" r="2.6" class="dot s5"/>
+        <line x1="70.0" y1="95.6" x2="300.0" y2="127.1" class="stroke s5" stroke-width="1.4"/><circle cx="70.0" cy="100.1" r="2.6" class="dot s5"/><circle cx="127.5" cy="108.8" r="2.6" class="dot s5"/><circle cx="185.0" cy="113.8" r="2.6" class="dot s5"/><circle cx="242.5" cy="120.0" r="2.6" class="dot s5"/><circle cx="300.0" cy="122.5" r="2.6" class="dot s5"/>
+        <line x1="70.0" y1="79.3" x2="300.0" y2="110.7" class="stroke s5" stroke-width="1.4"/><circle cx="70.0" cy="77.5" r="2.6" class="dot s5"/><circle cx="127.5" cy="90.3" r="2.6" class="dot s5"/><circle cx="185.0" cy="101.9" r="2.6" class="dot s5"/><circle cx="242.5" cy="106.6" r="2.6" class="dot s5"/><circle cx="300.0" cy="101.9" r="2.6" class="dot s5"/>
+        <line x1="70.0" y1="121.8" x2="300.0" y2="153.2" class="stroke s1" stroke-width="3.5"/>
+        <line x1="390.0" y1="167.6" x2="620.0" y2="183.3" class="stroke s5" stroke-width="1.4"/><circle cx="390.0" cy="173.5" r="2.6" class="dot s5"/><circle cx="447.5" cy="169.8" r="2.6" class="dot s5"/><circle cx="505.0" cy="172.4" r="2.6" class="dot s5"/><circle cx="562.5" cy="190.1" r="2.6" class="dot s5"/><circle cx="620.0" cy="183.0" r="2.6" class="dot s5"/>
+        <line x1="390.0" y1="151.3" x2="620.0" y2="115.9" class="stroke s5" stroke-width="1.4"/><circle cx="390.0" cy="141.9" r="2.6" class="dot s5"/><circle cx="447.5" cy="156.9" r="2.6" class="dot s5"/><circle cx="505.0" cy="135.9" r="2.6" class="dot s5"/><circle cx="562.5" cy="125.5" r="2.6" class="dot s5"/><circle cx="620.0" cy="121.8" r="2.6" class="dot s5"/>
+        <line x1="390.0" y1="138.2" x2="620.0" y2="201.0" class="stroke s5" stroke-width="1.4"/><circle cx="390.0" cy="134.6" r="2.6" class="dot s5"/><circle cx="447.5" cy="154.3" r="2.6" class="dot s5"/><circle cx="505.0" cy="180.1" r="2.6" class="dot s5"/><circle cx="562.5" cy="179.3" r="2.6" class="dot s5"/><circle cx="620.0" cy="196.2" r="2.6" class="dot s5"/>
+        <line x1="390.0" y1="128.4" x2="620.0" y2="120.5" class="stroke s5" stroke-width="1.4"/><circle cx="390.0" cy="121.6" r="2.6" class="dot s5"/><circle cx="447.5" cy="116.0" r="2.6" class="dot s5"/><circle cx="505.0" cy="121.8" r="2.6" class="dot s5"/><circle cx="562.5" cy="121.6" r="2.6" class="dot s5"/><circle cx="620.0" cy="129.9" r="2.6" class="dot s5"/>
+        <line x1="390.0" y1="118.5" x2="620.0" y2="153.9" class="stroke s5" stroke-width="1.4"/><circle cx="390.0" cy="114.1" r="2.6" class="dot s5"/><circle cx="447.5" cy="131.8" r="2.6" class="dot s5"/><circle cx="505.0" cy="139.5" r="2.6" class="dot s5"/><circle cx="562.5" cy="154.2" r="2.6" class="dot s5"/><circle cx="620.0" cy="160.9" r="2.6" class="dot s5"/>
+        <line x1="390.0" y1="108.7" x2="620.0" y2="195.1" class="stroke s5" stroke-width="1.4"/><circle cx="390.0" cy="112.6" r="2.6" class="dot s5"/><circle cx="447.5" cy="121.0" r="2.6" class="dot s5"/><circle cx="505.0" cy="166.6" r="2.6" class="dot s5"/><circle cx="562.5" cy="184.0" r="2.6" class="dot s5"/><circle cx="620.0" cy="193.4" r="2.6" class="dot s5"/>
+        <line x1="390.0" y1="95.6" x2="620.0" y2="76.0" class="stroke s5" stroke-width="1.4"/><circle cx="390.0" cy="85.2" r="2.6" class="dot s5"/><circle cx="447.5" cy="86.6" r="2.6" class="dot s5"/><circle cx="505.0" cy="99.5" r="2.6" class="dot s5"/><circle cx="562.5" cy="99.0" r="2.6" class="dot s5"/><circle cx="620.0" cy="73.4" r="2.6" class="dot s5"/>
+        <line x1="390.0" y1="79.3" x2="620.0" y2="126.4" class="stroke s5" stroke-width="1.4"/><circle cx="390.0" cy="84.6" r="2.6" class="dot s5"/><circle cx="447.5" cy="99.1" r="2.6" class="dot s5"/><circle cx="505.0" cy="95.8" r="2.6" class="dot s5"/><circle cx="562.5" cy="106.7" r="2.6" class="dot s5"/><circle cx="620.0" cy="125.3" r="2.6" class="dot s5"/>
+        <line x1="390.0" y1="121.8" x2="620.0" y2="144.9" class="stroke s1" stroke-width="3.5"/>
+      </svg>
+      <figcaption>Grey: eight patients (dots are visits, lines their fitted trajectories). Teal: the fixed effect, the average trajectory. On the left only levels differ; on the right the rate of change differs too, so a single average slope hides real heterogeneity. Illustrative numbers.</figcaption>
+    </figure>
+
+<pre><code>library(lme4); library(lmerTest)   # lmerTest adds p-values
+# SBP over time, own intercept and slope per patient, patients within clinics
+m1 &lt;- lmer(sbp ~ months * arm + (1 + months | patient) + (1 | clinic),
+           data = bp)
+summary(m1, ddf = "Kenward-Roger")   # small-sample-safe tests
+VarCorr(m1)                          # SDs of the random effects
+performance::icc(m1)                 # share of variance between clusters</code></pre>
+    <p>The formula reads: SBP depends on time, arm and their interaction (the fixed effects); each patient gets their own intercept and time slope; each clinic gets its own intercept. <code>VarCorr</code> shows how much patients and clinics differ.</p>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Ignoring a <code>boundary (singular) fit</code> message. It means a variance was estimated as zero or a correlation as ±1: the data cannot support that random-effects structure. Simplify it (drop the random-slope correlation, then the slope) and say so. Do not report a model that lme4 has warned you about.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Runners in a marathon: a random intercept is everyone starting from a different spot on the road; a random slope is everyone running at a different pace. The fixed effect is the pace of the average runner.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="pooling">
+    <h2>3. Partial pooling: borrowing strength</h2>
+    <p class="point">A mixed model’s estimate for each cluster is a weighted average of that cluster’s own data and the overall mean, and small clusters lean hardest on the mean.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Three ways to estimate each hospital’s mortality. <em>No pooling</em>: each hospital’s raw rate. <em>Complete pooling</em>: one rate for all. <em>Partial pooling</em>: the mixed model’s predicted random effects (BLUPs, “best linear unbiased predictors”), which pull each raw rate toward the mean. The weight on a hospital’s own data rises with its size and with how much hospitals truly differ.</dd>
+      <dt>Why it matters</dt>
+      <dd>Raw rates from small hospitals are mostly noise. Rank hospitals by raw rate and the top and bottom of the table fill with the smallest ones, through luck. Partial pooling gives estimates that are, on average, closer to the truth.</dd>
+      <dt>How to read it</dt>
+      <dd>A hospital estimate that barely moved from its raw rate is well informed by its own data. One pulled almost to the mean carries little information of its own, whatever its raw rate.</dd>
+      <dt>What a change means</dt>
+      <dd>As the between-hospital variance goes to zero, every estimate collapses to the overall mean (complete pooling). As it grows, the estimates return to the raw rates (no pooling). The model estimates this variance from the data, so it chooses its own amount of shrinkage.</dd>
+    </dl>
+
+    <div class="widget" data-widget="partial-pooling">
+      <div class="widget-title">Shrink the hospital league table</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Twelve hospitals, smallest at the top. Slide the between-hospital SD from 0 (complete pooling) to ∞ (no pooling) and watch the small hospitals move most. Then press “Model’s estimate” and compare the errors against the true rates.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>“Shrinkage hides bad hospitals.” It hides <em>unproven</em> ones. A small hospital with three deaths in ten patients might be dangerous or unlucky, and its data cannot tell which. Shrinkage states that honestly. The answer to a worrying small hospital is more data or a case-note review, not a league-table position based on ten patients.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Hospital profiling</div>
+      <p>The US Medicare 30-day mortality measures for heart attack, developed by Krumholz and colleagues (2006), are built on a hierarchical (mixed) logistic model with a random intercept per hospital. Each hospital’s risk-standardised rate comes from its shrunken estimate, not its raw rate. That design choice is what stops a small hospital with one bad month from topping the list.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>Partial pooling is ridge regression on the cluster effects. A normal random effect is an L2 penalty whose strength is the residual variance divided by the between-cluster variance. The difference is that a mixed model estimates the penalty from the data (empirical Bayes) instead of by cross-validation. Fully Bayesian hierarchical models (Lecture 8.8) put a prior on it instead. Python: <code>statsmodels</code> <code>MixedLM</code>.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="marginal">
+    <h2>4. Subject-specific vs population-averaged effects</h2>
+    <p class="point">For a logistic model, the odds ratio for one person and the odds ratio for the population are different numbers, and the population one is always closer to 1.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A mixed model’s coefficient is <em>conditional</em> (subject-specific): the change in odds for a given person, holding their random effect fixed. A GEE coefficient is <em>marginal</em> (population-averaged): the change in the odds of the population’s average risk. Averaging S-shaped curves that sit at different heights gives a flatter S, so the marginal effect is smaller.</dd>
+      <dt>Why it matters</dt>
+      <dd>The two estimate different things, so they will disagree even when both are fitted correctly. Comparing a GLMM odds ratio with a GEE or cohort odds ratio without saying which is which is a common error in meta-analyses and discussions.</dd>
+      <dt>How to read it</dt>
+      <dd>With identity (linear) links the two coincide. With log links only the intercept differs. With logit and probit links the slopes differ, and the gap grows with the random-intercept variance: roughly, if \(\sigma\) is the random-intercept SD on the log-odds scale, the log odds ratio shrinks by a factor of \(1/\sqrt{1 + 0.35\,\sigma^2}\).</dd>
+      <dt>What a change means</dt>
+      <dd>With \(\sigma = 2\), a subject-specific odds ratio of 3 corresponds to a population-averaged odds ratio of about 2. Nothing is wrong with either; they answer different questions.</dd>
+    </dl>
+
+    <div class="widget" data-widget="marginal-conditional">
+      <div class="widget-title">Average the S-curves</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Grey curves are individual people; teal is a typical person; amber is the population average. Raise the random-intercept SD and watch the amber curve flatten while every person’s odds ratio stays the same. Switch to the linear link and the gap disappears.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reading a GLMM odds ratio for a <em>between-person</em> variable, such as sex, as a population contrast. Its literal meaning is “a man versus a woman who share the same random effect”, a comparison nobody can observe. For between-cluster covariates and policy questions, the population-averaged effect is usually what you want.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Which number for which reader</div>
+      <p>A smoking-cessation programme is evaluated by whether patients are abstinent at each visit. A health ministry asks, “if we roll this out, by how much will the abstinence rate rise?” That is a population-averaged question: GEE or a marginalised estimate from the GLMM. A clinician asks, “how much does this raise my patient’s odds of quitting?” That is subject-specific: the GLMM coefficient.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Raising the bar by 10 cm makes little difference to the very best and very worst high jumpers: one clears it anyway, the other fails anyway. The effect is concentrated in the middle of the field. Averaged over everyone, the change in the share who clear the bar looks smaller than it does for a typical jumper.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="gee">
+    <h2>5. GEE: working correlation and robust standard errors</h2>
+    <p class="point">GEE fits an ordinary GLM for the population average, makes a guess about the correlation, and then uses a robust (sandwich) standard error that stays valid even if the guess is wrong.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Generalised estimating equations (Liang and Zeger 1986) model only the mean and a <em>working correlation</em> within clusters. No distribution is assumed for the cluster effects. The sandwich variance estimates the standard error from the observed spread of the cluster-level residuals, not from the assumed correlation.</dd>
+      <dt>Why it matters</dt>
+      <dd>It is robust and simple: the coefficients are consistent if the mean model is right, whatever the true correlation. The price is that it needs many clusters, gives no cluster-level estimates, and is weaker with missing data.</dd>
+      <dt>How to read it</dt>
+      <dd>The working correlation affects efficiency, not validity. A good choice narrows the confidence intervals; a poor one widens them but leaves them honest, provided there are enough clusters.</dd>
+      <dt>What a change means</dt>
+      <dd>If robust and model-based standard errors differ a lot, your working correlation is a poor guess. Report the robust ones.</dd>
+    </dl>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Working correlation</th><th>Assumes</th><th>Typical use</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Exchangeable</strong></td><td>Any two observations in a cluster are equally correlated</td><td>Patients within clinics; the usual default</td></tr>
+          <tr><td><strong>AR(1)</strong></td><td>Correlation fades with the gap in time</td><td>Evenly spaced repeated measures</td></tr>
+          <tr><td><strong>Independence</strong></td><td>No correlation; robust SEs do all the work</td><td>Safest with time-varying exposures, where other choices can bias the coefficients (Pepe and Anderson 1994); what survey software does (Lecture 3.4)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+<pre><code>library(geepack)
+bp &lt;- bp[order(bp$patient, bp$months), ]  # rows of a cluster must be together
+g1 &lt;- geeglm(controlled ~ months + arm, id = patient, data = bp,
+             family = binomial, corstr = "exchangeable")
+summary(g1)        # 'Std.err' is the robust (sandwich) SE
+exp(coef(g1))      # population-averaged odds ratios
+# The matching mixed model, for a subject-specific odds ratio:
+m2 &lt;- glmer(controlled ~ months + arm + (1 | patient), data = bp,
+            family = binomial)</code></pre>
+    <p><code>geeglm</code> fits a logistic model for whether BP is controlled at each visit, treating each patient’s visits as one cluster with equal correlation between them. Expect <code>m2</code>’s odds ratios to be further from 1 than <code>g1</code>’s.</p>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Forgetting to sort the data. <code>geeglm</code> treats each consecutive run of the same <code>id</code> as a cluster; if a patient’s rows are scattered, one patient becomes several clusters and the standard errors are wrong without warning.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="missing">
+    <h2>6. Dropout and missing data</h2>
+    <p class="point">Mixed models fitted by likelihood are valid when dropout depends on what you have already observed; standard GEE is not.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>In longitudinal studies people miss visits and drop out. Using the language of Lecture 3.5: standard GEE is unbiased if missingness is completely at random or depends only on covariates in the model. Likelihood-based mixed models are unbiased under missing at random (MAR), where dropout may depend on earlier observed outcomes, provided the model is right.</dd>
+      <dt>Why it matters</dt>
+      <dd>Dropout is rarely random. Patients whose BP stays high may stop attending, or be moved to another treatment. If that depends on their last recorded BP, the data are MAR, and an unweighted GEE will be biased.</dd>
+      <dt>How to read it</dt>
+      <dd>Look at the dropout pattern first: plot mean outcome over time separately for completers and for each dropout time. Diverging lines before dropout mean missingness relates to observed outcomes.</dd>
+      <dt>What a change means</dt>
+      <dd>To keep GEE under MAR, weight each observation by the inverse probability of remaining in the study (weighted GEE), or multiply impute first. Neither method rescues you if dropout depends on the unseen value itself (MNAR); that needs a sensitivity analysis.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Carrying the last observation forward (LOCF). It assumes nobody changes after dropout, which is rarely true, and it makes the data look less variable than they are. A mixed model on all available visits is almost always better and needs no imputation.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example</div>
+      <p>In a 12-month antihypertensive trial, 20% drop out, mostly after a high reading. A complete-case analysis keeps the people who did well and overstates the benefit. A mixed model uses everyone’s early visits; their high readings inform the estimate of where those patients were heading, which is the MAR assumption at work.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="choose">
+    <h2>7. Choosing, few clusters and cluster trials</h2>
+    <p class="point">Choose by the question first, then check that you have enough clusters for the method’s standard errors to be trusted.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Situation</th><th>Lean towards</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td>Policy or population question (“what happens to the rate?”)</td><td>GEE, or a marginalised GLMM</td><td>Gives the population-averaged effect directly</td></tr>
+          <tr><td>Individual trajectories, cluster-specific estimates, prediction</td><td>Mixed model</td><td>Only it estimates each patient’s or hospital’s effect</td></tr>
+          <tr><td>Dropout related to earlier outcomes (MAR)</td><td>Mixed model, or weighted GEE</td><td>Unweighted GEE is biased under MAR</td></tr>
+          <tr><td>Fewer than about 30–40 clusters</td><td>Mixed model with Kenward–Roger tests, or GEE with a bias-corrected sandwich</td><td>The plain sandwich SE is too small with few clusters</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <dl class="facets">
+      <dt>Few clusters</dt>
+      <dd>The sandwich estimator learns the variance from the clusters themselves, so with 10 or 15 clusters it is too small and tests reject too often. Mancl and DeRouen (2001) found plain robust tests with two to three times their nominal size in small samples. Use their correction (R package <code>geesmv</code>), a mixed model with Kenward–Roger degrees of freedom, or analyse cluster-level summaries.</dd>
+      <dt>Cluster randomised trials</dt>
+      <dd>When clinics, schools or villages are randomised, the cluster is the unit of inference. The sample size must include the design effect, the analysis must account for clustering, and the ICC must be reported (CONSORT extension for cluster trials, Campbell et al. 2012).</dd>
+    </dl>
+
+    <div class="callout example">
+      <div class="callout-title">Example</div>
+      <p>The EAGLE trial of AI-ECG (Lecture 2.15) randomised 120 primary care teams, not 22,641 patients. With 120 clusters, sandwich standard errors behave well. The same trial with 12 teams would have needed small-sample corrections and would have been far less informative, however many patients each team saw.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">In the Gulf</div>
+      <p>Saudi Arabia has 13 administrative regions, and the GCC has six countries. A comparison of regional programmes, or a policy rolled out region by region, therefore has at most 13 clusters, and a GCC-level analysis has six (the problem Project 4 faces). Thousands of patients per region do not fix this. Where you can, randomise or analyse at a lower level, such as primary health care centres, and use small-sample corrections whenever clusters are few.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Counting patients instead of clusters. A regional analysis with 400,000 patients in 13 regions has 13 independent units for any region-level effect. Report the number of clusters prominently; reviewers will look for it.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>A cluster randomised trial of 20 clinics is analysed with ordinary logistic regression on 6,000 patients and reports p = 0.01. What is your first concern?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The analysis ignores clustering, and the treatment varies between clinics, so the standard error is too small. Even a small ICC gives a large design effect with 300 patients per clinic. Reanalyse with a mixed model (Kenward–Roger) or GEE with a bias-corrected sandwich, since 20 clusters is few. The p-value will rise, perhaps a lot.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>On the same data, a GLMM gives an odds ratio of 2.6 and GEE gives 1.8. A colleague says one model must be wrong. Is that right?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>No. The GLMM gives a subject-specific odds ratio, GEE a population-averaged one, and with a sizeable random-intercept variance the subject-specific one is expected to be further from 1. Report the one that matches the question and say which it is.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A hospital with 3 deaths in 10 heart-attack admissions tops the raw mortality table. In the mixed model it sits near the middle. Is the model covering for it?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>No. Ten admissions carry little information, so the model rightly relies mostly on the average. The raw rate is consistent with both a dangerous and an unlucky hospital. Flag it for more data or a case-note review rather than ranking it.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>In a weight-loss trial, people whose weight went up at their last visit tend not to come back. You must choose between GEE and a linear mixed model. Which, and why?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The mixed model. Dropout depends on observed earlier outcomes, which is MAR, and likelihood-based mixed models are valid under MAR while unweighted GEE is not. If the trial needs a population-averaged estimate, use weighted GEE or multiple imputation, and add a sensitivity analysis for MNAR.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>For a continuous outcome, a GEE and a linear mixed model give very different slopes for time. Should that happen?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Not by design: with an identity link the two target the same coefficient. A big gap is a warning sign: informative dropout (GEE is biased under MAR and the mixed model is not), a misspecified mean model, or a covariate whose within- and between-cluster effects differ. Investigate before reporting either.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Fitzmaurice, Laird &amp; Ware, <em>Applied Longitudinal Analysis</em>, 2nd ed. (Wiley, 2011). Mixed models, GEE, marginal vs conditional effects and dropout.</li>
+      <li>Gelman &amp; Hill, <em>Data Analysis Using Regression and Multilevel/Hierarchical Models</em> (Cambridge, 2007). Partial pooling.</li>
+      <li>Kirkwood &amp; Sterne, <em>Essential Medical Statistics</em>, 2nd ed., chapter on the analysis of clustered data.</li>
+      <li>Liang &amp; Zeger, “Longitudinal data analysis using generalized linear models”, <em>Biometrika</em> (1986); Zeger, Liang &amp; Albert, “Models for longitudinal data: a generalized estimating equation approach”, <em>Biometrics</em> (1988); Pepe &amp; Anderson, “A cautionary note on inference for marginal regression models with longitudinal data and general correlated response data”, <em>Communications in Statistics: Simulation and Computation</em> (1994).</li>
+      <li>Hubbard et al., “To GEE or not to GEE: comparing population average and mixed models for estimating the associations between neighborhood risk factors and health”, <em>Epidemiology</em> (2010).</li>
+      <li>Mancl &amp; DeRouen, “A covariance estimator for GEE with improved small-sample properties”, <em>Biometrics</em> (2001); Kenward &amp; Roger, “Small sample inference for fixed effects from restricted maximum likelihood”, <em>Biometrics</em> (1997).</li>
+      <li>Robins, Rotnitzky &amp; Zhao, “Analysis of semiparametric regression models for repeated outcomes in the presence of missing data”, <em>JASA</em> (1995).</li>
+      <li>Adams et al., “Patterns of intra-cluster correlation from primary care research to inform study design and analysis”, <em>Journal of Clinical Epidemiology</em> (2004).</li>
+      <li>Campbell, Piaggio, Elbourne &amp; Altman, “CONSORT 2010 statement: extension to cluster randomised trials”, <em>BMJ</em> (2012).</li>
+      <li>Krumholz et al., “An administrative claims model suitable for profiling hospital performance based on 30-day mortality rates among patients with an acute myocardial infarction”, <em>Circulation</em> (2006).</li>
+      <li>Bates, Mächler, Bolker &amp; Walker, “Fitting linear mixed-effects models using lme4”, <em>Journal of Statistical Software</em> (2015); Halekoh, Højsgaard &amp; Yan, “The R package geepack for generalized estimating equations”, <em>Journal of Statistical Software</em> (2006).</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="3-07-competing-risks-multistate.html"><small>Previous</small>3.7 Competing risks and multistate models</a>
+    <a class="next" href="3-09-time-series.html"><small>Next</small>3.9 Time series for health data</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

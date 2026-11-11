@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>3.7 Competing risks and multistate models · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/3-07.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-3">Block 3</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 3.7</p>
+  <h1>Competing risks and multistate models</h1>
+  <div class="lecture-meta">
+    <span>Block 3 · Biostatistics core</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>When people can die of something else first, the probability of the event you care about is not 1 − Kaplan-Meier. You need the <strong>cumulative incidence function</strong> for risk, and you must decide whether your question is about <strong>causes</strong> (use cause-specific hazards) or about <strong>who will actually have the event</strong> (use cumulative incidence, perhaps via a Fine-Gray model). Project 3 studies cardiovascular death in adults who often die of other causes, and its novelty rests partly on doing this properly. Multistate models are the general frame that holds survival, competing risks and the Markov models of Lecture 1.11 together.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#competing">Competing events and the 1 − KM trap</a></li>
+      <li><a href="#cif">The cumulative incidence function</a></li>
+      <li><a href="#hazards">Two kinds of hazard</a></li>
+      <li><a href="#which">Which question each answers, and reporting both</a></li>
+      <li><a href="#multistate">Multistate models: the general frame</a></li>
+      <li><a href="#project3">Competing risks in Project 3</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="competing">
+    <h2>1. Competing events and the 1 − KM trap</h2>
+    <p class="point">A competing event is one that makes the event of interest impossible; treating it as censoring answers a question about a world where nobody dies of anything else.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>In a study of cardiovascular (CVD) death, a death from cancer is a <strong>competing event</strong>: after it, a CVD death can never happen. Censoring is different: a censored person could still have the event, we just stop watching.</dd>
+      <dt>Why it matters</dt>
+      <dd>Kaplan-Meier treats censored people as if they carry on with the same risk as those still followed. A person who died of cancer does not carry on; their risk of CVD death is zero. So 1 − KM for CVD death is too high. It estimates the risk in a hypothetical world where the competing causes were abolished (and even that needs the causes to be independent, which cannot be checked).</dd>
+      <dt>How to read it</dt>
+      <dd>The bias is small when competing events are rare, and large when they are common: older people, long follow-up, or sick populations. The gap grows with the cumulative incidence of the competing event, so check how many competing deaths there are before deciding it does not matter.</dd>
+      <dt>What a change means</dt>
+      <dd>Doubling the competing death rate does not change the cause-specific rate of CVD death at all, but it lowers the share of people who will ever die of CVD, because more of them die of something else first.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · Competing risks as states and transitions</div>
+      <svg class="viz-svg" viewBox="0 0 640 260" role="img" aria-label="A box on the left labelled Alive, under follow-up, with two arrows to boxes on the right: CVD death at the top, governed by the CVD death hazard h1 of t, and non-CVD death at the bottom, governed by the non-CVD death hazard h2 of t. A note under the left box says being alive on 31 December 2019 means censored, which is not a state but only the end of observation.">
+        <defs><marker id="l37-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead accent"/></marker></defs>
+        <g class="s1"><rect x="20" y="100" width="200" height="60" rx="10" class="node-fill"/></g>
+        <g class="s3"><rect x="420" y="20" width="200" height="60" rx="10" class="node-fill"/></g>
+        <g class="s5"><rect x="420" y="180" width="200" height="60" rx="10" class="node-fill"/></g>
+        <g text-anchor="middle">
+          <text x="120" y="126" class="viz-bold">Alive</text>
+          <text x="120" y="145" class="viz-small">under follow-up</text>
+          <text x="520" y="46" class="viz-bold">CVD death</text>
+          <text x="520" y="65" class="viz-small">the event of interest</text>
+          <text x="520" y="206" class="viz-bold">Non-CVD death</text>
+          <text x="520" y="225" class="viz-small">the competing event</text>
+          <text x="120" y="188" class="viz-small viz-muted">Alive on 31 Dec 2019 = censored.</text>
+          <text x="120" y="204" class="viz-small viz-muted">Censoring is not a state;</text>
+          <text x="120" y="220" class="viz-small viz-muted">it only ends observation.</text>
+        </g>
+        <path d="M220,120 L416,55" class="edge accent" marker-end="url(#l37-arrow)"/>
+        <path d="M220,140 L416,205" class="edge accent" marker-end="url(#l37-arrow)"/>
+        <text x="290" y="120" class="viz-small viz-bold colour s3">h₁(t): CVD death hazard</text>
+        <text x="290" y="152" class="viz-small viz-bold">h₂(t): non-CVD death hazard</text>
+      </svg>
+      <figcaption>Each arrow has its own <em>cause-specific hazard</em>: the rate of moving along it among people still in “Alive”. The probability of ending up in a box depends on both arrows, because whoever leaves by one arrow cannot leave by the other.</figcaption>
+    </figure>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reporting “the 15-year risk of CVD death was 14%” from a Kaplan-Meier curve that censored other deaths. Austin, Lee and Fine (2016) put it plainly: in the presence of competing risks, 1 − KM is biased upwards as an estimate of incidence. Add the 1 − KM risks for each cause and you can get more than the total risk of dying, which is impossible.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>The chance that a book on your shelf is ruined by water damage over 30 years. If you ignore that some books will be lost in a move first, and count them as “still at risk”, you overstate how many will end up water-damaged. A lost book cannot get wet on your shelf.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="cif">
+    <h2>2. The cumulative incidence function</h2>
+    <p class="point">The cumulative incidence function (CIF) gives the real probability of having the event by time \(t\), allowing for the fact that some people leave by another door first.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The <strong>Aalen-Johansen estimator</strong> builds the CIF step by step. At each CVD death, add the share of people at risk who died of CVD, multiplied by the probability of still being alive (from any cause) just before. That multiplication is what 1 − KM leaves out.</dd>
+      <dt>Why it matters</dt>
+      <dd>The CIF is what patients, clinicians and planners mean by “risk”: the fraction of this population who will actually die of CVD within 15 years. The CIFs for all causes add up to the all-cause risk of death, as they must.</dd>
+      <dt>How to read it</dt>
+      <dd>Plot the CIF for the event of interest and for the competing event together (stacked or side by side). A low CIF for CVD death in an old cohort can mean low CVD hazard, or a high competing hazard. You can only tell which by also looking at the hazards (section 3).</dd>
+      <dt>What a change means</dt>
+      <dd>A CIF that rises from 8% to 12% between groups means 4 more CVD deaths per 100 people by that time, the absolute number that matters for planning. Compare groups with Gray’s test, the competing-risks analogue of the log-rank test.</dd>
+    </dl>
+
+    \[ \hat F_1(t) = \sum_{t_j \le t} \hat S(t_{j-1}) \,\frac{d_{1j}}{n_j} \]
+    <p>Here \(\hat S\) is the all-cause Kaplan-Meier survival just before each death time, \(d_{1j}\) the CVD deaths at that time and \(n_j\) the number at risk. Replace \(\hat S\) with CVD-only “survival” and you get 1 − KM, which is too high.</p>
+
+    <div class="widget" data-widget="cr-sim">
+      <div class="widget-title">1 − KM versus the cumulative incidence</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">The shaded gap is how much 1 − KM overstates the risk of CVD death. Move the non-CVD death rate up and watch the gap grow while the CVD rate stays fixed. Try “No competing deaths”: the two curves meet. Then check the last readout: two 1 − KM risks added up can exceed the actual risk of dying.</p>
+    </div>
+
+    <pre><code>library(survival)
+d$status &lt;- with(d, ifelse(MORTSTAT == 0, "censored",
+                     ifelse(UCOD_LEADING == "001", "cvd", "other")))
+d$status &lt;- factor(d$status, levels = c("censored", "cvd", "other"))
+aj &lt;- survfit(Surv(years, status) ~ nak_q, data = d, weights = wt_pooled)
+summary(aj, times = 15)   # CIF for cvd and other at 15 years, by Na/K quartile</code></pre>
+    <p>When the status is a factor whose first level is censoring, <code>survfit</code> gives Aalen-Johansen CIFs for each cause instead of a Kaplan-Meier curve. Survey weights give the right point estimates, but the standard errors are not design-based; use replicate weights or a bootstrap over PSUs if you need intervals (Lecture 3.4). <code>cmprsk::cuminc</code> gives the same CIFs plus Gray’s test, without weights.</p>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>Competing risks is multi-class survival. The cause-specific hazards are the per-class rates; the CIF is the marginal probability of each class by time \(t\). Treating other classes as censored is like training a binary classifier that throws away every example of the other classes and then reading its output as an unconditional probability. Python’s <code>lifelines</code> has an Aalen-Johansen fitter.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="hazards">
+    <h2>3. Two kinds of hazard</h2>
+    <p class="point">The cause-specific hazard counts only people still alive; the subdistribution hazard keeps people who died of other causes in the risk set, so that it maps directly onto the CIF.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The <strong>cause-specific hazard</strong> of CVD death is the rate of CVD death among people currently alive. Fit it with an ordinary Cox model in which other deaths are censored. The <strong>subdistribution hazard</strong> is the rate of CVD death among people who have not yet died of CVD, including those who already died of something else. The <strong>Fine-Gray model</strong> is a Cox-type model for it.</dd>
+      <dt>Why it matters</dt>
+      <dd>The two can give different answers, even opposite ones. A factor that raises the hazard of non-CVD death leaves the cause-specific CVD hazard unchanged, but lowers the CIF of CVD death, so its subdistribution HR is below 1.</dd>
+      <dt>How to read it</dt>
+      <dd>A cause-specific HR of 1.3 means: among people alive at any moment, the exposed die of CVD at 1.3 times the rate. A subdistribution HR of 1.3 means: the exposed accumulate CVD deaths faster, in the sense of a higher CIF over time. It is not a rate among any real group of people.</dd>
+      <dt>What a change means</dt>
+      <dd>If the cause-specific and subdistribution HRs agree, the exposure barely affects the competing event. If they differ, look at the competing event’s cause-specific HR: that is where the difference comes from.</dd>
+    </dl>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th></th><th>Cause-specific hazard</th><th>Subdistribution hazard (Fine-Gray)</th></tr></thead>
+        <tbody>
+          <tr><td>Who is in the risk set</td><td>People still alive</td><td>People still alive, plus those who died of other causes</td></tr>
+          <tr><td>Other deaths are treated as</td><td>Censored</td><td>Kept in the risk set (weighted for censoring)</td></tr>
+          <tr><td>Links directly to</td><td>The rate of the event among those who could have it</td><td>The CIF of that event</td></tr>
+          <tr><td>R</td><td><code>coxph</code> / <code>svycoxph</code></td><td><code>finegray()</code> then <code>coxph</code>; <code>cmprsk::crr</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Interpreting a subdistribution HR as a rate ratio among people at risk, or a cause-specific HR as an effect on risk. Neither is right. And fitting a Fine-Gray model for each cause separately can give predicted CIFs that add up to more than 100% for some people (Austin, Steyerberg and Putter, 2021); combining cause-specific hazard models avoids this.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Counting how often a football team concedes goals. The cause-specific view: goals per minute while the match is still being played. The subdistribution view: keeps abandoned matches in the denominator, as if they could still concede. It is the right bookkeeping for “what share of matches end with a conceded goal”, and the wrong one for “how leaky is the defence”.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="which">
+    <h2>4. Which question each answers, and reporting both</h2>
+    <p class="point">Cause-specific hazards answer aetiological questions; the CIF and subdistribution hazards answer prediction and planning questions; a complete analysis reports both.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Austin, Lee and Fine (2016) suggest cause-specific hazard models for <strong>aetiology</strong> (does the exposure act on the biological process leading to CVD death?) and models of the CIF, such as Fine-Gray, for <strong>prognosis</strong> (what is this person’s absolute risk?). Latouche and colleagues (2013) argue that only reporting one set hides the story: report the cause-specific hazards for <em>all</em> causes and the CIFs.</dd>
+      <dt>Why it matters</dt>
+      <dd>A treatment can lower the CIF of CVD death without touching CVD biology, simply by letting fewer people die of CVD, or raise it by keeping people alive longer. Reading the CIF alone, you would credit or blame the wrong mechanism.</dd>
+      <dt>How to read it</dt>
+      <dd>For each exposure, ask three questions: does it change the rate of the event of interest (cause-specific HR)? Does it change the rate of the competing event (its cause-specific HR)? What is the net effect on who actually has the event (CIF, subdistribution HR)?</dd>
+      <dt>What a change means</dt>
+      <dd>A cause-specific HR of 1.0 for CVD with a CIF that rises means the exposure prevents other deaths, so more people live long enough to die of CVD. That is a success, not a harm.</dd>
+    </dl>
+
+    <div class="widget" data-widget="cr-treat">
+      <div class="widget-title">A treatment that only prevents the other deaths</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">The default treatment halves non-CVD deaths and does nothing to CVD biology (cause-specific HR 1.00). Watch the treated CVD curve rise above the untreated one, and the subdistribution HR move above 1. Then try “Only prevents CVD deaths”.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Choosing the model after seeing which gives the more striking result. Decide in the protocol: in Project 3 the question is aetiological (is a higher sodium-to-potassium ratio a cause of CVD death?), so the cause-specific HR is the primary estimate, with the CIFs and a Fine-Gray model reported alongside to show the absolute picture.</p>
+    </div>
+
+    <pre><code>csh_cvd &lt;- svycoxph(Surv(age_exam, age_exit, status == "cvd") ~
+                      log2(nak) + sex + race + smoker + egfr, design = des)
+csh_oth &lt;- svycoxph(Surv(age_exam, age_exit, status == "other") ~
+                      log2(nak) + sex + race + smoker + egfr, design = des)
+fg &lt;- finegray(Surv(years, status) ~ ., data = d, etype = "cvd")
+fit_fg &lt;- coxph(Surv(fgstart, fgstop, fgstatus) ~ log2(nak) + sex + race +
+                  smoker + egfr + age_exam, data = fg, weights = fgwt)</code></pre>
+    <p>The first two models are cause-specific: the other cause counts as censored. <code>finegray</code> expands the data so people who died of other causes stay in the risk set with decreasing weights <code>fgwt</code>; a weighted Cox fit on that gives the subdistribution HR. It is fitted here on time since the exam with baseline age as a covariate, because Fine-Gray with delayed entry is less straightforward. Combining <code>fgwt</code> with survey weights has no standard design-based solution yet; if you multiply them, say so and get intervals by replicate weights or bootstrap.</p>
+
+    <div class="callout example">
+      <div class="callout-title">Example · How the two can disagree</div>
+      <p>Smoking raises the hazard of both CVD death and cancer death. Its cause-specific HR for CVD death is clearly above 1. Its subdistribution HR for CVD death is smaller, because smokers who die of lung cancer are removed from any chance of CVD death. Both are correct; they answer different questions. Austin and Fine (2017) recommend reporting the CIFs alongside any Fine-Gray model so readers see the absolute effect.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="multistate">
+    <h2>5. Multistate models: the general frame</h2>
+    <p class="point">Survival, competing risks and illness-death models are all multistate models: boxes for states, arrows for transitions, a hazard on each arrow.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Ordinary survival is two states (alive → dead). Competing risks is one starting state and several absorbing ones. The <strong>illness-death model</strong> adds an intermediate state: healthy → ill → dead, plus healthy → dead. Each arrow gets its own hazard model, and the state occupation probabilities (who is where at time \(t\)) follow from all of them together.</dd>
+      <dt>Why it matters</dt>
+      <dd>Real disease paths have stages: a non-fatal heart attack changes the risk of death. A multistate model estimates how an exposure acts on each step, and stops you from conditioning on a future event (e.g. comparing people “who had an MI” with those who did not, from baseline, is immortal time again).</dd>
+      <dt>How to read it</dt>
+      <dd>Read the transition-specific HRs as cause-specific HRs for each arrow. Read the state occupation curves as stacked CIFs: at 10 years, what share are healthy, ill, or dead? Check whether the risk after illness depends on time since illness (clock-reset, semi-Markov) or only on age (clock-forward, Markov).</dd>
+      <dt>What a change means</dt>
+      <dd>An exposure that raises the healthy → ill hazard but not the ill → dead hazard acts on incidence, not on case fatality. Prevention and treatment target different arrows.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · The illness-death model</div>
+      <svg class="viz-svg" viewBox="0 0 640 262" role="img" aria-label="Three boxes. Healthy at top left, Ill at top right, Dead at the bottom centre. Arrow 1 from Healthy to Ill is incidence. Arrow 2 from Healthy to Dead is death without the illness. Arrow 3 from Ill to Dead is death after the illness, which may depend on time since the illness.">
+        <defs><marker id="l37-arrow2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead accent"/></marker></defs>
+        <g class="s1"><rect x="20" y="30" width="190" height="62" rx="10" class="node-fill"/></g>
+        <g class="s2"><rect x="430" y="30" width="190" height="62" rx="10" class="node-fill"/></g>
+        <g class="s5"><rect x="225" y="186" width="190" height="62" rx="10" class="node-fill"/></g>
+        <g text-anchor="middle">
+          <text x="115" y="57" class="viz-bold">Healthy</text>
+          <text x="115" y="76" class="viz-small">free of CVD at the exam</text>
+          <text x="525" y="57" class="viz-bold">Ill</text>
+          <text x="525" y="76" class="viz-small">e.g. after a first MI or stroke</text>
+          <text x="320" y="213" class="viz-bold">Dead</text>
+          <text x="320" y="232" class="viz-small">any cause (or split by cause)</text>
+          <text x="320" y="50" class="viz-small viz-bold colour s1">1 · incidence</text>
+        </g>
+        <path d="M210,61 L426,61" class="edge accent" marker-end="url(#l37-arrow2)"/>
+        <path d="M140,92 L268,182" class="edge accent" marker-end="url(#l37-arrow2)"/>
+        <path d="M500,92 L372,182" class="edge accent" marker-end="url(#l37-arrow2)"/>
+        <text x="190" y="150" text-anchor="end" class="viz-small viz-bold colour s1">2 · death without</text>
+        <text x="190" y="166" text-anchor="end" class="viz-small viz-bold colour s1">the illness</text>
+        <text x="450" y="150" class="viz-small viz-bold colour s1">3 · death after the</text>
+        <text x="450" y="166" class="viz-small viz-bold colour s1">illness (case fatality)</text>
+      </svg>
+      <figcaption>Each numbered arrow has its own hazard and its own covariate effects. Arrow 3 is where the model needs a decision: does the risk of death after an MI depend only on age (Markov), or also on how long ago the MI happened (semi-Markov)? This is the same three-state structure as the disease life tables in Lecture 1.11.</figcaption>
+    </figure>
+
+    <div class="callout example">
+      <div class="callout-title">Example · The link to Lecture 1.11</div>
+      <p>The Markov cohort models and disease life tables of Lecture 1.11 are multistate models run forwards, with transition probabilities per cycle taken from the literature or GBD. A multistate analysis of cohort data runs the other way: it estimates those transition hazards from individuals. The memoryless assumption in 1.11 is the Markov assumption here, and tunnel states are the discrete-time version of a semi-Markov clock. Project 1’s inputs could, in principle, come from exactly this kind of analysis.</p>
+    </div>
+
+    <pre><code>ms &lt;- tmerge(base, base, id = id, death = event(futime, died))
+ms &lt;- tmerge(ms, base, id = id, mi = event(mi_time))
+ms$state &lt;- factor(with(ms, ifelse(death == 1, "dead", ifelse(mi == 1, "ill", "censor"))),
+                   levels = c("censor", "ill", "dead"))
+fit_ms &lt;- coxph(Surv(tstart, tstop, state) ~ age + sex, data = ms, id = id)
+survcheck(Surv(tstart, tstop, state) ~ 1, data = ms, id = id)   # check transitions</code></pre>
+    <p>The <code>survival</code> package fits all transitions at once when the outcome is a multi-state factor and each person has an <code>id</code>; <code>survfit</code> on the same data gives state occupation probabilities. The <code>mstate</code> package does the same with more control. NHANES has no non-fatal events, so Project 3 stays a competing-risks analysis; Project 5A in MIMIC-IV is where an illness-death structure could fit.</p>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Comparing survival of people who had an MI during follow-up with those who did not, from the start of follow-up. People had to survive long enough to have the MI, so the “MI” group gets guaranteed survival time. The multistate model handles this by letting people move between states at the time they actually do.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="project3">
+    <h2>6. Competing risks in Project 3</h2>
+    <p class="point">How NCHS codes cause of death in the public-use files decides what “cardiovascular death” can mean in your analysis.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The public-use linked mortality files give vital status (<code>MORTSTAT</code>), months of follow-up from the interview or exam (<code>PERMTH_INT</code>, <code>PERMTH_EXM</code>), eligibility (<code>ELIGSTAT</code>), the underlying cause of death as a 10-group recode (<code>UCOD_LEADING</code>), and flags for diabetes and hypertension listed anywhere on the death certificate (<code>DIABETES</code>, <code>HYPERTEN</code>). Follow-up runs to 31 December 2019 for adults in NHANES 1999–2018.</dd>
+      <dt>Why it matters</dt>
+      <dd>For the 2015–2018 NHANES cycles, the public-use file only distinguishes heart disease, cancer and “all other causes”. Stroke deaths in those cycles are folded into “other”. If you define CVD death as heart disease plus stroke, the definition silently changes across cycles.</dd>
+      <dt>How to read it</dt>
+      <dd>Two defensible choices: define CVD death as heart disease only (<code>001</code>) across all cycles, or use heart disease plus stroke (<code>001</code> + <code>005</code>) and restrict to 1999–2014. State which, and show the other as a sensitivity analysis. Some records have synthetic cause or follow-up time in the public-use file; the restricted-use file in an NCHS Research Data Center avoids this.</dd>
+    </dl>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th><code>UCOD_LEADING</code></th><th>Underlying cause</th><th>In Project 3</th></tr></thead>
+        <tbody>
+          <tr><td>001</td><td>Diseases of heart (ICD-10 I00–I09, I11, I13, I20–I51)</td><td>Event of interest</td></tr>
+          <tr><td>005</td><td>Cerebrovascular diseases (I60–I69); not separated for 2015–2018</td><td>Event of interest if used; check cycles</td></tr>
+          <tr><td>002, 003, 004, 006–009</td><td>Cancer, chronic lower respiratory disease, accidents, Alzheimer’s, diabetes, influenza and pneumonia, kidney disease</td><td>Competing event</td></tr>
+          <tr><td>010</td><td>All other causes (residual)</td><td>Competing event</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Over-reading cause of death. It comes from death certificates, where “heart disease” is a common default when the real cause is unclear, especially in the very old. Misclassification between CVD and other deaths blurs both cause-specific HRs. All-cause mortality, which uses only <code>MORTSTAT</code>, is the most robust outcome; report it as well.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · A reporting plan for Project 3</div>
+      <p>Primary: survey-weighted cause-specific Cox model for CVD death, age as time scale, delayed entry at exam age (Lecture 3.6), multiply imputed covariates (Lecture 3.5). Alongside: the cause-specific HR for non-CVD death; weighted CIF curves for both causes by Na/K quartile; a Fine-Gray model. Sensitivity: exclude the first 2 years; heart-disease-only versus heart plus stroke; all-cause mortality. Limitation, every time: the exposure is one spot urine sample, a noisy measure of usual intake (Lecture 2.14), so HRs are likely diluted towards 1.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">Gulf example</div>
+      <p>Competing risks matter more, not less, in Gulf cohorts: diabetes and chronic kidney disease are common, and both raise non-CVD death as well as CVD death. A Saudi diabetes registry reporting 1 − KM for cardiovascular events over 10 years would overstate them, and a risk score built that way would overtreat. When you assess local prediction models in Block 5, check how competing deaths were handled.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>A cohort of adults aged 75 and over reports a 10-year risk of stroke of 22% from a Kaplan-Meier curve with non-stroke deaths censored. Half the cohort died of other causes. What is wrong, and which way is the error?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Deaths from other causes are competing events, not censoring. With so many of them, 1 − KM overstates the real stroke risk, possibly by a lot. The 22% describes a hypothetical world where nobody dies of anything else. Report the cumulative incidence (Aalen-Johansen) instead.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>An exposure has a cause-specific HR of 1.25 for CVD death and 1.60 for non-CVD death. Its subdistribution HR for CVD death is 1.02. A colleague writes “no association with CVD mortality”. Is that right?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>No. Among people alive, the exposed die of CVD 25% faster: an aetiological association. The near-null subdistribution HR arises because the exposed die of other causes even faster, removing them before CVD can occur. Report both: the exposure is harmful for CVD, but its net effect on the share who die of CVD is small because it kills by other routes too.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A new drug reduces deaths from infection in dialysis patients but has no effect on heart disease. In the trial, more treated patients die of heart disease. Should regulators worry?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Not on this evidence alone. Check the cause-specific HR for cardiac death: if it is about 1, the extra cardiac deaths are people who lived longer because they did not die of infection, so more had the chance to die of heart disease. That is the competing-risk effect, not toxicity. All-cause mortality and the cause-specific hazards together tell the real story.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>You are building a tool to tell Saudi patients their 10-year risk of a cardiovascular event. Cause-specific Cox or Fine-Gray, and why?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>This is prediction of absolute risk, so the output must be a cumulative incidence that accounts for competing death. Either a Fine-Gray model or cause-specific models for all causes combined into a CIF will do; the latter keeps predicted risks for different causes from summing over 100% (Austin, Steyerberg and Putter, 2021). Never 1 − KM from a single cause-specific model.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Your Project 3 draft defines CVD death as <code>UCOD_LEADING</code> 001 or 005 and pools NHANES 1999–2018. A reviewer is unhappy. Why?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>In the public-use files, code 005 (cerebrovascular disease) is not available for 2015–2018: those stroke deaths are in 010, “all other causes”. So the outcome means heart disease plus stroke in early cycles and heart disease only in later ones, and stroke deaths in later cycles are counted as competing events. Use 001 only across all cycles, or restrict 001 + 005 to 1999–2014, and run the other as a sensitivity analysis.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Austin, Lee &amp; Fine, “Introduction to the analysis of survival data in the presence of competing risks”, <em>Circulation</em> (2016): the clearest applied introduction; aetiology versus prognosis.</li>
+      <li>Latouche, Allignol, Beyersmann, Labopin &amp; Fine, “A competing risks analysis should report results on all cause-specific hazards and cumulative incidence functions”, <em>Journal of Clinical Epidemiology</em> (2013).</li>
+      <li>Fine &amp; Gray, “A proportional hazards model for the subdistribution of a competing risk”, <em>Journal of the American Statistical Association</em> (1999). Austin &amp; Fine, “Practical recommendations for reporting Fine-Gray model analyses for competing risk data”, <em>Statistics in Medicine</em> (2017).</li>
+      <li>Austin, Steyerberg &amp; Putter, “Fine-Gray subdistribution hazard models to simultaneously estimate the absolute risk of different event types: cumulative total failure probability may exceed 1”, <em>Statistics in Medicine</em> (2021).</li>
+      <li>Putter, Fiocco &amp; Geskus, “Tutorial in biostatistics: competing risks and multi-state models”, <em>Statistics in Medicine</em> (2007). Andersen, Geskus, de Witte &amp; Putter, “Competing risks in epidemiology: possibilities and pitfalls”, <em>International Journal of Epidemiology</em> (2012). Lau, Cole &amp; Gange, “Competing risk regression models for epidemiologic data”, <em>American Journal of Epidemiology</em> (2009).</li>
+      <li>Therneau, Crowson &amp; Atkinson, “Multi-state models and competing risks”, vignette for the R <code>survival</code> package; de Wreede, Fiocco &amp; Putter, “mstate: an R package for the analysis of competing risks and multi-state models”, <em>Journal of Statistical Software</em> (2011).</li>
+      <li>NCHS, Codebook for the 2019 Public-Use Linked Mortality Files (2022), for <code>UCOD_LEADING</code>, <code>MORTSTAT</code>, <code>PERMTH_EXM</code> and the 2015–2018 cause-of-death restriction; NCHS linked mortality files web pages for perturbation of public-use records.</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="3-06-survival-analysis.html"><small>Previous</small>3.6 Survival analysis</a>
+    <a class="next" href="3-08-mixed-models-vs-gee.html"><small>Next</small>3.8 Mixed models vs GEE</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

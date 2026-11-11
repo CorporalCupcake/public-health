@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>3.2 Statistical computing in R · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/3-02.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-3">Block 3</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 3.2</p>
+  <h1>Statistical computing in R for health data</h1>
+  <div class="lecture-meta">
+    <span>Block 3 · Biostatistics core</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>If you are fluent in Python, R is quick to write and easy to get subtly wrong. Three defaults decide what your results mean: how factors are ordered, how missing values spread, and how a model formula turns categories into columns. This lecture maps your pandas habits onto R, flags the traps that change estimates without an error message, and gives you the map of health packages you will use from Lecture 3.3 to Project 3 and beyond.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#model">R’s data model for a Python user</a></li>
+      <li><a href="#factors">Factors and their traps</a></li>
+      <li><a href="#na">Missing values: NA spreads, and survey codes hide</a></li>
+      <li><a href="#wrangling">Tidyverse, base and data.table</a></li>
+      <li><a href="#dates">Dates and labelled survey data</a></li>
+      <li><a href="#formulas">Model formulas and contrasts</a></li>
+      <li><a href="#output">From model to table and figure: broom and ggplot2</a></li>
+      <li><a href="#packages">The health package map</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="model">
+    <h2>1. R’s data model for a Python user</h2>
+    <p class="point">In R everything is a vector, indexing starts at 1, and functions never change their arguments in place.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>There are no scalars: <code>5</code> is a numeric vector of length one. Operations are vectorised by default. A data frame is a list of equal-length column vectors; a tibble is a stricter data frame that prints better.</dd>
+      <dt>Why it matters</dt>
+      <dd>Most R surprises for Python users come from three places: 1-based indexing with negative indices meaning “drop”, silent recycling of short vectors, and copy-on-modify semantics (a function that edits a data frame returns a new one; the original is untouched).</dd>
+      <dt>How to read it</dt>
+      <dd>If code works only because of recycling or a lucky index, it will break quietly on the next dataset. Prefer explicit joins and named columns over positions.</dd>
+    </dl>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Python</th><th>R</th><th>Watch out for</th></tr></thead>
+        <tbody>
+          <tr><td><code>x[0]</code>, <code>x[-1]</code></td><td><code>x[1]</code>, <code>x[length(x)]</code></td><td><code>x[-1]</code> in R <em>drops the first</em> element</td></tr>
+          <tr><td>NumPy array</td><td>atomic vector, <code>c(1, 2, 3)</code></td><td><code>c(1, 2, 3, 4) + c(10, 20)</code> recycles without warning</td></tr>
+          <tr><td><code>pd.Categorical</code></td><td><code>factor</code></td><td>Levels sort alphabetically; the first is the model’s reference</td></tr>
+          <tr><td><code>None</code>, <code>NaN</code></td><td><code>NULL</code>, <code>NA</code>, <code>NaN</code></td><td><code>NA</code> means “unknown”, and it spreads (section 3)</td></tr>
+          <tr><td><code>df.loc[...] = </code> (in place)</td><td><code>df &lt;- mutate(df, ...)</code></td><td>Nothing changes until you assign the result</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Using <code>x[-1]</code> to mean “the last value”. In R it returns everything except the first value, with no error. Write <code>tail(x, 1)</code> or <code>x[length(x)]</code>.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>R’s modelling functions take a data frame and a formula, not an <code>X</code> matrix and a <code>y</code> vector. The formula builds the design matrix for you, which is convenient and is also where the defaults in sections 2 and 6 bite.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="factors">
+    <h2>2. Factors and their traps</h2>
+    <p class="point">A factor is a vector of integer codes with a table of labels, and its level order silently chooses your reference group.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>R’s type for categorical variables. Internally, codes 1, 2, 3…; the <em>levels</em> attribute maps codes to labels. An <em>ordered</em> factor adds an order (low &lt; middle &lt; high).</dd>
+      <dt>Why it matters</dt>
+      <dd>Models turn a factor into dummy columns and compare every level with the first level. Tables list levels in level order. The default order is alphabetical, which is rarely the order you want.</dd>
+      <dt>How to read it</dt>
+      <dd>Before any model, run <code>levels(x)</code> and <code>table(x, useNA = "ifany")</code>. The first level printed is your reference.</dd>
+      <dt>What a change means</dt>
+      <dd>Changing the reference changes every coefficient and p-value for that factor but not the fitted values. The model is the same; the questions it answers are different.</dd>
+    </dl>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Trap</th><th>What happens</th><th>Fix</th></tr></thead>
+        <tbody>
+          <tr><td>Numbers stored as a factor</td><td><code>as.numeric(f)</code> returns the codes 1, 2, 3, not the values</td><td><code>as.numeric(as.character(f))</code>, or fix the import</td></tr>
+          <tr><td>Alphabetical reference</td><td>Smoking levels Current, Former, Never: “Current” becomes the reference</td><td>Set the levels explicitly, or <code>forcats::fct_relevel()</code></td></tr>
+          <tr><td>Ordered factor in a model</td><td>Coefficients become linear, quadratic and cubic trends (<code>.L</code>, <code>.Q</code>, <code>.C</code>), not level-versus-reference</td><td>Use an unordered factor unless you want trend contrasts</td></tr>
+          <tr><td>Empty levels after filtering</td><td>Rows of zeros in tables; a level with no data in a model</td><td><code>droplevels()</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+<pre><code>d$smoke &lt;- factor(d$smoke, levels = c("Never", "Former", "Current"))  # order, and reference, by design
+d$smoke &lt;- forcats::fct_relevel(d$smoke, "Never")                      # or move one level to the front</code></pre>
+
+    <div class="callout example">
+      <div class="callout-title">Example · A column that became a factor</div>
+      <p>One cell of a blood-pressure column reads <code>"128*"</code>, so the column is read as text and later turned into a factor. <code>as.numeric()</code> then gives the level codes 1 to 87. They are numbers, so nothing errors, but every summary built on them is wrong. Since R 4.0, text columns are no longer turned into factors on import by default, but packages and old scripts still do it.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>A factor is a coat-check system: you hold ticket 2, and the cloakroom’s list says ticket 2 is “Former smoker”. Do arithmetic on the tickets and you are adding cloakroom numbers, not coats.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="na">
+    <h2>3. Missing values: NA spreads, and survey codes hide</h2>
+    <p class="point">R’s NA means “unknown”, so anything computed from it is unknown too; survey files add a second problem, missing values disguised as numbers.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><code>NA + 1</code> is NA, <code>mean(x)</code> is NA if any value is, and <code>NA == NA</code> is NA, so test with <code>is.na()</code>. <code>na.rm = TRUE</code> drops missing values from a summary. <code>NULL</code> is “nothing at all”, and <code>NaN</code> is an undefined number such as 0/0.</dd>
+      <dt>Why it matters</dt>
+      <dd>Each function handles NA its own way, and some silently drop rows. <code>lm()</code> and <code>glm()</code> discard every row with a missing value in any variable in the formula (complete-case analysis), so adding a covariate can change who is in the model. <code>dplyr::filter()</code> drops rows where the condition is NA. <code>table()</code> hides NA unless asked.</dd>
+      <dt>How to read it</dt>
+      <dd>Always report the number analysed: <code>nobs(fit)</code>. If it differs between models, they are fitted to different people and cannot be compared directly. Lecture 3.5 covers what to do instead.</dd>
+    </dl>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Operation</th><th>pandas default</th><th>R default</th></tr></thead>
+        <tbody>
+          <tr><td>Mean of a column with a missing value</td><td>Skips it (<code>skipna=True</code>)</td><td>Returns NA unless <code>na.rm = TRUE</code></td></tr>
+          <tr><td>Group by a column with missing values</td><td>Drops the missing group (<code>dropna=True</code>)</td><td><code>group_by()</code> keeps NA as its own group</td></tr>
+          <tr><td>Count categories</td><td><code>value_counts()</code> excludes NaN</td><td><code>count()</code> includes NA; <code>table()</code> excludes it</td></tr>
+          <tr><td>Fit a regression</td><td>statsmodels formulas drop incomplete rows by default</td><td><code>lm()</code> drops incomplete rows, silently</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+<pre><code>d &lt;- d |> mutate(smq020 = replace(smq020, smq020 %in% c(7, 9), NA))  # 7 refused, 9 don't know
+nobs(fit)                                                            # who was actually analysed</code></pre>
+    <p>The first line sets NHANES’s “refused” and “don’t know” codes to missing for one smoking question. The codes depend on the field width (7/9, 77/99, 777/999…), so check each variable in its codebook rather than recoding every 7 and 9 in the file.</p>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Missing values stored as numbers. In NHANES and most survey files, “refused” and “don’t know” are numeric codes, not NA. Left in, a 77 or 999 becomes a real value: an extreme drinker or an implausible income, pulling means and slopes. R cannot know; only the codebook does.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>Your pandas reflexes are inverted. pandas skips missing values quietly in summaries, so you rarely see them; R refuses to give an answer, so you notice. R is noisier but safer: a summary that returns NA is telling you to decide how missing data should be handled, and that decision belongs in the analysis plan.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="wrangling">
+    <h2>4. Tidyverse, base and data.table</h2>
+    <p class="point">Use dplyr for clarity, data.table or duckdb for very large tables, and base R where a package would be overkill; they mix freely.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The tidyverse (dplyr, tidyr, readr, ggplot2, forcats, lubridate) gives one verb per operation, chained with the pipe <code>|&gt;</code> (built into R since 4.1; <code>%&gt;%</code> is the older magrittr pipe). data.table is a fast, terse alternative: <code>dt[rows, columns, by = groups]</code>. Base R is what every package is built on.</dd>
+      <dt>Why it matters</dt>
+      <dd>Readable data preparation is reviewable data preparation (Lecture 3.1). For millions of rows, such as MIMIC-IV’s event tables, dplyr on a laptop becomes slow; data.table, or dplyr syntax running on duckdb or arrow, keeps it fast.</dd>
+      <dt>How to read it</dt>
+      <dd>Pick one style per project for data preparation. Mixing dplyr and data.table in one pipeline is legal but hard to review.</dd>
+    </dl>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>pandas</th><th>dplyr / tidyr</th></tr></thead>
+        <tbody>
+          <tr><td><code>df[df.age &gt;= 20]</code></td><td><code>filter(df, age &gt;= 20)</code> (drops rows where age is NA)</td></tr>
+          <tr><td><code>df[["seqn", "sbp"]]</code></td><td><code>select(df, seqn, sbp)</code></td></tr>
+          <tr><td><code>df.assign(nak = df.na / df.k)</code></td><td><code>mutate(df, nak = na / k)</code></td></tr>
+          <tr><td><code>df.rename(columns={"RIAGENDR": "sex"})</code></td><td><code>rename(df, sex = RIAGENDR)</code> (new = old)</td></tr>
+          <tr><td><code>df.sort_values("age")</code></td><td><code>arrange(df, age)</code></td></tr>
+          <tr><td><code>df.groupby("sex").agg(m=("sbp", "mean"))</code></td><td><code>df |&gt; group_by(sex) |&gt; summarise(m = mean(sbp, na.rm = TRUE))</code></td></tr>
+          <tr><td><code>df.merge(lab, on="seqn", how="left")</code></td><td><code>left_join(df, lab, by = "seqn")</code></td></tr>
+          <tr><td><code>pd.melt(...)</code> / <code>df.pivot(...)</code></td><td><code>pivot_longer()</code> / <code>pivot_wider()</code></td></tr>
+          <tr><td><code>np.where(c, a, b)</code></td><td><code>if_else(c, a, b)</code>; several conditions: <code>case_when()</code></td></tr>
+          <tr><td><code>pd.cut(x, bins)</code></td><td><code>cut(x, breaks)</code> (returns a factor)</td></tr>
+          <tr><td><code>df["value"].value_counts()</code></td><td><code>count(df, value)</code></td></tr>
+          <tr><td><code>df.drop_duplicates()</code></td><td><code>distinct(df)</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+<pre><code>dt[age >= 20, .(mean_sbp = mean(sbp, na.rm = TRUE), n = .N), by = sex]   # data.table: rows, columns, groups</code></pre>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>A many-to-many join. If the lab file has two rows for some participants (a repeat measurement), <code>left_join()</code> duplicates those participants and your sample grows. Recent dplyr versions warn about unexpected many-to-many matches; check row counts before and after every join anyway.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="dates">
+    <h2>5. Dates and labelled survey data</h2>
+    <p class="point">Dates are numbers counted from an origin, and survey files carry numbers with labels attached; both go wrong when you forget which they are.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>An R <code>Date</code> is days since 1 January 1970. lubridate parses (<code>ymd()</code>, <code>dmy()</code>) and measures (<code>time_length(interval(dob, exam), "years")</code>). haven reads Stata (<code>read_dta</code>), SPSS (<code>read_sav</code>) and SAS transport files (<code>read_xpt</code>, the NHANES format). Stata and SPSS columns arrive as <em>labelled</em> numbers: 1 with the label “Male”.</dd>
+      <dt>Why it matters</dt>
+      <dd>Survival analysis needs follow-up time, and survey analysis needs categories coded correctly. A date read with the wrong origin, or a region code treated as a number, gives a confident wrong answer.</dd>
+      <dt>How to read it</dt>
+      <dd>Convert labelled columns deliberately: <code>as_factor()</code> for categories, <code>zap_labels()</code> for true numbers. NHANES’s public linked mortality files give follow-up as person-months from interview and from examination, not as dates, so check which one matches your time origin.</dd>
+    </dl>
+
+<pre><code>demo  &lt;- haven::read_xpt("data-raw/DEMO_J.XPT")      # NHANES 2017–2018 demographics
+steps &lt;- haven::read_dta("data-raw/steps.dta")      # labelled numbers: 1 = "Male", 2 = "Female"
+steps &lt;- steps |> mutate(sex = haven::as_factor(sex))
+d &lt;- d |> mutate(age = time_length(interval(dob, exam_date), "years"))</code></pre>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Different origins. SAS counts days from 1 January 1960, R from 1970, Excel from the end of 1899. Turn a raw SAS date number into an R date without the right origin and every date moves by ten years. haven converts properly formatted SAS and Stata dates for you; numbers that were never formatted as dates need the origin stated.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">In the Gulf</div>
+      <p>Survey microdata, such as WHO STEPS (the Project 3 fallback) and DHS, often arrive as Stata or SPSS files with value labels, sometimes in Arabic. Files written by older software may store Arabic labels in the Windows Arabic code page; <code>read_sav()</code> has an <code>encoding</code> argument (for example <code>"windows-1256"</code>) for that case. Check the labels print correctly before you trust any table.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="formulas">
+    <h2>6. Model formulas and contrasts</h2>
+    <p class="point">A formula is a compact recipe for the design matrix, and the contrast coding decides what each coefficient compares.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><code>y ~ a + b</code> reads “y is modelled by a and b”. R expands each term into columns: a number stays one column, a factor becomes dummy columns, a spline becomes several. <em>Contrasts</em> are the rule for turning a factor into columns: the default, <em>treatment</em> coding, compares each level with the reference; <em>sum</em> coding compares each level with the average of the level means.</dd>
+      <dt>Why it matters</dt>
+      <dd>The same data and model give different-looking coefficient tables under different codings and references. Reviewers read your table; they need to know what each row compares.</dd>
+      <dt>How to read it</dt>
+      <dd>Under treatment coding, the intercept is the reference group’s value and each coefficient is a difference from it (a log rate ratio or log odds ratio in a GLM). Check <code>levels()</code> to know which group that is.</dd>
+      <dt>What a change means</dt>
+      <dd>Changing contrasts changes coefficients, standard errors and p-values for that factor, but not the fitted values or the overall fit. If fitted values change, you changed the model, not the coding.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · Anatomy of an R model formula</div>
+      <svg class="viz-svg" viewBox="0 0 640 330" role="img" aria-label="The formula deaths tilde nak_q plus ns of age 4 plus sex times smoke plus offset of log py, with each term explained below. deaths is the outcome. nak_q is a factor that becomes k minus 1 dummy columns, each compared with the reference level. ns(age, 4) is a natural spline giving 4 columns that bend the age curve. sex times smoke expands to sex plus smoke plus their interaction. offset(log(py)) has its coefficient fixed at 1, so the model is for deaths per person-year. At the bottom: family equals poisson sets the distribution and the log link, so exponentiated coefficients are rate ratios.">
+        <text x="40" y="22" text-anchor="middle" class="viz-small viz-muted">outcome</text>
+        <g style="font-family:var(--font-mono);font-size:15px" text-anchor="middle">
+          <text x="40" y="50" class="viz-bold colour s2">deaths</text>
+          <text x="84" y="50">~</text>
+          <text x="124" y="50" class="viz-bold colour s1">nak_q</text>
+          <text x="163" y="50">+</text>
+          <text x="226" y="50" class="viz-bold colour s1">ns(age, 4)</text>
+          <text x="292" y="50">+</text>
+          <text x="359" y="50" class="viz-bold colour s1">sex * smoke</text>
+          <text x="427" y="50">+</text>
+          <text x="520" y="50" class="viz-bold colour s4">offset(log(py))</text>
+        </g>
+        <g class="edge">
+          <path d="M100,60 L100,66 L148,66 L148,60"/>
+          <path d="M180,60 L180,66 L272,66 L272,60"/>
+          <path d="M310,60 L310,66 L408,66 L408,60"/>
+          <path d="M450,60 L450,66 L590,66 L590,60"/>
+          <path d="M124,66 L85,128"/>
+          <path d="M226,66 L240,128"/>
+          <path d="M359,66 L395,128"/>
+          <path d="M520,66 L552,128"/>
+        </g>
+        <g class="s1">
+          <rect x="10" y="128" width="150" height="96" rx="10" class="node-fill"/>
+          <rect x="165" y="128" width="150" height="96" rx="10" class="node-fill"/>
+          <rect x="320" y="128" width="150" height="96" rx="10" class="node-fill"/>
+        </g>
+        <g class="s4"><rect x="475" y="128" width="155" height="96" rx="10" class="node-fill"/></g>
+        <g text-anchor="middle">
+          <text x="85" y="150" class="viz-bold">factor</text>
+          <text x="85" y="172" class="viz-small">k − 1 dummy columns,</text>
+          <text x="85" y="188" class="viz-small">each compared with</text>
+          <text x="85" y="204" class="viz-small">the reference level</text>
+          <text x="240" y="150" class="viz-bold">spline</text>
+          <text x="240" y="172" class="viz-small">4 columns that let</text>
+          <text x="240" y="188" class="viz-small">the age curve bend,</text>
+          <text x="240" y="204" class="viz-small">from the splines package</text>
+          <text x="395" y="150" class="viz-bold">interaction</text>
+          <text x="395" y="172" class="viz-small">expands to sex + smoke</text>
+          <text x="395" y="188" class="viz-small">+ sex:smoke; the last</text>
+          <text x="395" y="204" class="viz-small">term is the interaction</text>
+          <text x="552" y="150" class="viz-bold">offset</text>
+          <text x="552" y="172" class="viz-small">coefficient fixed at 1,</text>
+          <text x="552" y="188" class="viz-small">so the model is for</text>
+          <text x="552" y="204" class="viz-small">deaths per person-year</text>
+        </g>
+        <rect x="10" y="246" width="620" height="70" rx="10" class="node s5"/>
+        <text x="320" y="270" text-anchor="middle" style="font-family:var(--font-mono)" class="viz-small">glm(formula, family = poisson, data = d)</text>
+        <text x="320" y="292" text-anchor="middle" class="viz-small">the family sets the distribution and the log link, so exp(coefficient) is a rate ratio;</text>
+        <text x="320" y="308" text-anchor="middle" class="viz-small viz-muted">other common terms: I(age^2) for arithmetic, 0 + to drop the intercept, (1 | psu) in lme4, Surv() in survival</text>
+      </svg>
+      <figcaption>The tilde reads “is modelled by”. Inside a formula, <code>+</code>, <code>*</code> and <code>^</code> describe terms, not arithmetic; wrap arithmetic in <code>I()</code>. This is the shape of the Lecture 3.3 rate models.</figcaption>
+    </figure>
+
+    <div class="widget" data-widget="contrast-explorer">
+      <div class="widget-title">Factor and contrast explorer</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Systolic blood pressure by smoking status. Start with R’s default (reference “Current”, because it comes first alphabetically). Switch the reference to “Never”, then try sum coding, then the numeric-codes trap. Watch what each coefficient means, and whether the fitted group means change.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reading the intercept under sum coding as the overall mean. It is the unweighted average of the group means, which differs from the mean of all participants whenever groups differ in size. And sum coding leaves out the last level’s coefficient: it equals minus the sum of the others.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>Treatment coding is one-hot encoding with the first column dropped (<code>drop="first"</code> in scikit-learn); the dropped level becomes the intercept. statsmodels formulas use the same default as R. A full one-hot encoding with an intercept is collinear, which a penalised ML model tolerates and an unpenalised GLM does not.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="output">
+    <h2>7. From model to table and figure: broom and ggplot2</h2>
+    <p class="point">broom turns any fitted model into a tidy data frame, and ggplot2 turns data frames into figures by mapping columns to visual properties.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>broom’s <code>tidy()</code> gives one row per coefficient, <code>glance()</code> one row per model, <code>augment()</code> one row per observation. ggplot2 is a grammar: data, <em>aesthetic mappings</em> (which column goes to x, y, colour), <em>geoms</em> (points, lines, ranges), scales, and facets (small multiples).</dd>
+      <dt>Why it matters</dt>
+      <dd>Tidy output feeds tables (gtsummary) and figures directly, so the numbers in the manuscript come straight from the model (Lecture 3.1). Most packages you will use, including survival, survey and lme4 (via broom.mixed), have tidy methods.</dd>
+      <dt>How to read it</dt>
+      <dd>For a GLM, ask <code>tidy()</code> for <code>exponentiate = TRUE</code> to get odds or rate ratios, and <code>conf.int = TRUE</code> for intervals.</dd>
+    </dl>
+
+<pre><code>fit &lt;- glm(cvd ~ smoke + ns(age, 4) + sex, family = binomial, data = d)
+tidy(fit, exponentiate = TRUE, conf.int = TRUE) |>
+  filter(term != "(Intercept)") |>
+  ggplot(aes(x = estimate, xmin = conf.low, xmax = conf.high, y = term)) +
+  geom_pointrange() +
+  geom_vline(xintercept = 1, linetype = "dashed") +
+  scale_x_log10()                       # ratios belong on a log axis</code></pre>
+    <p>This fits a logistic model, extracts odds ratios with 95% intervals, drops the intercept, and draws a forest plot with a reference line at 1.</p>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Plotting ratios on a linear axis. An odds ratio of 0.5 and one of 2 are equally strong effects in opposite directions, but on a linear axis the first looks half as big. Use a log scale for every ratio.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="packages">
+    <h2>8. The health package map</h2>
+    <p class="point">Applied biostatistics in R rests on a dozen mature packages; knowing which one owns each task saves you from half-finished alternatives.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Task</th><th>Package</th><th>Where you use it</th></tr></thead>
+        <tbody>
+          <tr><td>Survey-weighted estimates and models</td><td><strong>survey</strong> (<code>svydesign</code>, <code>svyglm</code>, <code>svycoxph</code>); srvyr for dplyr syntax</td><td>Lecture 3.4, Project 3</td></tr>
+          <tr><td>Multiple imputation</td><td><strong>mice</strong>; mitools to combine with survey designs</td><td>Lecture 3.5, Project 3</td></tr>
+          <tr><td>Survival: Kaplan–Meier, Cox, checking proportional hazards</td><td><strong>survival</strong> (<code>Surv</code>, <code>survfit</code>, <code>coxph</code>, <code>cox.zph</code>)</td><td>Lecture 3.6</td></tr>
+          <tr><td>Competing risks and multistate models</td><td><strong>cmprsk</strong>, tidycmprsk, <code>survival::finegray</code>; <strong>mstate</strong></td><td>Lecture 3.7, Project 3</td></tr>
+          <tr><td>Counts and rates</td><td><code>glm(family = poisson)</code>; <code>MASS::glm.nb</code> for negative binomial</td><td>Lecture 3.3</td></tr>
+          <tr><td>Clustered and longitudinal data</td><td><strong>lme4</strong>, glmmTMB; <strong>geepack</strong></td><td>Lecture 3.8</td></tr>
+          <tr><td>Time series</td><td><strong>forecast</strong> or the tidy <strong>fable</strong> family</td><td>Lecture 3.9, Block 4</td></tr>
+          <tr><td>Epidemiological tables, rates, SMRs</td><td>epitools, Epi, epiR</td><td>Block 2 calculations, checks</td></tr>
+          <tr><td>Splines and regression tools</td><td>splines (<code>ns</code>), rms</td><td>Throughout</td></tr>
+          <tr><td>Publication tables</td><td>broom, gtsummary</td><td>Every paper</td></tr>
+          <tr><td>Getting NHANES</td><td>haven (<code>read_xpt</code>); nhanesA to download by file name</td><td>Project 3</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>Python covers prediction well (lifelines and scikit-survival for survival, statsmodels for GLMs). But design-based survey inference, imputation pooled across survey designs, and competing-risks regression are far more mature in R, and they are exactly what Project 3 needs. Use Python for ECG signal processing in Block 5; use R for the epidemiological analysis.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Project 3 in four packages</div>
+      <p>haven to read the NHANES files; survey to declare weights, strata and PSUs; mice to impute missing covariates; survival and cmprsk for the cause-specific and Fine–Gray models. Each step returns objects broom can tidy into the manuscript tables.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>After import, <code>summary(as.numeric(d$sbp))</code> shows values from 1 to 94. What probably happened, and how do you fix it?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The column was read as text (some cell was not a clean number) and turned into a factor, so <code>as.numeric()</code> returned level codes. Find the offending values, fix the import (or clean the text with code), and convert with <code>as.numeric(as.character(x))</code> only after checking what will become NA.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A logistic model of cardiovascular death on smoking reports rows <code>smokeFormer</code> and <code>smokeNever</code>, both with negative coefficients. What is being compared, and what would make the table easier to read?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Both are compared with current smokers, the alphabetical first level: former and never smokers have lower odds than current smokers. Making “Never” the reference gives the usual epidemiological reading, the excess odds of current and former smoking. The fitted risks do not change.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Model A for systolic blood pressure uses 9,812 participants; Model B adds income and uses 8,904. You present them side by side to show how much income “explains”. What is wrong?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p><code>lm()</code> dropped everyone missing income, so the models are fitted to different people. Any change in coefficients mixes the effect of adjustment with the effect of a different sample. Fit both to the same participants, and handle the missing income properly (multiple imputation, Lecture 3.5). Report <code>nobs()</code> for each model.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Your dplyr summary of mean urinary sodium by smoking group shows NA for one group, and an extra row labelled NA. The same summary in pandas showed numbers for every group and no extra row. Explain both differences.</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>R’s <code>mean()</code> returns NA if any value in the group is missing; pandas skips missing values by default. The extra row is participants with missing smoking status: <code>group_by()</code> keeps them as a group, while pandas drops missing group keys by default. R’s behaviour shows you two missing-data problems that pandas hid.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Switching a factor from treatment to sum contrasts changes the coefficient for “Former” from 7.5 to 4.0 and its p-value. A coauthor asks which model is right. Answer them.</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Both: it is the same model with the same fitted values and fit. The coefficients answer different questions: Former versus the reference group, or Former versus the average of the group means. Choose the coding whose comparison you want to report, and say which one it is in the table.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Wickham, Çetinkaya-Rundel &amp; Grolemund, <em>R for Data Science</em> (2nd edition, O’Reilly, 2023): data transformation, factors, dates, missing values, joins.</li>
+      <li>Wickham, <em>Advanced R</em> (2nd edition, CRC Press, 2019): vectors, subsetting, copy-on-modify.</li>
+      <li>Chambers &amp; Hastie (eds), <em>Statistical Models in S</em> (1992): the origin of R’s formula notation and contrasts.</li>
+      <li>Package documentation: haven, forcats, dplyr, data.table, lubridate, broom, ggplot2 (Wickham, <em>ggplot2: Elegant Graphics for Data Analysis</em>), survey, survival, mice.</li>
+      <li>Lumley, <em>Complex Surveys: A Guide to Analysis Using R</em> (Wiley, 2010).</li>
+      <li>van Buuren &amp; Groothuis-Oudshoorn, “mice: Multivariate imputation by chained equations in R”, <em>Journal of Statistical Software</em> (2011).</li>
+      <li>CDC/NCHS, NHANES data documentation and codebooks (missing-value codes for each variable); NCHS, public-use linked mortality files documentation (follow-up variables).</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="3-01-reproducible-pipelines.html"><small>Previous</small>3.1 Reproducible analysis pipelines</a>
+    <a class="next" href="3-03-glms-for-rates.html"><small>Next</small>3.3 GLMs for health data</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

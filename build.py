@@ -88,6 +88,16 @@ def render(blocks: list[dict], files: dict) -> str:
         n_ready = sum(1 for l in b["lectures"] if (l["block"], l["num"]) in files)
         n = len(b["lectures"])
         items = []
+        # Optional opener not in the lecture table, e.g. lectures/block-3/3-00-diagnostic.html (listed as N.0).
+        extra = files.get((b["n"], 0))
+        if extra:
+            t = re.search(r"<title>(?:\d+\.\d+\s+)?(.*?)(?: · .*)?</title>", (ROOT / extra).read_text(encoding="utf-8"), re.S)
+            title = html.escape(html.unescape(t[1].strip())) if t else "Diagnostic"
+            items.append(
+                f'<li class="lec-ready" data-id="{b["n"]}.0"><span class="lec-num">{b["n"]}.0</span>'
+                f'<span class="lec-title"><a href="{extra.as_posix()}">{title}</a></span>'
+                f'<button type="button" class="done-toggle" aria-pressed="false" aria-label="Mark done: {b["n"]}.0"></button></li>'
+            )
         for l in b["lectures"]:
             key = (l["block"], l["num"])
             title = html.escape(l["title"])

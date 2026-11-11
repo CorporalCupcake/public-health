@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>3.0 Biostatistics diagnostic · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/3-00.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-3">Block 3</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Week 33 · Diagnostic</p>
+  <h1>Biostatistics diagnostic: what theory do you still need?</h1>
+  <div class="lecture-meta">
+    <span>Block 3 · Biostatistics core</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>This is not a lecture. It is a closed-book test of the theory an MS in Biostatistics assumes, in nine topics with two or three exercises each. Your answers decide which topics get a short gap-fill note in weeks 34–36 and which you skip. Rate each topic honestly as you go; the plan at the end builds itself from your ratings.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#how">How to use this diagnostic</a></li>
+      <li><a href="#t-dist">Probability distributions</a></li>
+      <li><a href="#t-mle">Likelihood and maximum likelihood</a></li>
+      <li><a href="#t-freq">Frequentist inference</a></li>
+      <li><a href="#t-power">Power and sample size</a></li>
+      <li><a href="#t-bayes">Bayesian inference</a></li>
+      <li><a href="#t-lm">Linear model theory</a></li>
+      <li><a href="#t-glm">GLM theory</a></li>
+      <li><a href="#t-resamp">Resampling</a></li>
+      <li><a href="#t-mult">Multiple testing</a></li>
+      <li><a href="#plan">Your gap-fill plan</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="how">
+    <h2>How to use this diagnostic</h2>
+    <p class="point">Your MSc and ML work cover most of this already, so Block 3 checks first and teaches second. A diagnostic only helps if you take it as a test.</p>
+
+    <dl class="facets">
+      <dt>Conditions</dt>
+      <dd>Closed book, no software, a calculator allowed. Timebox it to about 3–4 hours: roughly 20 minutes per topic, plus marking.</dd>
+      <dt>Order</dt>
+      <dd>Write your answer to every exercise in a topic before you open any model answer. Then mark the whole topic and rate it.</dd>
+      <dt>Level</dt>
+      <dd>The exercises test understanding and judgement at MS level, not derivations. A few need a line of arithmetic because that is the cleanest test.</dd>
+      <dt>What happens next</dt>
+      <dd>Topics you rate Shaky or Gap get a short note in weeks 34–36 (Wasserman or Agresti, at the tier the later lectures need). Topics rated Solid get nothing.</dd>
+    </dl>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Rating</th><th>Use it when</th><th>What follows</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Solid</strong></td><td>Every answer right in substance, with reasoning you could defend to a reviewer</td><td>Skip the topic</td></tr>
+          <tr><td><strong>Shaky</strong></td><td>Right conclusions but hesitant reasoning, or one answer wrong</td><td>A short refresher note</td></tr>
+          <tr><td><strong>Gap</strong></td><td>Two or more answers wrong, or you could not start</td><td>A full gap-fill note, scheduled first</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · How Block 3 runs</div>
+      <svg class="viz-svg" viewBox="0 0 640 286" role="img" aria-label="Block 3 flow. Week 33: the diagnostic, nine topics, closed book, each rated Solid, Shaky or Gap. Shaky and Gap topics lead to weeks 34 to 36: gap-fill notes. Then weeks 37 to 45: lectures 3.1 to 3.9. A dashed bypass arrow from the diagnostic straight to the lectures says that if nothing is Shaky or Gap, lectures start in week 34. From the lectures, after lecture 3.5, an arrow leads to Project 3, starting week 41, on the NHANES sodium-to-potassium ratio and cardiovascular mortality.">
+        <defs>
+          <marker id="l30-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead accent"/></marker>
+          <marker id="l30-arrow-m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead"/></marker>
+        </defs>
+        <text x="308" y="22" text-anchor="middle" class="viz-small viz-muted">No Shaky or Gap topics? Skip gap-fill: the lectures start in week 34</text>
+        <path d="M96,80 C96,28 514,28 514,76" class="edge" stroke-dasharray="6 5" marker-end="url(#l30-arrow-m)"/>
+        <g class="s4"><rect x="16" y="82" width="160" height="80" rx="10" class="node-fill"/></g>
+        <g class="s2"><rect x="216" y="82" width="160" height="80" rx="10" class="node-fill"/></g>
+        <g class="s1"><rect x="404" y="82" width="220" height="80" rx="10" class="node-fill"/></g>
+        <g class="s3"><rect x="404" y="206" width="220" height="74" rx="10" class="node-fill"/></g>
+        <g text-anchor="middle">
+          <text x="96" y="102" class="viz-small viz-muted">Week 33</text>
+          <text x="96" y="122" class="viz-bold">Diagnostic</text>
+          <text x="96" y="140" class="viz-small">9 topics, closed book</text>
+          <text x="96" y="155" class="viz-small">rate Solid / Shaky / Gap</text>
+          <text x="296" y="102" class="viz-small viz-muted">Weeks 34–36</text>
+          <text x="296" y="122" class="viz-bold">Gap-fill notes</text>
+          <text x="296" y="140" class="viz-small">Shaky and Gap topics only</text>
+          <text x="296" y="155" class="viz-small">Wasserman, Agresti</text>
+          <text x="514" y="102" class="viz-small viz-muted">Weeks 37–45</text>
+          <text x="514" y="122" class="viz-bold">Lectures 3.1–3.9</text>
+          <text x="514" y="140" class="viz-small">applied: R, GLMs, surveys,</text>
+          <text x="514" y="155" class="viz-small">missing data, survival, time series</text>
+          <text x="514" y="226" class="viz-small viz-muted">From week 41</text>
+          <text x="514" y="246" class="viz-bold">Project 3</text>
+          <text x="514" y="264" class="viz-small">NHANES Na/K ratio and CVD deaths</text>
+        </g>
+        <path d="M176,122 L212,122" class="edge accent" marker-end="url(#l30-arrow)"/>
+        <path d="M376,122 L400,122" class="edge accent" marker-end="url(#l30-arrow)"/>
+        <path d="M514,162 L514,202" class="edge accent" marker-end="url(#l30-arrow)"/>
+        <text x="196" y="182" text-anchor="middle" class="viz-small">Shaky + Gap topics</text>
+        <text x="504" y="187" text-anchor="end" class="viz-small">after Lecture 3.5</text>
+      </svg>
+      <figcaption>The diagnostic decides how long the middle box is. With no gaps, the three gap-fill weeks disappear and every later block moves up. Project 3 starts once you have survey design and multiple imputation (Lectures 3.4 and 3.5).</figcaption>
+    </figure>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Marking generously. A topic wrongly rated Shaky costs you an hour of reading. A gap wrongly rated Solid comes back as a reviewer comment on Project 3, when it is far more expensive to fix. When in doubt, rate down.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>This is a held-out test set. Once you peek at the model answers before writing your own, it stops measuring anything.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="t-dist">
+    <h2>1. Probability distributions</h2>
+    <p class="point">Tests whether you read a distribution as a model of mean and variance, not a label, and can reason about skew and rare events.</p>
+    <ol class="exercises">
+      <li>
+        <p>Daily emergency attendances for asthma at a Riyadh hospital average 12 a day, with a variance of 30 across days. A colleague fits a Poisson model to test whether dust-storm days raise attendances. What is wrong, how will it show in the results, and what would you fit instead?</p>
+        <details class="answer">
+          <summary>Show model answer</summary>
+          <div>
+            <p>A Poisson model forces the variance to equal the mean. Here the variance is 2.5 times the mean: <em>overdispersion</em>, from day-to-day variation the model ignores (weekday, season, outbreaks). The Poisson standard errors will be too small by roughly \(\sqrt{2.5} \approx 1.6\), so confidence intervals are too narrow and p-values too small. Fit a negative binomial model (a Poisson whose rate itself varies between days) or quasi-Poisson, and model the known structure such as day of week and season.</p>
+            <p><strong>If you got this wrong:</strong> you are treating distributions as names rather than mean–variance assumptions. Lecture 3.3 is built on this, so a note on mean–variance relationships and mixtures comes first.</p>
+          </div>
+        </details>
+      </li>
+      <li>
+        <p>A paper analyses C-reactive protein (CRP) on the log scale because it is right-skewed, then back-transforms the mean of log CRP and reports “mean CRP 2.1 mg/L”. What has it actually reported, and is the true arithmetic mean larger or smaller?</p>
+        <details class="answer">
+          <summary>Show model answer</summary>
+          <div>
+            <p>The geometric mean. If log CRP is roughly normal, this is also the median. The arithmetic mean is larger, because the long right tail pulls it up. By the same logic, a back-transformed difference in log means is a <em>ratio</em> of geometric means, not a difference in means.</p>
+            <p><strong>If you got this wrong:</strong> revisit the log-normal distribution and transformations. They matter for every skewed biomarker, for costs, and for urinary sodium and potassium in Project 3.</p>
+          </div>
+        </details>
+      </li>
+      <li>
+        <p>No serious adverse events were seen in 300 patients given a new drug. The manufacturer says the risk is zero. What upper bound on the risk is compatible with these data at 95%, and why?</p>
+        <details class="answer">
+          <summary>Show model answer</summary>
+          <div>
+            <p>About 3/300 = 1% (the “rule of three”). The chance of seeing no events in \(n\) patients when the risk is \(p\) is about \(e^{-np}\); that falls to 5% when \(np \approx 3\). So zero events in 300 is compatible with a risk of up to about 1 in 100.</p>
+            <p><strong>If you got this wrong:</strong> refresh the binomial and Poisson distributions and exact intervals. You will need them for rare outcomes and safety signals in Block 5.</p>
+          </div>
+        </details>
+      </li>
+    </ol>
+    <div class="widget" data-topic="dist" data-label="Probability distributions" data-source="Wasserman ch. 2–3" data-feeds="Lecture 3.3">
+      <div class="diagram-title">Your rating · Probability distributions</div>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="t-mle">
+    <h2>2. Likelihood and maximum likelihood</h2>
+    <p class="point">Tests whether you can picture the likelihood behind a software output and know when its large-sample promises break.</p>
+    <ol class="exercises">
+      <li>
+        <p>A logistic regression of in-hospital death includes a rare comorbidity. All 14 patients with it died. The output shows a coefficient of 19.3, standard error 2,400, Wald p = 0.99. A colleague concludes the comorbidity has no effect. What is going on, and what do you do?</p>
+        <details class="answer">
+          <summary>Show model answer</summary>
+          <div>
+            <p>Separation. The likelihood keeps rising as the coefficient grows, so the maximum likelihood estimate does not exist; the software stopped at an arbitrary large value. The likelihood is almost flat there, so the standard error is huge and the Wald test is meaningless. The data in fact show a very strong association. Use a likelihood ratio test or a profile-likelihood interval, Firth’s penalised likelihood, or exact logistic regression, or simply report the table.</p>
+            <p><strong>If you got this wrong:</strong> you rely on output without picturing the likelihood surface. A note on Wald, score and likelihood ratio tests, and when the MLE exists, is worth an hour.</p>
+          </div>
+        </details>
+      </li>
+      <li>
+        <p>Two cohort studies estimate the same log hazard ratio, 0.40. In study A the log-likelihood (plotted against the log hazard ratio) is sharply peaked; in study B it is flat and lopsided. What does each shape say about precision, and which confidence interval method should you trust in B?</p>
+        <details class="answer">
+          <summary>Show model answer</summary>
+          <div>
+            <p>Curvature at the peak is the information; the standard error is roughly one over its square root. A is precise, B is not. Lopsided means the log-likelihood is not close to a parabola, so the Wald interval (estimate ± 1.96 SE, always symmetric) will be poor. Prefer a profile-likelihood interval, or work on a scale where the likelihood looks more quadratic.</p>
+            <p><strong>If you got this wrong:</strong> you know how to maximise a likelihood but not how its shape becomes a standard error. Revisit Fisher information and profile likelihood.</p>
+          </div>
+        </details>
+      </li>
+      <li>
+        <p>With 60 patients and 15 parameters, a colleague says: “Maximum likelihood is unbiased and efficient, so the estimates are fine.” Is that right?</p>
+        <details class="answer">
+          <summary>Show model answer</summary>
+          <div>
+            <p>No. Those are large-sample properties. In small samples MLEs can be biased (the MLE of a variance divides by \(n\); logistic coefficients drift away from zero when events per parameter are few), and Wald standard errors are unreliable. Use fewer parameters, penalisation (Firth, ridge), or exact or bootstrap inference.</p>
+            <p><strong>If you got this wrong:</strong> you are treating asymptotic results as guarantees. That matters for small subgroups and rare outcomes.</p>
+          </div>
+        </details>
+      </li>
+    </ol>
+    <div class="widget" data-topic="mle" data-label="Likelihood and MLE" data-source="Wasserman ch. 9" data-feeds="Lectures 3.3 and 3.6">
+      <div class="diagram-title">Your rating · Likelihood and maximum likelihood</div>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="t-freq">
+    <h2>3. Frequentist inference</h2>
+    <p class="point">Tests whether you read p-values and confidence intervals for what they are, and remember that every standard error rests on a sampling design.</p>
+    <ol class="exercises">
+      <li>
+        <p>Trial A: hazard ratio 0.80 (95% CI 0.65–0.98), p = 0.03. Trial B: hazard ratio 0.80 (95% CI 0.62–1.03), p = 0.08. An editorial says Trial B “failed to replicate” Trial A. How do you respond?</p>
+        <details class="answer">
+          <summary>Show model answer</summary>
+          <div>
+            <p>The two trials agree. Same estimate, almost entirely overlapping intervals; B is just less precise. The difference between “significant” and “not significant” is not itself significant. Pooled, the two give a more precise estimate of the same effect.</p>
+            <p><strong>If you got this wrong:</strong> you are reading p-values as verdicts. Re-read confidence intervals as ranges of effects compatible with the data (Greenland and colleagues, 2016).</p>
+          </div>
+        </details>
+      </li>
+      <li>
+        <p>Which of these is a correct reading of p = 0.03? (a) There is a 3% chance the null hypothesis is true. (b) There is a 3% chance the result is due to chance. (c) If the null hypothesis and every other model assumption were true, results at least this extreme would occur 3% of the time. (d) There is a 97% chance the effect is real.</p>
+        <details class="answer">
+          <summary>Show model answer</summary>
+          <div>
+            <p>Only (c). The others are probabilities about hypotheses, which need a prior (topic 5). Note “every other model assumption”: a small p-value can come from a broken assumption, such as ignoring clustering, rather than from a real effect.</p>
+            <p><strong>If you got this wrong:</strong> this is the most common misreading in medical papers, and reviewers will expect you to avoid it.</p>
+          </div>
+        </details>
+      </li>
+      <li>
+        <p>In 20,000 NHANES adults, mean systolic blood pressure differs by 0.8 mmHg between two diet groups, p &lt; 0.001. What does this show and not show?</p>
+        <details class="answer">
+          <summary>Show model answer</summary>
+          <div>
+            <p>It shows a small difference estimated precisely; the tiny p-value comes mostly from the sample size. Whether 0.8 mmHg matters is a clinical and population question (a small shift across a whole population can matter, Lecture 1.2), judged from the estimate and its interval. Two cautions: the p-value assumes simple random sampling, but NHANES is clustered and weighted, so design-based standard errors will be larger (Lecture 3.4); and an observational difference may be confounded.</p>
+            <p><strong>If you got this wrong:</strong> you are conflating precision with importance, or forgetting that standard errors depend on how the data were sampled.</p>
+          </div>
+        </details>
+      </li>
+    </ol>
+    <div class="widget" data-topic="freq" data-label="Frequentist inference" data-source="Wasserman ch. 6 and 10" data-feeds="Lecture 3.4">
+      <div class="diagram-title">Your rating · Frequentist inference</div>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="t-power">
+    <h2>4. Power and sample size</h2>
+    <p class="point">Tests whether you know what drives power, that it belongs to a design rather than a result, and what limits information in a cohort.</p>
+    <ol class="exercises">
+      <li>
+        <p>A trial is planned with 80% power to detect a fall in one-year event risk from 10% to 5%. The investigators now think 10% to 7.5% is more realistic. Roughly how does the required sample size change, and why?</p>
+        <details class="answer">
+          <summary>Show model answer</summary>
+          <div>
+            <p>It roughly quadruples, and a little more. Sample size scales with one over the square of the difference to detect, so halving the difference (5 to 2.5 percentage points) multiplies it by about four. It is slightly more than four because the variance of a proportion is larger at 7.5% than at 5%.</p>
+            <p><strong>If you got this wrong:</strong> the inverse-square rule is the one sample-size fact to know without a calculator.</p>
+          </div>
+        </details>
+      </li>
+      <li>
+        <p>A trial finds no significant difference. A reviewer asks for the “post-hoc power” calculated from the observed effect. How do you respond?</p>
+        <details class="answer">
+          <summary>Show model answer</summary>
+          <div>
+            <p>Observed power is just the p-value in another form: a non-significant result always has low observed power (p = 0.05 corresponds to about 50%). It adds nothing. Show the confidence interval instead, which says which effects are still compatible with the data. Power is a property of a design before the data arrive.</p>
+            <p><strong>If you got this wrong:</strong> you are treating power as a property of a result. Read Hoenig and Heisey (2001).</p>
+          </div>
+        </details>
+      </li>
+      <li>
+        <p>Project 3 might have about 20,000 NHANES participants but only about 600 cardiovascular deaths (illustrative numbers). What drives the power to detect a hazard ratio for the sodium-to-potassium ratio? Name two things that make the effective information smaller than “20,000” suggests.</p>
+        <details class="answer">
+          <summary>Show model answer</summary>
+          <div>
+            <p>The number of events, not participants, plus the spread of the exposure. Things that shrink it: the design effect from clustering and unequal weights in NHANES; measurement error in a single spot-urine ratio, which flattens the hazard ratio towards 1 (regression dilution); deaths from other causes, which remove people before a cardiovascular death can be seen; and missing data.</p>
+            <p><strong>If you got this wrong:</strong> your power thinking is stuck at “n”. You need this for the Project 3 protocol and for Lectures 3.4 and 3.6.</p>
+          </div>
+        </details>
+      </li>
+    </ol>
+    <div class="widget" data-topic="power" data-label="Power and sample size" data-source="Kirkwood &amp; Sterne, sample size chapter" data-feeds="the Project 3 protocol">
+      <div class="diagram-title">Your rating · Power and sample size</div>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="t-bayes">
+    <h2>5. Bayesian inference</h2>
+    <p class="point">Tests whether you can say what a posterior means, predict how a prior moves a weak result, and use Bayes’ rule to read a literature.</p>
+    <ol class="exercises">
+      <li>
+        <p>Explain to a clinician the difference between “95% confidence interval 0.62–0.95” and “95% credible interval 0.62–0.95” for a hazard ratio. When will the two be numerically similar?</p>
+        <details class="answer">
+          <summary>Show model answer</summary>
+          <div>
+            <p>The confidence interval comes from a procedure that captures the true value in 95% of repeated studies; this particular interval either contains it or not. The credible interval says: given the model, the prior and these data, there is a 95% probability the hazard ratio lies in this range, which is what clinicians usually think a confidence interval means. They are numerically close when the prior is weak and the data are plentiful enough for the likelihood to dominate.</p>
+            <p><strong>If you got this wrong:</strong> refresh priors, posteriors and credible intervals before Block 8’s hierarchical models.</p>
+          </div>
+        </details>
+      </li>
+      <li>
+        <p>A small trial reports an odds ratio of 0.40 (95% CI 0.15–1.05). You combine it with a sceptical prior centred on an odds ratio of 1, with 95% of its weight between 0.5 and 2. Without software, roughly where does the posterior land, and why?</p>
+        <details class="answer">
+          <summary>Show model answer</summary>
+          <div>
+            <p>On the log scale the posterior mean is a precision-weighted average of prior and data. The data say log OR −0.92 with SE about 0.50; the prior says 0 with SE about 0.35, so the prior carries about twice the weight. The posterior is about −0.31 with SE about 0.29: an odds ratio near 0.73, 95% credible interval roughly 0.42–1.29. Small trials with big effects are pulled hardest; a large trial would swamp this prior.</p>
+            <p><strong>If you got this wrong:</strong> you need the intuition for how prior and data trade off. It matters every time a small study reports a surprising effect.</p>
+          </div>
+        </details>
+      </li>
+      <li>
+        <p>In some field, 10% of the hypotheses tested are true, studies have 50% power, and α = 0.05. Among results with p &lt; 0.05, roughly what share are false positives? What has this to do with Bayes?</p>
+        <details class="answer">
+          <summary>Show model answer</summary>
+          <div>
+            <p>Per 1,000 hypotheses: 100 are true, and 50 of them come out significant; 900 are null, and 45 come out significant. So 45 of 95, about 47%, of significant findings are false. That is Bayes’ theorem: the prior probability (10%) matters as much as the evidence, and a p-value is not the probability a finding is false (Ioannidis, 2005).</p>
+            <p><strong>If you got this wrong:</strong> you will over-trust single significant findings, including your own. See also topic 9.</p>
+          </div>
+        </details>
+      </li>
+    </ol>
+    <div class="widget" data-topic="bayes" data-label="Bayesian inference" data-source="Wasserman ch. 11" data-feeds="Block 8 (Lecture 8.8)">
+      <div class="diagram-title">Your rating · Bayesian inference</div>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="t-lm">
+    <h2>6. Linear model theory</h2>
+    <p class="point">Tests whether you know which assumptions matter, what a coefficient means once others are in the model, and what R² does not tell you.</p>
+    <ol class="exercises">
+      <li>
+        <p>A reviewer writes: “Systolic blood pressure is not normally distributed in your sample, so linear regression is invalid.” How do you respond?</p>
+        <details class="answer">
+          <summary>Show model answer</summary>
+          <div>
+            <p>The assumption concerns the errors (outcome given the covariates), not the outcome’s overall distribution. With a large sample, inference on coefficients is robust to non-normal errors. What matters more, in order: the right mean model (linearity, the right covariates), independence (no ignored clustering), and constant variance (or use robust standard errors). Normality matters mainly for prediction intervals and small samples.</p>
+            <p><strong>If you got this wrong:</strong> you need the hierarchy of linear model assumptions; it is a frequent reviewer exchange.</p>
+          </div>
+        </details>
+      </li>
+      <li>
+        <p>In a model of systolic blood pressure on sodium intake, adding BMI halves the sodium coefficient and doubles its standard error. Give two explanations, and say which one statistics alone cannot settle.</p>
+        <details class="answer">
+          <summary>Show model answer</summary>
+          <div>
+            <p>First, BMI may be a confounder or a mediator, which changes the coefficient; deciding which is a causal question that needs a DAG (Lecture 2.6), not a test. Second, sodium and BMI are correlated (people who eat more eat more salt), and collinearity inflates the standard error. Collinearity costs precision; it does not cause bias. After adjustment, the coefficient is the association with sodium at a fixed BMI.</p>
+            <p><strong>If you got this wrong:</strong> you may be confusing collinearity with confounding, a mix-up reviewers spot quickly.</p>
+          </div>
+        </details>
+      </li>
+      <li>
+        <p>A model of systolic blood pressure on urinary sodium-to-potassium ratio has R² = 0.04. A colleague says: “Salt explains only 4% of blood pressure, so it doesn’t matter.” Respond.</p>
+        <details class="answer">
+          <summary>Show model answer</summary>
+          <div>
+            <p>R² is the share of between-person variation explained. It depends on how spread out the exposure is in this sample and on measurement noise (a single spot urine is very noisy). It says nothing about the size of the effect per unit or its importance. A small effect on everyone shifts the whole distribution (Rose, Lecture 1.2). Look at the coefficient and its interval.</p>
+            <p><strong>If you got this wrong:</strong> you are using R² as an effect size; revisit what it measures.</p>
+          </div>
+        </details>
+      </li>
+    </ol>
+    <div class="widget" data-topic="lm" data-label="Linear model theory" data-source="Agresti, linear model chapters; Wasserman ch. 13" data-feeds="Lectures 3.3 and 3.8">
+      <div class="diagram-title">Your rating · Linear model theory</div>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="t-glm">
+    <h2>7. GLM theory</h2>
+    <p class="point">Tests whether you know that the link sets the scale of the effect, how offsets turn counts into rates, and why odds ratios behave oddly.</p>
+    <ol class="exercises">
+      <li>
+        <p>The outcome has a prevalence of 30%. A logistic model gives an odds ratio of 2.0 for the exposure. Can you write “the exposure doubles the risk”? Which model would give a risk ratio directly?</p>
+        <details class="answer">
+          <summary>Show model answer</summary>
+          <div>
+            <p>No. An odds ratio approximates a risk ratio only when the outcome is rare. From a baseline risk of 30%, an odds ratio of 2 takes the risk to about 46%, a risk ratio of about 1.5. For risk ratios, fit a binomial GLM with a log link (log-binomial), or a Poisson GLM with robust standard errors (“modified Poisson”, Zou 2004) when the log-binomial fails to converge.</p>
+            <p><strong>If you got this wrong:</strong> revisit link functions as the choice of effect scale.</p>
+          </div>
+        </details>
+      </li>
+      <li>
+        <p>Cardiovascular deaths by region and year are modelled with Poisson regression, but regional populations differ tenfold. What is missing, what does it do, and how do you read a coefficient once it is there?</p>
+        <details class="answer">
+          <summary>Show model answer</summary>
+          <div>
+            <p>An offset of log person-years: a term whose coefficient is fixed at 1, so the model is for the log of the rate rather than the count. Without it, coefficients compare counts and mostly reflect population size. With it, the exponentiated coefficient is a rate ratio. Then check for overdispersion.</p>
+            <p><strong>If you got this wrong:</strong> Lecture 3.3 depends on this; read the note first.</p>
+          </div>
+        </details>
+      </li>
+      <li>
+        <p>In a randomised trial, adding a strong predictor of the outcome (age, balanced between arms) moves the treatment odds ratio from 1.6 to 1.9. The investigators conclude that age was a confounder. Are they right?</p>
+        <details class="answer">
+          <summary>Show model answer</summary>
+          <div>
+            <p>No. Randomisation and balance rule out confounding. This is <em>non-collapsibility</em>: the odds ratio within age groups differs from the population-averaged odds ratio even without confounding. Risk differences and risk ratios do not behave this way; hazard ratios do. Say which one you are estimating. The same split between conditional and marginal effects returns in mixed models vs GEE (Lecture 3.8).</p>
+            <p><strong>If you got this wrong:</strong> this matters for every adjusted odds ratio and hazard ratio you report, and for Block 4.</p>
+          </div>
+        </details>
+      </li>
+    </ol>
+    <div class="widget" data-topic="glm" data-label="GLM theory" data-source="Agresti, GLM, binary and count data chapters" data-feeds="Lecture 3.3">
+      <div class="diagram-title">Your rating · GLM theory</div>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="t-resamp">
+    <h2>8. Resampling</h2>
+    <p class="point">Tests whether you resample the right unit, repeat the whole procedure, and know what each resampling method estimates.</p>
+    <ol class="exercises">
+      <li>
+        <p>A dataset has three clinic visits for each of 1,000 patients (3,000 rows). You bootstrap by resampling rows to get a confidence interval for the mean change in blood pressure. What is wrong?</p>
+        <details class="answer">
+          <summary>Show model answer</summary>
+          <div>
+            <p>Rows are not independent. Resample the independent unit: patients, each with all their rows (a cluster bootstrap). Resampling rows breaks the within-patient correlation and gives intervals that are too narrow. In a survey, resample primary sampling units within strata, or use the replicate weights supplied (Lecture 3.4).</p>
+            <p><strong>If you got this wrong:</strong> the rule “resample what was sampled independently” needs to become automatic.</p>
+          </div>
+        </details>
+      </li>
+      <li>
+        <p>You build a prediction model with stepwise selection from 30 candidate predictors, ending with 8. To correct its apparent performance for optimism, you bootstrap: in each bootstrap sample you refit the final 8-predictor model. What is wrong?</p>
+        <details class="answer">
+          <summary>Show model answer</summary>
+          <div>
+            <p>The bootstrap must repeat the whole model-building process in every sample, including the variable selection. Refitting only the final model ignores the optimism from choosing those 8, so the “corrected” performance is still too good. The same applies to tuning and imputation inside cross-validation.</p>
+            <p><strong>If you got this wrong:</strong> this is leakage in statistical clothing; you will need it for prediction models in Lecture 5.13.</p>
+          </div>
+        </details>
+      </li>
+      <li>
+        <p>You want to compare a skewed biomarker between two groups of 25 patients. Which resampling method would you use for a p-value, which for a confidence interval for the difference, and what does the first one assume?</p>
+        <details class="answer">
+          <summary>Show model answer</summary>
+          <div>
+            <p>A permutation test for the p-value: shuffling group labels gives the null distribution, assuming the labels are exchangeable under the null (the same distribution, not just the same mean). A bootstrap for the interval, preferably bias-corrected and accelerated (BCa), since simple percentile intervals can undercover at n = 25.</p>
+            <p><strong>If you got this wrong:</strong> revisit what each method estimates: a null distribution versus a sampling distribution.</p>
+          </div>
+        </details>
+      </li>
+    </ol>
+    <div class="widget" data-topic="resamp" data-label="Resampling" data-source="Wasserman ch. 8" data-feeds="Lectures 3.4 and 3.5">
+      <div class="diagram-title">Your rating · Resampling</div>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="t-mult">
+    <h2>9. Multiple testing</h2>
+    <p class="point">Tests whether you can choose between error rates, count the analyses you did rather than the ones you reported, and handle subgroups.</p>
+    <ol class="exercises">
+      <li>
+        <p>Six secondary outcomes give p = 0.001, 0.008, 0.012, 0.030, 0.041 and 0.20. Which survive Bonferroni at a family-wise error rate of 5%, and which survive Benjamini–Hochberg at a false discovery rate of 5%? When would you use each?</p>
+        <details class="answer">
+          <summary>Show model answer</summary>
+          <div>
+            <p>Bonferroni: threshold 0.05/6 ≈ 0.0083, so two survive (0.001 and 0.008). Benjamini–Hochberg: compare the k-th smallest p-value with k × 0.05/6 (0.0083, 0.017, 0.025, 0.033, 0.042, 0.05); the largest one under its threshold is the fifth, so five survive. Control the family-wise rate for confirmatory claims where any false positive is costly. Control the false discovery rate for screening many candidates, where a known share of false leads is acceptable.</p>
+            <p><strong>If you got this wrong:</strong> revisit FWER versus FDR and the step-up procedure.</p>
+          </div>
+        </details>
+      </li>
+      <li>
+        <p>A paper analyses the sodium-to-potassium ratio as continuous, in tertiles, quartiles, quintiles and at a clinical cut-off; with and without BMI adjustment; in three groupings of NHANES cycles. It reports the one version with p = 0.02, and applies no multiplicity correction because “only one test was reported”. Comment.</p>
+        <details class="answer">
+          <summary>Show model answer</summary>
+          <div>
+            <p>That is 30 analyses, and multiplicity counts the analyses that were run (or could have been), not the ones printed. One “significant” result among 30 is unremarkable. The remedy is a pre-specified analysis plan with one primary analysis (Lecture 3.1), with the rest reported as sensitivity analyses.</p>
+            <p><strong>If you got this wrong:</strong> you will be vulnerable to the “garden of forking paths” in your own Project 3; Lecture 3.1 covers the safeguard.</p>
+          </div>
+        </details>
+      </li>
+      <li>
+        <p>A trial shows overall benefit and reports 20 subgroup analyses. Benefit is significant in men but not in women (p = 0.40 within women). The authors conclude the treatment does not work in women. Respond.</p>
+        <details class="answer">
+          <summary>Show model answer</summary>
+          <div>
+            <p>Test the interaction (does the effect differ between men and women?), not separate p-values within each subgroup. Subgroups are small, so each has low power, and with 20 of them about one will look significant by chance. The classic warning is ISIS-2, where aspirin appeared not to help patients born under Gemini or Libra. Believe a subgroup claim only if it was pre-specified, few were tested, the interaction test supports it, and it makes biological sense.</p>
+            <p><strong>If you got this wrong:</strong> you will need this for trial statistics in Lecture 5.8.</p>
+          </div>
+        </details>
+      </li>
+    </ol>
+    <div class="widget" data-topic="mult" data-label="Multiple testing" data-source="Wasserman ch. 10 (multiple testing section)" data-feeds="Lecture 3.1 and the Project 3 analysis plan">
+      <div class="diagram-title">Your rating · Multiple testing</div>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="plan">
+    <h2>Your gap-fill plan</h2>
+    <p class="point">The rule from the curriculum: short notes only for topics you rated Shaky or Gap, in weeks 34–36. If none, the lectures start in week 34.</p>
+
+    <div class="widget" data-widget="diagnostic-tracker">
+      <div class="widget-title">Your diagnostic summary</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Fills in as you rate each topic above. Ratings are saved in this browser only, so you can come back to them.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>Expect most gaps, if any, in power and sample size, and in the GLM details that ML rarely needs (offsets, non-collapsibility, log-binomial models). ML training covers likelihood, resampling and regularisation well, but treats them as tools for prediction rather than for estimating one effect with an honest interval.</p>
+    </div>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Wasserman, <em>All of Statistics: A Concise Course in Statistical Inference</em> (Springer, 2004): chapters 2–3 (distributions, expectation), 6 and 10 (inference, tests, p-values, multiple testing), 8 (bootstrap), 9 (parametric inference and maximum likelihood), 11 (Bayesian inference), 13 (regression). The main source for gap-fill notes.</li>
+      <li>Agresti, <em>Foundations of Linear and Generalized Linear Models</em> (Wiley, 2015): least squares and normal linear models, GLM fitting and inference, binary and count data.</li>
+      <li>Kirkwood &amp; Sterne, <em>Essential Medical Statistics</em> (2nd edition, Blackwell, 2003): likelihood, sample size calculation and Bayesian chapters, in a medical setting.</li>
+      <li>Greenland et al., “Statistical tests, P values, confidence intervals, and power: a guide to misinterpretations”, <em>European Journal of Epidemiology</em> (2016).</li>
+      <li>Gelman &amp; Stern, “The difference between ‘significant’ and ‘not significant’ is not itself statistically significant”, <em>The American Statistician</em> (2006).</li>
+      <li>Hoenig &amp; Heisey, “The abuse of power: the pervasive fallacy of power calculations for data analysis”, <em>The American Statistician</em> (2001).</li>
+      <li>Hanley &amp; Lippman-Hand, “If nothing goes wrong, is everything all right? Interpreting zero numerators”, <em>JAMA</em> (1983).</li>
+      <li>Ioannidis, “Why most published research findings are false”, <em>PLoS Medicine</em> (2005).</li>
+      <li>Zou, “A modified Poisson regression approach to prospective studies with binary data”, <em>American Journal of Epidemiology</em> (2004); Firth, “Bias reduction of maximum likelihood estimates”, <em>Biometrika</em> (1993).</li>
+      <li>Benjamini &amp; Hochberg, “Controlling the false discovery rate”, <em>Journal of the Royal Statistical Society B</em> (1995); ISIS-2 Collaborative Group, <em>Lancet</em> (1988).</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="../block-2/2-20-critical-appraisal.html"><small>Previous</small>2.20 Critical appraisal</a>
+    <a class="next" href="3-01-reproducible-pipelines.html"><small>Next</small>3.1 Reproducible analysis pipelines</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>
