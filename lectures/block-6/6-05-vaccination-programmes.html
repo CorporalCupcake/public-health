@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>6.5 Vaccination programmes · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/6-05.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-6">Block 6</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 6.5</p>
+  <h1>Vaccination programmes: effectiveness, coverage, hesitancy</h1>
+  <div class="lecture-meta">
+    <span>Block 6 · Health protection</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>A vaccination programme succeeds when an effective vaccine reaches enough of the right people, keeps working, and keeps their trust. Each link has its own measure: vaccine effectiveness (often from quick observational designs such as the screening method and the test-negative design), coverage, waning, safety signals and hesitancy. The designs are case-control and cohort studies you already know (Block 2), with traps of their own: who gets tested, who gets counted in the denominator, and the fact that vaccines protect the unvaccinated too.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#ve">Efficacy, effectiveness and impact</a></li>
+      <li><a href="#indirect">Direct and indirect effects</a></li>
+      <li><a href="#screening">The screening method</a></li>
+      <li><a href="#tnd">The test-negative design</a></li>
+      <li><a href="#coverage">Coverage and how it is measured</a></li>
+      <li><a href="#waning">Waning and safety after rollout</a></li>
+      <li><a href="#hesitancy">Hesitancy and how to measure it</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="ve">
+    <h2>1. Efficacy, effectiveness and impact</h2>
+    <p class="point">Vaccine effectiveness (VE) is the proportional reduction in disease among vaccinated people compared with similar unvaccinated people; efficacy is the same quantity measured in a trial.</p>
+
+    \[ \text{VE} = 1 - \text{RR} \]
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>Efficacy</strong> comes from a randomised trial under ideal conditions (cold chain intact, schedule followed, a defined population). <strong>Effectiveness</strong> comes from observational studies of routine use, so it includes real-world problems: missed doses, mismatched strains, older or sicker people. <strong>Impact</strong> is the change in disease in the whole population after a programme, which adds indirect protection (section 2). RR is the risk or rate ratio, vaccinated over unvaccinated; with case-control data the odds ratio stands in for it.</dd>
+      <dt>Why it matters</dt>
+      <dd>Licensing decisions use efficacy; programme decisions (keep, add a booster, change the schedule) use effectiveness and impact. They often differ, and the reasons are informative.</dd>
+      <dt>How to read it</dt>
+      <dd>VE of 60% means vaccinated people had 40% of the risk of comparable unvaccinated people. Measles vaccines reach the high 90s; seasonal influenza vaccines typically reduce illness by about 40–60% in seasons when the vaccine matches circulating strains (US CDC). Always ask: VE against what outcome (infection, illness, hospitalisation, death)? VE against severe disease is usually higher than against infection.</dd>
+      <dt>What a change means</dt>
+      <dd>VE moving from 90% to 80% doubles the risk among the vaccinated (10% to 20% of the unvaccinated risk), so small changes at the top of the scale matter a lot.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reading VE of 60% as “40% of vaccinated people will get the disease”. VE is relative: if 5% of unvaccinated people get influenza in a season, 2% of vaccinated people do. A second trap: “most cases were vaccinated, so the vaccine fails”. In a population with 95% coverage, most cases can be vaccinated even with a good vaccine (section 3).</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>A seatbelt’s effectiveness is not the share of crashes it prevents; it is how much it lowers your risk of serious injury when you crash. Most people injured in cars may be belted simply because most people wear belts.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="indirect">
+    <h2>2. Direct and indirect effects</h2>
+    <p class="point">Vaccinating some people protects others by reducing transmission, so the effect of a programme is bigger than the effect of a vaccine on the person who receives it.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Halloran, Struchiner and Longini named four effects by comparing a population with a programme (A) and one without (B). <strong>Direct</strong>: vaccinated vs unvaccinated within A. <strong>Indirect</strong>: unvaccinated in A vs unvaccinated in B, the herd effect (herd immunity thresholds are in Lecture 6.1). <strong>Total</strong>: vaccinated in A vs unvaccinated in B. <strong>Overall</strong>: everyone in A vs everyone in B, the public-health payoff.</dd>
+      <dt>Why it matters</dt>
+      <dd>An individually randomised trial measures something close to the direct effect. It misses the indirect effect, so it understates the value of a programme for vaccines that block transmission. Cluster-randomised trials and before–after population studies capture it.</dd>
+      <dt>How to read it</dt>
+      <dd>A falling disease rate in age groups that were not vaccinated, starting when a programme began, is the signature of an indirect effect. Expect it for vaccines that reduce carriage or infection (pneumococcal and meningococcal conjugates, measles), and little of it for vaccines that only prevent disease (tetanus, which does not spread person to person).</dd>
+      <dt>What a change means</dt>
+      <dd>As coverage rises, the direct effect stays about the same but the unvaccinated face less infection, so the overall effect grows faster than coverage. Comparing vaccinated with unvaccinated people inside a high-coverage population can even make the direct effect look smaller, because the unvaccinated comparison group is also protected.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · Four effects of a vaccination programme</div>
+      <svg class="viz-svg" viewBox="0 0 640 296" role="img" aria-label="Two populations. Population A has a vaccination programme and contains a vaccinated group and an unvaccinated group. Population B has no programme and contains only unvaccinated people. Connectors below show the comparisons: direct, vaccinated versus unvaccinated within A; indirect, unvaccinated in A versus unvaccinated in B; total, vaccinated in A versus unvaccinated in B. A connector above joins the two whole populations: overall.">
+        <path d="M160,44 L160,26 L480,26 L480,44" class="edge accent"/>
+        <text x="320" y="18" text-anchor="middle" class="viz-small viz-bold colour s1">Overall: everyone in A vs everyone in B</text>
+        <rect x="20" y="44" width="280" height="150" rx="12" class="node s5"/>
+        <text x="160" y="68" text-anchor="middle" class="viz-bold">A: with a programme</text>
+        <rect x="40" y="86" width="110" height="64" rx="8" class="node-fill s1"/>
+        <text x="95" y="122" text-anchor="middle" class="viz-small">Vaccinated</text>
+        <rect x="170" y="86" width="110" height="64" rx="8" class="node-fill s5"/>
+        <text x="225" y="122" text-anchor="middle" class="viz-small">Unvaccinated</text>
+        <rect x="340" y="44" width="280" height="150" rx="12" class="node s5"/>
+        <text x="480" y="68" text-anchor="middle" class="viz-bold">B: no programme</text>
+        <rect x="425" y="86" width="110" height="64" rx="8" class="node-fill s5"/>
+        <text x="480" y="122" text-anchor="middle" class="viz-small">Unvaccinated</text>
+        <path d="M95,150 L95,280" class="edge"/>
+        <path d="M225,150 L225,250" class="edge"/>
+        <path d="M480,150 L480,280" class="edge"/>
+        <path d="M95,222 L225,222" class="edge strong"/>
+        <text x="160" y="214" text-anchor="middle" class="viz-small viz-bold">Direct</text>
+        <path d="M225,250 L480,250" class="edge strong"/>
+        <text x="352" y="242" text-anchor="middle" class="viz-small viz-bold">Indirect</text>
+        <path d="M95,280 L480,280" class="edge strong"/>
+        <text x="300" y="273" text-anchor="middle" class="viz-small viz-bold">Total</text>
+      </svg>
+      <figcaption>The direct effect is what most vaccine effectiveness studies estimate. Indirect effects are why population-level impact studies (Lectures 4.6 and 4.7) belong in vaccine evaluation.</figcaption>
+    </figure>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Pneumococcal conjugate vaccine in the United States</div>
+      <p>After the seven-valent conjugate vaccine was introduced for infants in 2000, invasive pneumococcal disease in children under 2 fell by 69% by 2001, and in adults aged 65 and over, who were not given the vaccine, it fell by 18% (Whitney et al., <em>NEJM</em> 2003). Vaccinated infants carried and passed on vaccine serotypes less, so grandparents were protected too.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Counting only cases prevented in vaccinated people when estimating a programme’s benefit or cost-effectiveness. For transmissible infections this undercounts, sometimes by a lot. The reverse also happens: indirect effects can shift infection to older ages, where some diseases (rubella in pregnancy, varicella) are more severe. Dynamic transmission models (Lecture 6.2) are built to capture both.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="screening">
+    <h2>3. The screening method</h2>
+    <p class="point">If you know the coverage in the population and the share of cases who were vaccinated, you can estimate VE in minutes, as a quick check rather than a definitive study.</p>
+
+    \[ \text{VE} = 1 - \frac{\text{PCV}}{1-\text{PCV}} \times \frac{1-\text{PPV}}{\text{PPV}} \]
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>PCV is the proportion of cases vaccinated; PPV is the proportion of the population vaccinated (coverage). In words: compare the odds that a case was vaccinated with the odds that anyone in the population was. It is a case-control study (Lecture 2.3) whose “controls” are the whole population, summarised by its coverage.</dd>
+      <dt>Why it matters</dt>
+      <dd>Surveillance gives vaccination status of cases and programme data give coverage, so the method is cheap and fast. It is the natural first look when someone says “lots of the cases were vaccinated”.</dd>
+      <dt>How to read it</dt>
+      <dd>If the share of cases vaccinated equals coverage, VE is zero. The further below coverage it sits, the higher VE. At high coverage the curves bunch together, so a small error in coverage moves the VE estimate a lot.</dd>
+      <dt>What a change means</dt>
+      <dd>With coverage at 90%, half of cases vaccinated means VE of about 89%. If true coverage in the cases’ age group and area was 85%, the same data give about 82%.</dd>
+    </dl>
+
+    <div class="widget" data-widget="screening-method">
+      <div class="widget-title">Screening-method curves</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Set coverage to 90% and move the share of cases vaccinated: most cases can be vaccinated while VE is still high. Then drop coverage to 50% with the same share of cases: the vaccine now looks useless. Watch how far the red points move VE at high coverage.</p>
+    </div>
+
+    <pre><code># Farrington's version: logistic regression with coverage as an offset
+# cases: one row per case, vacc = 0/1, ppv = coverage for that case's age and area
+fit &lt;- glm(vacc ~ 1 + offset(qlogis(ppv)), family = binomial, data = cases)
+1 - exp(coef(fit))                   # VE
+1 - exp(rev(confint.default(fit)))   # 95% CI (Wald)</code></pre>
+    <p>Each case is compared with the coverage in its own stratum (age group, birth cohort, area) through the offset, which removes the worst source of error: using one national coverage figure for cases from very different groups. The intercept is the log of one minus VE.</p>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Using coverage from a different population than the cases. If cases cluster in a district with 70% coverage and you use the national 95%, VE looks much higher than it is. Coverage must match the cases by age, place and time, and cases must be ascertained regardless of vaccination status (if doctors test vaccinated patients less, PCV is too low).</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="tnd">
+    <h2>4. The test-negative design</h2>
+    <p class="point">Among people who seek care for the same symptoms and get tested, compare vaccination between those who test positive (cases) and those who test negative (controls).</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A case-control study nested in the testing pipeline. VE is one minus the odds ratio of vaccination, test-positive vs test-negative, usually adjusted for age and calendar time. It is the standard design for seasonal influenza VE networks and was used widely for COVID-19 vaccines.</dd>
+      <dt>Why it matters</dt>
+      <dd>People who get vaccinated also tend to seek care more. In an ordinary cohort, medically attended cases then overstate disease among the vaccinated and VE is biased down. Restricting everyone to people who sought care and were tested balances care-seeking between cases and controls by design.</dd>
+      <dt>How to read it</dt>
+      <dd>The design works if three things hold: care-seeking affects testing equally for the target infection and for other illnesses; the vaccine does not change the risk of the other illnesses; and the test is accurate. Check that controls are tested for the same reason as cases, in the same weeks.</dd>
+      <dt>What a change means</dt>
+      <dd>If the vaccine also prevents some test-negative illness, controls are depleted of vaccinated people and VE is underestimated. Low test specificity lets non-cases into the case group and pulls VE towards zero.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · What the test-negative design conditions on</div>
+      <svg class="viz-svg" viewBox="0 0 640 240" role="img" aria-label="A causal diagram. Care-seeking habits cause vaccination and cause being tested. Vaccination prevents the target infection, which leads to testing. Other respiratory illness also leads to testing. A dashed red arrow from vaccination to other respiratory illness marks the assumption that the vaccine does not affect it. The tested box is outlined strongly because the study includes only tested people.">
+        <defs><marker id="l65-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead"/></marker></defs>
+        <rect x="20" y="20" width="170" height="44" rx="8" class="node s5"/>
+        <text x="105" y="47" text-anchor="middle" class="viz-small">Care-seeking habits</text>
+        <rect x="20" y="170" width="170" height="44" rx="8" class="node s1"/>
+        <text x="105" y="197" text-anchor="middle" class="viz-small viz-bold">Vaccinated</text>
+        <rect x="250" y="170" width="170" height="44" rx="8" class="node s5"/>
+        <text x="335" y="197" text-anchor="middle" class="viz-small">Target infection</text>
+        <rect x="250" y="96" width="170" height="44" rx="8" class="node s5"/>
+        <text x="335" y="123" text-anchor="middle" class="viz-small">Other respiratory illness</text>
+        <rect x="470" y="96" width="150" height="44" rx="8" class="node-fill s2"/>
+        <text x="545" y="116" text-anchor="middle" class="viz-small viz-bold">Tested</text>
+        <text x="545" y="131" text-anchor="middle" class="viz-small">(study includes only these)</text>
+        <path d="M105,64 L105,167" class="edge" marker-end="url(#l65-arrow)"/>
+        <path d="M190,36 Q 420,30 538,93" class="edge" marker-end="url(#l65-arrow)"/>
+        <path d="M190,192 L247,192" class="edge" marker-end="url(#l65-arrow)"/>
+        <path d="M420,186 L490,142" class="edge" marker-end="url(#l65-arrow)"/>
+        <path d="M420,118 L467,118" class="edge" marker-end="url(#l65-arrow)"/>
+        <path d="M170,170 L250,140" class="stroke dashed s3" stroke-width="1.8"/>
+        <text x="200" y="146" text-anchor="end" class="viz-small colour s3">assumed absent</text>
+      </svg>
+      <figcaption>Restricting to tested people makes care-seeking similar in cases and controls. The dashed arrow is the key assumption: if the vaccine prevents “other” illness too, the control group is biased.</figcaption>
+    </figure>
+
+    <div class="widget" data-widget="tnd-bias">
+      <div class="widget-title">Test-negative bias explorer</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Start with “Ideal conditions”: vaccinated people seek care 1.5 times as often, which drags the naive estimate down, but the test-negative estimate is right. Then try an imperfect test, and a vaccine that also prevents other illness.</p>
+    </div>
+
+    <pre><code>library(splines)
+# tnd: one row per tested patient; pos = 1 if test-positive
+fit &lt;- glm(pos ~ vaccinated + ns(age, 3) + ns(week, 4),
+           family = binomial, data = tnd)
+or &lt;- exp(coef(fit)["vaccinated"])
+1 - or                               # VE, adjusted for age and calendar time</code></pre>
+    <p>Calendar time matters because both vaccination and infection are seasonal: early in the season few are vaccinated and few test positive, so ignoring week confounds VE. Splines let age and week enter smoothly.</p>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>The design is selection on a variable (being tested) that sits downstream of both the infection and care-seeking, which you know from Lecture 2.7 as collider territory. Here the selection is deliberate and helps, because it equalises care-seeking. It fails when the vaccine has its own path into the selection, the dashed arrow: then conditioning on testing opens a biased path, just as in collider bias.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Including test-negative controls who tested for a different reason (pre-operative screening, travel) alongside symptomatic cases. They do not share the care-seeking pathway, so the design’s main protection is lost. Restrict to people tested because of a defined symptom set, and analyse by time since symptom onset to limit false negatives from late testing.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="coverage">
+    <h2>5. Coverage and how it is measured</h2>
+    <p class="point">Coverage is the share of the target population that received the recommended doses on time; the hard part is the denominator.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Source</th><th>How</th><th>Typical problem</th></tr></thead>
+        <tbody>
+          <tr><td>Administrative</td><td>Doses given ÷ estimated target population</td><td>Wrong denominator; coverage above 100%</td></tr>
+          <tr><td>Household survey</td><td>Card or caregiver recall for sampled children</td><td>Recall error, lost cards, sampling error</td></tr>
+          <tr><td>Registry</td><td>Linked individual records</td><td>Incomplete for private providers or movers</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Standard indicators include coverage of the third dose of diphtheria–tetanus–pertussis vaccine (DTP3), the <strong>dropout</strong> between DTP1 and DTP3 (people reached once who did not return), and <strong>zero-dose</strong> children who did not receive even DTP1. WHO and UNICEF publish yearly national estimates (WUENIC) that reconcile administrative and survey data.</dd>
+      <dt>Why it matters</dt>
+      <dd>National averages hide pockets. Measles returns where local coverage falls below the herd immunity threshold, even when the national figure looks fine.</dd>
+      <dt>How to read it</dt>
+      <dd>Look at subnational coverage, timeliness (doses given on schedule, not just eventually), and dropout. A high DTP1 with a big drop to DTP3 is an access or follow-up problem; low DTP1 is a reach problem.</dd>
+      <dt>What a change means</dt>
+      <dd>Administrative coverage jumping after a census update usually reflects a new denominator, not more vaccination. Large mobile and migrant populations make denominators especially unstable.</dd>
+    </dl>
+
+    <div class="callout gulf">
+      <div class="callout-title">Gulf example · Meningococcal vaccination for Hajj and Umrah</div>
+      <p>Coverage for pilgrims is enforced by entry requirements. For the 1447H (2026) season, Saudi health requirements ask pilgrims to show a meningococcal ACYW vaccine given at least 10 days before arrival: a conjugate vaccine (quadrivalent, or pentavalent ACYWX) within the last 5 years, or a polysaccharide vaccine within the last 3 years; a certificate that does not state the type counts as valid for 3 years. Serogroup A vaccination had been required of all pilgrims since an outbreak after the 1987 Hajj; W135 was covered after outbreaks linked to the 2000 Hajj spread to pilgrims’ contacts in several countries. Requirements change each season, so check the current list (Lecture 6.10 covers the Hajj in depth).</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reading administrative coverage above 100% as a data error to be capped at 100%. It is a signal that the denominator is too small (unregistered births, migrants) or that people from outside the area are being vaccinated there. Capping hides exactly the population you are not counting.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="waning">
+    <h2>6. Waning and safety after rollout</h2>
+    <p class="point">Protection can fade with time since vaccination, and rare harms only show up once millions are vaccinated; both need continuous monitoring after licensing.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>Waning</strong> is VE falling with time since the last dose: estimate VE separately by time since vaccination. <strong>Safety monitoring</strong> starts with spontaneous reports (Lecture 5.12) that raise signals, then tests them with self-controlled case series and related designs (Lecture 5.5), which suit vaccines because exposure dates are known exactly.</dd>
+      <dt>Why it matters</dt>
+      <dd>Waning drives booster policy; safety drives public trust. Vaccines are given to healthy people, often children, so tolerance of harm is much lower than for treatments.</dd>
+      <dt>How to read it</dt>
+      <dd>A real waning curve shows VE falling steadily with time since dose, within the same season or strain. A drop that coincides with a new variant or a drifted influenza strain is escape, not waning.</dd>
+      <dt>What a change means</dt>
+      <dd>If VE against infection falls but VE against hospitalisation holds, boosters may be needed only for groups at high risk of severe disease.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p><strong>Depletion of susceptibles</strong>. Early in a season, susceptible unvaccinated people get infected and become immune, so the unvaccinated group becomes less susceptible over time. VE then appears to fall even if protection is constant. Lipsitch and colleagues showed this can create apparent within-season waning, and recommended comparing people vaccinated at different times before the season, at the same calendar time.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>A sunscreen test that compares burns at 4 pm: by then the unprotected people who burn easily have already gone indoors, so the remaining unprotected group looks tougher, and sunscreen looks as if it is wearing off.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="hesitancy">
+    <h2>7. Hesitancy and how to measure it</h2>
+    <p class="point">Vaccine hesitancy is delay in accepting, or refusing, vaccination despite available services; it has several causes, and measuring only “trust” misses most of them.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Framework</th><th>Components</th></tr></thead>
+        <tbody>
+          <tr><td>SAGE “3Cs” (MacDonald 2015)</td><td>Confidence, complacency, convenience</td></tr>
+          <tr><td>5C scale (Betsch et al. 2018)</td><td>Confidence, complacency, constraints, calculation, collective responsibility</td></tr>
+          <tr><td>WHO BeSD (2022)</td><td>Thinking and feeling, social processes, motivation, practical issues</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The WHO SAGE working group defined hesitancy and its 3Cs: <strong>confidence</strong> (trust in vaccines, providers and the system), <strong>complacency</strong> (low perceived risk of the disease), <strong>convenience</strong> (access, cost, opening hours). The 5C scale adds calculation (extensive weighing of information) and collective responsibility (willingness to protect others). WHO’s Behavioural and Social Drivers (BeSD) tools give short validated survey questions for the four domains in the table.</dd>
+      <dt>Why it matters</dt>
+      <dd>The fix depends on the cause. Low confidence needs trusted messengers; complacency needs risk communication; convenience needs clinics open after work. A campaign that answers the wrong C wastes money.</dd>
+      <dt>How to read it</dt>
+      <dd>Use validated instruments, report each component separately, and link answers to actual uptake from records where possible. Stated intention overpredicts behaviour.</dd>
+      <dt>What a change means</dt>
+      <dd>Rising complacency after years of low disease is the paradox of success: a well-controlled disease feels like no threat, which lowers uptake until outbreaks return.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Blaming low coverage on hesitancy when the problem is access. Unvaccinated people are often willing but face practical barriers (distance, cost, time off work, language). Measure both, and check for constraints before designing persuasion campaigns.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>Hesitancy surveys are a measurement problem (Lecture 2.14): latent constructs, item wording, and validity across languages. Social-media sentiment models are tempting but measure a loud, unrepresentative sample; treat them as an early-warning signal and validate against surveys and uptake.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>During a measles outbreak in a city with 95% coverage, 40% of cases were vaccinated. A newspaper says the vaccine is failing. What do you say?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>With 95% coverage, vaccinated people vastly outnumber unvaccinated, so even a very effective vaccine leaves many vaccinated cases. The screening method gives VE of about 96% here: 40% of cases vaccinated is far below 95% of the population. The check is whether the coverage figure matches the cases’ age group and area.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A cohort study using insurance records finds influenza VE of 20% against medically attended influenza, while a test-negative study in the same season finds 50%. Give one reason the cohort estimate might be too low.</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Vaccinated people seek care and get tested more, so their influenza is more often recorded. That inflates the count of cases among the vaccinated and biases VE down. The test-negative design restricts to people who sought care, which balances that difference.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>An individually randomised trial of a new vaccine finds 50% efficacy against infection. After the national programme starts, disease falls 70% in the whole population, including adults not offered the vaccine. Is something wrong?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Not necessarily. The trial estimates roughly the direct effect. A programme also reduces transmission, so the unvaccinated are protected (indirect effect), and the overall effect can exceed the direct effect. You would still check for secular trends or changes in testing with a before–after design that has a comparison (Lectures 4.6, 4.7).</p></div>
+        </details>
+      </li>
+      <li>
+        <p>VE estimated in a test-negative study falls from 70% in the first month after vaccination to 40% by month five, during one long season. Name a reason this might not be true waning.</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Depletion of susceptibles: as the season goes on, more unvaccinated people have been infected and are now immune, so the unvaccinated comparison group becomes less susceptible and VE appears to fall. Strain change during the season could also lower VE without waning. Comparing people vaccinated at different times, at the same calendar time, avoids the first problem.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A survey finds 90% of parents in a district “trust vaccines”, yet coverage is 70%. What would you measure next?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Convenience or practical issues: distance to clinics, opening hours, costs, missed follow-up doses (DTP1 to DTP3 dropout), and whether reminder systems exist. High confidence with low coverage points to access, not attitudes. Also check the coverage denominator.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Halloran, Struchiner &amp; Longini, “Study designs for evaluating different efficacy and effectiveness aspects of vaccines”, <em>American Journal of Epidemiology</em> (1997). Halloran, Longini &amp; Struchiner, <em>Design and Analysis of Vaccine Studies</em> (Springer, 2010).</li>
+      <li>Orenstein et al., “Field evaluation of vaccine efficacy”, <em>Bulletin of the World Health Organization</em> (1985). Farrington, “Estimation of vaccine effectiveness using the screening method”, <em>International Journal of Epidemiology</em> (1993).</li>
+      <li>Jackson &amp; Nelson, “The test-negative design for estimating influenza vaccine effectiveness”, <em>Vaccine</em> (2013). Sullivan, Tchetgen Tchetgen &amp; Cowling, “Theoretical basis of the test-negative study design for assessment of influenza vaccine effectiveness”, <em>American Journal of Epidemiology</em> (2016).</li>
+      <li>Whitney et al., “Decline in invasive pneumococcal disease after the introduction of protein–polysaccharide conjugate vaccine”, <em>New England Journal of Medicine</em> (2003).</li>
+      <li>Lipsitch, Goldstein, Ray &amp; Fireman, “Depletion-of-susceptibles bias in influenza vaccine waning studies: how to ensure robust results”, <em>Epidemiology and Infection</em> (2019).</li>
+      <li>MacDonald &amp; the SAGE Working Group on Vaccine Hesitancy, “Vaccine hesitancy: definition, scope and determinants”, <em>Vaccine</em> (2015). Betsch et al., “Beyond confidence: development of a measure assessing the 5C psychological antecedents of vaccination”, <em>PLoS ONE</em> (2018). WHO, <em>Behavioural and social drivers of vaccination: tools and practical guidance for achieving high uptake</em> (2022).</li>
+      <li>Saudi Ministry of Health, Hajj and Umrah health requirements (updated each season). Aguilera et al., “Outbreak of serogroup W135 meningococcal disease after the Hajj pilgrimage, Europe, 2000”, <em>Emerging Infectious Diseases</em> (2002).</li>
+      <li>Vynnycky &amp; White, <em>An Introduction to Infectious Disease Modelling</em> (Oxford University Press, 2010), chapters on vaccination and herd immunity.</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="6-04-outbreak-investigation.html"><small>Previous</small>6.4 Outbreak investigation</a>
+    <a class="next" href="6-06-antimicrobial-resistance.html"><small>Next</small>6.6 Antimicrobial resistance</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

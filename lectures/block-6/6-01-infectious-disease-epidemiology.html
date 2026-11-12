@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>6.1 Infectious disease epidemiology · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/6-01.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-6">Block 6</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 6.1</p>
+  <h1>Infectious disease epidemiology: transmission, R0, incubation, herd immunity</h1>
+  <div class="lecture-meta">
+    <span>Block 6 · Health protection</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>Infectious disease breaks the rule the rest of epidemiology relies on: one person’s outcome depends on everyone else’s. My infection is your exposure. That makes cases grow, shrink or fizzle out as chains, and five numbers describe the chain: how it spreads, how fast, how many each case infects, how unevenly, and how many die. This lecture gives you those numbers and how to read them. The rest of Block 6 (models, surveillance, outbreaks, vaccines, the Hajj) is built on them.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#routes">How infections travel</a></li>
+      <li><a href="#clock">The clock of an infection</a></li>
+      <li><a href="#r0">R0 and the effective reproduction number</a></li>
+      <li><a href="#k">Superspreading and chance</a></li>
+      <li><a href="#herd">Herd immunity</a></li>
+      <li><a href="#severity">Severity: case fatality vs infection fatality</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="routes">
+    <h2>1. How infections travel</h2>
+    <p class="point">The route of transmission decides who is exposed, which contacts count, and which control works; get the route wrong and the right effort goes to the wrong place.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The path a pathogen takes from one host to the next. The main routes are respiratory (droplets and fine airborne particles), direct or indirect contact (hands, surfaces), faecal–oral (food and water), vector-borne (mosquitoes, ticks), blood and sexual, and from mother to child. A <em>zoonosis</em> is an infection that crosses from animals to people; the first human case is a <em>spillover</em>.</dd>
+      <dt>Why it matters</dt>
+      <dd>Each route has its own contact network and its own lever. Water-borne cholera is stopped by clean water, not masks. Dengue is stopped by controlling <em>Aedes</em> mosquitoes, not by isolating patients. An airborne virus needs ventilation as well as hand hygiene.</dd>
+      <dt>How to read it</dt>
+      <dd>Ask three questions of any new outbreak: what is the source (an animal, a meal, a person)? Is there person-to-person spread, and how much? Where does it concentrate (households, hospitals, schools, workplaces)?</dd>
+      <dt>What a change means</dt>
+      <dd>A shift from spillover-only cases to clusters of person-to-person cases is the key warning sign. It means the outbreak can now sustain itself without the animal source.</dd>
+    </dl>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Route</th><th>Example</th><th>Main lever</th></tr></thead>
+        <tbody>
+          <tr><td>Respiratory</td><td>Measles, influenza, MERS in hospitals</td><td>Vaccination, isolation, ventilation, infection control</td></tr>
+          <tr><td>Faecal–oral</td><td>Cholera, hepatitis A, food poisoning</td><td>Safe water, sanitation, food hygiene</td></tr>
+          <tr><td>Vector-borne</td><td>Dengue, malaria</td><td>Vector control, bed nets, removing breeding sites</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">In the Gulf · MERS-CoV</div>
+      <p>MERS coronavirus shows two routes in one disease. Dromedary camels are the reservoir: people catch it from camels in occasional spillovers. Most reported cases, though, came from person-to-person spread inside hospitals, where coughing patients, aerosol-generating procedures and crowded emergency rooms amplify it. Spread in households and the community is limited. That split is why the control strategy is two-pronged: reduce camel exposure, and enforce infection control in health care.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Assuming the route from the symptoms. A respiratory illness can come from an animal or a contaminated ventilation system, and diarrhoea can spread person to person in a nursing home. Infer the route from the epidemiology (who got sick, when, where, and with what exposure), which is the subject of outbreak investigation in Lecture 6.4.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="clock">
+    <h2>2. The clock of an infection</h2>
+    <p class="point">Infectiousness and symptoms run on two separate clocks; whenever people are infectious before they feel ill, isolating the sick cannot stop the epidemic on its own.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The <em>latent period</em> runs from infection to becoming infectious; the <em>infectious period</em> follows it. The <em>incubation period</em> runs from infection to symptoms. The <em>generation interval</em> is the time from one person’s infection to the infection of someone they infect; the <em>serial interval</em> is the time between their symptom onsets, which is what we can actually observe.</dd>
+      <dt>Why it matters</dt>
+      <dd>The generation interval sets the speed of the epidemic: the same number of secondary cases per case, delivered in half the time, doubles the growth rate. The gap between latent and incubation periods decides whether symptom-based control (isolation, contact tracing) can work. The incubation period sets quarantine lengths and tells you how far back to look for the source.</dd>
+      <dt>How to read it</dt>
+      <dd>If the latent period is shorter than the incubation period, there is presymptomatic transmission. Fraser and colleagues (2004) showed that the share of transmission before symptoms is what made SARS controllable by isolation and tracing (little presymptomatic spread) and pandemic influenza much harder (a lot).</dd>
+      <dt>What a change means</dt>
+      <dd>A serial interval of 5 days instead of 10 means each generation of cases arrives twice as fast, so you have half the time to trace contacts before they become infectious themselves.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · Two clocks, two intervals</div>
+      <svg class="viz-svg" viewBox="0 0 640 322" role="img" aria-label="Timeline for person A: latent period from day 0 to 3, then infectious from day 3 to 9; incubation from day 0 to 5, then symptomatic. A bracket marks days 3 to 5 as infectious before symptoms. Person A infects person B on day 6. Person B has the same pattern shifted by 6 days. The generation interval runs from A's infection on day 0 to B's infection on day 6; the serial interval runs from A's symptom onset on day 5 to B's on day 11.">
+        <defs><marker id="l61-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0L10,5L0,10Z" class="arrowhead"/></marker>
+        <marker id="l61-arrow-acc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0L10,5L0,10Z" class="arrowhead accent"/></marker></defs>
+        <!-- presymptomatic bracket -->
+        <path d="M192,34 L192,28 L260,28 L260,34" class="edge"/>
+        <text x="226" y="20" text-anchor="middle" class="viz-small viz-bold colour s3">infectious before symptoms</text>
+        <!-- person A -->
+        <text x="8" y="68" class="viz-bold">Person A</text>
+        <rect x="90" y="36" width="102" height="24" rx="4" class="node-fill s5"/>
+        <text x="141" y="52" text-anchor="middle" class="viz-small">latent</text>
+        <rect x="192" y="36" width="204" height="24" rx="4" class="node-fill s3"/>
+        <text x="294" y="52" text-anchor="middle" class="viz-small">infectious</text>
+        <rect x="90" y="66" width="170" height="24" rx="4" class="node-fill s5"/>
+        <text x="175" y="82" text-anchor="middle" class="viz-small">incubation</text>
+        <rect x="260" y="66" width="204" height="24" rx="4" class="node-fill s2"/>
+        <text x="362" y="82" text-anchor="middle" class="viz-small">symptomatic</text>
+        <!-- transmission A to B -->
+        <path d="M294,60 L294,146" class="edge accent" stroke-dasharray="5 4" marker-end="url(#l61-arrow-acc)"/>
+        <text x="302" y="124" class="viz-small viz-bold colour s1">A infects B on day 6</text>
+        <!-- person B -->
+        <text x="8" y="182" class="viz-bold">Person B</text>
+        <rect x="294" y="150" width="102" height="24" rx="4" class="node-fill s5"/>
+        <text x="345" y="166" text-anchor="middle" class="viz-small">latent</text>
+        <rect x="396" y="150" width="204" height="24" rx="4" class="node-fill s3"/>
+        <text x="498" y="166" text-anchor="middle" class="viz-small">infectious</text>
+        <rect x="294" y="180" width="170" height="24" rx="4" class="node-fill s5"/>
+        <text x="379" y="196" text-anchor="middle" class="viz-small">incubation</text>
+        <rect x="464" y="180" width="136" height="24" rx="4" class="node-fill s2"/>
+        <text x="532" y="196" text-anchor="middle" class="viz-small">symptomatic</text>
+        <!-- guides -->
+        <line x1="90" y1="90" x2="90" y2="270" class="edge" stroke-dasharray="3 3" stroke-width="1.2"/>
+        <line x1="260" y1="90" x2="260" y2="232" class="edge" stroke-dasharray="3 3" stroke-width="1.2"/>
+        <line x1="294" y1="204" x2="294" y2="270" class="edge" stroke-dasharray="3 3" stroke-width="1.2"/>
+        <line x1="464" y1="204" x2="464" y2="232" class="edge" stroke-dasharray="3 3" stroke-width="1.2"/>
+        <!-- intervals -->
+        <path d="M262,232 L462,232" class="edge strong" marker-start="url(#l61-arrow)" marker-end="url(#l61-arrow)"/>
+        <text x="472" y="229" class="viz-small viz-bold">serial interval</text>
+        <text x="472" y="244" class="viz-small viz-muted">onset → onset (observed)</text>
+        <path d="M92,270 L292,270" class="edge strong" marker-start="url(#l61-arrow)" marker-end="url(#l61-arrow)"/>
+        <text x="302" y="267" class="viz-small viz-bold">generation interval</text>
+        <text x="302" y="282" class="viz-small viz-muted">infection → infection (rarely seen)</text>
+        <!-- axis -->
+        <line x1="90" y1="298" x2="600" y2="298" class="viz-axis"/>
+        <g class="viz-tick" text-anchor="middle">
+          <text x="90" y="314">day 0</text><text x="260" y="314">5</text><text x="430" y="314">10</text><text x="600" y="314">15</text>
+        </g>
+      </svg>
+      <figcaption>Illustrative durations. A’s infectious period starts two days before symptoms, so some of A’s contacts are infected before anyone knows A is ill. The serial interval is observable and usually close to the generation interval on average, but individual serial intervals can even be negative when B shows symptoms before A.</figcaption>
+    </figure>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Using “incubation period” to mean “time before you can spread it”. They are different clocks. For MERS the incubation period is typically about 5 days (range roughly 2 to 14), but that alone does not tell you when patients become infectious. Quarantine length comes from the incubation period; tracing windows come from when infectiousness starts.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>A smoke alarm with a delay. If the fire spreads to the next room before the alarm sounds, evacuating on the alarm is too late for that room. Presymptomatic transmission is a fire that outruns its alarm.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="r0">
+    <h2>3. R0 and the effective reproduction number</h2>
+    <p class="point">R is the average number of people each case infects; above 1 the epidemic grows, below 1 it shrinks, and almost every control measure works by pushing R below 1.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The <em>basic reproduction number</em> \(R_0\) is the average number of secondary cases caused by one case in a fully susceptible population, with no control measures. The <em>effective reproduction number</em> \(R_t\) is the same thing at time \(t\), in the population as it is now: some people immune, some behaviour changed, some measures in place.</dd>
+      <dt>Why it matters</dt>
+      <dd>It is the single threshold that decides growth or decline, and it decomposes into levers. Roughly, \(R_0\) is contacts per day, times the chance each contact transmits, times days infectious. Distancing cuts contacts, masks and hygiene cut the chance per contact, and isolation cuts the days infectious.</dd>
+      <dt>How to read it</dt>
+      <dd>\(R_0\) is a property of a pathogen <em>in a population</em>, not of the pathogen alone: the same virus has a higher \(R_0\) in a crowded city than in a scattered village. \(R_t\) falls as people become immune: roughly \(R_0\) times the share still susceptible, times the effect of any measures.</dd>
+      <dt>What a change means</dt>
+      <dd>An \(R_t\) of 1.2 means cases grow by 20% each generation; 0.8 means they shrink by 20%. With a 5-day generation interval, 1.2 doubles cases in about 19 days and 0.8 halves them in about 16. The direction matters more than the decimal.</dd>
+    </dl>
+
+    \[ R_0 \approx \text{contacts per day} \times \text{transmission chance per contact} \times \text{days infectious} \]
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Pathogen</th><th>Typical R<sub>0</sub> (commonly quoted)</th><th>Read it as</th></tr></thead>
+        <tbody>
+          <tr><td>Measles</td><td>12–18</td><td>Explosive; tiny immunity gaps cause outbreaks</td></tr>
+          <tr><td>Seasonal influenza</td><td>about 1.3 (median of estimates)</td><td>Modest R, but very fast generations</td></tr>
+          <tr><td>MERS-CoV, between people</td><td>below 1</td><td>Chains die out, but clusters can still be large</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Comparing pathogens by R alone. Speed depends on R <em>and</em> the generation interval. Influenza, with an R near 1.3 but generations of about 3 days, can outrun a pathogen with R of 2 and 10-day generations. When an outbreak is growing, the doubling time is the more urgent number; R tells you how hard you must push to stop it.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>R is the branching factor of a tree, or the gain of a feedback loop: below 1 the loop damps, above 1 it explodes. The growth rate is like compound interest, where R is the multiplier per period and the generation interval is the period length. Converting between R and growth rate needs the whole generation-interval distribution, not just its mean (Wallinga &amp; Lipsitch 2007), which is why two studies with the same growth rate can report different R.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="k">
+    <h2>4. Superspreading and chance</h2>
+    <p class="point">The average hides the shape: when a few cases cause most transmission, most introductions die out by luck, and the rest explode.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The number of secondary cases per case varies. Epidemiologists model it as a negative binomial distribution with mean R and a <em>dispersion parameter</em> \(k\) (the same overdispersion as in Lecture 3.3). Small \(k\) means a long tail: most cases infect nobody, a few infect many. A <em>superspreading event</em> is one case, or one setting, causing far more infections than average.</dd>
+      <dt>Why it matters</dt>
+      <dd>Low \(k\) changes strategy. Many introductions fizzle, so early case counts are noisy and misleading. Control can be targeted: find and close the settings where superspreading happens (hospital wards, crowded indoor events), and trace backwards to the event that infected a case, not only forwards.</dd>
+      <dt>How to read it</dt>
+      <dd>\(k\) above about 5 is close to “everyone alike”. \(k\) below 1 is overdispersed. Lloyd-Smith and colleagues (2005) estimated \(k \approx 0.16\) for SARS, which implies the most infectious 20% of cases cause close to 90% of transmission.</dd>
+      <dt>What a change means</dt>
+      <dd>With R = 2, lowering \(k\) from 5 to 0.2 raises the chance a single introduction dies out from under a third to about four in five. Same R, very different early picture.</dd>
+    </dl>
+
+    <div class="widget" data-widget="branching">
+      <div class="widget-title">Twenty introductions of one case each</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Each line is one outbreak started by one case. Keep R at 2 and slide k down: more outbreaks die out, but the survivors grow just as fast. Then shorten the generation interval and watch the doubling time fall with R unchanged.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">In the Gulf · MERS clusters</div>
+      <p>Kucharski and Althaus (2015) fitted this model to MERS cluster data and estimated R at about 0.5 and, in their main dataset, \(k\) at about 0.26 (with wide uncertainty): most chains stop quickly, yet clusters of over 150 cases are not unexpected. That is what happened in South Korea in 2015, when one traveller returning from the Arabian Peninsula started a hospital outbreak of 186 cases. Only 22 of the 186 infected anyone, and 5 superspreading events caused 150 of the transmissions (Kim et al. 2017). The same pattern of hospital amplification drove the large Saudi hospital outbreaks.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reading “R below 1” as “no risk of a large outbreak”. With strong overdispersion, a subcritical pathogen can still produce a big cluster in the wrong setting. Conversely, “the first few imported cases led nowhere” is weak evidence that R is low: with small \(k\), most introductions fail even when R is well above 1.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Sparks from a campfire. Most land on sand and die. A few land on dry grass. The average spark is harmless; the forest fire comes from the tail.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="herd">
+    <h2>5. Herd immunity</h2>
+    <p class="point">Once enough people are immune that each case infects fewer than one other on average, chains die out, and the unimmune are protected indirectly.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The <em>herd-immunity threshold</em> is the share of the population that must be immune for \(R_t\) to fall below 1 in a randomly mixing population. It comes straight from \(R_t \approx R_0 \times\) (share susceptible): set that to 1 and solve.</dd>
+      <dt>Why it matters</dt>
+      <dd>It sets vaccination coverage targets, and it explains why vaccines protect people who cannot be vaccinated (newborns, the immunocompromised). With an imperfect vaccine, the coverage needed is the threshold divided by vaccine effectiveness.</dd>
+      <dt>How to read it</dt>
+      <dd>\(R_0 = 2\) needs 50% immune; \(R_0 = 4\) needs 75%; measles, at 12–18, needs about 92–95%. If vaccine effectiveness is lower than the threshold, no coverage reaches it: the vaccine alone cannot interrupt transmission.</dd>
+      <dt>What a change means</dt>
+      <dd>Because the curve is steep at high \(R_0\), small coverage drops matter most for the most contagious diseases. Measles coverage falling from 95% to 90% can turn a protected population into an outbreak-prone one.</dd>
+    </dl>
+
+    \[ \text{herd-immunity threshold} = 1 - \frac{1}{R_0} \]
+
+    <div class="widget" data-widget="herd-pocket">
+      <div class="widget-title">National coverage vs local gaps</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">The teal line assumes coverage is spread evenly; the red line has the same national coverage but one community, 10% of people, sits below it. Raise the coverage gap and the share of contacts within that community: the coverage needed climbs past the textbook threshold, sometimes out of reach.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Treating the threshold as a finish line: “we are at 95%, we can stop pushing”. The formula assumes random mixing. Real populations cluster by school, neighbourhood, nationality and belief, so a national average can hide pockets well below the threshold where outbreaks still happen. The threshold is also a floor, not a target: each birth cohort arrives susceptible, so coverage must be maintained every year, and an epidemic that runs unchecked overshoots it, infecting far more than the threshold implies (Lecture 6.2).</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example</div>
+      <p>Measles outbreaks in high-income countries with national coverage above 90% are typically concentrated in close-knit communities with low uptake. The national figure looked safe; the local one was not. Coverage must be measured where people actually mix, which is why Lecture 6.5 and the small-area methods of Lecture 6.8 matter.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="severity">
+    <h2>6. Severity: case fatality vs infection fatality</h2>
+    <p class="point">How deadly a disease looks depends on whom you counted as a case; the case fatality ratio of a newly found disease is usually wrong, and its errors run in both directions.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The <em>case fatality ratio</em> (CFR) is deaths divided by diagnosed cases. The <em>infection fatality ratio</em> (IFR) is deaths divided by all infections, including mild and silent ones never tested. The IFR needs serosurveys (blood tests for antibodies) or modelling to estimate the denominator.</dd>
+      <dt>Why it matters</dt>
+      <dd>CFR drives fear and headlines; IFR drives the expected death toll if the infection spreads widely. Planning for hospital beds, risk communication and the case for vaccination all depend on which one you use.</dd>
+      <dt>How to read it</dt>
+      <dd>Early CFR is biased upward when only the sickest are tested (ascertainment bias) and downward when recent cases have not yet had time to die (right censoring, the same problem as in survival analysis). Watch whether testing is broadening over time.</dd>
+      <dt>What a change means</dt>
+      <dd>A CFR falling from 60% to 30% over a year may mean better care, or simply that milder cases are now being found. Check testing policy before celebrating.</dd>
+    </dl>
+
+    <div class="callout gulf">
+      <div class="callout-title">In the Gulf · How deadly is MERS?</div>
+      <p>WHO’s December 2025 global update counted 2,635 laboratory-confirmed MERS cases and 964 deaths since 2012, a CFR of about 37%; 2,224 of the cases were reported by Saudi Arabia. Two studies show why that is not the infection fatality. Cauchemez and colleagues (2014) found a CFR of 74% among primary cases picked up by routine surveillance, against 20% among secondary cases found by tracing contacts, and estimated that at least 62% of symptomatic cases had gone undetected. A nationwide Saudi serosurvey (Müller et al. 2015) found antibodies in 0.15% of over 10,000 adults, with prevalence 15 times higher in camel shepherds and 23 times higher in slaughterhouse workers: evidence of infections that were never diagnosed. MERS is severe, but the 37% describes the cases we find, not the infections that occur.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Dividing cumulative deaths by cumulative cases during a growing epidemic. Many recent cases have not reached their outcome, so the ratio is too low; meanwhile, testing only the hospitalised makes it too high. Use deaths among cases with known outcomes, adjust for the delay from onset to death, and state clearly whether you report CFR or IFR.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>CFR from surveillance is a model trained on a biased sample: the label “case” is only assigned to people who were sick enough to be tested. It is the same selection problem as training a disease classifier on hospital patients and deploying it in the community (Lecture 2.7 on selection bias). The serosurvey is the representative test set.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>A new respiratory virus has R0 estimated at 2.5. A colleague says isolating everyone with symptoms will stop it. What do you need to know before agreeing?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>How much transmission happens before symptoms (and from people who never develop them). If the latent period is shorter than the incubation period, a large share of spread has already happened by the time anyone is isolated. Isolation must remove enough transmission to bring R below 1; with R0 = 2.5 it must prevent more than 60% of it, which is impossible if most spread is presymptomatic.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Two countries each import ten cases of the same virus. In country A none leads to onward spread; in country B one sparks a large outbreak. Is the virus less transmissible in country A?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Not necessarily. With strong overdispersion (small k), most introductions die out by chance even when R is above 1. Ten failed introductions are weak evidence about R. The difference may be luck, or the setting where the introduction landed (a hospital ward vs a home).</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A country reports 95% national measles vaccine coverage and yet has repeated outbreaks. Give two explanations consistent with the herd-immunity threshold being “met”.</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>First, coverage is not even: pockets of low uptake, where people mostly mix with each other, can sit far below the threshold. Second, coverage is not immunity: vaccine failure, waning, missed second doses and older cohorts never vaccinated all leave more susceptibles than the coverage figure suggests. Imported cases then find those susceptibles.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Early in an outbreak the reported CFR is 50%. Six months later, after testing is extended to contacts of cases, it is 20%. Has the disease become milder?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Probably not. The denominator changed: testing contacts finds mild and asymptomatic infections that were missed when only severe patients were tested. This is exactly the MERS pattern of primary vs secondary cases. Compare like with like, for example CFR among hospitalised cases over time, before concluding anything about virulence.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Two outbreaks have the same R of 1.5, but one doubles every 4 days and the other every 12. What differs, and which one leaves less time for contact tracing?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The generation interval: the fast one passes infection on about three times as quickly. It leaves less time to trace because contacts become infectious sooner after exposure. Both need the same proportional cut in transmission to bring R below 1, but the fast one needs it much sooner.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Vynnycky &amp; White, <em>An Introduction to Infectious Disease Modelling</em> (Oxford University Press, 2010). The opening chapters on natural history, R0 and herd immunity.</li>
+      <li>Giesecke, <em>Modern Infectious Disease Epidemiology</em>, 3rd ed. (CRC Press, 2017). Transmission routes, incubation and CFR in plain language.</li>
+      <li>Fine, Eames &amp; Heymann, “‘Herd immunity’: a rough guide”, <em>Clinical Infectious Diseases</em> (2011).</li>
+      <li>Fraser, Riley, Anderson &amp; Ferguson, “Factors that make an infectious disease outbreak controllable”, <em>PNAS</em> (2004).</li>
+      <li>Wallinga &amp; Lipsitch, “How generation intervals shape the relationship between growth rates and reproductive numbers”, <em>Proceedings of the Royal Society B</em> (2007).</li>
+      <li>Lloyd-Smith, Schreiber, Kopp &amp; Getz, “Superspreading and the effect of individual variation on disease emergence”, <em>Nature</em> (2005).</li>
+      <li>Biggerstaff, Cauchemez, Reed, Gambhir &amp; Finelli, “Estimates of the reproduction number for seasonal, pandemic, and zoonotic influenza: a systematic review of the literature”, <em>BMC Infectious Diseases</em> (2014).</li>
+      <li>Kucharski &amp; Althaus, “The role of superspreading in Middle East respiratory syndrome coronavirus (MERS-CoV) transmission”, <em>Eurosurveillance</em> 20(25) (2015).</li>
+      <li>Kim et al., “Risk factors for transmission of Middle East respiratory syndrome coronavirus infection during the 2015 outbreak in South Korea”, <em>Clinical Infectious Diseases</em> 64(5) (2017).</li>
+      <li>Cauchemez et al., “Middle East respiratory syndrome coronavirus: quantification of the extent of the epidemic, surveillance biases, and transmissibility”, <em>Lancet Infectious Diseases</em> 14(1) (2014).</li>
+      <li>Müller et al., “Presence of Middle East respiratory syndrome coronavirus antibodies in Saudi Arabia: a nationwide, cross-sectional, serological study”, <em>Lancet Infectious Diseases</em> 15(5) (2015).</li>
+      <li>World Health Organization, Disease Outbreak News: “Middle East respiratory syndrome coronavirus – global update” (December 2025), and the WHO MERS-CoV fact sheet (incubation period, camel reservoir, health-care transmission).</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="../block-5/5-17-reporting-standards-ai.html"><small>Previous</small>5.17 Reporting standards</a>
+    <a class="next" href="6-02-compartmental-models.html"><small>Next</small>6.2 Compartmental models</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

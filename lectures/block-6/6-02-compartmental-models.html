@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>6.2 Compartmental models · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/6-02.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-6">Block 6</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 6.2</p>
+  <h1>Compartmental models: SIR, SEIR, and fitting them to data</h1>
+  <div class="lecture-meta">
+    <span>Block 6 · Health protection</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>A compartmental model splits the population into boxes (susceptible, exposed, infectious, recovered) and moves people between them at set rates. Four boxes and three rates reproduce the shape of most epidemics: growth, a peak, a long tail and an overshoot. The model is easy to run and hard to fit. Early data fix the growth rate, not the parameters you care about. This lecture shows what the models can and cannot tell you, and how to estimate the reproduction number from case counts without being fooled by reporting delays.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#boxes">Boxes and flows</a></li>
+      <li><a href="#shape">Peak, overshoot and final size</a></li>
+      <li><a href="#stochastic">Deterministic vs stochastic</a></li>
+      <li><a href="#fitting">Fitting to data: what the data can identify</a></li>
+      <li><a href="#rt">Estimating Rₜ from case counts</a></li>
+      <li><a href="#mechanistic">Mechanistic models vs black-box forecasts</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="boxes">
+    <h2>1. Boxes and flows</h2>
+    <p class="point">An SEIR model is four boxes and three arrows; each arrow is a rate, and only one of them, infection, depends on how many people are in another box.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Everyone is in one box. <em>S</em> (susceptible) can be infected. <em>E</em> (exposed) is infected but not yet infectious, the latent period of Lecture 6.1. <em>I</em> is infectious. <em>R</em> is recovered (or removed: immune, isolated or dead). SIR drops the E box. Each arrow has a rate: \(\beta\) for transmission, \(\sigma\) for leaving E, \(\gamma\) for leaving I.</dd>
+      <dt>Why it matters</dt>
+      <dd>The rates are interpretable. One over \(\sigma\) is the mean latent period; one over \(\gamma\) is the mean infectious period. Interventions map onto them: distancing lowers \(\beta\), faster isolation raises \(\gamma\), vaccination moves people from S to R without infection.</dd>
+      <dt>How to read it</dt>
+      <dd>The infection flow is \(\beta\) times S times the infectious fraction: new infections need both susceptibles and infectious people. That single product is what makes epidemics rise and fall on their own. The reproduction number is transmission rate times days infectious.</dd>
+      <dt>What a change means</dt>
+      <dd>Doubling the infectious period from 5 to 10 days at the same \(\beta\) doubles \(R_0\). Doubling the latent period leaves \(R_0\) unchanged but slows the epidemic, because each generation takes longer.</dd>
+    </dl>
+
+    \[ R_0 = \frac{\beta}{\gamma} = \beta \times \text{mean infectious period} \]
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · The SEIR model as flows between boxes</div>
+      <svg class="viz-svg" viewBox="0 0 640 214" role="img" aria-label="Four boxes in a row: S susceptible, E exposed, I infectious, R recovered. Arrows: S to E labelled infection, beta times S times I over N; E to I labelled becomes infectious, rate sigma equals one over the latent period; I to R labelled recovery, rate gamma equals one over the infectious period. A curved accent arrow runs from the I box back to the S to E arrow: infectious people drive new infections. A dashed arrow runs under the row from S directly to R: vaccination.">
+        <defs><marker id="l62-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead"/></marker>
+        <marker id="l62-arrow-acc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead accent"/></marker></defs>
+        <path d="M400,58 C400,22 160,22 160,74" class="edge accent" stroke-dasharray="5 4" marker-end="url(#l62-arrow-acc)"/>
+        <text x="280" y="16" text-anchor="middle" class="viz-small viz-bold colour s1">infectious people drive new infections</text>
+        <rect x="30" y="60" width="100" height="50" rx="6" class="node-fill s1"/>
+        <text x="80" y="82" text-anchor="middle" class="viz-bold">S</text>
+        <text x="80" y="100" text-anchor="middle" class="viz-small">susceptible</text>
+        <rect x="190" y="60" width="100" height="50" rx="6" class="node-fill s2"/>
+        <text x="240" y="82" text-anchor="middle" class="viz-bold">E</text>
+        <text x="240" y="100" text-anchor="middle" class="viz-small">exposed</text>
+        <rect x="350" y="60" width="100" height="50" rx="6" class="node-fill s3"/>
+        <text x="400" y="82" text-anchor="middle" class="viz-bold">I</text>
+        <text x="400" y="100" text-anchor="middle" class="viz-small">infectious</text>
+        <rect x="510" y="60" width="100" height="50" rx="6" class="node-fill s4"/>
+        <text x="560" y="82" text-anchor="middle" class="viz-bold">R</text>
+        <text x="560" y="100" text-anchor="middle" class="viz-small">recovered</text>
+        <path d="M130,85 L187,85" class="edge strong" marker-end="url(#l62-arrow)"/>
+        <path d="M290,85 L347,85" class="edge strong" marker-end="url(#l62-arrow)"/>
+        <path d="M450,85 L507,85" class="edge strong" marker-end="url(#l62-arrow)"/>
+        <text x="160" y="134" text-anchor="middle" class="viz-small viz-bold">infection</text>
+        <text x="160" y="150" text-anchor="middle" class="viz-small viz-muted">β × S × I / N</text>
+        <text x="320" y="134" text-anchor="middle" class="viz-small viz-bold">becomes infectious</text>
+        <text x="320" y="150" text-anchor="middle" class="viz-small viz-muted">rate σ = 1/latent</text>
+        <text x="480" y="134" text-anchor="middle" class="viz-small viz-bold">recovery</text>
+        <text x="480" y="150" text-anchor="middle" class="viz-small viz-muted">rate γ = 1/infectious</text>
+        <path d="M80,110 L80,176 L560,176 L560,114" class="edge" stroke-dasharray="5 4" marker-end="url(#l62-arrow)"/>
+        <text x="320" y="196" text-anchor="middle" class="viz-small viz-muted">vaccination moves people from S straight to R</text>
+      </svg>
+      <figcaption>The only non-linear term is the infection flow, which multiplies S by I. Everything else is a fixed share of a box leaving per day, which implies exponentially distributed waiting times: the simplest, and often least realistic, assumption in the model.</figcaption>
+    </figure>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Taking the boxes literally. A rate \(\gamma = 1/5\) means waiting times are exponential: some people leave I after hours, some after weeks, with a mean of 5 days. Real infectious periods are more regular. The mean and \(R_0\) are unaffected, but timing is: models with exponential waits grow and peak differently from reality. Splitting a box into several stages in series (E1, E2…) gives more realistic, less skewed durations.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>A system of tanks and pipes. Water flows from tank to tank at rates set by the pipe widths. The first pipe is unusual: its flow is pumped by the water in the third tank.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="shape">
+    <h2>2. Peak, overshoot and final size</h2>
+    <p class="point">An unchecked epidemic peaks when the susceptible share falls to 1/R0, then keeps going: the final size overshoots the herd-immunity threshold by a wide margin.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The <em>peak</em> is the day with the most people infectious. The <em>final size</em> (attack rate) is the share ever infected when the epidemic ends. Both follow from the model without fitting anything.</dd>
+      <dt>Why it matters</dt>
+      <dd>Hospital planning needs the peak; the total burden needs the final size. Interventions trade them: a temporary measure can lower and delay the peak, yet leave the final size almost unchanged once it lifts.</dd>
+      <dt>How to read it</dt>
+      <dd>In the simple model, incidence turns down when the susceptible share drops below \(1/R_0\), because each case then infects fewer than one. But many people are infectious at that moment, so infections continue. With \(R_0 = 2\), the threshold is 50% but about 80% are eventually infected; with \(R_0 = 1.5\), about 58%; with \(R_0 = 3\), about 94%.</dd>
+      <dt>What a change means</dt>
+      <dd>Cutting transmission by 40% for 60 days near the start mostly delays the epidemic. The same cut started shortly before the uncontrolled peak reduces the overshoot and so the final size: in the default simulator, from about 89% to about 73% infected.</dd>
+    </dl>
+
+    <div class="widget" data-widget="seir-sim">
+      <div class="widget-title">SEIR simulator with an intervention</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Start the intervention on day 0 and lift it after 60 days: the epidemic comes back. Then start it shortly before the uncontrolled peak (around day 80) and compare the final share infected. In the lower chart, notice that the peak falls where the susceptible line crosses 1/R₀.</p>
+    </div>
+
+<pre><code>library(deSolve)
+seir &lt;- function(t, y, p) with(as.list(c(y, p)), {
+  N  &lt;- S + E + I + R
+  dS &lt;- -beta * S * I / N
+  dE &lt;-  beta * S * I / N - sigma * E
+  dI &lt;-  sigma * E - gamma * I
+  dR &lt;-  gamma * I
+  list(c(dS, dE, dI, dR))
+})
+p   &lt;- c(beta = 2.5 / 5, sigma = 1 / 4, gamma = 1 / 5)   # R0 = 2.5, latent 4 d, infectious 5 d
+y0  &lt;- c(S = 999990, E = 0, I = 10, R = 0)
+out &lt;- ode(y0, times = 0:365, func = seir, parms = p)
+plot(out)</code></pre>
+    <p>The function returns the rate of change of each box; <code>ode</code> integrates it day by day from ten infectious people in a million. Making <code>beta</code> a function of <code>t</code> adds an intervention. For larger models, <code>odin</code> writes the same equations in a compact syntax and compiles them for speed.</p>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reading “flatten the curve” as “fewer infections”. Flattening lowers the peak so health services cope; it reduces the total only if the measures last until immunity (from infection or vaccines) brings \(R_t\) below 1 for good, or if a vaccine arrives in the meantime. Lift early, and the widget shows the second wave.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example</div>
+      <p>The overshoot is why “let it run to herd immunity” costs far more than the threshold suggests. With \(R_0 = 2.5\) the threshold is 60%, but an unmitigated epidemic in this model infects about 89%: nearly 30 percentage points of the population are infected after the threshold has already been passed, with no benefit to anyone.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="stochastic">
+    <h2>3. Deterministic vs stochastic</h2>
+    <p class="point">Deterministic models give the average path of a large epidemic; when numbers are small, chance dominates and you need a stochastic model.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A <em>deterministic</em> model solves the flow equations: one input, one output, fractions of people allowed. A <em>stochastic</em> model draws each infection and recovery at random, so the same inputs give a spread of outcomes, including fade-out.</dd>
+      <dt>Why it matters</dt>
+      <dd>Early in an outbreak, in a hospital ward, or for a rare imported infection, there are few cases. The deterministic model cannot die out and cannot tell you the chance of a large outbreak; the stochastic one can (the branching process of Lecture 6.1 is the simplest example).</dd>
+      <dt>How to read it</dt>
+      <dd>When dozens or more are infectious, the two agree on the average. Report stochastic results as a distribution: the chance of fade-out, and a range for peak timing and size.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Trusting a deterministic model that predicts “0.3 infected people” in a town. Fractions of people keep the epidemic alive in the equations long after it would have died out in reality, which can create spurious resurgences. Use a stochastic model, or a threshold below which infection is set to zero.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>The average result of 1,000 coin tosses is predictable; the result of three tosses is not. A deterministic model is the thousand tosses. A new outbreak is three.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="fitting">
+    <h2>4. Fitting to data: what the data can identify</h2>
+    <p class="point">The early part of an epidemic curve tells you one number well, the growth rate; R0, the infectious period and the share of infections reported can trade off against each other and fit equally well.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Fitting means choosing parameters so the model’s predicted reported cases match the observed counts, usually by maximum likelihood or Bayesian inference with a negative binomial observation model (Lecture 3.3). A parameter is <em>identifiable</em> if the data pin it down; if different values fit equally well, it is not.</dd>
+      <dt>Why it matters</dt>
+      <dd>During exponential growth the curve has two features: its level and its slope. Many parameter sets share them. A longer infectious period with lower daily transmission gives the same slope but a higher \(R_0\). A lower reporting fraction gives the same reported curve but more true infections, so an earlier peak. The forecasts diverge sharply even though the fits are identical.</dd>
+      <dt>How to read it</dt>
+      <dd>Fix what you can from other data: the latent and infectious periods from clinical and contact-tracing studies (Lecture 6.1), the reporting fraction from serosurveys. Report how forecasts change across plausible values. A fitted model with narrow intervals and no external information on these parameters is overconfident.</dd>
+      <dt>What a change means</dt>
+      <dd>As the epidemic bends (susceptibles deplete, behaviour changes), the data start to separate the parameter sets. Identifiability improves with time, which is little comfort when decisions are needed in week three.</dd>
+    </dl>
+
+    <div class="widget" data-widget="seir-fit">
+      <div class="widget-title">Same first five weeks, different futures</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Each setting is refitted to the same 35 days of reported cases. Move both sliders: the fit to the data barely changes, but the implied R₀, the forecast peak and the final share infected swing widely. Then reveal what actually happened.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">In the Gulf · Under-ascertainment of MERS</div>
+      <p>Cauchemez and colleagues (2014) estimated MERS transmissibility while explicitly modelling who gets detected. Using cases detected among travellers, with travel volumes and lengths of stay, they estimated about 940 symptomatic cases up to August 2013, so at least 62% had been missed. They estimated R between 0.8 and 1.3 without control measures, and found chains were not self-sustaining once infection control was in place. The reporting fraction was not a nuisance parameter; it changed the answer.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Treating reported cases as infections. Testing capacity, care-seeking and case definitions change over time, so the reporting fraction is not even constant. A jump in testing makes cases rise without any change in transmission. Model reported cases as a (possibly changing) fraction of infections, and look at outcomes less sensitive to testing, such as hospital admissions or deaths, alongside cases.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="rt">
+    <h2>5. Estimating Rₜ from case counts</h2>
+    <p class="point">You can estimate the reproduction number in real time from an incidence curve and the generation interval, but only if you correct for the delay between infection and report.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>\(R_t\) is estimated as today’s new infections divided by a weighted sum of recent infections, weighted by how infectious each past day’s cases are now (the generation interval). <code>EpiEstim</code> (Cori et al. 2013) does this with cases and a serial interval. <code>EpiNow2</code> first works back from reported cases to infections, accounting for the incubation period and reporting delays, then estimates \(R_t\).</dd>
+      <dt>Why it matters</dt>
+      <dd>\(R_t\) answers the question decision-makers ask: is it growing or shrinking now, and did the last measure work? It needs no full model, only the generation interval.</dd>
+      <dt>How to read it</dt>
+      <dd>Look at the interval, not the point: an \(R_t\) of 1.1 with a 95% interval of 0.8–1.4 does not say growth. The estimate refers to when people were <em>infected</em>, which is one to two weeks before their cases are reported.</dd>
+      <dt>What a change means</dt>
+      <dd>\(R_t\) falling from 1.3 to 0.9 after a measure is encouraging only if the timing fits: the drop should appear in infections dated after the measure, not in reports dated a few days after it.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · Why the most recent days always look like a decline</div>
+      <svg class="viz-svg" viewBox="0 0 640 252" role="img" aria-label="Chart of daily cases over 50 days up to today. True infections rise steadily throughout. Cases counted by report date rise too, lagging about nine days behind. Cases counted by date of infection, as known today, follow the true curve until about day 35, then bend over and fall to zero at today, because recent infections have not yet been reported. An annotation marks the false peak.">
+        <defs><marker id="l62-arrow2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead"/></marker></defs>
+        <g class="viz-grid"><line x1="56" x2="604" y1="165.5" y2="165.5"/><line x1="56" x2="604" y1="117" y2="117"/><line x1="56" x2="604" y1="68.5" y2="68.5"/></g>
+        <line x1="56" x2="604" y1="214" y2="214" class="viz-axis"/>
+        <line x1="56" x2="56" y1="214" y2="20" class="viz-axis"/>
+        <g class="viz-tick" text-anchor="middle"><text x="56" y="230">0</text><text x="161.4" y="230">10</text><text x="266.8" y="230">20</text><text x="372.2" y="230">30</text><text x="477.5" y="230">40</text><text x="582.9" y="230">50</text></g>
+        <text x="330" y="248" text-anchor="middle" class="viz-label">Day</text>
+        <text x="16" y="117" text-anchor="middle" class="viz-label" transform="rotate(-90 16 117)">Cases per day</text>
+        <line x1="582.9" x2="582.9" y1="24" y2="214" class="stroke s5 dashed" stroke-width="1.5"/>
+        <text x="582.9" y="16" text-anchor="middle" class="viz-small viz-bold">today</text>
+        <path d="M56.0,200.1 L66.5,199.4 L77.1,198.7 L87.6,197.9 L98.2,197.1 L108.7,196.2 L119.2,195.3 L129.8,194.3 L140.3,193.3 L150.8,192.3 L161.4,191.2 L171.9,190.0 L182.5,188.8 L193.0,187.5 L203.5,186.1 L214.1,184.7 L224.6,183.2 L235.2,181.6 L245.7,179.9 L256.2,178.2 L266.8,176.3 L277.3,174.4 L287.8,172.4 L298.4,170.2 L308.9,168.0 L319.5,165.6 L330.0,163.2 L340.5,160.5 L351.1,157.8 L361.6,154.9 L372.2,151.9 L382.7,148.7 L393.2,145.4 L403.8,141.8 L414.3,138.1 L424.8,134.3 L435.4,130.2 L445.9,125.9 L456.5,121.4 L467.0,116.6 L477.5,111.6 L488.1,106.4 L498.6,100.8 L509.2,95.0 L519.7,88.9 L530.2,82.5 L540.8,75.8 L551.3,68.7 L561.8,61.3 L572.4,53.4 L582.9,45.2" class="stroke s1" stroke-width="2.6"/>
+        <path d="M56.0,205.0 L66.5,204.5 L77.1,204.0 L87.6,203.5 L98.2,203.0 L108.7,202.4 L119.2,201.8 L129.8,201.2 L140.3,200.6 L150.8,199.9 L161.4,199.2 L171.9,198.4 L182.5,197.6 L193.0,196.8 L203.5,195.9 L214.1,194.9 L224.6,194.0 L235.2,192.9 L245.7,191.9 L256.2,190.7 L266.8,189.5 L277.3,188.3 L287.8,186.9 L298.4,185.6 L308.9,184.1 L319.5,182.6 L330.0,181.0 L340.5,179.3 L351.1,177.5 L361.6,175.6 L372.2,173.6 L382.7,171.6 L393.2,169.4 L403.8,167.1 L414.3,164.7 L424.8,162.2 L435.4,159.5 L445.9,156.7 L456.5,153.8 L467.0,150.7 L477.5,147.5 L488.1,144.1 L498.6,140.5 L509.2,136.7 L519.7,132.7 L530.2,128.6 L540.8,124.2 L551.3,119.6 L561.8,114.7 L572.4,109.7 L582.9,104.3" class="stroke s5 dashed" stroke-width="2"/>
+        <path d="M56.0,200.1 L66.5,199.4 L77.1,198.7 L87.6,197.9 L98.2,197.1 L108.7,196.2 L119.2,195.3 L129.8,194.3 L140.3,193.3 L150.8,192.3 L161.4,191.2 L171.9,190.0 L182.5,188.8 L193.0,187.5 L203.5,186.1 L214.1,184.7 L224.6,183.2 L235.2,181.6 L245.7,179.9 L256.2,178.2 L266.8,176.3 L277.3,174.4 L287.8,172.4 L298.4,170.3 L308.9,168.0 L319.5,165.7 L330.0,163.3 L340.5,160.8 L351.1,158.2 L361.6,155.5 L372.2,152.7 L382.7,150.0 L393.2,147.3 L403.8,144.8 L414.3,142.5 L424.8,140.7 L435.4,139.6 L445.9,139.3 L456.5,140.3 L467.0,142.9 L477.5,147.3 L488.1,153.8 L498.6,162.4 L509.2,172.6 L519.7,183.8 L530.2,194.7 L540.8,203.9 L551.3,210.1 L561.8,213.2 L572.4,214.0 L582.9,214.0" class="stroke s3" stroke-width="2.6"/>
+        <!-- legend -->
+        <line x1="72" x2="96" y1="34" y2="34" class="stroke s1" stroke-width="2.6"/>
+        <text x="104" y="38" class="viz-small">true infections, by date of infection (unseen)</text>
+        <line x1="72" x2="96" y1="54" y2="54" class="stroke s5 dashed" stroke-width="2"/>
+        <text x="104" y="58" class="viz-small">cases by date of report (lag ≈ 9 days)</text>
+        <line x1="72" x2="96" y1="74" y2="74" class="stroke s3" stroke-width="2.6"/>
+        <text x="104" y="78" class="viz-small">cases by date of infection, as known today</text>
+        <text x="300" y="116" text-anchor="middle" class="viz-small viz-bold colour s3">false peak: recent infections</text>
+        <text x="300" y="131" text-anchor="middle" class="viz-small viz-bold colour s3">not yet reported</text>
+        <path d="M372,127 L436,136" class="edge" marker-end="url(#l62-arrow2)"/>
+      </svg>
+      <figcaption>Illustrative numbers: infections grow 5% a day; the delay from infection to report averages 9 days. Back-dating cases to infection is the right idea, but the latest days are incomplete (right truncation). Unless the delay is modelled (nowcasting), \(R_t\) appears to fall exactly when it may be rising.</figcaption>
+    </figure>
+
+<pre><code>library(EpiNow2)
+gt    &lt;- Gamma(mean = 5, sd = 2, max = 14)         # generation time (days)
+incub &lt;- LogNormal(mean = 5, sd = 2, max = 14)     # infection to onset
+rdel  &lt;- LogNormal(mean = 3, sd = 1.5, max = 10)   # onset to report
+est &lt;- epinow(data = cases,                        # columns: date, confirm
+  generation_time = gt_opts(gt),
+  delays = delay_opts(incub + rdel),
+  rt = rt_opts(prior = LogNormal(mean = 2, sd = 0.2)))
+plot(est)                                          # infections, reports and R_t</code></pre>
+    <p>The three distributions describe the pathogen and the reporting system (the values here are placeholders: take them from published studies of your pathogen). <code>epinow</code> back-calculates infections from reported counts, allows for the cases not yet reported, and estimates \(R_t\) with credible intervals. The simpler <code>EpiEstim::estimate_R(incid, method = "parametric_si", config = make_config(list(mean_si = 5, std_si = 2)))</code> works on cases by onset date and is fine for retrospective analysis, if the latest week is dropped.</p>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Estimating \(R_t\) from cases by report date and reading the latest value as “now”. Gostic and colleagues (2020) showed that ignoring delays shifts \(R_t\) later in time and smooths away sharp changes, and that right truncation biases the most recent estimates downward. Use an infection-time method that models delays, and treat the last week or so as provisional.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="mechanistic">
+    <h2>6. Mechanistic models vs black-box forecasts</h2>
+    <p class="point">Use a mechanistic model when you need to ask “what if we do X?”; use a statistical or machine-learning forecaster when you need the next few weeks; and judge each by the job it was built for.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A <em>mechanistic</em> model (SEIR and its relatives) encodes how transmission works; its parameters mean something. A <em>black-box</em> or statistical forecaster (ARIMA, gradient boosting, neural networks; Lecture 3.9) learns patterns in past counts without a theory of transmission.</dd>
+      <dt>Why it matters</dt>
+      <dd>Only the mechanistic model can run a counterfactual: close schools, vaccinate 60%, add a booster. A black box trained on the past has never seen the intervention. For short-term forecasts, though, flexible statistical models and ensembles often match or beat mechanistic ones.</dd>
+      <dt>How to read it</dt>
+      <dd>Scenario projections answer “what if”, conditional on assumptions; they are not predictions and should not be scored as if they were. Forecasts answer “what next”, and should be scored on genuinely future data against a simple baseline.</dd>
+    </dl>
+
+    <div class="callout example">
+      <div class="callout-title">Example</div>
+      <p>The US COVID-19 Forecast Hub pooled weekly mortality forecasts from dozens of teams, mechanistic and statistical. Cramer and colleagues (2022) found the multi-model ensemble was among the most consistently accurate, while individual models were often best one week and poor the next. The practical lesson: combine models of different kinds, and evaluate on a fixed, pre-registered schedule.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>Fitting an ODE model is training a tiny, highly structured network: a handful of interpretable weights, a strong inductive bias, and a loss on observed counts. The identifiability problem of section 4 is the familiar one of a flat loss surface along a ridge; priors (regularisation) or extra data sources fix it. Hybrids exist, such as neural networks for the time-varying transmission rate inside an SEIR model, or physics-informed neural networks. They keep the counterfactual ability only as long as the mechanistic structure carries the intervention.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Judging a scenario model by whether its worst case happened. If the projection prompted action that bent the curve, the worst case was never going to be observed. Judge scenario models by whether their assumptions were stated and plausible, and judge forecasts by their scores.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>A team fits an SEIR model to the first four weeks of a new outbreak and reports R0 = 3.1 (95% CI 2.9 to 3.3). The infectious period was estimated from the same case data. What worries you?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The early curve identifies the growth rate, not R0 and the infectious period separately. A longer assumed infectious period gives a higher R0 with the same fit. The narrow interval probably reflects fixed or tightly constrained assumptions, not real information. Ask what external data fixed the infectious period, and how R0 changes across plausible values.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A city imposes restrictions for six weeks early in an epidemic, cases fall, and restrictions are lifted. Cases then rise again to a higher peak than projected. Was the policy a failure?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Not necessarily. Lifting measures while most people are still susceptible restores R above 1, so the epidemic resumes. The measure bought time (for hospitals, testing, vaccines) rather than reducing the final size. Whether that was worth it depends on what the time was used for.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>An Rₜ dashboard based on cases by date of symptom onset shows a steady decline over the last five days. What would you check before reporting good news?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Right truncation: cases with recent onsets are still being reported, so the latest days are incomplete and always look low. Check whether the method models the reporting delay (nowcasting), compare with yesterday’s version of the same curve, and look at indicators with shorter delays.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Would you use a deterministic SEIR model to estimate the probability that a single imported MERS case leads to a hospital outbreak? Why or why not?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>No. With one case, chance dominates: most introductions die out and a few explode, especially with strong overdispersion. A deterministic model has no probability of fade-out. Use a stochastic model (a branching process with a negative binomial offspring distribution, as in Lecture 6.1) to estimate the chance of a large cluster.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A gradient-boosted model forecasts weekly influenza admissions better than your SEIR model. The ministry asks what would happen if school holidays were extended by two weeks. Which model do you use, and why?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The SEIR model, or an age-structured version with school contacts. The question is a counterfactual about a change the boosted model has never seen; it has no mechanism linking school closures to transmission. Keep the boosted model for routine short-term forecasts, and present the SEIR output as a scenario with its assumptions stated.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Vynnycky &amp; White, <em>An Introduction to Infectious Disease Modelling</em> (Oxford University Press, 2010). The chapters on SIR/SEIR models, final size, stochastic models and fitting to data.</li>
+      <li>Keeling &amp; Rohani, <em>Modeling Infectious Diseases in Humans and Animals</em> (Princeton University Press, 2008). Deterministic and stochastic SEIR models.</li>
+      <li>Soetaert, Petzoldt &amp; Setzer, “Solving differential equations in R: package deSolve”, <em>Journal of Statistical Software</em> (2010).</li>
+      <li>Cori, Ferguson, Fraser &amp; Cauchemez, “A new framework and software to estimate time-varying reproduction numbers during epidemics”, <em>American Journal of Epidemiology</em> (2013). The EpiEstim method.</li>
+      <li>Abbott et al., “Estimating the time-varying reproduction number of SARS-CoV-2 using national and subnational case counts”, <em>Wellcome Open Research</em> (2020), and the EpiNow2 package documentation (epiforecasts.io/EpiNow2).</li>
+      <li>Gostic et al., “Practical considerations for measuring the effective reproductive number, Rt”, <em>PLOS Computational Biology</em> (2020).</li>
+      <li>Roosa &amp; Chowell, “Assessing parameter identifiability in compartmental dynamic models using a computational approach: application to infectious disease transmission models”, <em>Theoretical Biology and Medical Modelling</em> (2019).</li>
+      <li>Cauchemez et al., “Middle East respiratory syndrome coronavirus: quantification of the extent of the epidemic, surveillance biases, and transmissibility”, <em>Lancet Infectious Diseases</em> 14(1) (2014).</li>
+      <li>Cramer et al., “Evaluation of individual and ensemble probabilistic forecasts of COVID-19 mortality in the United States”, <em>PNAS</em> (2022).</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="6-01-infectious-disease-epidemiology.html"><small>Previous</small>6.1 Infectious disease epidemiology</a>
+    <a class="next" href="6-03-surveillance-systems.html"><small>Next</small>6.3 Surveillance systems</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

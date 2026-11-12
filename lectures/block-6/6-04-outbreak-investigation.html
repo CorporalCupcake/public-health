@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>6.4 Outbreak investigation · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/6-04.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-6">Block 6</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 6.4</p>
+  <h1>Outbreak investigation, step by step</h1>
+  <div class="lecture-meta">
+    <span>Block 6 · Health protection</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>An outbreak investigation is applied epidemiology under time pressure: confirm the excess is real, define a case, find the cases, describe them by time, place and person, form a hypothesis about the source, test it with a quick cohort or case-control study, and act. You already know every analytic tool involved (attack rates, risk and odds ratios, misclassification). What is new is the order, the speed, and the habit of reading an epidemic curve to infer how people were exposed. Control does not wait for proof: it starts as soon as a source is plausible.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#steps">The steps, and why they overlap</a></li>
+      <li><a href="#real">Is it real? Establishing the outbreak</a></li>
+      <li><a href="#casedef">The case definition</a></li>
+      <li><a href="#describe">Describing cases: time, place, person</a></li>
+      <li><a href="#curve">Reading the epidemic curve</a></li>
+      <li><a href="#analytic">Testing the hypothesis: attack rates and odds ratios</a></li>
+      <li><a href="#control">Control, communication and when it is over</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="steps">
+    <h2>1. The steps, and why they overlap</h2>
+    <p class="point">The standard list has thirteen steps, but they collapse into six jobs that run in a loop, often in parallel, not a strict sequence.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>US CDC’s teaching list runs from “prepare for field work” through “establish the existence of an outbreak”, “verify the diagnosis”, case definition, case finding, descriptive epidemiology, hypotheses, analytic testing, refining, lab and environmental studies, control, surveillance and “communicate findings”. CDC itself calls the order conceptual.</dd>
+      <dt>Why it matters</dt>
+      <dd>Knowing the steps stops you skipping the dull ones that later ruin the analysis: an outbreak that was a reporting artefact, or a case definition that changed halfway through.</dd>
+      <dt>How to read it</dt>
+      <dd>A good investigation report shows each job, states the case definition explicitly, includes an epidemic curve, and separates what the descriptive data suggested from what the analytic study tested.</dd>
+      <dt>What a change means</dt>
+      <dd>A new fact at any step can send you back: a lab result that splits the cases into two strains means two outbreaks, two case definitions and two curves.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · The investigation as a loop</div>
+      <svg class="viz-svg" viewBox="0 0 640 290" role="img" aria-label="Six boxes in a snake. Top row left to right: 1 Is it real, establish the outbreak and verify the diagnosis; 2 Define and find, case definition and systematic case finding; 3 Describe, time place and person and the epidemic curve. An arrow drops to the bottom row, which runs right to left: 4 Hypothesise, source, vehicle and route; 5 Test, analytic study plus lab and environment; 6 Control and report. A dashed arrow from box 5 back up to box 2 is labelled refine and repeat.">
+        <defs><marker id="l64-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead"/></marker>
+        <marker id="l64-arrow-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead accent"/></marker></defs>
+        <rect x="16" y="40" width="180" height="70" rx="8" class="node s5"/>
+        <text x="28" y="64" class="viz-bold">1 · Is it real?</text>
+        <text x="28" y="82" class="viz-small viz-muted">establish the outbreak</text>
+        <text x="28" y="98" class="viz-small viz-muted">verify the diagnosis</text>
+        <rect x="230" y="40" width="180" height="70" rx="8" class="node s5"/>
+        <text x="242" y="64" class="viz-bold">2 · Define and find</text>
+        <text x="242" y="82" class="viz-small viz-muted">case definition</text>
+        <text x="242" y="98" class="viz-small viz-muted">systematic case finding</text>
+        <rect x="444" y="40" width="180" height="70" rx="8" class="node s5"/>
+        <text x="456" y="64" class="viz-bold">3 · Describe</text>
+        <text x="456" y="82" class="viz-small viz-muted">time, place, person</text>
+        <text x="456" y="98" class="viz-small viz-muted">the epidemic curve</text>
+        <rect x="444" y="176" width="180" height="70" rx="8" class="node s2"/>
+        <text x="456" y="200" class="viz-bold">4 · Hypothesise</text>
+        <text x="456" y="218" class="viz-small viz-muted">source, vehicle, route</text>
+        <text x="456" y="234" class="viz-small viz-muted">from 3 plus interviews</text>
+        <rect x="230" y="176" width="180" height="70" rx="8" class="node s2"/>
+        <text x="242" y="200" class="viz-bold">5 · Test</text>
+        <text x="242" y="218" class="viz-small viz-muted">cohort or case-control</text>
+        <text x="242" y="234" class="viz-small viz-muted">lab and environment</text>
+        <rect x="16" y="176" width="180" height="70" rx="8" class="node s1"/>
+        <text x="28" y="200" class="viz-bold">6 · Control and report</text>
+        <text x="28" y="218" class="viz-small viz-muted">stop the source or spread</text>
+        <text x="28" y="234" class="viz-small viz-muted">surveillance, communicate</text>
+        <path d="M196,75 L227,75" class="edge" marker-end="url(#l64-arrow)"/>
+        <path d="M410,75 L441,75" class="edge" marker-end="url(#l64-arrow)"/>
+        <path d="M534,110 L534,173" class="edge" marker-end="url(#l64-arrow)"/>
+        <path d="M444,211 L413,211" class="edge" marker-end="url(#l64-arrow)"/>
+        <path d="M230,211 L199,211" class="edge accent" marker-end="url(#l64-arrow-a)"/>
+        <path d="M320,176 L320,113" class="edge" stroke-dasharray="5 4" marker-end="url(#l64-arrow)"/>
+        <text x="328" y="148" class="viz-small viz-muted">refine and repeat</text>
+        <text x="320" y="276" text-anchor="middle" class="viz-small viz-muted">Control (6) starts as soon as a source is plausible, in parallel with 4 and 5.</text>
+      </svg>
+      <figcaption>The thirteen CDC steps mapped onto six jobs. Preparation (team, lab contacts, permissions) sits before box 1; surveillance after box 6 confirms that control worked.</figcaption>
+    </figure>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Treating control as the last step. If a food item, a ward or a water source is a plausible cause, withdraw it, isolate, or close it now, and keep investigating. The analytic study confirms and refines; it is not a licence to act.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>A fire crew does not finish the arson report before putting the fire out. They contain it first, and the investigation of the cause runs alongside.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="real">
+    <h2>2. Is it real? Establishing the outbreak</h2>
+    <p class="point">An outbreak is more cases than expected for this place, time and group; before anything else, check that the excess is not produced by how cases are counted.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Compare current counts with a baseline: surveillance data for the same weeks in earlier years (Lecture 6.3), or a reasonable expectation when no baseline exists. A single case of a disease that should be absent (cholera in a city with safe water, a novel pathogen) counts as an outbreak. Then <strong>verify the diagnosis</strong>: review clinical findings and confirm with the lab.</dd>
+      <dt>Why it matters</dt>
+      <dd>Apparent excesses often come from a new test, a new lab, a change in reporting rules, a publicity campaign that makes people seek care, or a population that has grown. Investigating an artefact wastes days; missing a real cluster costs lives.</dd>
+      <dt>How to read it</dt>
+      <dd>Ask four questions: has the case definition or test changed; has the population at risk changed; has care-seeking or reporting changed; are the cases really the same disease? If the answers are “no”, treat the excess as real.</dd>
+      <dt>What a change means</dt>
+      <dd>A jump that coincides exactly with a new multiplex PCR panel in the lab is probably detection, not transmission. A jump confined to one ward, one restaurant’s customers or one dialysis unit is probably real.</dd>
+    </dl>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>This is distribution shift in the labelling process. A detector trained on last year’s counts fires when the measuring instrument changes, not only when the world changes. Statistical outbreak detection (the <code>surveillance</code> package’s Farrington-type algorithms, Lecture 6.3) gives the alert; step 1 is the human check that the alert is not a data-pipeline change.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Calling a cluster an outbreak because the cases are close in space. Small numbers cluster by chance, and people go looking for clusters after noticing a few. Ask whether the count exceeds what is expected for that population, and whether the cases share a plausible common exposure.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="casedef">
+    <h2>3. The case definition</h2>
+    <p class="point">A case definition is a fixed rule for who counts: clinical criteria plus limits on time, place and person, usually tiered into confirmed, probable and possible cases.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>For example: “illness with vomiting or diarrhoea within 72 hours of attending the event on 18 April”. <strong>Confirmed</strong> adds a positive lab test; <strong>probable</strong> has the typical clinical picture and an epidemiological link; <strong>possible</strong> has fewer or less specific features. Unlike a clinical diagnosis, it never includes the suspected exposure, or the analytic study would be circular.</dd>
+      <dt>Why it matters</dt>
+      <dd>The definition is a diagnostic test applied to people (Lecture 2.11). Early on you want <strong>sensitivity</strong>, to find all cases and see the outbreak’s full shape. For the analytic study you want <strong>specificity</strong>, because non-cases counted as cases dilute the association (non-differential misclassification, Lecture 2.8).</dd>
+      <dt>How to read it</dt>
+      <dd>Check that it names a time window, a place or group, and objective clinical criteria. A good report gives counts in each tier and runs the analysis on confirmed plus probable, with confirmed only as a sensitivity check.</dd>
+      <dt>What a change means</dt>
+      <dd>Narrowing the definition from “any gastrointestinal symptom” to “vomiting or diarrhoea within 72 hours” usually <em>raises</em> the risk ratio for the true vehicle, because fewer background cases of unrelated diarrhoea are mixed in.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · Tiers of a case definition</div>
+      <svg class="viz-svg" viewBox="0 0 640 250" role="img" aria-label="Three nested rounded rectangles. Outer: possible case, symptoms plus a link to the setting. Middle: probable case, plus an epidemiological link to a confirmed case or a typical clinical picture. Inner: confirmed case, plus a positive lab test. Text on the left says wider definitions are more sensitive, catching more true cases and more non-cases. Text on the right says narrower definitions are more specific, with fewer false cases but some true ones missed.">
+        <rect x="170" y="16" width="300" height="222" rx="16" class="node-fill s5"/>
+        <rect x="205" y="72" width="230" height="154" rx="14" class="node-fill s2"/>
+        <rect x="245" y="128" width="150" height="86" rx="12" class="node-fill s1"/>
+        <text x="320" y="38" text-anchor="middle" class="viz-bold">Possible</text>
+        <text x="320" y="56" text-anchor="middle" class="viz-small">symptoms + link to the setting</text>
+        <text x="320" y="94" text-anchor="middle" class="viz-bold">Probable</text>
+        <text x="320" y="112" text-anchor="middle" class="viz-small">+ typical picture or epi link</text>
+        <text x="320" y="154" text-anchor="middle" class="viz-bold">Confirmed</text>
+        <text x="320" y="172" text-anchor="middle" class="viz-small">+ positive lab test</text>
+        <text x="20" y="96" class="viz-bold">Wider</text>
+        <text x="20" y="116" class="viz-small viz-muted">more sensitive:</text>
+        <text x="20" y="132" class="viz-small viz-muted">catches more true</text>
+        <text x="20" y="148" class="viz-small viz-muted">cases, and more</text>
+        <text x="20" y="164" class="viz-small viz-muted">non-cases</text>
+        <text x="490" y="96" class="viz-bold">Narrower</text>
+        <text x="490" y="116" class="viz-small viz-muted">more specific:</text>
+        <text x="490" y="132" class="viz-small viz-muted">fewer false cases,</text>
+        <text x="490" y="148" class="viz-small viz-muted">misses some true</text>
+        <text x="490" y="164" class="viz-small viz-muted">ones</text>
+      </svg>
+      <figcaption>Use the wide tier to find cases and draw the epidemic curve; use the narrow tiers to test hypotheses. Write the definition down and date every revision.</figcaption>
+    </figure>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Quietly changing the case definition as the investigation goes on, then pooling everyone. Early cases were found under one rule and later ones under another, so the epidemic curve’s shape partly reflects the rule change. Keep a version history and say which version each analysis used.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>A fishing net: a fine mesh catches every fish you want and a lot of weed; a coarse mesh is clean but lets small fish through. You use the fine net to see what is in the water, the coarse one to weigh the catch.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="describe">
+    <h2>4. Describing cases: time, place, person</h2>
+    <p class="point">Descriptive epidemiology turns a line list into a hypothesis: who got sick, where, and when usually points to how.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Systematic <strong>case finding</strong> (ringing labs and clinics, contacting everyone at an event, reviewing records) feeds a <strong>line list</strong>: one row per case, with identifiers, onset date and time, symptoms, lab results, demographics and exposures. From it you draw the epidemic curve (time), a map or ward plan (place), and attack rates by age, sex, occupation or ward (person).</dd>
+      <dt>Why it matters</dt>
+      <dd>Each axis narrows the possibilities. Cases in one hospital unit point to a shared procedure; cases among people who ate at one sitting point to the meal; cases only in adults point to a food children did not eat.</dd>
+      <dt>How to read it</dt>
+      <dd>Attack rates beat raw counts: 20 cases in a 400-bed ward block and 20 in a 40-bed dialysis unit are very different signals. Outliers matter: the earliest and latest cases often reveal the source or a secondary route.</dd>
+      <dt>What a change means</dt>
+      <dd>If later cases have no link to the original setting, transmission has moved on, often from a common source to person-to-person spread, and the control strategy has to change with it.</dd>
+    </dl>
+
+    <div class="callout gulf">
+      <div class="callout-title">Gulf example · MERS in Al-Hasa hospitals, 2013</div>
+      <p>Between 1 April and 23 May 2013, 23 confirmed MERS-CoV cases were reported in Al-Hasa in Saudi Arabia’s Eastern Province (Assiri et al., <em>NEJM</em> 2013). Person, place and time did the work: 21 of the 23 cases were acquired person to person in haemodialysis units, intensive care units and inpatient wards of three health care facilities. The median incubation period was estimated at 5.2 days (95% CI 1.9 to 14.7) and the serial interval at 7.6 days (2.5 to 23.1). The descriptive picture, chains of cases in health care settings rather than a single community source, pointed control at infection prevention in hospitals.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>The line list is a tidy table, and most errors are data-engineering errors: duplicate people found through two routes, onset dates typed as report dates, free-text symptoms. Deduplicate on several identifiers, store onset and report dates separately, and code exposures as yes/no/unknown, not blanks. Unknown is information.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Plotting cases by date of report or lab result instead of date of symptom onset. Reporting delays shift and smear the curve, and weekends create fake troughs. Use onset; if it is missing for some cases, impute from report date minus the typical delay and say so.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="curve">
+    <h2>5. Reading the epidemic curve</h2>
+    <p class="point">The epidemic curve, a histogram of cases by onset time, tells you the mode of exposure and roughly when it happened, once you combine it with the disease’s incubation period.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Three classic shapes. <strong>Point source</strong>: one shared exposure, one peak, all cases within about one incubation range. <strong>Continuous common source</strong>: an exposure that persists (a contaminated water supply), a plateau that ends about one incubation period after the source is removed. <strong>Propagated</strong>: person-to-person spread, successive waves roughly one serial interval apart (Lecture 6.1).</dd>
+      <dt>Why it matters</dt>
+      <dd>For a point source you can back-calculate the exposure: peak minus the median incubation period, or first case minus the shortest incubation and last case minus the longest. That narrows the meals, days or procedures to ask about. Knowing the incubation period of the suspected agent also narrows the agent.</dd>
+      <dt>How to read it</dt>
+      <dd>Choose a bar width of about a quarter to a third of the median incubation period. Look at the overall shape, the outliers, and where control measures fall on the time axis. A curve that keeps going after control means the source was wrong or transmission has become secondary.</dd>
+      <dt>What a change means</dt>
+      <dd>A second, smaller peak one incubation period after the main one is the signature of secondary spread from the first cases. A tail that stops abruptly one incubation period after a recall is evidence the recalled product was the source.</dd>
+    </dl>
+
+    <div class="widget" data-widget="epi-curve">
+      <div class="widget-title">Epidemic-curve builder</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Pick an exposure pattern, then change the incubation period and its spread. For a point source, compare the estimated exposure (dashed) with the truth. Then make the bars much wider and much narrower and watch the shape disappear.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Oswego, New York, 1940</div>
+      <p>The classic CDC teaching case: gastrointestinal illness after a church supper on the evening of 18 April 1940. Among ill people with full timing data, incubation periods ran from 3 to 7 hours with a median of 4 hours, a single tight peak typical of a preformed toxin and a point source. One outlier fell ill at 3 pm on 18 April, hours before the supper: an 8-year-old recorded as eating at 11 am and as eating nothing but the two ice creams. An outlier that the supper cannot explain points straight at the ice cream.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reading every single-peaked curve as a point source. A short person-to-person outbreak in a closed group, or a continuous source removed quickly, can look similar. Check the width: if cases span much more than one incubation range, it was not one exposure.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Guests leaving a party: if they all arrived together, departures bunch around one time; if they drifted in all evening, departures spread out; if each guest brought friends who brought friends, you see waves.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="analytic">
+    <h2>6. Testing the hypothesis: attack rates and odds ratios</h2>
+    <p class="point">For a closed group such as a wedding or a flight, run a retrospective cohort and compare attack rates; for an open community, run a case-control study and estimate odds ratios.</p>
+
+    \[ \text{RR} = \frac{\text{attack rate among the exposed}}{\text{attack rate among the unexposed}} \]
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The <strong>attack rate</strong> is the proportion of people exposed who became cases during the outbreak (a cumulative incidence, Lecture 2.1, despite the name). In a <strong>cohort</strong> of everyone at the event you compute it for eaters and non-eaters of every food. When you cannot list everyone exposed (a nationwide <em>Salmonella</em> outbreak), use a <strong>case-control</strong> study (Lecture 2.3) with controls from the same population, and report the odds ratio.</dd>
+      <dt>Why it matters</dt>
+      <dd>Descriptive data suggest; analytic data test. Without the comparison group, a food eaten by 90% of cases might just be a food eaten by 90% of everyone.</dd>
+      <dt>How to read it</dt>
+      <dd>The culprit usually has three features: a high attack rate among those exposed, a low one among the unexposed, and it explains most of the cases. A risk ratio of 5 with only 30% of cases exposed does not explain the outbreak; look for a second vehicle or cross-contamination.</dd>
+      <dt>What a change means</dt>
+      <dd>A few cases among the unexposed are normal: people forget what they ate, foods get cross-contaminated, and background illness exists. If many cases are unexposed, the hypothesis is incomplete.</dd>
+    </dl>
+
+    <div class="widget" data-widget="attack-rates">
+      <div class="widget-title">Oswego attack-rate table</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Sort by attack rate among eaters, then by risk ratio, then by the share of cases who ate the food. Which food is at the top of all three? Then select chocolate ice cream and read its risk ratio.</p>
+    </div>
+
+    <pre><code>library(epitools)
+data(oswego)                          # 75 interviewed supper guests
+tab &lt;- table(oswego$vanilla.ice.cream, oswego$ill)
+riskratio(tab)$measure                # RR with 95% CI, cohort design
+# loop over all foods to build the attack-rate table
+foods &lt;- names(oswego)[8:21]
+sapply(foods, function(f)
+  riskratio(table(oswego[[f]], oswego$ill))$measure[2, ])</code></pre>
+    <p><code>table</code> cross-tabulates eating (N, Y) against illness; <code>riskratio</code> returns the risk ratio for eaters against non-eaters with a confidence interval. The <code>sapply</code> line repeats it for every food, which is exactly the attack-rate table investigators build by hand. For a case-control design, swap in <code>oddsratio</code>.</p>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Testing fourteen foods and declaring any with p &lt; 0.05 the source. With many exposures, one or two will cross the line by chance, and protective-looking foods (chocolate ice cream at Oswego, RR about 0.7) are usually substitutes for the real vehicle. At Oswego, 19 of the 47 chocolate eaters skipped vanilla, against 2 of 27 non-chocolate eaters; among vanilla eaters the attack rate was 79% with chocolate and 80% without. Look for one exposure with a large effect that explains most cases, and confirm it with the lab or the kitchen.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>The food table is a multiple-comparisons and feature-correlation problem. Foods served together are collinear, so a model with all foods may spread the effect between them. Field epidemiologists handle this with stratification (vanilla ice cream within strata of chocolate) rather than a large regression, because the samples are small and the question is which single exposure explains the cases.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="control">
+    <h2>7. Control, communication and when it is over</h2>
+    <p class="point">Control targets the source, the route of transmission and the susceptible host; communication runs throughout; the outbreak is over when no new cases appear for about two maximum incubation periods.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Target</th><th>Examples</th></tr></thead>
+        <tbody>
+          <tr><td>Source</td><td>Withdraw the food, close the kitchen, treat the water, find and treat carriers</td></tr>
+          <tr><td>Transmission</td><td>Infection prevention in hospitals, isolation, hand hygiene, vector control</td></tr>
+          <tr><td>Host</td><td>Vaccination or prophylaxis of contacts (Lecture 6.5)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Lab and environmental work (cultures of food and patients, whole-genome sequencing that links cases with a common strain) runs alongside the epidemiology. Communication includes daily updates to those in charge, information for the public, a written report, and formal notification where required, which for some events means notifying WHO under the International Health Regulations (Lecture 6.11).</dd>
+      <dt>Why it matters</dt>
+      <dd>The investigation exists to stop cases and prevent the next outbreak. A recall that is not communicated, or a report that never reaches the food-safety regulator, wastes the work.</dd>
+      <dt>How to read it</dt>
+      <dd>Judge control by the epidemic curve after the intervention: new onsets should stop about one incubation period later. The end of an outbreak is declared after a waiting period with no new cases; for Ebola, WHO uses 42 days, twice the maximum 21-day incubation period.</dd>
+      <dt>What a change means</dt>
+      <dd>New cases after the waiting period mean either a missed chain of transmission or a new introduction; sequencing tells the two apart.</dd>
+    </dl>
+
+    <div class="callout gulf">
+      <div class="callout-title">Gulf example · Why hospital MERS clusters matter for control</div>
+      <p>In Al-Hasa, transmission ran through dialysis units and wards, so control meant infection prevention and control in exactly those units: early recognition and isolation of suspected cases, protection of staff, and follow-up of exposed patients, staff and families. The same pattern of health-care amplification recurred in later MERS outbreaks in the Kingdom, which is why MERS control in Saudi Arabia focuses so heavily on hospital infection control. Lecture 6.10 returns to MERS around the Hajj.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Declaring success because cases fell after an intervention. Point-source outbreaks end on their own once the exposed have passed through their incubation period. To credit the intervention, the fall has to come earlier than the natural end, or new exposures had to be ongoing.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>Reported <em>Campylobacter</em> cases in a region double in the month after the regional laboratory switches from culture to a PCR panel. Do you launch an outbreak investigation?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Not yet. PCR panels detect more infections than culture, so the rise may be pure detection. Check whether the increase is spread evenly across the region and ages (suggests the test) or concentrated in one place, group or time (suggests a real cluster). Compare with regions whose labs did not switch, and look at a time series with the test change marked.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Your case definition early in a wedding outbreak is “any gastrointestinal symptom within a week of the wedding”. For the analytic study you narrow it to “vomiting or diarrhoea within 72 hours”. Why might the risk ratio for the culprit dish go up?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The wide definition includes people with unrelated, background gastrointestinal symptoms. Their illness is independent of the dish, so counting them as cases mixes non-cases into the case group and pulls the risk ratio towards 1 (non-differential misclassification). The narrower definition is more specific, so the true association shows more clearly.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>An epidemic curve shows cases spread evenly over three weeks, then stopping abruptly. What exposure pattern does this suggest, and what would you check?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>A continuous common source that was removed or stopped. Check what changed about one incubation period before the last cases: a product recall, a water system repair, a closed food stall, a procedure stopped. If the curve had shown waves spaced by a serial interval instead, person-to-person spread would be more likely.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Salmonellosis cases appear in several cities after a national product launch. Why would you run a case-control study rather than a cohort study?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>There is no closed, listable group of exposed people: you cannot enumerate everyone who ate the product. So you sample cases and comparable controls from the same population and compare their exposure, estimating odds ratios. With a closed group like a wedding guest list, you can interview everyone and compute attack rates directly.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>In the Oswego table, chocolate ice cream has a risk ratio below 1. A colleague suggests it protected people. What is the better reading?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Substitution: people who took chocolate were less likely to take vanilla, the real vehicle, so the chocolate group had a lower attack rate. Stratifying shows it: among vanilla eaters the attack rate was about 80% whether or not they also ate chocolate. Chocolate is a marker of not eating vanilla, not a protective factor. Among many foods tested, a few associations in either direction also arise by chance.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>US CDC, <em>Principles of Epidemiology in Public Health Practice</em>, 3rd edition, Lesson 6 “Investigating an outbreak” (archived online). The thirteen steps, epidemic curves, case definitions.</li>
+      <li>Rasmussen &amp; Goodman (eds), <em>The CDC Field Epidemiology Manual</em> (Oxford University Press, 2019). Chapters on conducting a field investigation, describing epidemiologic data and designing studies in the field.</li>
+      <li>US CDC Epidemic Intelligence Service, “Oswego: an outbreak of gastrointestinal illness following a church supper”, case study; Gross, “Oswego County revisited”, <em>Public Health Reports</em> (1976). The data are in the R package <code>epitools</code> (<code>data(oswego)</code>).</li>
+      <li>Assiri et al., “Hospital outbreak of Middle East respiratory syndrome coronavirus”, <em>New England Journal of Medicine</em> (2013).</li>
+      <li>Giesecke, <em>Modern Infectious Disease Epidemiology</em>, 3rd edition (CRC Press, 2017). Chapters on outbreak investigation and case definitions.</li>
+      <li>Vynnycky &amp; White, <em>An Introduction to Infectious Disease Modelling</em> (Oxford University Press, 2010). Incubation and serial intervals.</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="6-03-surveillance-systems.html"><small>Previous</small>6.3 Surveillance systems</a>
+    <a class="next" href="6-05-vaccination-programmes.html"><small>Next</small>6.5 Vaccination programmes</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

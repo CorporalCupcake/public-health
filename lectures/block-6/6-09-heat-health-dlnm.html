@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>6.9 Heat and health · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/6-09.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-6">Block 6</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 6.9</p>
+  <h1>Heat and health: time series designs and distributed lag non-linear models</h1>
+  <div class="lecture-meta">
+    <span>Block 6 · Health protection</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>Temperature affects deaths along two axes at once: <em>how hot or cold</em> a day is and <em>how many days ago</em> it was. Heat kills fast, and some of those deaths are only brought forward a few days; cold kills slowly over two or three weeks. Distributed lag non-linear models (DLNMs) estimate this whole surface from daily time series, with season and trend removed, and turn it into the number of deaths attributable to non-optimal temperature. For Project 6 this is the optional extension: carrying published exposure–response curves over to Gulf outdoor workers, which needs more caveats than code.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#design">The design: daily counts, or each case against itself</a></li>
+      <li><a href="#jcurve">The J-shaped curve and the minimum-mortality temperature</a></li>
+      <li><a href="#lags">Lags and harvesting: heat is fast, cold is slow</a></li>
+      <li><a href="#dlnm">The DLNM: one model for the whole surface</a></li>
+      <li><a href="#attribution">Attributable deaths: AF and AN</a></li>
+      <li><a href="#adaptation">Vulnerability and adaptation</a></li>
+      <li><a href="#project6">Project 6: from WBGT hours to health impact</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="design">
+    <h2>1. The design: daily counts, or each case against itself</h2>
+    <p class="point">Heat–health studies compare a city with itself on hotter and cooler days, so everything that changes slowly (age structure, smoking, health care) cancels out; what must be removed is season, long-term trend and day of the week.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A <em>time-series regression</em> (Lecture 3.9): daily death counts in one city over many years, modelled with quasi-Poisson regression (Lecture 3.3, which allows for overdispersion) on temperature, a smooth function of time for season and trend, and day of week. The <em>time-stratified case-crossover</em> (Lectures 2.4 and 5.5) compares each death's temperature on the day it happened with the same weekdays in the same month.</dd>
+      <dt>Why it matters</dt>
+      <dd>The two designs give the same answer: a conditional Poisson model with one stratum per year–month–weekday is mathematically equivalent to the conditional logistic case-crossover (Lu and Zeger 2007; Armstrong, Gasparrini and Tobias 2014). Choose whichever is easier to explain.</dd>
+      <dt>How to read it</dt>
+      <dd>The season-and-trend spline usually has about 7 or 8 degrees of freedom per year. Too few and summer itself is confounded with heat; too many and the spline starts absorbing the heatwaves you want to study.</dd>
+      <dt>What a change means</dt>
+      <dd>If the heat effect halves when you raise the time spline from 4 to 8 df per year, seasonal confounding was driving part of it. Show that sensitivity analysis.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · A time-stratified case-crossover in July 2024</div>
+      <svg class="viz-svg" viewBox="0 0 640 262" role="img" aria-label="A July 2024 calendar, Monday to Sunday. A death on Wednesday 17 July is the case day. The control days are the other Wednesdays in the same month: 3, 10, 24 and 31 July. The temperature on the case day is compared with the temperature on the control days.">
+        <text x="80" y="20" text-anchor="middle" class="viz-small viz-muted">Mon</text>
+        <text x="160" y="20" text-anchor="middle" class="viz-small viz-muted">Tue</text>
+        <text x="240" y="20" text-anchor="middle" class="viz-small viz-muted">Wed</text>
+        <text x="320" y="20" text-anchor="middle" class="viz-small viz-muted">Thu</text>
+        <text x="400" y="20" text-anchor="middle" class="viz-small viz-muted">Fri</text>
+        <text x="480" y="20" text-anchor="middle" class="viz-small viz-muted">Sat</text>
+        <text x="560" y="20" text-anchor="middle" class="viz-small viz-muted">Sun</text>
+        <rect x="42" y="30" width="76" height="36" rx="4" class="edge"/>
+        <text x="50" y="46" class="viz-bold">1</text>
+        <rect x="122" y="30" width="76" height="36" rx="4" class="edge"/>
+        <text x="130" y="46" class="viz-bold">2</text>
+        <rect x="202" y="30" width="76" height="36" rx="4" class="node-fill s1"/>
+        <text x="210" y="46" class="viz-bold">3</text>
+        <text x="210" y="60" class="viz-small">control</text>
+        <rect x="282" y="30" width="76" height="36" rx="4" class="edge"/>
+        <text x="290" y="46" class="viz-bold">4</text>
+        <rect x="362" y="30" width="76" height="36" rx="4" class="edge"/>
+        <text x="370" y="46" class="viz-bold">5</text>
+        <rect x="442" y="30" width="76" height="36" rx="4" class="edge"/>
+        <text x="450" y="46" class="viz-bold">6</text>
+        <rect x="522" y="30" width="76" height="36" rx="4" class="edge"/>
+        <text x="530" y="46" class="viz-bold">7</text>
+        <rect x="42" y="70" width="76" height="36" rx="4" class="edge"/>
+        <text x="50" y="86" class="viz-bold">8</text>
+        <rect x="122" y="70" width="76" height="36" rx="4" class="edge"/>
+        <text x="130" y="86" class="viz-bold">9</text>
+        <rect x="202" y="70" width="76" height="36" rx="4" class="node-fill s1"/>
+        <text x="210" y="86" class="viz-bold">10</text>
+        <text x="210" y="100" class="viz-small">control</text>
+        <rect x="282" y="70" width="76" height="36" rx="4" class="edge"/>
+        <text x="290" y="86" class="viz-bold">11</text>
+        <rect x="362" y="70" width="76" height="36" rx="4" class="edge"/>
+        <text x="370" y="86" class="viz-bold">12</text>
+        <rect x="442" y="70" width="76" height="36" rx="4" class="edge"/>
+        <text x="450" y="86" class="viz-bold">13</text>
+        <rect x="522" y="70" width="76" height="36" rx="4" class="edge"/>
+        <text x="530" y="86" class="viz-bold">14</text>
+        <rect x="42" y="110" width="76" height="36" rx="4" class="edge"/>
+        <text x="50" y="126" class="viz-bold">15</text>
+        <rect x="122" y="110" width="76" height="36" rx="4" class="edge"/>
+        <text x="130" y="126" class="viz-bold">16</text>
+        <rect x="202" y="110" width="76" height="36" rx="4" class="node-fill s3"/>
+        <text x="210" y="126" class="viz-bold">17</text>
+        <text x="210" y="140" class="viz-small">case: death</text>
+        <rect x="282" y="110" width="76" height="36" rx="4" class="edge"/>
+        <text x="290" y="126" class="viz-bold">18</text>
+        <rect x="362" y="110" width="76" height="36" rx="4" class="edge"/>
+        <text x="370" y="126" class="viz-bold">19</text>
+        <rect x="442" y="110" width="76" height="36" rx="4" class="edge"/>
+        <text x="450" y="126" class="viz-bold">20</text>
+        <rect x="522" y="110" width="76" height="36" rx="4" class="edge"/>
+        <text x="530" y="126" class="viz-bold">21</text>
+        <rect x="42" y="150" width="76" height="36" rx="4" class="edge"/>
+        <text x="50" y="166" class="viz-bold">22</text>
+        <rect x="122" y="150" width="76" height="36" rx="4" class="edge"/>
+        <text x="130" y="166" class="viz-bold">23</text>
+        <rect x="202" y="150" width="76" height="36" rx="4" class="node-fill s1"/>
+        <text x="210" y="166" class="viz-bold">24</text>
+        <text x="210" y="180" class="viz-small">control</text>
+        <rect x="282" y="150" width="76" height="36" rx="4" class="edge"/>
+        <text x="290" y="166" class="viz-bold">25</text>
+        <rect x="362" y="150" width="76" height="36" rx="4" class="edge"/>
+        <text x="370" y="166" class="viz-bold">26</text>
+        <rect x="442" y="150" width="76" height="36" rx="4" class="edge"/>
+        <text x="450" y="166" class="viz-bold">27</text>
+        <rect x="522" y="150" width="76" height="36" rx="4" class="edge"/>
+        <text x="530" y="166" class="viz-bold">28</text>
+        <rect x="42" y="190" width="76" height="36" rx="4" class="edge"/>
+        <text x="50" y="206" class="viz-bold">29</text>
+        <rect x="122" y="190" width="76" height="36" rx="4" class="edge"/>
+        <text x="130" y="206" class="viz-bold">30</text>
+        <rect x="202" y="190" width="76" height="36" rx="4" class="node-fill s1"/>
+        <text x="210" y="206" class="viz-bold">31</text>
+        <text x="210" y="220" class="viz-small">control</text>
+        <text x="320" y="252" text-anchor="middle" class="viz-small viz-muted">Stratum = July 2024 × Wednesday: 1 case day, 4 control days</text>
+      </svg>
+      <figcaption>Each death is its own control: the temperature on the day of death (red) is compared with the same weekday in the same calendar month (teal). The stratum fixes season, trend and day of week by design, and the person's own characteristics cannot confound. 1 July 2024 was a Monday.</figcaption>
+    </figure>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Choosing control days that are only <em>before</em> the case, or a fixed window around it. Temperature has a trend within a month, so unbalanced referents bias the estimate (the "overlap bias" of early case-crossover designs). The time-stratified scheme, with all same-weekday days in the month, avoids it.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="jcurve">
+    <h2>2. The J-shaped curve and the minimum-mortality temperature</h2>
+    <p class="point">Mortality is lowest at a city-specific "comfortable" temperature and rises on both sides: slowly into the cold, steeply into the heat.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The cumulative exposure–response curve plots relative risk of death against daily temperature. Its lowest point is the <em>minimum-mortality temperature</em> (MMT), and all relative risks are reported against it.</dd>
+      <dt>Why it matters</dt>
+      <dd>The MMT tracks local climate: populations are adapted to what they usually experience. In a 13-country study of 384 locations, the MMT sat at about the 60th percentile of local temperature in tropical places and the 80th to 90th in temperate ones (Gasparrini and colleagues 2015). An MMT is meaningful as a percentile, not as a universal number of degrees.</dd>
+      <dt>How to read it</dt>
+      <dd>A relative risk of 1.3 at the 99th percentile means 30% more deaths on such days than on days at the MMT. Curves are steep near the hot end, so confidence intervals there are wide: few days are that hot.</dd>
+      <dt>What a change means</dt>
+      <dd>An MMT that rises over decades, or a heat curve that flattens, is the signature of adaptation (section 6).</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Using one curve from a temperate city to project heat deaths in Riyadh or Kuwait City. Both the MMT and the slope differ by climate and by population; transporting a curve across climates is a strong assumption, not a default.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Each population has a thermostat set point fitted to its usual weather. A day that is "hot" in Oslo is a pleasant morning in Riyadh; what harms is distance from the local set point, especially upward.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="lags">
+    <h2>3. Lags and harvesting: heat is fast, cold is slow</h2>
+    <p class="point">A hot day raises deaths that day and the next, and then deaths can dip below normal because some of the people who died were already close to death; cold raises deaths modestly but for two to three weeks.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The <em>lag–response</em> curve shows the extra risk on each of the following days after one day at a given temperature. <em>Harvesting</em> (mortality displacement) is the dip after the early peak: deaths brought forward by days or weeks, not lives shortened by years.</dd>
+      <dt>Why it matters</dt>
+      <dd>Looking only at lag 0 overstates heat effects if there is harvesting and badly understates cold effects. The quantity that matters is the <em>cumulative</em> effect summed over enough lags, commonly 21 days, to capture both.</dd>
+      <dt>How to read it</dt>
+      <dd>If the cumulative heat effect over 21 days is much smaller than over 0–2 days, much of the early excess was displacement. If it stays near the short-lag value, the deaths were not merely brought forward.</dd>
+      <dt>What a change means</dt>
+      <dd>Cold effects built through respiratory infection and cardiovascular strain take days to appear; cutting the lag at 3 days can make cold look harmless.</dd>
+    </dl>
+
+    <div class="widget" data-widget="lag-explorer">
+      <div class="widget-title">Lag–response, harvesting and the cumulative effect</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Pick a heat or cold pattern, then change how much of the early excess is harvesting and how many lags your model includes. Compare the effect at lags 0–1 with the cumulative effect.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reporting the lag-0 relative risk as "the heat effect". It is one slice of the lag–response. The public health quantity is the cumulative relative risk over the full lag period, and the choice of maximum lag should be stated and tested.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="dlnm">
+    <h2>4. The DLNM: one model for the whole surface</h2>
+    <p class="point">A DLNM describes the risk surface over temperature and lag with a flexible basis in each direction, crossed, and estimates it as ordinary regression coefficients.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A <em>cross-basis</em> (Gasparrini, Armstrong and Kenward 2010) combines a spline in temperature (the exposure–response shape) with a spline in lag (the lag–response shape). The model has a few dozen coefficients but describes a smooth surface over every temperature and every lag up to the maximum.</dd>
+      <dt>Why it matters</dt>
+      <dd>It lets heat and cold have different lag shapes in one model, and it gives three summaries: the full surface, the lag–response at a chosen temperature, and the cumulative exposure–response over all lags.</dd>
+      <dt>How to read it</dt>
+      <dd>Read the surface as slices. A horizontal slice at 36 °C is the lag–response for a very hot day; a vertical slice at lag 0 is the same-day exposure–response; summing along lags gives the J-curve of section 2.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · The exposure–lag–response surface</div>
+      <svg class="viz-svg" viewBox="0 26 640 306" role="img" aria-label="A heat map with daily temperature from 14 to 38 degrees on the vertical axis and lag from 0 to 21 days on the horizontal axis. Above the minimum-mortality temperature of 31 degrees, risk is high at lags 0 to 2, strongest at the hottest temperatures, then slightly below baseline from about lag 4 to 13, which is harvesting. Below 31 degrees, risk is modestly raised over all lags up to 21 days, more so at colder temperatures. A highlighted row at 36 degrees marks a lag-response slice; a highlighted column at lag 0 marks a same-day exposure-response slice.">
+        <g>
+        <rect x="96" y="40" width="20" height="14" class="fill s3" opacity="1.00"/><rect x="118" y="40" width="20" height="14" class="fill s3" opacity="0.71"/><rect x="140" y="40" width="20" height="14" class="fill s3" opacity="0.52"/><rect x="162" y="40" width="20" height="14" class="fill s3" opacity="0.25"/><rect x="184" y="40" width="20" height="14" class="fill s1" opacity="0.35"/><rect x="206" y="40" width="20" height="14" class="fill s1" opacity="0.38"/><rect x="228" y="40" width="20" height="14" class="fill s1" opacity="0.38"/><rect x="250" y="40" width="20" height="14" class="fill s1" opacity="0.37"/><rect x="272" y="40" width="20" height="14" class="fill s1" opacity="0.35"/><rect x="294" y="40" width="20" height="14" class="fill s1" opacity="0.32"/><rect x="316" y="40" width="20" height="14" class="fill s1" opacity="0.30"/><rect x="338" y="40" width="20" height="14" class="fill s1" opacity="0.28"/><rect x="360" y="40" width="20" height="14" class="fill s1" opacity="0.27"/><rect x="382" y="40" width="20" height="14" class="fill s1" opacity="0.25"/><rect x="404" y="40" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="426" y="40" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="448" y="40" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="470" y="40" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="492" y="40" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="514" y="40" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="536" y="40" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="558" y="40" width="20" height="14" class="fill-soft s5" opacity="0.4"/>
+        <rect x="96" y="56" width="20" height="14" class="fill s3" opacity="0.76"/><rect x="118" y="56" width="20" height="14" class="fill s3" opacity="0.55"/><rect x="140" y="56" width="20" height="14" class="fill s3" opacity="0.41"/><rect x="162" y="56" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="184" y="56" width="20" height="14" class="fill s1" opacity="0.29"/><rect x="206" y="56" width="20" height="14" class="fill s1" opacity="0.32"/><rect x="228" y="56" width="20" height="14" class="fill s1" opacity="0.32"/><rect x="250" y="56" width="20" height="14" class="fill s1" opacity="0.31"/><rect x="272" y="56" width="20" height="14" class="fill s1" opacity="0.29"/><rect x="294" y="56" width="20" height="14" class="fill s1" opacity="0.27"/><rect x="316" y="56" width="20" height="14" class="fill s1" opacity="0.26"/><rect x="338" y="56" width="20" height="14" class="fill s1" opacity="0.25"/><rect x="360" y="56" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="382" y="56" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="404" y="56" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="426" y="56" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="448" y="56" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="470" y="56" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="492" y="56" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="514" y="56" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="536" y="56" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="558" y="56" width="20" height="14" class="fill-soft s5" opacity="0.4"/>
+        <rect x="96" y="72" width="20" height="14" class="fill s3" opacity="0.51"/><rect x="118" y="72" width="20" height="14" class="fill s3" opacity="0.39"/><rect x="140" y="72" width="20" height="14" class="fill s3" opacity="0.31"/><rect x="162" y="72" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="184" y="72" width="20" height="14" class="fill s1" opacity="0.24"/><rect x="206" y="72" width="20" height="14" class="fill s1" opacity="0.25"/><rect x="228" y="72" width="20" height="14" class="fill s1" opacity="0.25"/><rect x="250" y="72" width="20" height="14" class="fill s1" opacity="0.24"/><rect x="272" y="72" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="294" y="72" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="316" y="72" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="338" y="72" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="360" y="72" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="382" y="72" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="404" y="72" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="426" y="72" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="448" y="72" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="470" y="72" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="492" y="72" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="514" y="72" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="536" y="72" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="558" y="72" width="20" height="14" class="fill-soft s5" opacity="0.4"/>
+        <rect x="96" y="88" width="20" height="14" class="fill s3" opacity="0.27"/><rect x="118" y="88" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="140" y="88" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="162" y="88" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="184" y="88" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="206" y="88" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="228" y="88" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="250" y="88" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="272" y="88" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="294" y="88" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="316" y="88" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="338" y="88" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="360" y="88" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="382" y="88" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="404" y="88" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="426" y="88" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="448" y="88" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="470" y="88" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="492" y="88" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="514" y="88" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="536" y="88" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="558" y="88" width="20" height="14" class="fill-soft s5" opacity="0.4"/>
+        <rect x="96" y="104" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="118" y="104" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="140" y="104" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="162" y="104" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="184" y="104" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="206" y="104" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="228" y="104" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="250" y="104" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="272" y="104" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="294" y="104" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="316" y="104" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="338" y="104" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="360" y="104" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="382" y="104" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="404" y="104" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="426" y="104" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="448" y="104" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="470" y="104" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="492" y="104" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="514" y="104" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="536" y="104" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="558" y="104" width="20" height="14" class="fill-soft s5" opacity="0.4"/>
+        <rect x="96" y="120" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="118" y="120" width="20" height="14" class="fill s3" opacity="0.26"/><rect x="140" y="120" width="20" height="14" class="fill s3" opacity="0.26"/><rect x="162" y="120" width="20" height="14" class="fill s3" opacity="0.27"/><rect x="184" y="120" width="20" height="14" class="fill s3" opacity="0.27"/><rect x="206" y="120" width="20" height="14" class="fill s3" opacity="0.26"/><rect x="228" y="120" width="20" height="14" class="fill s3" opacity="0.26"/><rect x="250" y="120" width="20" height="14" class="fill s3" opacity="0.25"/><rect x="272" y="120" width="20" height="14" class="fill s3" opacity="0.24"/><rect x="294" y="120" width="20" height="14" class="fill s3" opacity="0.24"/><rect x="316" y="120" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="338" y="120" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="360" y="120" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="382" y="120" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="404" y="120" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="426" y="120" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="448" y="120" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="470" y="120" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="492" y="120" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="514" y="120" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="536" y="120" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="558" y="120" width="20" height="14" class="fill-soft s5" opacity="0.4"/>
+        <rect x="96" y="136" width="20" height="14" class="fill s3" opacity="0.27"/><rect x="118" y="136" width="20" height="14" class="fill s3" opacity="0.30"/><rect x="140" y="136" width="20" height="14" class="fill s3" opacity="0.31"/><rect x="162" y="136" width="20" height="14" class="fill s3" opacity="0.32"/><rect x="184" y="136" width="20" height="14" class="fill s3" opacity="0.31"/><rect x="206" y="136" width="20" height="14" class="fill s3" opacity="0.31"/><rect x="228" y="136" width="20" height="14" class="fill s3" opacity="0.30"/><rect x="250" y="136" width="20" height="14" class="fill s3" opacity="0.29"/><rect x="272" y="136" width="20" height="14" class="fill s3" opacity="0.28"/><rect x="294" y="136" width="20" height="14" class="fill s3" opacity="0.27"/><rect x="316" y="136" width="20" height="14" class="fill s3" opacity="0.27"/><rect x="338" y="136" width="20" height="14" class="fill s3" opacity="0.26"/><rect x="360" y="136" width="20" height="14" class="fill s3" opacity="0.25"/><rect x="382" y="136" width="20" height="14" class="fill s3" opacity="0.24"/><rect x="404" y="136" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="426" y="136" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="448" y="136" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="470" y="136" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="492" y="136" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="514" y="136" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="536" y="136" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="558" y="136" width="20" height="14" class="fill-soft s5" opacity="0.4"/>
+        <rect x="96" y="152" width="20" height="14" class="fill s3" opacity="0.30"/><rect x="118" y="152" width="20" height="14" class="fill s3" opacity="0.34"/><rect x="140" y="152" width="20" height="14" class="fill s3" opacity="0.36"/><rect x="162" y="152" width="20" height="14" class="fill s3" opacity="0.36"/><rect x="184" y="152" width="20" height="14" class="fill s3" opacity="0.36"/><rect x="206" y="152" width="20" height="14" class="fill s3" opacity="0.35"/><rect x="228" y="152" width="20" height="14" class="fill s3" opacity="0.34"/><rect x="250" y="152" width="20" height="14" class="fill s3" opacity="0.33"/><rect x="272" y="152" width="20" height="14" class="fill s3" opacity="0.32"/><rect x="294" y="152" width="20" height="14" class="fill s3" opacity="0.31"/><rect x="316" y="152" width="20" height="14" class="fill s3" opacity="0.30"/><rect x="338" y="152" width="20" height="14" class="fill s3" opacity="0.28"/><rect x="360" y="152" width="20" height="14" class="fill s3" opacity="0.27"/><rect x="382" y="152" width="20" height="14" class="fill s3" opacity="0.26"/><rect x="404" y="152" width="20" height="14" class="fill s3" opacity="0.25"/><rect x="426" y="152" width="20" height="14" class="fill s3" opacity="0.24"/><rect x="448" y="152" width="20" height="14" class="fill s3" opacity="0.24"/><rect x="470" y="152" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="492" y="152" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="514" y="152" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="536" y="152" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="558" y="152" width="20" height="14" class="fill-soft s5" opacity="0.4"/>
+        <rect x="96" y="168" width="20" height="14" class="fill s3" opacity="0.33"/><rect x="118" y="168" width="20" height="14" class="fill s3" opacity="0.38"/><rect x="140" y="168" width="20" height="14" class="fill s3" opacity="0.40"/><rect x="162" y="168" width="20" height="14" class="fill s3" opacity="0.40"/><rect x="184" y="168" width="20" height="14" class="fill s3" opacity="0.40"/><rect x="206" y="168" width="20" height="14" class="fill s3" opacity="0.39"/><rect x="228" y="168" width="20" height="14" class="fill s3" opacity="0.38"/><rect x="250" y="168" width="20" height="14" class="fill s3" opacity="0.37"/><rect x="272" y="168" width="20" height="14" class="fill s3" opacity="0.35"/><rect x="294" y="168" width="20" height="14" class="fill s3" opacity="0.34"/><rect x="316" y="168" width="20" height="14" class="fill s3" opacity="0.32"/><rect x="338" y="168" width="20" height="14" class="fill s3" opacity="0.31"/><rect x="360" y="168" width="20" height="14" class="fill s3" opacity="0.30"/><rect x="382" y="168" width="20" height="14" class="fill s3" opacity="0.28"/><rect x="404" y="168" width="20" height="14" class="fill s3" opacity="0.27"/><rect x="426" y="168" width="20" height="14" class="fill s3" opacity="0.26"/><rect x="448" y="168" width="20" height="14" class="fill s3" opacity="0.25"/><rect x="470" y="168" width="20" height="14" class="fill s3" opacity="0.24"/><rect x="492" y="168" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="514" y="168" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="536" y="168" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="558" y="168" width="20" height="14" class="fill-soft s5" opacity="0.4"/>
+        <rect x="96" y="184" width="20" height="14" class="fill s3" opacity="0.36"/><rect x="118" y="184" width="20" height="14" class="fill s3" opacity="0.41"/><rect x="140" y="184" width="20" height="14" class="fill s3" opacity="0.43"/><rect x="162" y="184" width="20" height="14" class="fill s3" opacity="0.44"/><rect x="184" y="184" width="20" height="14" class="fill s3" opacity="0.44"/><rect x="206" y="184" width="20" height="14" class="fill s3" opacity="0.43"/><rect x="228" y="184" width="20" height="14" class="fill s3" opacity="0.41"/><rect x="250" y="184" width="20" height="14" class="fill s3" opacity="0.40"/><rect x="272" y="184" width="20" height="14" class="fill s3" opacity="0.38"/><rect x="294" y="184" width="20" height="14" class="fill s3" opacity="0.37"/><rect x="316" y="184" width="20" height="14" class="fill s3" opacity="0.35"/><rect x="338" y="184" width="20" height="14" class="fill s3" opacity="0.33"/><rect x="360" y="184" width="20" height="14" class="fill s3" opacity="0.32"/><rect x="382" y="184" width="20" height="14" class="fill s3" opacity="0.31"/><rect x="404" y="184" width="20" height="14" class="fill s3" opacity="0.29"/><rect x="426" y="184" width="20" height="14" class="fill s3" opacity="0.28"/><rect x="448" y="184" width="20" height="14" class="fill s3" opacity="0.27"/><rect x="470" y="184" width="20" height="14" class="fill s3" opacity="0.26"/><rect x="492" y="184" width="20" height="14" class="fill s3" opacity="0.25"/><rect x="514" y="184" width="20" height="14" class="fill s3" opacity="0.24"/><rect x="536" y="184" width="20" height="14" class="fill-soft s5" opacity="0.4"/><rect x="558" y="184" width="20" height="14" class="fill-soft s5" opacity="0.4"/>
+        <rect x="96" y="200" width="20" height="14" class="fill s3" opacity="0.39"/><rect x="118" y="200" width="20" height="14" class="fill s3" opacity="0.45"/><rect x="140" y="200" width="20" height="14" class="fill s3" opacity="0.47"/><rect x="162" y="200" width="20" height="14" class="fill s3" opacity="0.48"/><rect x="184" y="200" width="20" height="14" class="fill s3" opacity="0.47"/><rect x="206" y="200" width="20" height="14" class="fill s3" opacity="0.46"/><rect x="228" y="200" width="20" height="14" class="fill s3" opacity="0.45"/><rect x="250" y="200" width="20" height="14" class="fill s3" opacity="0.43"/><rect x="272" y="200" width="20" height="14" class="fill s3" opacity="0.41"/><rect x="294" y="200" width="20" height="14" class="fill s3" opacity="0.39"/><rect x="316" y="200" width="20" height="14" class="fill s3" opacity="0.38"/><rect x="338" y="200" width="20" height="14" class="fill s3" opacity="0.36"/><rect x="360" y="200" width="20" height="14" class="fill s3" opacity="0.34"/><rect x="382" y="200" width="20" height="14" class="fill s3" opacity="0.32"/><rect x="404" y="200" width="20" height="14" class="fill s3" opacity="0.31"/><rect x="426" y="200" width="20" height="14" class="fill s3" opacity="0.30"/><rect x="448" y="200" width="20" height="14" class="fill s3" opacity="0.28"/><rect x="470" y="200" width="20" height="14" class="fill s3" opacity="0.27"/><rect x="492" y="200" width="20" height="14" class="fill s3" opacity="0.26"/><rect x="514" y="200" width="20" height="14" class="fill s3" opacity="0.25"/><rect x="536" y="200" width="20" height="14" class="fill s3" opacity="0.24"/><rect x="558" y="200" width="20" height="14" class="fill-soft s5" opacity="0.4"/>
+        <rect x="96" y="216" width="20" height="14" class="fill s3" opacity="0.41"/><rect x="118" y="216" width="20" height="14" class="fill s3" opacity="0.48"/><rect x="140" y="216" width="20" height="14" class="fill s3" opacity="0.50"/><rect x="162" y="216" width="20" height="14" class="fill s3" opacity="0.51"/><rect x="184" y="216" width="20" height="14" class="fill s3" opacity="0.51"/><rect x="206" y="216" width="20" height="14" class="fill s3" opacity="0.49"/><rect x="228" y="216" width="20" height="14" class="fill s3" opacity="0.48"/><rect x="250" y="216" width="20" height="14" class="fill s3" opacity="0.46"/><rect x="272" y="216" width="20" height="14" class="fill s3" opacity="0.44"/><rect x="294" y="216" width="20" height="14" class="fill s3" opacity="0.42"/><rect x="316" y="216" width="20" height="14" class="fill s3" opacity="0.40"/><rect x="338" y="216" width="20" height="14" class="fill s3" opacity="0.38"/><rect x="360" y="216" width="20" height="14" class="fill s3" opacity="0.36"/><rect x="382" y="216" width="20" height="14" class="fill s3" opacity="0.34"/><rect x="404" y="216" width="20" height="14" class="fill s3" opacity="0.33"/><rect x="426" y="216" width="20" height="14" class="fill s3" opacity="0.31"/><rect x="448" y="216" width="20" height="14" class="fill s3" opacity="0.30"/><rect x="470" y="216" width="20" height="14" class="fill s3" opacity="0.28"/><rect x="492" y="216" width="20" height="14" class="fill s3" opacity="0.27"/><rect x="514" y="216" width="20" height="14" class="fill s3" opacity="0.26"/><rect x="536" y="216" width="20" height="14" class="fill s3" opacity="0.25"/><rect x="558" y="216" width="20" height="14" class="fill s3" opacity="0.24"/>
+        <rect x="96" y="232" width="20" height="14" class="fill s3" opacity="0.44"/><rect x="118" y="232" width="20" height="14" class="fill s3" opacity="0.51"/><rect x="140" y="232" width="20" height="14" class="fill s3" opacity="0.54"/><rect x="162" y="232" width="20" height="14" class="fill s3" opacity="0.54"/><rect x="184" y="232" width="20" height="14" class="fill s3" opacity="0.54"/><rect x="206" y="232" width="20" height="14" class="fill s3" opacity="0.52"/><rect x="228" y="232" width="20" height="14" class="fill s3" opacity="0.51"/><rect x="250" y="232" width="20" height="14" class="fill s3" opacity="0.49"/><rect x="272" y="232" width="20" height="14" class="fill s3" opacity="0.47"/><rect x="294" y="232" width="20" height="14" class="fill s3" opacity="0.44"/><rect x="316" y="232" width="20" height="14" class="fill s3" opacity="0.42"/><rect x="338" y="232" width="20" height="14" class="fill s3" opacity="0.40"/><rect x="360" y="232" width="20" height="14" class="fill s3" opacity="0.38"/><rect x="382" y="232" width="20" height="14" class="fill s3" opacity="0.36"/><rect x="404" y="232" width="20" height="14" class="fill s3" opacity="0.34"/><rect x="426" y="232" width="20" height="14" class="fill s3" opacity="0.33"/><rect x="448" y="232" width="20" height="14" class="fill s3" opacity="0.31"/><rect x="470" y="232" width="20" height="14" class="fill s3" opacity="0.29"/><rect x="492" y="232" width="20" height="14" class="fill s3" opacity="0.28"/><rect x="514" y="232" width="20" height="14" class="fill s3" opacity="0.27"/><rect x="536" y="232" width="20" height="14" class="fill s3" opacity="0.26"/><rect x="558" y="232" width="20" height="14" class="fill s3" opacity="0.25"/>
+        </g>
+        <text x="88" y="51" text-anchor="end" class="viz-tick">38</text>
+        <text x="88" y="83" text-anchor="end" class="viz-tick">34</text>
+        <text x="88" y="115" text-anchor="end" class="viz-tick">30</text>
+        <text x="88" y="147" text-anchor="end" class="viz-tick">26</text>
+        <text x="88" y="179" text-anchor="end" class="viz-tick">22</text>
+        <text x="88" y="211" text-anchor="end" class="viz-tick">18</text>
+        <text x="88" y="243" text-anchor="end" class="viz-tick">14</text>
+        <text x="106" y="262" text-anchor="middle" class="viz-tick">0</text>
+        <text x="172" y="262" text-anchor="middle" class="viz-tick">3</text>
+        <text x="260" y="262" text-anchor="middle" class="viz-tick">7</text>
+        <text x="414" y="262" text-anchor="middle" class="viz-tick">14</text>
+        <text x="568" y="262" text-anchor="middle" class="viz-tick">21</text>
+        <text x="337" y="282" text-anchor="middle" class="viz-label">Lag (days after the exposure day)</text>
+        <text transform="translate(34,143) rotate(-90)" text-anchor="middle" class="viz-label">Daily mean temperature (°C)</text>
+        <line x1="94" x2="582" y1="103" y2="103" class="stroke s5 dashed" stroke-width="1.5"/>
+        <text x="586" y="100" class="viz-small viz-bold">MMT</text><text x="586" y="114" class="viz-small">31 °C</text>
+        <rect x="94" y="55" width="486" height="16" class="stroke s2" stroke-width="2"/>
+        <rect x="94" y="38" width="24" height="210" class="stroke s4 dashed" stroke-width="2"/>
+        <text x="96" y="306" class="viz-small colour s2 viz-bold">Amber row: the lag–response after a 36 °C day</text>
+        <text x="96" y="324" class="viz-small colour s4 viz-bold">Indigo column: the same-day (lag 0) exposure–response</text>
+      </svg>
+      <figcaption>Illustrative numbers, shaped like published curves. Red = more deaths than at the MMT, teal = fewer, grey = about the same; darker = larger. Heat (top) acts at lags 0–2, followed by a small deficit (harvesting); cold (bottom) acts weakly but for three weeks.</figcaption>
+    </figure>
+
+<pre><code>library(dlnm); library(splines)
+cb &lt;- crossbasis(d$tmean, lag = 21,
+        argvar = list(fun = "ns", knots = quantile(d$tmean, c(.10, .75, .90), na.rm = TRUE)),
+        arglag = list(fun = "ns", knots = logknots(21, 3)))
+fit &lt;- glm(deaths ~ cb + ns(time, df = 8 * nyears) + dow,
+           family = quasipoisson, data = d)
+pred &lt;- crosspred(cb, fit, cen = 30, by = 0.5)       # centre provisionally
+mmt  &lt;- pred$predvar[which.min(pred$allRRfit)]       # minimum-mortality temperature
+pred &lt;- crosspred(cb, fit, cen = mmt, by = 0.5)
+plot(pred, "overall")                                # cumulative J-curve
+plot(pred, "slices", var = 36)                       # lag-response at 36 °C</code></pre>
+    <p>The cross-basis puts a natural spline on temperature (knots at the 10th, 75th and 90th percentiles, as in the multi-country studies) and on lags 0–21 (knots spaced on a log scale, because the shape changes fastest at short lags). The quasi-Poisson model adds 8 degrees of freedom per year for season and trend and day of week. <code>crosspred</code> converts the coefficients into relative risks against a reference temperature; we find the MMT and re-centre there. For the case-crossover version, fit the same cross-basis with <code>gnm(deaths ~ cb, eliminate = factor(stratum), family = quasipoisson)</code>, where the stratum is year–month–weekday.</p>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>A cross-basis is a tensor-product spline: the same construction as <code>te()</code> smooths in a GAM, or feature crossing of two basis expansions. DLNMs can also be fitted as penalised GAMs in <code>mgcv</code>, which picks the smoothness by REML instead of by fixed knots.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Over-reading the surface's corners. The hottest temperatures at long lags rest on a handful of days; their wiggles are noise. Report the cumulative curve and a few pre-specified slices with confidence intervals, not the colours of the extreme cells.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="attribution">
+    <h2>5. Attributable deaths: AF and AN</h2>
+    <p class="point">The attributable number adds up, over every day, the deaths that would not have happened had that day been at the minimum-mortality temperature; it is Lecture 1.7's PAF computed day by day.</p>
+
+    <p>For each day, using the cumulative relative risk at that day's temperature (Gasparrini and Leone 2014):</p>
+    \[ \text{AN}_t = \text{deaths}_t \times \left(1 - \frac{1}{\text{RR}_t}\right) \]
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Summing AN over days gives total attributable deaths; dividing by total deaths gives the attributable fraction (AF). Splitting days at the MMT separates heat from cold, and at the 2.5th and 97.5th percentiles separates extreme from moderate temperatures.</dd>
+      <dt>Why it matters</dt>
+      <dd>Relative risks are steepest for heat, but impact depends on how many days fall in each part of the curve. Across 384 locations, 7.71% of deaths were attributable to non-optimal temperature: 7.29% to cold and 0.42% to heat, and only 0.86% to extreme days of either kind (Gasparrini and colleagues 2015). Most of the burden comes from many moderately cold days, not from rare extremes.</dd>
+      <dt>How to read it</dt>
+      <dd>An AF of 5% for heat in a city means 1 in 20 deaths would not have happened (at that time) had every hot day been at the MMT. Read it with its uncertainty interval, which is estimated by simulation.</dd>
+      <dt>What a change means</dt>
+      <dd>Moving the MMT changes the AN a lot, because it moves the boundary between "attributable" and "baseline" for many days. Report the MMT and its uncertainty with every AF.</dd>
+    </dl>
+
+    <div class="widget" data-widget="attrib-curve">
+      <div class="widget-title">From the J-curve to attributable deaths</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">An illustrative hot-climate city with ten years of daily temperatures. Move the MMT and the steepness of the heat and cold sides, and see where the attributable deaths come from.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reading "cold kills more than heat" as a statement that heat is unimportant, or that warming will reduce deaths. The cold total is the sum of small risks over most of the year; heat deaths are concentrated, more preventable with warnings and work rules, and the attribution relative to the MMT says nothing directly about future climates, where populations, curves and adaptation all change.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="adaptation">
+    <h2>6. Vulnerability and adaptation</h2>
+    <p class="point">The same temperature harms some groups far more than others, and the heat curve can flatten over time; both decide who a heat policy should protect.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><em>Effect modification</em> of the exposure–response curve by age, sex, nationality, occupation, chronic disease or housing. <em>Adaptation</em> is the curve changing over time, through physiology, behaviour, air conditioning, warning systems and work rules.</dd>
+      <dt>Why it matters</dt>
+      <dd>In 105 US cities from 1987 to 2005, excess deaths per 1,000 deaths for a 10 °F hotter day fell from 51 to 19; the rise in air conditioning did not explain the fall (Bobb and colleagues 2014). Curves are not fixed constants of nature.</dd>
+      <dt>How to read it</dt>
+      <dd>Fit the DLNM separately by subgroup (or with interactions) and compare cumulative relative risks at the same percentile, such as the 99th versus the MMT.</dd>
+    </dl>
+
+    <div class="callout gulf">
+      <div class="callout-title">In the Gulf</div>
+      <p>In a DLNM study of deaths in Kuwait from 2010 to 2016, the cumulative relative risk at the 99th percentile of temperature, against the minimum-mortality temperature, was 2.90 (95% CI 1.42–5.93) among non-Kuwaiti men and 2.59 among non-Kuwaitis of working age (15–64). For Kuwaitis the clearer signal was cold, especially for those aged 65 and over (Alahmad and colleagues 2020). Non-Kuwaiti men are the majority of outdoor workers. Air conditioning protects most residents indoors; the people the curve is steep for are those who work outside. The wider ceiling is climatic: wet-bulb temperatures of 35 °C, around the theoretical limit of human heat tolerance, have already been briefly recorded at stations on the Persian Gulf coast (Raymond, Matthews and Horton 2020).</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Averaging a curve over the whole population and applying it to a subgroup. A citywide relative risk dominated by air-conditioned older residents can miss the working-age migrant men for whom heat is an occupational hazard.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="project6">
+    <h2>7. Project 6: from WBGT hours to health impact</h2>
+    <p class="point">The optional extension, applying a published exposure–response curve to your ERA5 exposure series, is useful as a scenario only if the curve's exposure metric, population and outcome match yours, and in Project 6 they mostly do not.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Mismatch</th><th>Published curve</th><th>Project 6</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Exposure</strong></td><td>Daily mean air temperature at a city station</td><td>Hourly WBGT in the sun, from a 31 km reanalysis cell</td></tr>
+          <tr><td><strong>Population</strong></td><td>All residents, mostly older people and indoor exposure</td><td>Working-age outdoor workers, largely migrants</td></tr>
+          <tr><td><strong>Outcome</strong></td><td>All-cause deaths</td><td>Heat illness, injuries, kidney damage, lost work capacity</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A health impact assessment: combine an exposure series, an exposure–response curve and a baseline rate to estimate attributable cases under the observed climate and under counterfactuals (no ban, a ban triggered by WBGT instead of the clock).</dd>
+      <dt>Why it matters</dt>
+      <dd>It turns "hours above the limit" into a number policy-makers recognise. But AN needs a baseline death or illness rate for workers, which GCC sources rarely publish by occupation.</dd>
+      <dt>How to read it</dt>
+      <dd>Present results as scenarios with the assumptions in the title ("if workers had the Kuwaiti non-national curve…"), with wide uncertainty, and with a sensitivity analysis over at least two curves.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Plugging WBGT values into a curve estimated on air temperature. A WBGT of 32 °C and an air temperature of 32 °C are very different days; a curve must be applied on the scale it was estimated on, or re-estimated, for example with a DLNM on WBGT from ERA5 and city death counts where those are available.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>A study reports that heat raises deaths by 15% on the same day, but its 21-day cumulative relative risk is 1.03. What happened, and which number should guide policy?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Most of the same-day excess was harvesting: deaths brought forward by days, followed by a deficit. The cumulative figure measures net extra deaths. Policy should weigh both: the same-day spike still matters for emergency services and for workers, who are not frail and are not simply being "harvested".</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A colleague fits a model with lags 0–3 and concludes that cold has no effect in a Gulf city. What would you check?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Cold effects are delayed and spread over two to three weeks; a 3-day lag window misses most of them. Refit with lags up to 21 days and compare the cumulative relative risks. Also check the MMT: in a hot city "cold" may mean 20 °C.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Two analyses of the same city give heat AFs of 1.2% and 3.5%. The only difference is the MMT: 34 °C versus 31 °C. Which is right?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Neither can be declared right from the AF alone. A lower MMT counts more days as hot and measures each against a lower baseline. Check how each MMT was found (estimated from the curve, or fixed?), its confidence interval, and whether the curve is flat between 31 and 34 °C, where the choice matters little in risk but a lot in counted days.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Your time-series model uses 2 degrees of freedom per year for season. The heat effect is very large. Why be suspicious?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>A stiff time spline leaves seasonal variation in deaths unexplained, and summer and heat are confounded. Some of the "heat" effect may be other things that vary with season (Ramadan timing, holidays, migration of residents in summer). Increase the df and show the sensitivity.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>For Project 6, you plan to multiply hours above the WBGT limit by a citywide relative risk from Kuwait to estimate worker deaths prevented by a longer ban. What are the two biggest problems?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The exposure scale differs (the curve uses daily air temperature, not hourly WBGT), and the population and baseline differ (citywide deaths, not worker deaths, for whom no baseline rate is published). Frame it as a scenario with stated assumptions, use the curve on its own scale, and prefer occupational outcomes and estimates where they exist.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Gasparrini A, Armstrong B, Kenward MG, "Distributed lag non-linear models", <em>Statistics in Medicine</em> 29:2224–2234 (2010); Gasparrini A, "Distributed lag linear and non-linear models in R: the package dlnm", <em>Journal of Statistical Software</em> 43(8) (2011); dlnm package vignettes.</li>
+      <li>Bhaskaran K, Gasparrini A, Hajat S, Smeeth L, Armstrong B, "Time series regression studies in environmental epidemiology", <em>International Journal of Epidemiology</em> 42:1187–1195 (2013).</li>
+      <li>Gasparrini A, Leone M, "Attributable risk from distributed lag models", <em>BMC Medical Research Methodology</em> 14:55 (2014).</li>
+      <li>Gasparrini A et al., "Mortality risk attributable to high and low ambient temperature: a multicountry observational study", <em>The Lancet</em> 386:369–375 (2015).</li>
+      <li>Lu Y, Zeger SL, "On the equivalence of case-crossover and time series methods in environmental epidemiology", <em>Biostatistics</em> 8:337–344 (2007); Armstrong BG, Gasparrini A, Tobias A, "Conditional Poisson models: a flexible alternative to conditional logistic case cross-over analysis", <em>BMC Medical Research Methodology</em> 14:122 (2014).</li>
+      <li>Bobb JF, Peng RD, Bell ML, Dominici F, "Heat-related mortality and adaptation to heat in the United States", <em>Environmental Health Perspectives</em> 122:811–816 (2014).</li>
+      <li>Alahmad B, Shakarchi AF, Khraishah H, et al., "Extreme temperatures and mortality in Kuwait: who is vulnerable?", <em>Science of the Total Environment</em> 732:139289 (2020).</li>
+      <li>Raymond C, Matthews T, Horton RM, "The emergence of heat and humidity too severe for human tolerance", <em>Science Advances</em> 6:eaaw1838 (2020).</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="6-08-spatial-small-area-estimation.html"><small>Previous</small>6.8 Spatial epidemiology and small-area estimation</a>
+    <a class="next" href="6-10-mass-gatherings-hajj.html"><small>Next</small>6.10 Mass gatherings and the Hajj</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

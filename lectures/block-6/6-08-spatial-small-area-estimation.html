@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>6.8 Spatial epidemiology and small-area estimation · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/6-08.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-6">Block 6</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 6.8</p>
+  <h1>Spatial epidemiology and small-area estimation</h1>
+  <div class="lecture-meta">
+    <span>Block 6 · Health protection</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>A map of raw rates mostly shows you where the populations are small. Spatial epidemiology is the set of tools that stops a map from lying: standardised ratios, smoothing that borrows strength from neighbours (the partial pooling of Lecture 3.8, laid out on a map), honest tests for clustering and clusters, and care about the boundaries you draw. Small-area estimation applies the same idea to surveys too thin to report locally. For Project 6 the map shows exposure, not disease: how heat stress differs between grid cells, coastal and inland cities, and how to summarise thousands of correlated cell-level trends without fooling yourself.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#small-numbers">Maps of rates and the small-numbers problem</a></li>
+      <li><a href="#smoothing">Smoothing as partial pooling: empirical Bayes, BYM, BYM2</a></li>
+      <li><a href="#moran">Spatial autocorrelation and Moran's I</a></li>
+      <li><a href="#clusters">Cluster detection and multiple testing</a></li>
+      <li><a href="#maup">Boundaries change the answer: MAUP and the ecological fallacy</a></li>
+      <li><a href="#sae">Small-area estimation from surveys</a></li>
+      <li><a href="#project6">Project 6: mapping heat exposure</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="small-numbers">
+    <h2>1. Maps of rates and the small-numbers problem</h2>
+    <p class="point">Small areas have few cases, so their rates swing wildly by chance; on a raw map, both the highest and the lowest rates belong to the smallest places.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The usual mapped quantity is the <em>standardised mortality (or morbidity) ratio</em>, \( \text{SMR} = O/E \): observed cases divided by the cases expected if the area had the reference population's age- and sex-specific rates (indirect standardisation). An SMR of 1.3 means 30% more cases than expected for its age structure.</dd>
+      <dt>Why it matters</dt>
+      <dd>The variance of an SMR is roughly SMR/E. An area expecting 2 cases that sees 4 has an SMR of 2.0 by bad luck alone; an area expecting 200 cannot reach 2.0 without a real cause. The colour scale treats them the same.</dd>
+      <dt>How to read it</dt>
+      <dd>Always look at E next to the SMR. With E below about 10, an SMR between 0.5 and 2 is compatible with no difference at all. A funnel plot (SMR against E, with control limits that narrow as E grows) shows which areas are genuinely unusual.</dd>
+      <dt>What a change means</dt>
+      <dd>A small area's SMR jumping from 0.8 to 1.6 between years is usually noise; the same jump in a large city is news.</dd>
+    </dl>
+
+    <div class="callout example">
+      <div class="callout-title">Example · "The most dangerous equation"</div>
+      <p>US counties with the lowest kidney cancer death rates were mostly rural and sparsely populated, which invites stories about clean air and healthy living. Counties with the <em>highest</em> rates were also mostly rural and sparsely populated. Wainer (2007) uses this to show that the extremes are driven by small populations, not by rural life: de Moivre's result that the spread of a mean shrinks with the square root of the sample size.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Ranking areas by raw SMR and sending resources to the top five. The top of a raw ranking is crowded with tiny areas that happened to have a bad year. Rank on smoothed estimates, or show the uncertainty next to each rank.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="smoothing">
+    <h2>2. Smoothing as partial pooling: empirical Bayes, BYM, BYM2</h2>
+    <p class="point">Smoothing pulls each area's estimate toward a mean, by more when the area has little data; spatial models make that mean the area's neighbours rather than the whole country.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><em>Empirical Bayes</em> (Clayton and Kaldor 1987) shrinks each SMR toward the overall mean, with a weight set by how much real between-area variation the data show. The <em>BYM model</em> (Besag, York and Mollié 1991) gives each area two random effects: an unstructured one (pure heterogeneity) and a spatially structured one that is pulled toward the average of its neighbours. <em>BYM2</em> (Riebler and colleagues 2016) rewrites BYM with one variance and a mixing parameter for the share that is spatial, which makes priors sensible.</dd>
+      <dt>Why it matters</dt>
+      <dd>It is Lecture 3.8's partial pooling: areas are clusters, and a small area borrows strength from others. It turns a speckled raw map into one where the remaining pattern is more likely to be real.</dd>
+      <dt>How to read it</dt>
+      <dd>Large areas keep almost their raw SMR; small areas move most. Report the posterior probability that each area's relative risk exceeds 1 (above 0.8 or 0.9 is a common flag), not just the smoothed value.</dd>
+      <dt>What a change means</dt>
+      <dd>A BYM2 mixing parameter near 1 means most of the extra variation is spatially structured (neighbours resemble each other); near 0 means it is unstructured noise between areas.</dd>
+    </dl>
+
+    <div class="widget" data-widget="smr-smooth">
+      <div class="widget-title">Raw vs smoothed rates on a map</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">126 small areas with a known true risk surface. Move the smoothing strength from 0 (raw SMRs) up, and switch between shrinking to the overall mean and shrinking to each area's neighbours. Watch the top-10 list and the error against the truth.</p>
+    </div>
+
+<pre><code>library(sf); library(spdep); library(INLA)
+nb &lt;- poly2nb(areas)                    # neighbours share a border
+nb2INLA("areas.adj", nb); g &lt;- inla.read.graph("areas.adj")
+areas$id &lt;- seq_len(nrow(areas))
+fit &lt;- inla(cases ~ 1 + f(id, model = "bym2", graph = g, scale.model = TRUE),
+            family = "poisson", E = expected, data = areas,
+            control.predictor = list(compute = TRUE))
+areas$rr &lt;- fit$summary.fitted.values$mean   # smoothed relative risk
+summary(fit)$hyperpar                        # "Phi": the spatial share</code></pre>
+    <p><code>poly2nb</code> builds the neighbour list from the area polygons; INLA fits a Poisson model with expected counts as the offset and a BYM2 random effect per area; the fitted values are smoothed relative risks, and the mixing parameter (called Phi in the output) says how much of the variation is spatial. <code>brms</code> offers the same model with <code>car(..., type = "bym2")</code>.</p>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>Global empirical Bayes is James–Stein shrinkage, a close relative of ridge regression. The structured BYM term is a Gaussian Markov random field whose precision matrix is the graph Laplacian of the neighbour graph: the same smoothness penalty as Laplacian regularisation in graph-based semi-supervised learning. INLA is fast approximate Bayesian inference for exactly this family of latent Gaussian models.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Smoothing away a real, sharp hotspot. Spatial smoothing assumes neighbours are similar; a genuine point source affecting one small area, such as a contaminated well, can be pulled toward its unaffected neighbours. Smoothed maps are for describing broad patterns, not for finding the one odd area.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>A restaurant with two five-star reviews is not better than one with 900 reviews averaging 4.6. You mentally pull the small one toward the typical score. Spatial smoothing also asks what the restaurants on the same street are like.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="moran">
+    <h2>3. Spatial autocorrelation and Moran's I</h2>
+    <p class="point">Nearby places resemble each other; Moran's I measures how much, and its residual version tells you whether your model has explained the spatial pattern.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Moran's I is a correlation between each area's value and the average of its neighbours' values. It runs from about −1 (a checkerboard: neighbours opposite) through about 0 (no pattern) to about +1 (smooth clusters).</dd>
+      <dt>Why it matters</dt>
+      <dd>Spatially autocorrelated residuals break the independence assumption, just as autocorrelated residuals in time do (Lecture 3.9): standard errors come out too small and "significant" area-level predictors multiply.</dd>
+      <dt>How to read it</dt>
+      <dd>There is no universal cut-off: a value of 0.2 can be highly significant across 2,000 small areas and meaningless across 13 regions. Test it against a permutation distribution (shuffle the values across areas many times), and compute it on model residuals, not only on raw rates.</dd>
+      <dt>What a change means</dt>
+      <dd>If Moran's I on rates is 0.5 but on residuals after adding deprivation is 0.05, deprivation explains the spatial pattern. If residual I stays high, something spatial is missing from the model.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · Three patterns and their Moran's I</div>
+      <svg class="viz-svg" viewBox="0 0 640 230" role="img" aria-label="Three 6 by 6 grids of high and low areas. Left, clustered: the left half is high, the right half low; Moran's I is 0.80. Middle, random: high and low areas scattered with no pattern; Moran's I is 0.00. Right, dispersed: a checkerboard; Moran's I is minus 1.00. Neighbours are areas sharing an edge.">
+        <g id="l68-grids">
+          <!-- clustered: columns 0-2 high -->
+          <g transform="translate(20,30)">
+            <rect x="0" y="0" width="90" height="180" class="fill s3"/><rect x="90" y="0" width="90" height="180" class="fill-soft s1"/>
+            <g class="viz-grid"><line x1="30" x2="30" y1="0" y2="180"/><line x1="60" x2="60" y1="0" y2="180"/><line x1="90" x2="90" y1="0" y2="180"/><line x1="120" x2="120" y1="0" y2="180"/><line x1="150" x2="150" y1="0" y2="180"/><line y1="30" y2="30" x1="0" x2="180"/><line y1="60" y2="60" x1="0" x2="180"/><line y1="90" y2="90" x1="0" x2="180"/><line y1="120" y2="120" x1="0" x2="180"/><line y1="150" y2="150" x1="0" x2="180"/></g>
+          </g>
+        </g>
+        <text x="110" y="20" text-anchor="middle" class="viz-bold">Clustered · I = 0.80</text>
+        <g transform="translate(230,30)">
+          <rect x="0" y="0" width="180" height="180" class="fill-soft s1"/>
+          <g class="fill s3">
+            <rect x="0" y="0" width="30" height="30"/><rect x="30" y="0" width="30" height="30"/><rect x="120" y="0" width="30" height="30"/>
+            <rect x="90" y="30" width="30" height="30"/>
+            <rect x="60" y="60" width="30" height="30"/><rect x="90" y="60" width="30" height="30"/><rect x="120" y="60" width="30" height="30"/><rect x="150" y="60" width="30" height="30"/>
+            <rect x="0" y="90" width="30" height="30"/><rect x="60" y="90" width="30" height="30"/><rect x="90" y="90" width="30" height="30"/>
+            <rect x="0" y="120" width="30" height="30"/><rect x="30" y="120" width="30" height="30"/><rect x="60" y="120" width="30" height="30"/><rect x="90" y="120" width="30" height="30"/><rect x="120" y="120" width="30" height="30"/>
+            <rect x="90" y="150" width="30" height="30"/><rect x="150" y="150" width="30" height="30"/>
+          </g>
+          <g class="viz-grid"><line x1="30" x2="30" y1="0" y2="180"/><line x1="60" x2="60" y1="0" y2="180"/><line x1="90" x2="90" y1="0" y2="180"/><line x1="120" x2="120" y1="0" y2="180"/><line x1="150" x2="150" y1="0" y2="180"/><line y1="30" y2="30" x1="0" x2="180"/><line y1="60" y2="60" x1="0" x2="180"/><line y1="90" y2="90" x1="0" x2="180"/><line y1="120" y2="120" x1="0" x2="180"/><line y1="150" y2="150" x1="0" x2="180"/></g>
+        </g>
+        <text x="320" y="20" text-anchor="middle" class="viz-bold">Random · I = 0.00</text>
+        <g transform="translate(440,30)">
+          <rect x="0" y="0" width="180" height="180" class="fill-soft s1"/>
+          <g class="fill s3">
+            <rect x="0" y="0" width="30" height="30"/><rect x="60" y="0" width="30" height="30"/><rect x="120" y="0" width="30" height="30"/>
+            <rect x="30" y="30" width="30" height="30"/><rect x="90" y="30" width="30" height="30"/><rect x="150" y="30" width="30" height="30"/>
+            <rect x="0" y="60" width="30" height="30"/><rect x="60" y="60" width="30" height="30"/><rect x="120" y="60" width="30" height="30"/>
+            <rect x="30" y="90" width="30" height="30"/><rect x="90" y="90" width="30" height="30"/><rect x="150" y="90" width="30" height="30"/>
+            <rect x="0" y="120" width="30" height="30"/><rect x="60" y="120" width="30" height="30"/><rect x="120" y="120" width="30" height="30"/>
+            <rect x="30" y="150" width="30" height="30"/><rect x="90" y="150" width="30" height="30"/><rect x="150" y="150" width="30" height="30"/>
+          </g>
+          <g class="viz-grid"><line x1="30" x2="30" y1="0" y2="180"/><line x1="60" x2="60" y1="0" y2="180"/><line x1="90" x2="90" y1="0" y2="180"/><line x1="120" x2="120" y1="0" y2="180"/><line x1="150" x2="150" y1="0" y2="180"/><line y1="30" y2="30" x1="0" x2="180"/><line y1="60" y2="60" x1="0" x2="180"/><line y1="90" y2="90" x1="0" x2="180"/><line y1="120" y2="120" x1="0" x2="180"/><line y1="150" y2="150" x1="0" x2="180"/></g>
+        </g>
+        <text x="530" y="20" text-anchor="middle" class="viz-bold">Dispersed · I = −1.00</text>
+      </svg>
+      <figcaption>Computed for these grids with neighbours defined as areas sharing an edge (rook contiguity); red = high, teal = low, 18 of each in every panel. Same counts, different arrangement: Moran's I is about arrangement, not level. Under no pattern its expected value is −1/(n−1), here −0.03.</figcaption>
+    </figure>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reporting a single Moran's I as "the" spatial pattern. Its value depends on the neighbour definition (shared border, distance band, k nearest) and on the scale of the areas. State the weights, try one alternative, and use local indicators (LISA) if you want to know <em>where</em> the clustering is.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="clusters">
+    <h2>4. Cluster detection and multiple testing</h2>
+    <p class="point">If you look at enough places and shapes, some will look like clusters by chance; a valid cluster test accounts for every window it could have looked at.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Kulldorff's spatial scan statistic slides circles (or ellipses, or space–time cylinders) of every size across the map, finds the window whose cases most exceed expectation by likelihood ratio, and gets a p-value by repeating the search on many random relabellings of the data. The free SaTScan software implements it.</dd>
+      <dt>Why it matters</dt>
+      <dd>The Monte Carlo p-value is for the <em>most extreme</em> window found anywhere, so it builds in the multiple testing that a naive area-by-area test ignores. It is the standard tool for surveillance of disease clusters, from cancer registries to outbreak detection (Lecture 6.3).</dd>
+      <dt>How to read it</dt>
+      <dd>A scan p-value of 0.01 means a window this extreme appeared in only 1% of random maps. Secondary clusters are reported with conservative p-values; read them with caution.</dd>
+      <dt>What a change means</dt>
+      <dd>Testing 200 areas separately at 5% gives about 10 false "clusters" even when nothing is going on. The scan statistic keeps the chance of any false cluster near 5% across the whole map.</dd>
+    </dl>
+
+    <div class="callout example">
+      <div class="callout-title">Example</div>
+      <p>Goodman and colleagues (2012) reviewed 428 US state and federal investigations of suspected community cancer clusters over two decades. An increase in incidence was confirmed for 72 of 567 cancer categories examined (13%), and a cause was almost never established. Most reported clusters are the human eye finding patterns in random scatter; a statistical scan is the first filter, not the last word.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>The Texas sharpshooter: drawing the boundary around cases you have already seen, then testing whether that area has excess cases. The test is meaningless because the boundary was chosen by the data. Define the area and the hypothesis before looking, or use a scan that searches all windows honestly.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="maup">
+    <h2>5. Boundaries change the answer: MAUP and the ecological fallacy</h2>
+    <p class="point">The same individual data can show a strong pattern, no pattern or the reverse, depending on how you draw and size the areas; and no area-level pattern licenses a claim about individuals.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The <em>modifiable areal unit problem</em> (MAUP; Openshaw 1984) has two parts: the <em>scale</em> effect (results change as areas get bigger) and the <em>zoning</em> effect (results change when areas of the same size are drawn differently). The <em>ecological fallacy</em> (Lecture 2.4) is inferring individual risk from area-level associations.</dd>
+      <dt>Why it matters</dt>
+      <dd>Administrative boundaries are drawn for governance, not for health. Region-level correlations in the GCC, where each region mixes cities, oases and desert, can say little about any one place or person in it.</dd>
+      <dt>How to read it</dt>
+      <dd>Correlations between area-level variables usually get stronger as areas get bigger, because averaging removes within-area noise. Treat a strong correlation across a few large regions as a description, not a dose–response.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · Same 16 areas, two zonings, two stories</div>
+      <svg class="viz-svg" viewBox="0 0 640 228" role="img" aria-label="Left: a 4 by 4 grid of small areas with rates per 1,000; the top two rows are high, about 7 to 9, and the bottom two rows low, about 1 to 3. Middle: the same areas grouped into a west and an east zone, each averaging 5.0, so there is no pattern. Right: grouped into a north and a south zone, averaging 8.0 and 2.0, a fourfold difference.">
+        <text x="98" y="20" text-anchor="middle" class="viz-bold">16 small areas</text>
+        <g transform="translate(18,34)">
+          <g class="fill s3">
+            <rect x="0" y="0" width="40" height="40" opacity="0.78"/><rect x="40" y="0" width="40" height="40" opacity="1"/><rect x="80" y="0" width="40" height="40" opacity="0.89"/><rect x="120" y="0" width="40" height="40" opacity="0.89"/>
+            <rect x="0" y="40" width="40" height="40" opacity="1"/><rect x="40" y="40" width="40" height="40" opacity="0.78"/><rect x="80" y="40" width="40" height="40" opacity="0.89"/><rect x="120" y="40" width="40" height="40" opacity="0.89"/>
+            <rect x="0" y="80" width="40" height="40" opacity="0.22"/><rect x="40" y="80" width="40" height="40" opacity="0.33"/><rect x="80" y="80" width="40" height="40" opacity="0.11"/><rect x="120" y="80" width="40" height="40" opacity="0.22"/>
+            <rect x="0" y="120" width="40" height="40" opacity="0.11"/><rect x="40" y="120" width="40" height="40" opacity="0.22"/><rect x="80" y="120" width="40" height="40" opacity="0.33"/><rect x="120" y="120" width="40" height="40" opacity="0.22"/>
+          </g>
+          <g class="viz-grid"><line x1="40" x2="40" y1="0" y2="160"/><line x1="80" x2="80" y1="0" y2="160"/><line x1="120" x2="120" y1="0" y2="160"/><line y1="40" y2="40" x1="0" x2="160"/><line y1="80" y2="80" x1="0" x2="160"/><line y1="120" y2="120" x1="0" x2="160"/></g>
+          <g class="viz-small viz-bold" text-anchor="middle">
+            <text x="20" y="24">7</text><text x="60" y="24">9</text><text x="100" y="24">8</text><text x="140" y="24">8</text>
+            <text x="20" y="64">9</text><text x="60" y="64">7</text><text x="100" y="64">8</text><text x="140" y="64">8</text>
+            <text x="20" y="104">2</text><text x="60" y="104">3</text><text x="100" y="104">1</text><text x="140" y="104">2</text>
+            <text x="20" y="144">1</text><text x="60" y="144">2</text><text x="100" y="144">3</text><text x="140" y="144">2</text>
+          </g>
+          <rect x="0" y="0" width="160" height="160" class="edge"/>
+        </g>
+        <text x="320" y="20" text-anchor="middle" class="viz-bold">Zoned west | east</text>
+        <g transform="translate(240,34)">
+          <rect x="0" y="0" width="80" height="160" class="fill s3" opacity="0.55"/><rect x="80" y="0" width="80" height="160" class="fill s3" opacity="0.55"/>
+          <line x1="80" x2="80" y1="0" y2="160" class="edge strong"/>
+          <rect x="0" y="0" width="160" height="160" class="edge"/>
+          <text x="40" y="86" text-anchor="middle" class="viz-bold">5.0</text><text x="120" y="86" text-anchor="middle" class="viz-bold">5.0</text>
+        </g>
+        <text x="320" y="216" text-anchor="middle" class="viz-small">"No geographic pattern"</text>
+        <text x="542" y="20" text-anchor="middle" class="viz-bold">Zoned north / south</text>
+        <g transform="translate(462,34)">
+          <rect x="0" y="0" width="160" height="80" class="fill s3" opacity="0.89"/><rect x="0" y="80" width="160" height="80" class="fill s3" opacity="0.22"/>
+          <line x1="0" x2="160" y1="80" y2="80" class="edge strong"/>
+          <rect x="0" y="0" width="160" height="160" class="edge"/>
+          <text x="80" y="46" text-anchor="middle" class="viz-bold">8.0</text><text x="80" y="126" text-anchor="middle" class="viz-bold">2.0</text>
+        </g>
+        <text x="542" y="216" text-anchor="middle" class="viz-small">"Fourfold north–south gap"</text>
+        <text x="98" y="216" text-anchor="middle" class="viz-small viz-muted">rates per 1,000, equal populations</text>
+      </svg>
+      <figcaption>Illustrative numbers. The zoning effect: identical data, identical zone sizes, opposite conclusions. Real boundaries are rarely this unlucky, but you never know how unlucky yours are unless you try another zoning or scale.</figcaption>
+    </figure>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reading a region-level correlation as individual risk. If Saudi regions with more outdoor workers have more heat-illness admissions, that is compatible with outdoor work causing heat illness, but also with regional differences in climate, hospital coding and age. Lecture 2.4's ecological fallacy applies to every choropleth map.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="sae">
+    <h2>6. Small-area estimation from surveys</h2>
+    <p class="point">When a national survey has only a handful of respondents in each district, model-based small-area estimation borrows strength from covariates and other districts to give usable local estimates, at the price of model assumptions.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Approach</th><th>How it works</th><th>Used for</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Direct estimate</strong></td><td>Survey-weighted mean of the respondents in the area (Lecture 3.4)</td><td>Large areas; unbiased but noisy when small</td></tr>
+          <tr><td><strong>Fay–Herriot (area level)</strong></td><td>Shrinks each direct estimate toward a regression prediction from area covariates, by more when the direct estimate is noisier</td><td>US county poverty estimates (SAIPE)</td></tr>
+          <tr><td><strong>MRP (unit level)</strong></td><td>Multilevel regression on individuals, then predictions weighted by census counts of each demographic cell in the area</td><td>US CDC PLACES estimates for counties, places and census tracts</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Fay and Herriot (1979) is the area-level version of empirical Bayes: a weighted average of the direct survey estimate and a model prediction, with weights from their relative precision. MRP (multilevel regression and poststratification) models individuals, then rebuilds each area from its census make-up.</dd>
+      <dt>Why it matters</dt>
+      <dd>Local health planning needs local numbers, and surveys are designed for national ones. Model-based estimates fill the gap, provided the covariates carry real information about the outcome.</dd>
+      <dt>How to read it</dt>
+      <dd>Ask for the model, the covariates and a validation (model estimates vs direct estimates where samples are large). An area estimate that is almost entirely the regression prediction tells you about the covariates, not about the area.</dd>
+    </dl>
+
+    <div class="callout gulf">
+      <div class="callout-title">In the Gulf</div>
+      <p>Much Saudi health and survey data are published only for the 13 administrative regions, if at all below national level, and microdata at governorate level are rarely public. Regions are huge and mixed (Eastern Province spans Dammam's humid coast, the Al-Ahsa oasis and empty desert), so region-level maps hide most of the contrast that matters for heat or air pollution. Two practical consequences: environmental exposures from gridded data (ERA5, satellites) often have far finer resolution than the health data you can link them to; and any small-area health estimate needs census counts by area and demographic group, which you should confirm are available before planning an MRP.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Treating model-based small-area estimates as data and then correlating them with the covariates used to make them. The association is partly built in. If deprivation was a covariate in the model, a map showing that "deprived districts have higher estimated diabetes" is partly the model talking.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="project6">
+    <h2>7. Project 6: mapping heat exposure</h2>
+    <p class="point">Project 6 maps exposure, not disease: ERA5 is already smooth, so the spatial problems are which cells represent workers, and how to test thousands of correlated cell-level trends honestly.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>For each ERA5 cell and year, compute hours of WBGT above each workload limit (Lecture 6.7), then the trend. Map the trend; summarise by city using the cell or cells covering it.</dd>
+      <dt>Why it matters</dt>
+      <dd>Heat stress varies more between coastal and inland places than air temperature suggests, because coastal humidity drives the wet bulb. A GCC-wide average would hide that the humid coast and the dry interior may need different ban hours.</dd>
+      <dt>How to read it</dt>
+      <dd>Cell-level trend p-values are spatially autocorrelated, so many "significant" cells next to each other are not many independent findings. Control the false discovery rate, or test "field significance" with resampling that preserves the spatial pattern.</dd>
+      <dt>What a change means</dt>
+      <dd>A trend of +40 hours per decade above the moderate-work limit in a coastal cell means about one more working week of hazardous hours each summer than a generation ago.</dd>
+    </dl>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>Weight cells by where workers are, not by area: most GCC land is empty desert. Gridded population layers (for example WorldPop or the EU's GHS-POP) let you compute a population-weighted exposure for each city or country. That is a weighted average, so check how sensitive the national figure is to the weighting layer.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Smoothing ERA5 again, or applying BYM to it. Reanalysis fields are model output that is already spatially smooth, and they are not counts, so the small-numbers problem does not arise. The spatial issues in Project 6 are representativeness (sea-contaminated coastal cells, urban heat islands) and correlated tests, not noisy rates.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>A map of childhood leukaemia SMRs by district shows the five highest SMRs in remote districts with very small populations. A journalist asks whether remoteness causes leukaemia. What do you say?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Small districts have few expected cases, so their SMRs swing to the extremes by chance; the lowest SMRs are probably in small districts too. Look at expected counts, a funnel plot or a smoothed map before reading anything into the ranking.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>After BYM2 smoothing, a district with an SMR of 3.0 (expected 1.5 cases) has a smoothed relative risk of 1.2. Was the smoothing wrong to discard the signal?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Not necessarily. With 1.5 expected cases, an SMR of 3.0 is about 4 or 5 cases, quite compatible with chance, so the model trusts the neighbours and the overall level more. The posterior probability that its risk exceeds 1 is the fairer summary. If there is a specific reason to suspect a local source, investigate that hypothesis directly rather than relying on the smoothed map.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Moran's I of district diabetes prevalence is 0.45. After adding obesity and age to a regression, Moran's I of the residuals is 0.40. What does that tell you?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Obesity and age do not explain the spatial pattern; something spatially structured is missing (for example, ethnicity, access to diagnosis, or coding practices that differ by health cluster). The regression's standard errors are also too small. Add the missing covariate if you can, or a spatial random effect.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Residents report a cluster of cancers near a factory. The health department draws a 2 km circle around the factory, finds an SMR of 1.8 (p = 0.03) and declares a confirmed cluster. What is wrong?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The hypothesis was prompted by the same cases used to test it, and the radius could have been 1, 2 or 5 km: a Texas-sharpshooter problem. The p-value is not valid. Use a scan statistic with a pre-specified search, test a fresh period of data, and look for a plausible exposure route before calling it confirmed.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>In Project 6, 60% of ERA5 cells over the Arabian Peninsula show a "significant" upward trend in hours above the WBGT limit. Can you report that 60% of the region has a significant trend?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Not as it stands. Neighbouring cells share weather, so their tests are strongly correlated, and the count of significant cells overstates the independent evidence. Report a false-discovery-rate-controlled map or a field-significance test, and weight the summary by where workers live rather than by land area.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Moraga P, <em>Geospatial Health Data: Modeling and Visualization with R-INLA and Shiny</em> (Chapman &amp; Hall/CRC, 2019; free online). Areal data, SMRs, BYM in INLA.</li>
+      <li>Elliott P, Wakefield J, Best N, Briggs D (eds), <em>Spatial Epidemiology: Methods and Applications</em> (Oxford University Press, 2000).</li>
+      <li>Clayton D, Kaldor J, "Empirical Bayes estimates of age-standardized relative risks for use in disease mapping", <em>Biometrics</em> 43:671–681 (1987).</li>
+      <li>Besag J, York J, Mollié A, "Bayesian image restoration, with two applications in spatial statistics", <em>Annals of the Institute of Statistical Mathematics</em> 43:1–20 (1991); Riebler A, Sørbye SH, Simpson D, Rue H, "An intuitive Bayesian spatial model for disease mapping that accounts for scaling", <em>Statistical Methods in Medical Research</em> 25:1145–1165 (2016).</li>
+      <li>Kulldorff M, "A spatial scan statistic", <em>Communications in Statistics: Theory and Methods</em> 26:1481–1496 (1997); SaTScan user guide.</li>
+      <li>Openshaw S, <em>The Modifiable Areal Unit Problem</em> (CATMOG 38, 1984).</li>
+      <li>Fay RE, Herriot RA, "Estimates of income for small places: an application of James–Stein procedures to census data", <em>Journal of the American Statistical Association</em> 74:269–277 (1979); Rao JNK, Molina I, <em>Small Area Estimation</em>, 2nd ed. (Wiley, 2015).</li>
+      <li>US CDC, PLACES methodology (multilevel regression and poststratification).</li>
+      <li>Wainer H, "The most dangerous equation", <em>American Scientist</em> 95:249–256 (2007).</li>
+      <li>Goodman M, Naiman JS, Goodman D, LaKind JS, "Cancer clusters in the USA: what do the last twenty years of state and federal investigations tell us?", <em>Critical Reviews in Toxicology</em> 42:474–490 (2012).</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="6-07-environmental-epidemiology.html"><small>Previous</small>6.7 Environmental epidemiology</a>
+    <a class="next" href="6-09-heat-health-dlnm.html"><small>Next</small>6.9 Heat and health</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

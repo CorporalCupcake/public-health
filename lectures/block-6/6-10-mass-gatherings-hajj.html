@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>6.10 Mass gatherings and the Hajj · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/6-10.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-6">Block 6</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 6.10</p>
+  <h1>Mass gatherings: the Hajj as a public health case study</h1>
+  <div class="lecture-meta">
+    <span>Block 6 · Health protection</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>A mass gathering packs people from many places into one place for days, then sends them home. That creates four risks: faster transmission, mixing of pathogens and immunity, environmental stress such as heat, and rapid spread back to home countries. The Hajj has all four at a scale of about 1.7 million pilgrims, and Saudi Arabia has decades of evidence on what works. This lecture uses the tools from 6.1–6.5 and 6.9 to read that evidence, and shows why Hajj heat risk is predictable decades ahead, which links straight to Project 6.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#why">Why mass gatherings are different</a></li>
+      <li><a href="#hajj">The Hajj: scale, rituals and a moving calendar</a></li>
+      <li><a href="#resp">Respiratory infections and meningococcal disease</a></li>
+      <li><a href="#mers">MERS: the outbreak that did not happen</a></li>
+      <li><a href="#heat">Heat illness</a></li>
+      <li><a href="#crowd">Crowd crush</a></li>
+      <li><a href="#control">Controls and surveillance</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="why">
+    <h2>1. Why mass gatherings are different</h2>
+    <p class="point">A mass gathering briefly raises the contact rate, mixes populations that never normally meet, adds physical stress, and then scatters everyone; each step changes the epidemiology.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>WHO defines a <strong>mass gathering</strong> by its effect, not its size: an event attended by enough people to strain the planning and response resources of the host community, state or nation. Pilgrimages, sports tournaments, festivals and protests all qualify.</dd>
+      <dt>Why it matters</dt>
+      <dd>R is roughly contacts × transmission chance per contact × duration of infectiousness (6.1). A gathering multiplies the first term for days. It also brings in people with different immunity and carriage, so a strain common in one country meets people with no protection against it.</dd>
+      <dt>How to read it</dt>
+      <dd>Split the event into three phases and ask what can go wrong in each: before (who comes, vaccinated or not), during (crowding, heat, exertion, food and water) and after (where people go, and what they carry).</dd>
+      <dt>What a change means</dt>
+      <dd>Doubling crowd density roughly doubles close contacts per hour. For a pathogen with R just below 1 in normal life, that can push it above 1 for the length of the event.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · Three phases of a mass gathering</div>
+      <svg class="viz-svg" viewBox="0 0 640 250" role="img" aria-label="Three boxes in a row joined by arrows: Before, During and After. Before lists quotas and permits, required vaccines and pre-travel advice. During lists dense, long contact, mixing of many nationalities, and heat and exertion in older pilgrims. After lists dispersal home within days, illness appearing after return, and spread to contacts. Under each box is what surveillance watches.">
+        <defs>
+          <marker id="l610-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead accent"/></marker>
+        </defs>
+        <rect x="10" y="12" width="186" height="150" rx="10" class="node-fill s1"/>
+        <rect x="227" y="12" width="186" height="150" rx="10" class="node-fill s2"/>
+        <rect x="444" y="12" width="186" height="150" rx="10" class="node-fill s3"/>
+        <text x="103" y="38" text-anchor="middle" class="viz-bold">Before</text>
+        <text x="320" y="38" text-anchor="middle" class="viz-bold">During</text>
+        <text x="537" y="38" text-anchor="middle" class="viz-bold">After</text>
+        <g class="viz-small">
+          <text x="24" y="68">• Quotas and permits</text>
+          <text x="24" y="92">• Required vaccines</text>
+          <text x="24" y="116">• Pre-travel advice for</text>
+          <text x="36" y="132">older, chronically ill</text>
+          <text x="241" y="68">• Dense, long contact</text>
+          <text x="241" y="92">• Many nationalities mix</text>
+          <text x="241" y="116">• Heat and exertion,</text>
+          <text x="253" y="132">often in older pilgrims</text>
+          <text x="458" y="68">• Dispersal home</text>
+          <text x="470" y="84">within days</text>
+          <text x="458" y="108">• Illness starts after</text>
+          <text x="470" y="124">return (incubation)</text>
+          <text x="458" y="148">• Spread to contacts</text>
+        </g>
+        <path d="M198,87 L224,87" class="edge accent" marker-end="url(#l610-arrow)"/>
+        <path d="M415,87 L441,87" class="edge accent" marker-end="url(#l610-arrow)"/>
+        <g class="viz-small viz-muted">
+          <text x="103" y="190" text-anchor="middle" class="viz-muted">Watch: vaccine coverage,</text>
+          <text x="103" y="206" text-anchor="middle" class="viz-muted">who is eligible</text>
+          <text x="320" y="190" text-anchor="middle" class="viz-muted">Watch: syndromic counts,</text>
+          <text x="320" y="206" text-anchor="middle" class="viz-muted">heat illness, injuries</text>
+          <text x="537" y="190" text-anchor="middle" class="viz-muted">Watch: returning-traveller</text>
+          <text x="537" y="206" text-anchor="middle" class="viz-muted">surveillance at home</text>
+        </g>
+        <text x="320" y="240" text-anchor="middle" class="viz-label">The host country controls the first two phases; the third happens in every home country.</text>
+      </svg>
+      <figcaption>Most of the public health burden of the “after” phase falls on other countries’ surveillance systems (6.3), which is why mass gatherings are an international health issue (6.11).</figcaption>
+    </figure>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Judging a gathering’s infection risk only by cases seen during the event. Many infections have incubation periods longer than the stay, so they show up at home, in another country’s data, labelled as imported or not linked at all.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>A gathering works like a mixing bowl followed by a sprinkler: a few days of thorough mixing, then everything is sprayed back across the map.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="hajj">
+    <h2>2. The Hajj: scale, rituals and a moving calendar</h2>
+    <p class="point">The Hajj is one of the largest recurring mass gatherings on Earth: about 1.7 million people performing fixed rituals at fixed sites on fixed lunar dates, with most pilgrims arriving from abroad.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The Hajj takes place on 8–13 Dhu al-Hijjah, the last month of the Islamic lunar calendar, in Makkah and the holy sites of Mina, Arafat and Muzdalifah. Saudi Arabia’s statistics authority (GASTAT) counted 1,673,230 pilgrims in 2025 and 1,707,301 in 2026, about 1.55 million of them from abroad in 2026. Before COVID-19 the numbers were higher: 2,489,406 in 2019 and 3,161,573 in 2012. The Umrah, a lesser pilgrimage, runs all year.</dd>
+      <dt>Why it matters</dt>
+      <dd>The same sites, rituals and timetable repeat every year, so the Hajj is close to a natural laboratory. Interventions can be compared year to year, which is rare for mass gatherings.</dd>
+      <dt>How to read it</dt>
+      <dd>The lunar year is about 11 days shorter than the solar year, so the Hajj moves about 11 days earlier in the Gregorian calendar each year and cycles through every season in about 33 years. On this measure the Hajj fell in the hottest months (May–September) from 2017 to 2028, and returns to them from 2049.</dd>
+      <dt>What a change means</dt>
+      <dd>Pilgrim numbers are set by policy, not demand (section 7). A drop from 2.5 million to 1.7 million reflects quotas and enforcement, not less interest, so it is a poor denominator for trends unless you know the policy.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · The Hajj circuit and where each risk peaks</div>
+      <svg class="viz-svg" viewBox="0 0 640 300" role="img" aria-label="Schematic of the Hajj route, not to scale. Four sites in a row from west to east: Makkah, Mina, Muzdalifah, Arafat. Upper arrows show the outward route: Makkah to Mina on the 8th of Dhu al-Hijjah, then Mina to Arafat on the 9th. Lower arrows show the return: Arafat to Muzdalifah on the night of the 9th, Muzdalifah to Mina on the 10th, then Mina and Makkah on the 10th to 13th. Risk notes: Makkah, dense crowds at the Grand Mosque; Mina, close-contact nights in tents and crowd density at the Jamarat; Arafat, hours outdoors from midday to sunset.">
+        <defs>
+          <marker id="l610-arrow2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead"/></marker>
+        </defs>
+        <rect x="15" y="118" width="110" height="44" rx="8" class="node s1"/>
+        <rect x="195" y="118" width="110" height="44" rx="8" class="node s1"/>
+        <rect x="365" y="118" width="110" height="44" rx="8" class="node s5"/>
+        <rect x="515" y="118" width="110" height="44" rx="8" class="node s3"/>
+        <text x="70" y="145" text-anchor="middle" class="viz-bold">Makkah</text>
+        <text x="250" y="145" text-anchor="middle" class="viz-bold">Mina</text>
+        <text x="420" y="145" text-anchor="middle" class="viz-bold">Muzdalifah</text>
+        <text x="570" y="145" text-anchor="middle" class="viz-bold">Arafat</text>
+        <path d="M95,116 Q160,80 225,116" class="edge" marker-end="url(#l610-arrow2)"/>
+        <text x="160" y="80" text-anchor="middle" class="viz-small">8th</text>
+        <path d="M270,116 Q415,20 556,116" class="edge" marker-end="url(#l610-arrow2)"/>
+        <text x="415" y="54" text-anchor="middle" class="viz-small">9th: to Arafat, stay until sunset</text>
+        <path d="M545,164 Q497,194 450,164" class="edge" marker-end="url(#l610-arrow2)"/>
+        <text x="497" y="202" text-anchor="middle" class="viz-small">9th night</text>
+        <path d="M390,164 Q335,194 280,164" class="edge" marker-end="url(#l610-arrow2)"/>
+        <text x="335" y="202" text-anchor="middle" class="viz-small">10th</text>
+        <path d="M220,164 Q160,194 100,164" class="edge" marker-end="url(#l610-arrow2)"/>
+        <text x="160" y="202" text-anchor="middle" class="viz-small">10th–13th, back and forth</text>
+        <g class="viz-small">
+          <text x="70" y="236" text-anchor="middle" class="colour s1">Grand Mosque:</text>
+          <text x="70" y="252" text-anchor="middle" class="colour s1">dense crowds</text>
+          <text x="250" y="236" text-anchor="middle" class="colour s1">Tent nights: close contact</text>
+          <text x="250" y="252" text-anchor="middle" class="colour s1">Jamarat: crowd density</text>
+          <text x="570" y="236" text-anchor="middle" class="colour s3">Midday to sunset</text>
+          <text x="570" y="252" text-anchor="middle" class="colour s3">outdoors: heat</text>
+        </g>
+        <text x="320" y="288" text-anchor="middle" class="viz-label">Schematic, not to scale. Days are of Dhu al-Hijjah.</text>
+      </svg>
+      <figcaption>The circuit concentrates each hazard at a known place and time: heat at Arafat on the 9th, crowd density at the Jamarat from the 10th, close contact in Mina’s tent city. That predictability is what makes targeted prevention possible.</figcaption>
+    </figure>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Treating “the Hajj” as one exposure. Risk varies by day, site, age and whether the pilgrim is registered. Pooled rates across all pilgrims hide the high-risk groups, the same lesson as the ecological fallacy (2.4).</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="resp">
+    <h2>3. Respiratory infections and meningococcal disease</h2>
+    <p class="point">Respiratory infections are the most common health problem at the Hajj, and meningococcal disease is the classic example of a Hajj outbreak exported worldwide.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Cough and cold symptoms are extremely common among pilgrims; systematic reviews report rates varying widely across studies, from a few per cent to over 90%, depending on case definitions. Rhinovirus is the virus most often isolated, followed by influenza and seasonal (non-MERS) coronaviruses. <strong>Meningococcal disease</strong> (meningitis and septicaemia from <em>Neisseria meningitidis</em>) is rarer but can kill within hours; healthy people can carry the bacterium in the throat and pass it on.</dd>
+      <dt>Why it matters</dt>
+      <dd>Carriage spreads in crowded sleeping quarters, and returning pilgrims take new strains home, where their contacts have no immunity to them.</dd>
+      <dt>How to read it</dt>
+      <dd>Separate three outcomes: illness in pilgrims, carriage in pilgrims, and disease in their contacts at home. A vaccine can cut the first without touching the other two.</dd>
+      <dt>What a change means</dt>
+      <dd>If carriage among returning pilgrims rises while disease among them stays flat, the risk has moved to their families, not gone away.</dd>
+    </dl>
+
+    <div class="callout gulf">
+      <div class="callout-title">Gulf example · The W135 outbreak and the vaccine requirement</div>
+      <p>Saudi Arabia already required meningococcal vaccination for pilgrims after a serogroup A outbreak in 1987, but the vaccine in use covered only serogroups A and C. In 2000 an unusual serogroup, W135, caused an outbreak among pilgrims. It spread to their contacts in several countries: about 90 cases were reported outside Saudi Arabia, mostly in the UK and France. In 2001 W135 struck again (WHO counted 109 cases and 35 deaths in Saudi Arabia in early 2001). Saudi Arabia then required the quadrivalent ACWY vaccine for Hajj and Umrah visitors. As of the 2026 season, pilgrims need a quadrivalent ACYW conjugate vaccine within the last 5 years and at least 10 days before arrival (or a polysaccharide vaccine within 3 years). Studies after 2001 found W135 carriage in vaccinated pilgrims, because polysaccharide vaccines protect the vaccinee but do little against carriage; conjugate vaccines reduce carriage too (6.5).</p>
+    </div>
+
+    <div class="widget" data-widget="hajj-export">
+      <div class="widget-title">Infections carried home after the Hajj</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Start with a low risk (25 per 100,000): the largest contingents almost surely bring at least one infection home. Raise vaccination to 80%, then switch the vaccine to “prevents illness only” and compare ill pilgrims with infections carried home.</p>
+    </div>
+
+    <p>The chance that a contingent of \(n\) pilgrims, each with a small risk \(r\), brings home at least one infection is</p>
+    \[ P(\geq 1 \text{ import}) = 1 - e^{-nr}. \]
+    <p>It depends on the expected number \(nr\), not on \(r\) alone. A 1-in-4,000 risk is negligible for one pilgrim and close to certain for a contingent of 100,000.</p>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Measuring a pilgrim vaccine only by disease in pilgrims. A vaccine that prevents illness but not carriage can make the Hajj look safe while vaccinated, symptom-free pilgrims carry the strain home. Carriage studies and surveillance of contacts are part of the evaluation.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="mers">
+    <h2>4. MERS: the outbreak that did not happen</h2>
+    <p class="point">Despite fears since MERS-CoV emerged in Saudi Arabia in 2012, screening studies of pilgrims have not found Hajj-linked MERS spread; that is reassuring but needs careful reading.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>MERS-CoV (Middle East respiratory syndrome coronavirus) reaches people mainly from dromedary camels. Human-to-human spread has occurred mostly in hospitals and households, without sustained spread in the community. Studies testing pilgrims, including symptomatic pilgrims at the Hajj and returning pilgrims from China, Ghana, India and Indonesia between 2013 and 2015, found no MERS-CoV; a 2016 systematic review noted that MERS-CoV had never been isolated from Hajj pilgrims.</dd>
+      <dt>Why it matters</dt>
+      <dd>It shows that crowding alone does not make an outbreak. A pathogen needs a route into the crowd and an R above 1 among the people there. MERS rarely enters the crowd and spreads poorly outside healthcare settings.</dd>
+      <dt>How to read it</dt>
+      <dd>Zero cases in a sample bounds the risk; it does not prove the risk is zero. With zero events in \(n\) people, the 95% upper limit for the rate is roughly \(3/n\) (the “rule of three”). Zero in 1,000 tested pilgrims is compatible with a rate up to about 3 per 1,000 among people like them.</dd>
+      <dt>What a change means</dt>
+      <dd>A change in the virus (better human-to-human transmission) or in exposure (camel contact during travel) would change the answer, which is why screening continues.</dd>
+    </dl>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>This is the zero-count problem from model evaluation: a classifier with no false positives on 300 test cases still has a plausible false-positive rate up to about 1%. Who was tested also matters: screening only symptomatic pilgrims, or only some airports, is a biased sample (2.8). Ask what the test population was before reading “no cases found” as “no risk”.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Concluding from MERS that the Hajj carries no risk of new pathogens. Respiratory viruses with high R spread easily there; the absence of MERS reflects MERS’s own biology, not the crowd’s safety.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="heat">
+    <h2>5. Heat illness</h2>
+    <p class="point">Heat caused the largest Hajj death toll of the 2020s, and because the Hajj date moves through the seasons, summer Hajj years can be seen decades ahead.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Heat exhaustion and heat stroke come from hours of exertion outdoors with little shade, worse in older pilgrims and those with heart disease or diabetes. Long-term mean daily maximum temperatures in Makkah are about 42–44 °C from May to September and about 30–32 °C from December to February.</dd>
+      <dt>Why it matters</dt>
+      <dd>In June 2024, a summer Hajj, Saudi Arabia reported 1,301 deaths; the authorities said 83% were among pilgrims without permits, who lacked registered accommodation, transport and air-conditioned tents. A temperature of 51.8 °C was reported at the Grand Mosque on 17 June 2024.</dd>
+      <dt>How to read it</dt>
+      <dd>Heat risk depends on humidity, sun and wind as well as air temperature: use wet-bulb globe temperature (WBGT) and the exposure–response tools from 6.9. Air temperature alone understates risk on humid days.</dd>
+      <dt>What a change means</dt>
+      <dd>As the Hajj moves into cooler months (from 2029 it falls before May), deaths should fall even with no new measures. A before–after comparison across that shift would credit interventions with the calendar’s work.</dd>
+    </dl>
+
+    <div class="widget" data-widget="hajj-calendar">
+      <div class="widget-title">When does the Hajj fall, and how hot is it?</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Slide from 1980 to 2060. Watch the dots march earlier each year and wrap round. Find the summer run that includes 2024, when it ends, and when the next one starts.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">Gulf example · Planning heat measures after 2024</div>
+      <p>For 2025 Saudi Arabia expanded shade, misting and cold-water stations and air-conditioned tents at Mina and Arafat, and enforced a “no permit, no Hajj” policy, with fines of up to about US$5,000 and possible deportation for unpermitted pilgrims. Officials said heat illness cases were limited in 2025. A fair evaluation would compare like with like: the 2025 Hajj fell about 10 days earlier in June, and an interrupted time series (4.7) or a WBGT-adjusted comparison (6.9) is needed before crediting the measures.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Computing a heat death rate with registered pilgrims as the denominator. Most 2024 deaths were among unregistered pilgrims, who are not in the official count. The numerator includes them, the denominator does not, so the rate is inflated and the comparison with other years is distorted.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="crowd">
+    <h2>6. Crowd crush</h2>
+    <p class="point">Crowd disasters follow the physics of density, not panic; the fix is engineering and flow management.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A <strong>crowd crush</strong> happens when density gets so high that people cannot move independently; pressure passes through the crowd, people fall, and others fall over them. Crowd scientist G. Keith Still treats about 5 people per square metre as the upper limit for standing crowds, and moving crowds stop flowing well at lower densities.</dd>
+      <dt>Why it matters</dt>
+      <dd>Crushes cause many deaths in minutes, at predictable pinch points: ramps, junctions, crossing flows.</dd>
+      <dt>How to read it</dt>
+      <dd>Read crowd risk as density × duration at a bottleneck. Monitoring density in real time, and stopping inflow before the limit, prevents crushes; medical teams only reduce deaths afterwards.</dd>
+      <dt>What a change means</dt>
+      <dd>Widening a bottleneck or splitting flows by time (for example, giving pilgrim groups time slots for the stoning ritual) lowers peak density without cutting total numbers.</dd>
+    </dl>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Mina 2006 and 2015</div>
+      <p>In January 2006 a crush near the Jamarat bridge killed at least 346 pilgrims; the old bridge was then demolished and replaced by a multi-level structure with more space. In September 2015 a crush at a street junction in Mina killed 769 people by the Saudi official count; an Associated Press count based on other countries’ reports reached at least 2,411. The gap between the two numbers is itself a surveillance lesson: deaths of foreign nationals are counted by many governments, not one.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Calling crushes “stampedes” caused by panic. That blames the victims and points to the wrong fix. People in a crush are usually unable to move, not running; the cause is too many people in too little space.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Water in a pipe: below a certain flow it runs smoothly; push more through a narrowing and pressure builds until something gives. You fix it by managing what enters the pipe, not by asking the water to stay calm.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="control">
+    <h2>7. Controls and surveillance</h2>
+    <p class="point">Saudi Arabia controls Hajj risk mainly by deciding who comes, what protection they must have, and how they move; surveillance during and after the event checks whether it worked.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Four levers. <strong>Quotas</strong>: since a 1987 agreement of the Organisation of Islamic Cooperation, each country’s allocation is about one pilgrim per 1,000 Muslims. <strong>Permits</strong>: registered pilgrims get accommodation, transport and health services. <strong>Health requirements</strong>: mandatory meningococcal vaccination, with other vaccines advised or required by origin. <strong>Site engineering</strong>: shade, cooling, crowd flow. In 2020, during COVID-19, the Hajj was limited to about 1,000 people already in the Kingdom; in 2021 to 60,000 vaccinated citizens and residents.</dd>
+      <dt>Why it matters</dt>
+      <dd>These levers act before exposure, which is cheaper and more reliable than treating illness at the sites.</dd>
+      <dt>How to read it</dt>
+      <dd>Surveillance at a gathering is syndromic and fast (6.3): daily counts of fever, respiratory illness, diarrhoea, heat illness and injury from clinics at the sites, compared with a short baseline. After the event, returning-pilgrim surveillance in home countries looks for imported cases and clusters.</dd>
+      <dt>What a change means</dt>
+      <dd>The 2020–2021 restrictions were a natural experiment (4.11): with almost no international pilgrims, importations of Hajj-linked infections into home countries should have fallen, which home-country surveillance can test.</dd>
+    </dl>
+
+<pre><code>library(surveillance)
+# daily syndromic counts from Hajj clinics: 30 baseline days, then the Hajj
+s &lt;- sts(observed = hajj$resp_visits, start = c(2026, 110), frequency = 365)
+res &lt;- earsC(s, control = list(method = "C2", baseline = 7, alpha = 0.001,
+                                 range = 31:nrow(hajj)))
+alarms(res)       # TRUE on days far above the recent baseline
+plot(res)         # counts with the alarm threshold</code></pre>
+    <p><code>sts</code> turns a vector of daily counts into a surveillance time series. <code>earsC</code> applies the EARS C2 method, designed for short baselines: each day is compared with the mean and spread of a 7-day window that ends two days earlier, so a slowly building outbreak does not hide in its own baseline. <code>range</code> sets which days get evaluated (after the first 30). Expect alarms on the busiest ritual days; read them alongside the timetable.</p>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>Mass-gathering surveillance is anomaly detection on a short, non-stationary series: the population itself changes daily as pilgrims move. A fixed threshold built from normal Makkah data would fire all the time. Use rates per pilgrim-day where you can (an offset, 3.3), and baselines from the same ritual days in past years.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reading a fall in reported cases as success when pilgrim numbers also fell. Quotas changed sharply between 2019 (about 2.5 million), 2020 (about 1,000) and 2025 (1.67 million). Always compare rates per pilgrim, with the registration caveat from section 5.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>A country reports no Hajj-related meningococcal cases among its returning pilgrims this year, and concludes that the vaccine requirement removed the risk to its population. What is missing from that argument?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Carriage and contacts. Vaccinated pilgrims can carry the bacterium without illness, especially with polysaccharide vaccines, and pass it to unvaccinated family members. The evidence needed is disease in contacts and, ideally, carriage in returning pilgrims, not just illness in pilgrims themselves.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A paper compares heat deaths in Hajj 2025 with Hajj 2024 and credits the new heat measures with the whole fall. Name two reasons the comparison may overstate their effect.</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>First, weather: 2025 may have had lower WBGT on key days, so the comparison should adjust for heat exposure (6.9). Second, the population changed: stricter permit enforcement removed many unregistered pilgrims, who were most of the 2024 deaths, and the total number of pilgrims fell. Both change the risk without any heat measure working. Regression to the mean after an extreme year is a third reason.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Screening of 800 returning pilgrims finds no MERS-CoV. A minister announces that Hajj pilgrims face no MERS risk. How would you phrase the finding instead?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>“No MERS-CoV was found in 800 pilgrims tested; the rate among pilgrims like these is probably below about 4 per 1,000 (rule of three: 3/800).” Add who was tested (symptomatic only? which airports?) and that this fits MERS’s known biology: it spreads poorly outside hospitals.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Why is a single country’s risk of importing an infection after the Hajj driven more by its contingent size than by the per-pilgrim risk?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The chance of at least one import depends on the expected number, contingent size × per-pilgrim risk. A rare per-person risk becomes near-certain across 100,000 pilgrims, while a country sending 400 pilgrims may see nothing even at a much higher risk. Large-contingent countries should plan returning-traveller surveillance every year.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>For Project 6, you could estimate WBGT at Arafat on the Day of Arafah for every year since 1980 from ERA5. What does the moving Hajj date let you do that a fixed-date event would not?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>It separates two sources of change: the calendar (the Hajj moving through the seasons) and climate warming (the same calendar day getting hotter over decades). Comparing Hajj seasons in the same month 33 years apart (for example 1990 and 2023) holds season fixed and isolates the warming trend; contrasting seasons within the cycle shows how much of any year’s heat risk is simply the calendar. A fixed-date event would give the warming trend for one season only.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Memish, Steffen, White et al., “Mass gatherings medicine: public health issues arising from mass gathering religious and sporting events”, <em>The Lancet</em> 393 (2019). Infections, resistant bacteria, crowd incidents and heat at the Hajj and other events, 2013–2018.</li>
+      <li>Memish, Zumla, Alhakeem et al., “Hajj: infectious disease surveillance and control”, <em>The Lancet</em> 383 (2014), part of the Lancet series on mass gatherings medicine; and the 2012 <em>Lancet Infectious Diseases</em> series on mass gatherings health, opened by Memish and colleagues.</li>
+      <li>WHO, <em>Public health for mass gatherings: key considerations</em> (2015), and the WHO information note on mass gatherings (2017) for the definition.</li>
+      <li>Gautret et al., “Hajj-associated viral respiratory infections: a systematic review”, <em>Travel Medicine and Infectious Disease</em> (2016); Benkouiten et al., “Clinical respiratory infections and pneumonia during the Hajj pilgrimage: a systematic review”, <em>Travel Medicine and Infectious Disease</em> (2019).</li>
+      <li>WHO Disease Outbreak News on meningococcal disease, serogroup W135, in Saudi Arabia (April 2000 and April 2001); US CDC <em>Emerging Infectious Diseases</em> reports on W135 after the 2000 Hajj.</li>
+      <li>Saudi Ministry of Health, health requirements for Hajj 1447H (2026); GASTAT Hajj statistics bulletins (2019, 2025, 2026).</li>
+      <li>Still, <em>Introduction to Crowd Science</em> (CRC Press). Density, flow and why crushes are not stampedes.</li>
+      <li>Vynnycky &amp; White, <em>An Introduction to Infectious Disease Modelling</em>, chapters on R and contact patterns; Höhle, “surveillance: an R package for the monitoring of infectious diseases”, <em>Computational Statistics</em> (2007).</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="6-09-heat-health-dlnm.html"><small>Previous</small>6.9 Heat and health</a>
+    <a class="next" href="6-11-emergency-preparedness-ihr.html"><small>Next</small>6.11 Emergency preparedness and the IHR</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

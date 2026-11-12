@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>6.3 Surveillance systems · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/6-03.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-6">Block 6</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 6.3</p>
+  <h1>Surveillance systems: notifiable diseases, syndromic and wastewater surveillance</h1>
+  <div class="lecture-meta">
+    <span>Block 6 · Health protection</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>Public health surveillance is the routine collection, analysis and use of health data to trigger action. Every surveillance count is the tip of a pyramid of missed infections, filtered by who seeks care, who gets tested and who reports. That is acceptable if the filter is stable, because surveillance is mostly about change: a rise, a cluster, a new place. This lecture covers the main kinds of system, how to judge one, and how statistical alarm rules turn weekly counts into a decision to investigate, with the same trade-off between sensitivity and false alarms you met with screening tests in Lecture 2.11.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#purpose">What surveillance is for</a></li>
+      <li><a href="#types">Passive, active and sentinel</a></li>
+      <li><a href="#notifiable">Notifiable diseases and the reporting pyramid</a></li>
+      <li><a href="#syndromic">Syndromic surveillance</a></li>
+      <li><a href="#wastewater">Wastewater surveillance</a></li>
+      <li><a href="#evaluate">Evaluating a surveillance system</a></li>
+      <li><a href="#aberration">Aberration detection: when is a rise an outbreak?</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="purpose">
+    <h2>1. What surveillance is for</h2>
+    <p class="point">Surveillance is information for action: if no one would act differently on the data, it is not surveillance, it is record-keeping.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Ongoing, systematic collection, analysis and interpretation of health data, with timely feedback to those who can act. Its three core jobs are to <em>detect</em> outbreaks and new threats, <em>monitor</em> trends and burden, and <em>evaluate</em> programmes such as vaccination or control campaigns.</dd>
+      <dt>Why it matters</dt>
+      <dd>Each job needs different data. Detection needs speed and sensitivity, even at the cost of false alarms. Trend monitoring needs consistency over years more than completeness. Evaluation needs a stable baseline so that a change can be attributed to the programme (with the designs of Block 4).</dd>
+      <dt>How to read it</dt>
+      <dd>For any system, ask: what decision does it feed, who receives the output, and how quickly? A weekly report read by no one fails, however good its data.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Judging a system by how many cases it captures. A system that captures 10% of cases consistently is excellent for trends; one that captures 60% but changes its coverage every year is useless for them. Completeness matters most for diseases where every case needs action (such as measles or MERS, where contacts must be traced).</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>A smoke detector, a thermostat and an energy meter. One raises the alarm, one tracks the level, one tells you whether the insulation you installed worked. Surveillance systems are designed for one of these jobs, and do the others less well.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="types">
+    <h2>2. Passive, active and sentinel</h2>
+    <p class="point">Who does the work of finding cases decides what you get: passive systems are cheap and incomplete, active ones complete and expensive, sentinel ones deep but narrow.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><em>Passive</em> surveillance waits for clinicians and laboratories to report. <em>Active</em> surveillance has public health staff go looking: calling hospitals, reviewing records, visiting communities. <em>Sentinel</em> surveillance uses a chosen set of sites that report in detail, often with laboratory samples, on a defined syndrome.</dd>
+      <dt>Why it matters</dt>
+      <dd>Most national systems are passive for most diseases, so they under-report, and the degree of under-reporting varies by place and time. Active case-finding is used when every case counts: during outbreaks, in elimination programmes, or around a mass gathering.</dd>
+      <dt>How to read it</dt>
+      <dd>Sentinel data give rates and trends for the sites, plus which strains are circulating; they do not give national totals. A rise at sentinel sites is a signal about the population only if the sites are reasonably representative.</dd>
+    </dl>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Type</th><th>Strength</th><th>Weakness</th><th>Typical use</th></tr></thead>
+        <tbody>
+          <tr><td>Passive</td><td>Cheap, wide coverage</td><td>Incomplete, variable reporting</td><td>Notifiable diseases</td></tr>
+          <tr><td>Active</td><td>Complete, timely</td><td>Costly, short-term</td><td>Outbreaks, elimination, mass gatherings</td></tr>
+          <tr><td>Sentinel</td><td>Detailed, lab-confirmed</td><td>Not population totals</td><td>Influenza-like illness, severe respiratory infection</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example</div>
+      <p>Influenza is monitored worldwide through sentinel sites that report influenza-like illness and send samples to National Influenza Centres in the WHO Global Influenza Surveillance and Response System. The strains they find guide the twice-yearly vaccine composition decision. Saudi Arabia’s Public Health Laboratory, run by the Public Health Authority, was recognised by WHO as a National Influenza Centre in 2022.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Comparing case counts from an active system with those from a passive one, for example during and after an outbreak response. The jump when active case-finding starts is mostly detection, and the fall when it stops is partly the end of searching.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="notifiable">
+    <h2>3. Notifiable diseases and the reporting pyramid</h2>
+    <p class="point">A notifiable disease is one clinicians and laboratories must report by law; the count is always the tip of a pyramid, and its shape differs by disease, place and year.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A legal list of diseases, each with a case definition and a deadline for reporting. Diseases needing immediate action (contact tracing, prophylaxis, outbreak control) must be reported within hours; others within days. Each step from infection to notification loses cases: the <em>reporting pyramid</em>.</dd>
+      <dt>Why it matters</dt>
+      <dd>Notification triggers the public health response for each case and gives the long-run series for trends. Under-reporting factors (true cases per reported case) are needed to estimate real burden, for Block 1’s DALYs or for modelling (Lecture 6.2).</dd>
+      <dt>How to read it</dt>
+      <dd>Severe, distinctive, lab-diagnosed diseases (meningococcal disease, MERS) have narrow pyramids. Mild, common ones (food poisoning, many sexually transmitted infections) have broad ones, with many cases per notification.</dd>
+      <dt>What a change means</dt>
+      <dd>Notified cases doubling may mean twice the infections, or the same infections with a new test, a new laboratory joining the network, a media story that sends people to clinics, or a change in the case definition.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · The reporting pyramid</div>
+      <svg class="viz-svg" viewBox="0 0 640 300" role="img" aria-label="A pyramid of six layers. From bottom to top: all infections; had symptoms (lost: no symptoms); sought care (lost: stayed home); tested (lost: not tested); confirmed by a laboratory (lost: test missed it); reported to public health (lost: not notified). The top layer, highlighted, is what the surveillance system sees.">
+        <polygon points="210.0,30.0 250.0,30.0 280.0,73.3 180.0,73.3" class="node-fill s1"/>
+        <polygon points="180.0,73.3 280.0,73.3 310.0,116.7 150.0,116.7" class="node-fill s5"/>
+        <polygon points="150.0,116.7 310.0,116.7 340.0,160.0 120.0,160.0" class="node-fill s5"/>
+        <polygon points="120.0,160.0 340.0,160.0 370.0,203.3 90.0,203.3" class="node-fill s5"/>
+        <polygon points="90.0,203.3 370.0,203.3 400.0,246.7 60.0,246.7" class="node-fill s5"/>
+        <polygon points="60.0,246.7 400.0,246.7 430.0,290.0 30.0,290.0" class="node-fill s5"/>
+        <text x="190" y="56" text-anchor="end" class="viz-small viz-bold colour s1">what the system sees →</text>
+        <g class="edge" stroke-width="1" stroke-dasharray="2 3">
+          <line x1="271" y1="51.7" x2="444" y2="51.7"/><line x1="301" y1="95" x2="444" y2="95"/><line x1="331" y1="138.3" x2="444" y2="138.3"/>
+          <line x1="361" y1="181.7" x2="444" y2="181.7"/><line x1="391" y1="225" x2="444" y2="225"/><line x1="421" y1="268.3" x2="444" y2="268.3"/>
+        </g>
+        <text x="450" y="49.7" class="viz-small viz-bold">Reported to public health</text>
+        <text x="450" y="64.7" class="viz-small viz-muted">lost: not notified</text>
+        <text x="450" y="93" class="viz-small viz-bold">Confirmed by a laboratory</text>
+        <text x="450" y="108" class="viz-small viz-muted">lost: test missed it</text>
+        <text x="450" y="136.3" class="viz-small viz-bold">Tested</text>
+        <text x="450" y="151.3" class="viz-small viz-muted">lost: not tested</text>
+        <text x="450" y="179.7" class="viz-small viz-bold">Sought care</text>
+        <text x="450" y="194.7" class="viz-small viz-muted">lost: stayed home</text>
+        <text x="450" y="223" class="viz-small viz-bold">Had symptoms</text>
+        <text x="450" y="238" class="viz-small viz-muted">lost: no symptoms</text>
+        <text x="450" y="266.3" class="viz-small viz-bold">All infections</text>
+        <text x="450" y="281.3" class="viz-small viz-muted">the true burden</text>
+      </svg>
+      <figcaption>Layer widths are schematic. Each step has its own drop-out, and each can change independently: a new rapid test widens the “tested” layer, a fee for clinic visits narrows “sought care”. The reported count moves with all of them.</figcaption>
+    </figure>
+
+    <div class="callout gulf">
+      <div class="callout-title">In the Gulf · Notification in Saudi Arabia</div>
+      <p>Saudi Arabia’s notifiable disease list (Ministry of Health, 2023 edition) sorts conditions by deadline. MERS, invasive meningococcal disease, poliomyelitis and Alkhurma haemorrhagic fever must be reported immediately, by telephone and through HESN; brucellosis and pulmonary tuberculosis within 72 hours through HESN. HESN, the Health Electronic Surveillance Network, was launched in 2012 at Mina during the Hajj, and since 2015 government and private facilities alike have been required to report infectious diseases through it. Studies of reporting in Saudi regions still raise concerns about clinicians’ compliance: the pyramid narrows at the top as well as the bottom. The Public Health Authority (Weqaya), set up in 2013 as the National Center for Disease Prevention and Control and converted to an authority in 2021, leads national surveillance.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Comparing notification rates between regions or countries as if they measured incidence. Differences in testing, laboratory access and reporting culture can easily exceed real differences in disease. Compare trends within a stable system, or use a measure less sensitive to ascertainment, such as hospitalisations or deaths.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="syndromic">
+    <h2>4. Syndromic surveillance</h2>
+    <p class="point">Syndromic surveillance watches symptoms and behaviour rather than diagnoses, trading accuracy for speed.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Automated, near-real-time monitoring of data that precede or bypass diagnosis: emergency department chief complaints grouped into syndromes (respiratory, gastrointestinal, rash), calls to health advice lines, school or work absence, over-the-counter medicine sales.</dd>
+      <dt>Why it matters</dt>
+      <dd>It can show a rise days before laboratory-confirmed notifications, and it captures illness for which no one is tested. It also provides reassurance: during a heatwave or a mass gathering, a flat syndromic signal is useful information.</dd>
+      <dt>How to read it</dt>
+      <dd>Signals are non-specific: a respiratory syndrome rise could be influenza, RSV, COVID-19, dust storms or a change in how triage staff code complaints. Treat a syndromic alarm as a reason to look, then confirm with laboratory data.</dd>
+      <dt>What a change means</dt>
+      <dd>A 30% rise in emergency visits for respiratory complaints in one week is a prompt to check virology results and weather, not a declared outbreak.</dd>
+    </dl>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>Google Flu Trends predicted influenza-like illness from search queries. Lazer and colleagues (2014) showed it overestimated the 2012–13 US season badly, at times predicting more than double CDC’s figure. Their diagnosis is familiar from ML: features chosen by correlation with a short training period, overfitting, and drift because the search engine itself kept changing. Digital signals are useful features, but they need regular recalibration against a ground-truth series and should be combined with, not substituted for, traditional surveillance.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Building a syndromic system and never deciding what happens when it alarms. Without an agreed response protocol (who checks, how fast, against what other data) the alarms are ignored after the first few false ones, and the system loses its only advantage, speed.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="wastewater">
+    <h2>5. Wastewater surveillance</h2>
+    <p class="point">Sewage samples a whole community at once, including people who never seek care or get tested, but it measures genetic material, not cases.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Regular sampling of untreated wastewater at treatment plants or sewer points, tested for pathogen genetic material (polio, SARS-CoV-2, influenza, antimicrobial resistance genes). Concentrations are adjusted for flow and dilution, often using a marker of human faeces.</dd>
+      <dt>Why it matters</dt>
+      <dd>It does not depend on care-seeking or testing, so it keeps working when clinical testing falls, and it can detect silent transmission. One sample covers thousands to millions of people at low cost.</dd>
+      <dt>How to read it</dt>
+      <dd>Read trends, not levels: shedding varies by person and by stage of infection, so concentrations cannot be converted reliably into case numbers. Rainfall, industrial discharge and population movement (tourists, commuters, pilgrims) all change the signal.</dd>
+      <dt>What a change means</dt>
+      <dd>A sustained rise over two or three samples at one site is a signal; a single high sample is often noise.</dd>
+    </dl>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Polio in the sewers</div>
+      <p>In 2013 Israel’s routine environmental surveillance found wild poliovirus type 1 in sewage in the south of the country, with no paralytic cases, and the country responded with an oral polio vaccine campaign. In 2022 vaccine-derived poliovirus detected repeatedly in London sewage led to a polio booster offer for all children aged 1 to 9 in London. In both, wastewater found transmission that clinical surveillance could not see, because most polio infections cause no symptoms.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Assuming wastewater is representative of everyone. Households not connected to the sewer system, such as labour camps on septic tanks or rural areas, are invisible to it. Where sewer coverage is uneven, the signal over-represents connected, often wealthier, areas.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">In the Gulf</div>
+      <p>Mass gatherings are a natural case for wastewater sampling: millions of people, a short window and many international arrivals. Reviews of antimicrobial resistance at the Hajj and other religious gatherings have argued for wastewater surveillance of resistant bacteria and resistance genes at such events (Lectures 6.6 and 6.10). The population-movement caveat applies with full force: a rise during the pilgrimage reflects who is in the catchment as much as how much infection there is.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="evaluate">
+    <h2>6. Evaluating a surveillance system</h2>
+    <p class="point">A surveillance system is a diagnostic test applied to a population over time, and it is judged with the same vocabulary: sensitivity, predictive value, timeliness and representativeness.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The US CDC’s guidelines for evaluating public health surveillance systems (2001) list the attributes to assess: simplicity, flexibility, data quality, acceptability, sensitivity, positive predictive value, representativeness, timeliness and stability. Which matter most depends on the system’s purpose.</dd>
+      <dt>Why it matters</dt>
+      <dd>Systems are expensive and tend to persist long after their purpose has changed. An evaluation tells you whether to fund, fix or retire one, and it is the only way to know what the counts mean.</dd>
+      <dt>How to read it</dt>
+      <dd><em>Sensitivity</em> is the share of true cases (or outbreaks) the system detects. <em>PPV</em> is the share of reported cases (or alarms) that are real. <em>Timeliness</em> is the delay between steps, from onset to report to action. <em>Representativeness</em> is whether the cases captured resemble all cases in person, place and time.</dd>
+    </dl>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Attribute</th><th>Matters most when…</th><th>Measured against</th></tr></thead>
+        <tbody>
+          <tr><td>Sensitivity</td><td>Every case needs action (measles, MERS)</td><td>An independent source, e.g. capture–recapture or record review</td></tr>
+          <tr><td>Timeliness</td><td>Detection and control</td><td>Dates of onset, diagnosis, report and response</td></tr>
+          <tr><td>Representativeness</td><td>Trends, burden, targeting</td><td>Population or survey data on who gets ill</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Forgetting that PPV depends on prevalence, exactly as for screening (Lecture 2.11). When a disease is rare, even a specific case definition yields mostly false positives; when an outbreak alarm is checked every week for a rare event, most alarms are false. A system’s PPV in an epidemic year says little about its PPV in a quiet one.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>Estimating sensitivity needs ground truth that the system itself did not produce. Capture–recapture, matching two independent case lists (say, laboratory records and notifications), estimates the cases both missed. It assumes the two sources are independent, which they rarely are: the same severe cases tend to appear in both, so the estimate of missed cases is usually too small. This is the same issue as estimating recall with two correlated annotators.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="aberration">
+    <h2>7. Aberration detection: when is a rise an outbreak?</h2>
+    <p class="point">An alarm rule compares this week’s count with what was expected for this time of year; where you set the threshold trades missed outbreaks against false alarms, and no setting removes both.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Automated rules run on weekly counts for many diseases and areas. The <em>Farrington</em> method (1996; improved by Noufaily and colleagues in 2013 and used routinely in England) predicts the expected count from the same weeks in previous years, with a quasi-Poisson model that allows for trend and down-weights past outbreaks, and alarms when the count exceeds an upper limit. <em>CUSUM</em> methods accumulate small excesses week after week, so they catch slow rises. The CDC’s EARS methods use only the last few weeks, for systems without long histories.</dd>
+      <dt>Why it matters</dt>
+      <dd>No one can eyeball hundreds of series every week. Alarm rules decide which signals a person investigates, so they set the system’s sensitivity, false-alarm rate and timeliness in one number.</dd>
+      <dt>How to read it</dt>
+      <dd>A high threshold gives few false alarms but detects small outbreaks late or never. A low one detects early but floods staff with false alarms, which they learn to ignore. Report detection rules with their false-alarm rate, not just the outbreaks they caught.</dd>
+      <dt>What a change means</dt>
+      <dd>Lowering the threshold from 3 to 2 standard deviations can multiply false alarms several times over for a modest gain in early detection. Whether that is worth it depends on the cost of a missed outbreak.</dd>
+    </dl>
+
+    <div class="widget" data-widget="aberration">
+      <div class="widget-title">Set the alarm threshold</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Five years of simulated weekly counts with an outbreak injected in the final year. Lower the threshold and watch true alarms (teal) come earlier and false alarms (red) multiply; the lower chart traces the whole trade-off. Then move the same outbreak into the high season, where it hides in the normal winter rise.</p>
+    </div>
+
+<pre><code>library(surveillance)
+cases &lt;- sts(observed = weekly$count, start = c(2021, 1), frequency = 52)
+ctl &lt;- list(range = 160:260,   # weeks to monitor (needs 3 years of history)
+            b = 3, w = 3,      # same week ± 3 in the previous 3 years
+            alpha = 0.01)      # smaller alpha: higher threshold, fewer alarms
+res &lt;- farringtonFlexible(cases, control = ctl)
+plot(res)                      # counts, upper limit and alarm weeks
+sum(alarms(res))               # how many weeks alarmed</code></pre>
+    <p><code>sts</code> stores the weekly counts with their calendar. <code>farringtonFlexible</code> fits the baseline from comparable weeks in past years, allowing for trend and down-weighting earlier outbreaks, and flags weeks above the limit. Changing <code>alpha</code> moves the threshold, the slider in the widget.</p>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Running alarm rules on counts by date of report as if they were complete. A reporting backlog cleared in one week produces a false spike; a holiday week produces a false dip. In the Gulf, Ramadan, Eid and the Hajj shift care-seeking and reporting on a lunar calendar that a 52-week baseline cannot follow (Lecture 3.9). Model reporting delays, and add calendar terms to the baseline where they matter.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example</div>
+      <p>An alarm is the start of an investigation, not its end. Typical first checks: is it a data artefact (duplicate records, a new laboratory, a backlog)? Are the cases linked in place, time or person? Does the case definition still hold? Only then does it become an outbreak investigation, the subject of Lecture 6.4.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>Notified brucellosis cases in one Saudi region double in a year. List the first three non-epidemic explanations you would rule out.</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>A change in testing (a new laboratory, a new or more sensitive test), a change in reporting (a reporting campaign, a facility newly connected to HESN, a backlog cleared), and a change in the case definition or coding. Then check for a real exposure, such as unpasteurised milk products from a particular source.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A syndromic system flags a 40% rise in respiratory emergency visits in Riyadh in one week in spring. What do you check before alerting anyone?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Laboratory results from the same week (influenza, RSV, SARS-CoV-2), environmental causes such as a dust storm, data artefacts (a new hospital feeding the system, a change in triage coding), and whether the rise is spread across hospitals or concentrated in one. A syndromic alarm is a reason to look, not a diagnosis.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Staff complain that the weekly outbreak alarms are “always false” and have stopped reading them. What would you change, and what do you give up?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Raise the threshold (or require two consecutive weeks above it), and check the baseline handles season, trend and holidays. The cost is lower sensitivity and later detection of small outbreaks. Making the trade-off explicit, with the expected false alarms per year at each threshold, lets managers choose it rather than discover it.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A city’s wastewater SARS-CoV-2 signal triples during a large international event while clinical cases stay flat. How do you interpret this?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Possibly real silent transmission, but the catchment population changed: many visitors, possibly from places with more infection, and more total flow. Normalise for faecal markers and flow, compare with sites outside the event area, and look for confirmation in syndromic or laboratory data. Wastewater trends are most reliable when the population contributing is stable.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Why might a surveillance system’s alarm PPV be much higher during a pandemic year than in a normal year, even with the same threshold?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Because PPV depends on prevalence. When outbreaks are frequent, more alarm weeks are real; when they are rare, the same false-alarm rate makes up a larger share of all alarms. This is the screening result from Lecture 2.11 applied to weeks instead of people.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>US CDC, “Updated guidelines for evaluating public health surveillance systems”, <em>MMWR Recommendations and Reports</em> 50(RR-13) (2001).</li>
+      <li>US CDC, <em>The CDC Field Epidemiology Manual</em> (Oxford University Press, 2019), chapters on surveillance and on analysing surveillance data.</li>
+      <li>Giesecke, <em>Modern Infectious Disease Epidemiology</em>, 3rd ed. (CRC Press, 2017). Surveillance and reporting.</li>
+      <li>Farrington, Andrews, Beale &amp; Catchpole, “A statistical algorithm for the early detection of outbreaks of infectious disease”, <em>Journal of the Royal Statistical Society A</em> (1996); Noufaily et al., “An improved algorithm for outbreak detection in multiple surveillance systems”, <em>Statistics in Medicine</em> (2013).</li>
+      <li>Salmon, Schumacher &amp; Höhle, “Monitoring count time series in R: aberration detection in public health surveillance”, <em>Journal of Statistical Software</em> (2016). The <code>surveillance</code> package.</li>
+      <li>Lazer, Kennedy, King &amp; Vespignani, “The parable of Google Flu: traps in big data analysis”, <em>Science</em> (2014).</li>
+      <li>Saudi Ministry of Health, <em>List of notifiable diseases, KSA</em> (2023); Ministry of Health news releases on the launch of HESN (October 2012) and mandatory electronic reporting (March 2015).</li>
+      <li>World Health Organization, Global Influenza Surveillance and Response System; Saudi Public Health Authority announcements on its Public Health Laboratory.</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="6-02-compartmental-models.html"><small>Previous</small>6.2 Compartmental models</a>
+    <a class="next" href="6-04-outbreak-investigation.html"><small>Next</small>6.4 Outbreak investigation</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

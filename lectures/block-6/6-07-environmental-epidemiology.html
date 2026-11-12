@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>6.7 Environmental epidemiology · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/6-07.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-6">Block 6</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 6.7</p>
+  <h1>Environmental epidemiology: air pollution, exposure assessment</h1>
+  <div class="lecture-meta">
+    <span>Block 6 · Health protection</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>In environmental epidemiology everyone is exposed, nobody chose the exposure, and the effects per person are small. So the hard part is rarely the outcome model. It is the exposure: how you measure air or heat for people you never meet, and what your measurement error does to the estimate. This lecture covers the exposure toolkit (monitors, satellites, reanalysis, land-use regression, personal sensors), the two kinds of measurement error, and the short-term vs long-term designs. It then builds the core of Project 6: computing wet-bulb globe temperature (WBGT) from ERA5 and comparing it with the GCC midday work bans.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#different">What makes environmental epidemiology different</a></li>
+      <li><a href="#exposure">Exposure assessment: four ways to measure</a></li>
+      <li><a href="#error">Classical vs Berkson measurement error</a></li>
+      <li><a href="#designs">Short-term and long-term designs</a></li>
+      <li><a href="#reanalysis">Reanalysis data as exposure: ERA5 and its limits</a></li>
+      <li><a href="#wbgt">WBGT: one number for four kinds of heat</a></li>
+      <li><a href="#thresholds">Workload thresholds and the GCC midday bans</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="different">
+    <h2>1. What makes environmental epidemiology different</h2>
+    <p class="point">Environmental exposures are shared, involuntary and continuous, with small relative risks spread over whole populations, so the burden is large even when each estimate looks unimpressive.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The study of how the physical environment affects health: air pollution, heat and cold, water, noise, dust. The exposure is usually measured for a place and a time (a city-day, a grid cell, a home address), not for a person.</dd>
+      <dt>Why it matters</dt>
+      <dd>Because everyone breathes the air, a rate ratio of 1.01 per 10 µg/m³ of fine particles (PM2.5, particles under 2.5 micrometres) translates into many deaths. This is the prevention paradox (Lecture 1.2) in its purest form.</dd>
+      <dt>How to read it</dt>
+      <dd>Effects are reported per fixed increment: per 10 µg/m³ of PM2.5, per 1 °C, or for a high percentile against the optimum. A short-term rate ratio of 1.005 to 1.02 per 10 µg/m³ is typical for daily mortality; long-term cohort estimates are several times larger.</dd>
+      <dt>What a change means</dt>
+      <dd>An estimate moving from 1.01 to 1.02 per 10 µg/m³ doubles the attributable burden. Small numbers matter here, so the measurement error that nudges them matters too.</dd>
+    </dl>
+
+    <div class="callout gulf">
+      <div class="callout-title">In the Gulf</div>
+      <p>Gulf air mixes desert dust with urban and industrial pollution, and ground monitors are sparse and short-lived. In Kuwait, a 17-year time series used daily airport <em>visibility</em> as a stand-in for particles: low-visibility days gave a rate ratio of 1.01 (95% CI 0.99 to 1.03) for natural deaths, with higher estimates in non-Kuwaiti men (Achilleos et al. 2019). A later study using modelled PM2.5 estimates found a 1.19% (0.59 to 1.80%) rise in all-cause deaths per 10 µg/m³ of the 3-day average (Alahmad et al. 2023). Both papers are as much about the exposure workaround as the result.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Dismissing a rate ratio of 1.01 as "no real effect". Judge it by the population exposed and how often: a 1% daily increase applied to every resident on every polluted day adds up. Judge the <em>credibility</em> by confounding control (season, temperature, day of week) and exposure quality, not by the size.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="exposure">
+    <h2>2. Exposure assessment: four ways to measure</h2>
+    <p class="point">Every exposure method trades spatial detail against coverage in time and population; pick the one whose error matters least for your question.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Method</th><th>What you get</th><th>Strength</th><th>Main weakness</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Fixed monitors</strong></td><td>Hourly readings at a few sites</td><td>Accurate where they stand; long daily series</td><td>Sparse; one site stands for a whole city</td></tr>
+          <tr><td><strong>Satellite and reanalysis</strong></td><td>Gridded estimates everywhere (satellite aerosol optical depth for particles; ERA5 for weather)</td><td>Full coverage, decades long</td><td>Coarse grid; a model, not a measurement</td></tr>
+          <tr><td><strong>Land-use regression</strong></td><td>A prediction for any address from traffic, land use, altitude</td><td>Fine spatial contrast within a city</td><td>Mostly long-term averages; trained on few monitors</td></tr>
+          <tr><td><strong>Personal monitoring</strong></td><td>What one person actually breathed or felt</td><td>Captures indoor time, commuting, work</td><td>Expensive; small samples, short periods</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Exposure assessment assigns each unit of analysis (a person, a city-day, a grid cell-hour) a value for the exposure. Land-use regression (LUR) is a regression of monitor readings on mapped predictors such as road length within 100 m, then used to predict at addresses with no monitor.</dd>
+      <dt>Why it matters</dt>
+      <dd>The method decides which <em>contrast</em> you can study. Daily monitor data give contrasts over time within a city (short-term designs); LUR and satellites give contrasts between places (long-term designs). Personal monitors validate both.</dd>
+      <dt>How to read it</dt>
+      <dd>Ask two questions of any exposure: at what resolution in space and time, and how well does it agree with a better measure? For a model, ask for its cross-validated R² against monitors it never saw: higher is better, and a model that explains little of the spatial contrast mostly adds noise.</dd>
+      <dt>What a change means</dt>
+      <dd>Moving from one city monitor to a 1 km model changes the question you can answer, from "do high-pollution days raise deaths?" to "do people living in more polluted neighbourhoods die earlier?".</dd>
+    </dl>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>Modern PM2.5 surfaces are supervised learning: monitors are labels, satellite aerosol optical depth, weather and land use are features, and random forests or gradient boosting predict everywhere. The usual ML traps carry over with a spatial twist. Random cross-validation leaks through spatial autocorrelation, so use spatially blocked folds; and the prediction error you then carry into a health model is measurement error with structure, which is the next section.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Treating outdoor concentration as personal exposure. People spend most of the day indoors, and in a Gulf summer the indoor share is higher still. The outdoor value is the right exposure for a policy that changes outdoor air, but a poor proxy for what any individual inhaled.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="error">
+    <h2>3. Classical vs Berkson measurement error</h2>
+    <p class="point">If your measure scatters around the truth, the slope is flattened (classical error); if the truth scatters around your measure, the slope is roughly right but less precise (Berkson error).</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><em>Classical error</em>: measured = true + noise, as with a faulty personal sensor or one spot reading. <em>Berkson error</em>: true = assigned + noise. Everyone in a group gets the same assigned value (the city monitor, the grid-cell mean), and individuals scatter around it. Lecture 2.8 covered the classical case as regression dilution.</dd>
+      <dt>Why it matters</dt>
+      <dd>They do opposite things. Classical error biases a linear slope toward zero by the factor below. Berkson error leaves a linear slope nearly unbiased but adds variance, so confidence intervals widen. Most environmental exposures contain both.</dd>
+      <dt>How to read it</dt>
+      <dd>Ask how the value was produced. A group-level value assigned to individuals (monitor, grid cell, area average) is mainly Berkson. A noisy instrument or a single short measurement of each person is mainly classical. A model prediction is a mix.</dd>
+      <dt>What a change means</dt>
+      <dd>If classical noise has the same variance as the true exposure, the attenuation factor is 0.5: a true slope of −0.50 is estimated near −0.25.</dd>
+    </dl>
+
+    \[ \text{attenuation factor} = \frac{\operatorname{var}(\text{true exposure})}{\operatorname{var}(\text{true exposure}) + \operatorname{var}(\text{noise})} \]
+
+    <div class="widget" data-widget="me-error">
+      <div class="widget-title">Classical vs Berkson error</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Raise the error SD under each error type. Classical error tilts the fitted line toward flat; Berkson error leaves the slope on target but spreads the estimates across repeated studies.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example</div>
+      <p>Zeger and colleagues (2000) split the error in daily air-pollution time series into parts. The gap between each person's exposure and the city's true average, and between the true average and a well-placed monitor, behave mainly like Berkson error and cost little bias. Instrument error at the monitor is classical. So time-series estimates from well-placed monitors are biased less than you might fear; the danger is a monitor that tracks the city average poorly.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Assuming all error biases toward the null. That holds for classical, non-differential error in a single exposure. It fails with Berkson error in non-linear models, with error correlated with the outcome, and with two correlated exposures (PM2.5 and temperature): the better-measured one can steal the effect of the worse-measured one.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Classical: every student's test score has random marking error, so the link between study hours and score looks weaker than it is. Berkson: every student in a class is assigned the class's average study hours. The assigned value is correct on average, so the slope survives, but you have thrown away information.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="designs">
+    <h2>4. Short-term and long-term designs</h2>
+    <p class="point">Short-term designs ask whether bad days raise risk within days; long-term designs ask whether living with more exposure shortens life. They answer different questions and are confounded by different things.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th></th><th>Short-term</th><th>Long-term</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Designs</strong></td><td>Daily time series (Lecture 3.9, 6.9); time-stratified case-crossover (2.4, 5.5)</td><td>Cohorts with exposure at the home address</td></tr>
+          <tr><td><strong>Contrast used</strong></td><td>Day-to-day variation within one place</td><td>Differences between places or people</td></tr>
+          <tr><td><strong>Main confounders</strong></td><td>Season, trend, temperature, day of week, holidays</td><td>Smoking, income, diet, everything that differs between neighbourhoods</td></tr>
+          <tr><td><strong>Typical PM2.5 effect</strong></td><td>About 1% more deaths per 10 µg/m³</td><td>Several times larger per 10 µg/m³</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>In a time series, each city is its own control, so things that differ between people but are stable over weeks (smoking, income) cannot confound. In a cohort, the comparison is between people, so those things must be measured and adjusted.</dd>
+      <dt>Why it matters</dt>
+      <dd>The long-term estimate captures chronic disease built over years; the short-term one captures acute events, part of which may be deaths brought forward by days (harvesting, Lecture 6.9). Policy impact models use long-term estimates.</dd>
+      <dt>How to read it</dt>
+      <dd>A larger cohort estimate is expected, not a contradiction. A short-term estimate that vanishes when temperature is adjusted was probably confounded by it.</dd>
+    </dl>
+
+    <div class="callout example">
+      <div class="callout-title">Example</div>
+      <p>The Harvard Six Cities study (Dockery et al. 1993) followed about 8,000 adults and found mortality rose across cities with fine-particle pollution after adjusting for smoking and other individual factors. It is the classic long-term design, and the template for the cohorts behind today's air-quality guidelines.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Comparing pollution and mortality across Gulf cities in one year and calling it a long-term effect. That is an ecological study (Lecture 2.4): cities differ in age structure, nationality mix and healthcare. Long-term effects need individual follow-up or very careful area-level adjustment.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="reanalysis">
+    <h2>5. Reanalysis data as exposure: ERA5 and its limits</h2>
+    <p class="point">A reanalysis is a weather model run backwards over history, constantly corrected by observations; it gives every place and hour a value, but each value is an average over a large grid cell.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>ERA5, produced by ECMWF for the Copernicus Climate Change Service, combines a weather model with millions of observations to give hourly fields (temperature, dewpoint, wind, radiation) on a 0.25° grid, about 31 km, from 1940 to the present. ERA5-Land reruns the land surface at 0.1° (about 9 km) from 1950.</dd>
+      <dt>Why it matters</dt>
+      <dd>It removes the GCC's main data problem: few long weather records, and almost none with humidity, wind and radiation together. Project 6 uses it to compute WBGT for every city and hour since 1980 with no health records at all.</dd>
+      <dt>How to read it</dt>
+      <dd>Treat an ERA5 value as the grid-cell average in open, flat conditions. It is good for day-to-day and year-to-year variation and long trends, weaker for the absolute level at any one street or worksite.</dd>
+      <dt>What a change means</dt>
+      <dd>A 1 °C bias that is constant over time does not affect a trend, but it does change the count of hours above a fixed threshold. That is why Project 6 must sanity-check levels against on-site measurements, such as those of Al-Bouwarthan and colleagues.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · What one ERA5 grid cell hides</div>
+      <svg class="viz-svg" viewBox="0 0 640 310" role="img" aria-label="A square grid cell about 31 km wide containing a strip of sea on the left, a city with an urban heat island in the middle, and desert on the right. Numbered markers show: 1, the sea portion mixing in cooler, more humid air; 2, the city being hotter than the cell average; 3, an outdoor worker in full sun; 4, an indoor worker. Text on the right explains that ERA5 gives one value per cell per hour.">
+        <rect x="20" y="20" width="290" height="240" class="node s5"/>
+        <path d="M20,20 L96,20 C88,80 112,150 70,260 L20,260 Z" class="fill-soft s4"/>
+        <text x="36" y="110" class="viz-small viz-bold colour s4">Gulf</text>
+        <text x="36" y="126" class="viz-small colour s4">(sea)</text>
+        <ellipse cx="185" cy="120" rx="62" ry="44" class="fill-soft s3"/>
+        <text x="185" y="116" text-anchor="middle" class="viz-small viz-bold colour s3">City</text>
+        <text x="185" y="132" text-anchor="middle" class="viz-small colour s3">heat island</text>
+        <text x="262" y="230" text-anchor="middle" class="viz-small viz-muted">Desert</text>
+        <g class="viz-small viz-bold">
+          <circle cx="58" cy="200" r="11" class="node s4"/><text x="58" y="204" text-anchor="middle">1</text>
+          <circle cx="232" cy="88" r="11" class="node s3"/><text x="232" y="92" text-anchor="middle">2</text>
+          <circle cx="150" cy="200" r="11" class="node s2"/><text x="150" y="204" text-anchor="middle">3</text>
+          <circle cx="200" cy="200" r="11" class="node s5"/><text x="200" y="204" text-anchor="middle">4</text>
+        </g>
+        <line x1="20" y1="282" x2="310" y2="282" class="edge"/>
+        <line x1="20" y1="276" x2="20" y2="288" class="edge"/><line x1="310" y1="276" x2="310" y2="288" class="edge"/>
+        <text x="165" y="302" text-anchor="middle" class="viz-small viz-muted">≈ 31 km (0.25°)</text>
+        <text x="336" y="34" class="viz-bold">One value per cell per hour</text>
+        <text x="336" y="66" class="viz-small"><tspan class="viz-bold colour s4">1 Land–sea mix.</tspan> A coastal cell blends sea and</text>
+        <text x="336" y="82" class="viz-small">land: humidity and temperature can be off.</text>
+        <text x="336" y="114" class="viz-small"><tspan class="viz-bold colour s3">2 Urban heat island.</tspan> The city runs hotter</text>
+        <text x="336" y="130" class="viz-small">than the cell average, especially at night.</text>
+        <text x="336" y="162" class="viz-small"><tspan class="viz-bold colour s2">3 Sun and local surfaces.</tspan> Radiant heat off</text>
+        <text x="336" y="178" class="viz-small">concrete and steel is not in the grid value.</text>
+        <text x="336" y="210" class="viz-small"><tspan class="viz-bold">4 Indoor vs outdoor.</tspan> Air-conditioned work</text>
+        <text x="336" y="226" class="viz-small">is far cooler; ERA5 is outdoor only.</text>
+        <text x="336" y="258" class="viz-small viz-muted">ERA5-Land (≈ 9 km) narrows 1 and 2,</text>
+        <text x="336" y="274" class="viz-small viz-muted">but does not remove them.</text>
+      </svg>
+      <figcaption>Schematic, not to scale. For a coastal Gulf city, check the land–sea mask and prefer land-dominated cells; then compare a few summers against station or on-site data before trusting absolute levels.</figcaption>
+    </figure>
+
+<pre><code>library(ecmwfr); library(terra)
+wf_set_key(key = "YOUR-CDS-API-KEY")          # free Copernicus account
+req &lt;- list(dataset_short_name = "reanalysis-era5-single-levels",
+  product_type = "reanalysis", year = "2024", month = "07",
+  variable = c("2m_temperature", "2m_dewpoint_temperature",
+               "10m_u_component_of_wind", "10m_v_component_of_wind",
+               "surface_solar_radiation_downwards"),
+  day = sprintf("%02d", 1:31), time = sprintf("%02d:00", 0:23),
+  area = c(32, 34, 12, 60),                   # N, W, S, E: Arabian Peninsula
+  data_format = "netcdf", target = "era5_2024_07.nc")
+f   &lt;- wf_request(req, path = "data")
+t2m &lt;- rast(f, subds = "t2m") - 273.15       # kelvin to °C, one layer per hour
+ta  &lt;- extract(t2m, vect(cbind(46.7, 24.7), crs = "EPSG:4326"))  # Riyadh's cell</code></pre>
+    <p>The request asks the Copernicus Climate Data Store for one month of hourly fields over the Arabian Peninsula; <code>terra</code> reads the NetCDF file and pulls the hourly series for the grid cell containing a city. Project 6 loops this over months and years and adds the radiation fields that WBGT needs.</p>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>Think of ERA5 as a very good smoother, not ground truth: it is fit to observations, so it inherits their gaps (fewer stations early on, satellites only from the 1970s). That makes early decades less certain. Check a trend's sensitivity to the start year. In Python, <code>xarray</code> reads the same files, and ECMWF's <code>thermofeel</code> library computes WBGT from them.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reading a reanalysis grid value as the heat a worker experiences. ERA5 knows nothing about the shadeless concrete slab, the reflective steel, the protective clothing or the air-conditioned site office. It is an exposure for the <em>place</em>; the worker's exposure can be higher (sun, hard labour) or much lower (indoors).</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="wbgt">
+    <h2>6. WBGT: one number for four kinds of heat</h2>
+    <p class="point">Wet-bulb globe temperature combines air temperature, humidity, radiant heat and wind into one index of how hard the body must work to shed heat, which is why it, not air temperature, is the occupational standard.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A weighted average of three thermometer readings. The <em>natural wet bulb</em> is a wetted, unshielded thermometer that cools by evaporation, so it senses humidity and wind. The <em>black globe</em> is a thermometer inside a black sphere that absorbs radiant heat from the sun and hot surfaces. The <em>dry bulb</em> is ordinary air temperature.</dd>
+      <dt>Why it matters</dt>
+      <dd>Sweat only cools if it evaporates. At 40 °C and 10% humidity sweat evaporates fast; at 35 °C and 60% it barely does. Air temperature calls the first day hotter; WBGT can rank them the other way, and so does the body.</dd>
+      <dt>How to read it</dt>
+      <dd>WBGT values run far below air temperature: 28 °C WBGT is already the limit for acclimatised workers doing moderate work. Outdoors in sun, a hot humid Gulf afternoon can reach the low 30s °C WBGT.</dd>
+      <dt>What a change means</dt>
+      <dd>Because the wet bulb carries 70% of the weight, a rise in humidity moves WBGT more than the same rise in air temperature. That is why humid coastal cities can exceed limits on days when the inland capital, with higher air temperatures, does not.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · Three thermometers, one index</div>
+      <svg class="viz-svg" viewBox="0 0 640 300" role="img" aria-label="Three boxes feed into one. Natural wet bulb, weight 0.7, senses humidity, wind and some radiation. Black globe, weight 0.2, senses radiant heat from sun and hot surfaces, and wind. Dry bulb, weight 0.1, senses air temperature. Arrows lead to a box with the outdoor formula WBGT equals 0.7 natural wet bulb plus 0.2 globe plus 0.1 dry bulb, and the indoor or shade formula 0.7 natural wet bulb plus 0.3 globe. A bar below shows the 70, 20, 10 split.">
+        <defs><marker id="l67-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead"/></marker></defs>
+        <rect x="14" y="14" width="196" height="100" rx="8" class="node-fill s4"/>
+        <text x="112" y="38" text-anchor="middle" class="viz-bold">Natural wet bulb</text>
+        <text x="112" y="58" text-anchor="middle" class="viz-small">humidity, wind,</text>
+        <text x="112" y="74" text-anchor="middle" class="viz-small">some radiation</text>
+        <text x="112" y="100" text-anchor="middle" class="viz-bold colour s4">weight 0.7</text>
+        <rect x="222" y="14" width="196" height="100" rx="8" class="node-fill s2"/>
+        <text x="320" y="38" text-anchor="middle" class="viz-bold">Black globe</text>
+        <text x="320" y="58" text-anchor="middle" class="viz-small">radiant heat from sun</text>
+        <text x="320" y="74" text-anchor="middle" class="viz-small">and hot surfaces; wind</text>
+        <text x="320" y="100" text-anchor="middle" class="viz-bold colour s2">weight 0.2</text>
+        <rect x="430" y="14" width="196" height="100" rx="8" class="node-fill s5"/>
+        <text x="528" y="38" text-anchor="middle" class="viz-bold">Dry bulb</text>
+        <text x="528" y="58" text-anchor="middle" class="viz-small">air temperature</text>
+        <text x="528" y="74" text-anchor="middle" class="viz-small">(the weather forecast)</text>
+        <text x="528" y="100" text-anchor="middle" class="viz-bold">weight 0.1</text>
+        <path d="M112,114 L250,162" class="edge" marker-end="url(#l67-arrow)"/>
+        <path d="M320,114 L320,160" class="edge" marker-end="url(#l67-arrow)"/>
+        <path d="M528,114 L390,162" class="edge" marker-end="url(#l67-arrow)"/>
+        <rect x="120" y="164" width="400" height="66" rx="8" class="node s1"/>
+        <text x="320" y="190" text-anchor="middle" class="viz-bold">Outdoors in sun: 0.7 Tnwb + 0.2 Tg + 0.1 Ta</text>
+        <text x="320" y="214" text-anchor="middle" class="viz-small">Indoors or in shade: 0.7 Tnwb + 0.3 Tg</text>
+        <rect x="20" y="252" width="420" height="20" class="fill s4"/>
+        <rect x="440" y="252" width="120" height="20" class="fill s2"/>
+        <rect x="560" y="252" width="60" height="20" class="fill s5"/>
+        <text x="230" y="292" text-anchor="middle" class="viz-small viz-muted">70% wet bulb</text>
+        <text x="500" y="292" text-anchor="middle" class="viz-small viz-muted">20% globe</text>
+        <text x="590" y="292" text-anchor="middle" class="viz-small viz-muted">10% air</text>
+      </svg>
+      <figcaption>Tnwb = natural wet-bulb temperature, Tg = black-globe temperature, Ta = air (dry-bulb) temperature (ISO 7243). Weather services do not measure Tnwb or Tg, so gridded WBGT has to estimate them from temperature, humidity, wind and radiation.</figcaption>
+    </figure>
+
+    <dl class="facets">
+      <dt>From ERA5 to WBGT</dt>
+      <dd>The reference method is Liljegren and colleagues' (2008) heat- and mass-transfer model, which computes Tnwb and Tg from standard weather variables plus solar radiation; US OSHA's outdoor WBGT calculator uses it. Brimicombe and colleagues (2023) built a global WBGT dataset from ERA5, with globe temperature derived from mean radiant temperature, found it tracked the Liljegren method in three heatwave case studies, and found the simple temperature-and-humidity approximation inadequate.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Using a "WBGT" computed from temperature and humidity alone. These shortcuts assume a fixed amount of sun and wind, so they miss the radiation that dominates midday outdoor work and the wind that relieves it. Brimicombe and colleagues found such an approximation inadequate. For Project 6, compute WBGT with radiation and wind, and state the method.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Air temperature is the oven setting. WBGT is closer to how fast the roast actually cooks: it adds whether the oven is fan-assisted (wind), whether the grill is on (radiation) and how steamy it is inside (humidity).</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="thresholds">
+    <h2>7. Workload thresholds and the GCC midday bans</h2>
+    <p class="point">The safe WBGT depends on how hard the person is working and whether they are acclimatised; a fixed clock-time ban is a crude stand-in for an exposure limit that moves with the weather.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Occupational limits (ISO 7243, the ACGIH threshold limit values and the US NIOSH recommended limits) give a maximum WBGT for each metabolic rate. Harder work makes more internal heat, so the limit falls. Unacclimatised workers, in their first one to two weeks of heat, get a lower "action" or "alert" limit.</dd>
+      <dt>Why it matters</dt>
+      <dd>It converts a WBGT series into the Project 6 outcome: hours per year above the limit for a given workload, and how many of those hours fall outside the legal ban window.</dd>
+      <dt>How to read it</dt>
+      <dd>For acclimatised workers doing continuous work, NIOSH's limit is about 31 °C WBGT for light work (about 180 W), 28 °C for moderate (300 W), 26.5 °C for heavy (415 W) and 25.5 °C for very heavy (520 W). Unacclimatised limits are about 3 °C lower. ACGIH values are close.</dd>
+      <dt>What a change means</dt>
+      <dd>Moving from moderate to heavy work cuts the limit by about 1.5 °C. On a Gulf summer day that adds hours, not minutes, above the limit.</dd>
+    </dl>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Country</th><th>Ban period</th><th>Hours</th><th>Note</th></tr></thead>
+        <tbody>
+          <tr><td>Saudi Arabia</td><td>15 June – 15 September</td><td>12:00 – 15:00</td><td>Outdoor work in direct sun</td></tr>
+          <tr><td>UAE</td><td>15 June – 15 September</td><td>12:30 – 15:00</td><td></td></tr>
+          <tr><td>Qatar</td><td>1 June – 15 September</td><td>10:00 – 15:30</td><td>Also: stop work when site WBGT exceeds 32.1 °C</td></tr>
+          <tr><td>Kuwait</td><td>1 June – 31 August</td><td>11:00 – 16:00</td><td></td></tr>
+          <tr><td>Oman</td><td>1 June – 31 August</td><td>12:30 – 15:30</td><td></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>As of late 2026, per a June 2026 legal comparison and Qatar's Ministerial Decision No. 17 of 2021. Bahrain also has a summer midday ban, but published hours and dates differ between sources; Project 6 should take each country's dates from the official decree for each year, since several have changed over time.</p>
+
+    <div class="widget" data-widget="wbgt-day">
+      <div class="widget-title">Hours above the limit vs the ban window</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Pick a city type, sun or shade, wind, workload and a country's ban. Red dots are half-hours above the limit that the ban does not cover. Try the humid city with moderate work under the Saudi ban, then switch to Qatar's.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">In the Gulf · Project 6's benchmark</div>
+      <p>Al-Bouwarthan and colleagues (2019) measured WBGT at 10 construction sites in Al-Ahsa, Eastern Province, in summer 2016. Outdoor heat stress was most intense from 9 am to noon, with hourly mean WBGT of 31 to 33 °C, and they concluded that complying with the 12 to 3 pm ban was not effective in reducing heat stress risk. Project 6 asks the same question for every GCC city and every summer since 1980, using ERA5, and uses this study to check that ERA5 WBGT levels are realistic.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Counting a WBGT limit exceedance as a health effect. The limits mark where heat strain becomes likely for healthy, hydrated workers at a given pace, with breaks and clothing adjustments ignored here. An hour above the limit is a hazard indicator, not an injury. Turning exposure into health risk needs exposure–response estimates (Lecture 6.9).</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>A cohort study assigns each participant the annual PM2.5 of their postcode from a 10 km model. A reviewer says the estimate must be biased toward the null because of measurement error. Is that right?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Not necessarily. Assigning an area value to everyone in the area is mainly Berkson error, which in a linear model leaves the slope roughly unbiased but widens the interval. The model's own prediction error adds a classical part, and correlated co-pollutants can bias in either direction. The answer depends on the error's structure, not just its size.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A Gulf time series finds that dust-storm days raise daily deaths, but the effect disappears after adjusting for temperature. What happened, and what would you report?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Dust storms come with hot, dry, windy weather, so temperature confounded the crude estimate. Report the adjusted result as the dust effect, with an appropriately flexible temperature term and lags. Also say that the two exposures are correlated, so the separation depends on modelling choices and measurement quality for both.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>ERA5 shows Riyadh with higher summer air temperatures than Dammam, yet your WBGT shows more hours above the limit in Dammam. Is that a bug?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Probably not. WBGT weights the wet bulb at 0.7, and coastal humidity keeps the wet bulb high, so a humid 40 °C can exceed a dry 45 °C. Do check that the Dammam cell is not mostly sea, which would distort humidity and temperature.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A ministry argues that the midday ban protects workers because WBGT peaks at about 1 pm. What would you ask for before agreeing?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The hours above the limit, not the hour of the peak. If WBGT stays above the limit for moderate work from mid-morning to late afternoon, a three-hour window covers a minority of those hours. Ask for that count by city, month and workload, as in Project 6, and check it against on-site measurements like Al-Bouwarthan's, which found the worst exposure from 9 am to noon.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>You want to estimate the long-term effect of PM2.5 on mortality across Saudi regions using one year of regional averages. What is the main problem?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>It is an ecological comparison across a handful of regions that differ in age, nationality mix, smoking and healthcare. Confounding between places is the whole problem in long-term designs, and regional averages cannot address it. A short-term time series within each region is more credible, but answers the acute question, not the long-term one.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Al-Bouwarthan M, Quinn MM, Kriebel D, Wegman DH, "Assessment of heat stress exposure among construction workers in the hot desert climate of Saudi Arabia", <em>Annals of Work Exposures and Health</em> 63(5):505–520 (2019).</li>
+      <li>Brimicombe C, Lo CHB, Pappenberger F, et al., "Wet bulb globe temperature: indicating extreme heat risk on a global grid", <em>GeoHealth</em> 7(2):e2022GH000701 (2023); Brimicombe et al., "thermofeel: a python thermal comfort indices library", <em>SoftwareX</em> 18:101005 (2022).</li>
+      <li>Liljegren JC, Carhart RA, Lawday P, Tschopp S, Sharp R, "Modeling the wet bulb globe temperature using standard meteorological measurements", <em>Journal of Occupational and Environmental Hygiene</em> 5(10):645–655 (2008).</li>
+      <li>ISO 7243:2017, <em>Ergonomics of the thermal environment: assessment of heat stress using the WBGT index</em>; NIOSH, <em>Criteria for a recommended standard: occupational exposure to heat and hot environments</em> (DHHS publication 2016-106); ACGIH, <em>TLVs and BEIs</em> (current edition), heat stress and strain.</li>
+      <li>Bernard TE, Flach JW, Ashley CD, "Group outcomes for time-weighted averaging in WBGT-based heat stress exposure assessment", <em>Annals of Work Exposures and Health</em> 67:345–353 (2023), for the limit equations by metabolic rate.</li>
+      <li>Hersbach H, et al., "The ERA5 global reanalysis", <em>Quarterly Journal of the Royal Meteorological Society</em> (2020); Copernicus Climate Data Store documentation for ERA5 and ERA5-Land.</li>
+      <li>Zeger SL, Thomas D, Dominici F, et al., "Exposure measurement error in time-series studies of air pollution: concepts and consequences", <em>Environmental Health Perspectives</em> 108:419–426 (2000).</li>
+      <li>Dockery DW, Pope CA, Xu X, et al., "An association between air pollution and mortality in six U.S. cities", <em>New England Journal of Medicine</em> 329:1753–1759 (1993).</li>
+      <li>Achilleos S, et al., "Acute effects of air pollution on mortality: a 17-year analysis in Kuwait", <em>Environment International</em> 126:476–483 (2019); Alahmad B, et al., "Burden of fine air pollution on mortality in the desert climate of Kuwait", <em>Journal of Exposure Science &amp; Environmental Epidemiology</em> 33:646–651 (2023).</li>
+      <li>Clyde &amp; Co, "Understanding the GCC midday work ban: a comparative guide" (June 2026); ILO, "Qatar's Ministerial Decision on heat stress" (No. 17 of 2021).</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="6-06-antimicrobial-resistance.html"><small>Previous</small>6.6 Antimicrobial resistance</a>
+    <a class="next" href="6-08-spatial-small-area-estimation.html"><small>Next</small>6.8 Spatial epidemiology and small-area estimation</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>
