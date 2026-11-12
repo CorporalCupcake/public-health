@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>4.1 Potential outcomes and identification · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/4-01.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-4">Block 4</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 4.1</p>
+  <h1>Potential outcomes and identification: exchangeability, positivity, consistency</h1>
+  <div class="lecture-meta">
+    <span>Block 4 · Causal inference and policy evaluation</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>Lecture 2.10 defined potential outcomes. This lecture is about the step most papers skip: going from a causal question to a number you can compute from data. That step is called <strong>identification</strong>. It needs a precise estimand and three conditions you have to argue for, not test: consistency, exchangeability and positivity. Every method in Block 4, from inverse probability weighting to synthetic control, is a way of estimating something that has already been identified. Project 5A (anticoagulation for new-onset AF) and Project 4 (GCC sugary-drink taxes) both stand or fall on the arguments in this lecture.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#question">The causal question comes before the method</a></li>
+      <li><a href="#estimands">Causal estimands: ATE, ATT, ATU and their scale</a></li>
+      <li><a href="#identification">Identification versus estimation</a></li>
+      <li><a href="#consistency">Consistency, well-defined interventions and no interference</a></li>
+      <li><a href="#exchangeability">Conditional exchangeability: the untestable one</a></li>
+      <li><a href="#positivity">Positivity: random and structural violations</a></li>
+      <li><a href="#argument">Writing the identification argument</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="question">
+    <h2>1. The causal question comes before the method</h2>
+    <p class="point">Write down the question, the estimand that answers it and the assumptions that link it to data before you pick a method. Most errors in causal papers are made before the first model is fitted.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A chain of five steps, the <strong>identification ladder</strong>: causal question → causal estimand → identifying assumptions → statistical estimand → estimator. The first three steps are causal: you argue for them from subject knowledge. The last two are statistical: data and modelling choices help there.</dd>
+      <dt>Why it matters</dt>
+      <dd>A method estimates whatever its estimand is, whether or not that matches your question. If you never said which estimand you wanted, nobody can tell whether IPW with trimming answered your question or a nearby one. Confounders are only defined relative to a causal question, so without one, “adjusted for” has no standard to meet.</dd>
+      <dt>How to read it</dt>
+      <dd>A good methods section names the intervention, the population, the comparison, the outcome, the time horizon and the scale (difference or ratio). A paper that says “associated with” throughout, then recommends a treatment in the discussion, is making a causal claim without defending it.</dd>
+      <dt>What a change means</dt>
+      <dd>Changing one step changes every step below it. Moving from “all eligible patients” to “patients like those who were treated” turns the ATE into the ATT, which changes the positivity requirement and the weights.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · The identification ladder, with Project 5A filled in</div>
+      <svg class="viz-svg" viewBox="0 0 640 400" role="img" aria-label="Five boxes stacked from top to bottom joined by arrows: causal question, causal estimand, identifying assumptions, statistical estimand, estimator. A bracket marks the first three as causal steps argued from subject knowledge and the last two as statistical steps where data help. Beside each box is the Project 5A version of that step.">
+        <defs>
+          <marker id="l41-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead accent"/></marker>
+        </defs>
+        <!-- boxes -->
+        <g class="s1">
+          <rect x="34" y="14" width="196" height="50" rx="10" class="node-fill"/>
+          <rect x="34" y="92" width="196" height="50" rx="10" class="node-fill"/>
+          <rect x="34" y="170" width="196" height="50" rx="10" class="node-fill"/>
+        </g>
+        <g class="s4">
+          <rect x="34" y="248" width="196" height="50" rx="10" class="node-fill"/>
+          <rect x="34" y="326" width="196" height="50" rx="10" class="node-fill"/>
+        </g>
+        <g text-anchor="middle">
+          <text x="132" y="44" class="viz-bold">1. Causal question</text>
+          <text x="132" y="122" class="viz-bold">2. Causal estimand</text>
+          <text x="132" y="200" class="viz-bold">3. Identifying assumptions</text>
+          <text x="132" y="278" class="viz-bold">4. Statistical estimand</text>
+          <text x="132" y="356" class="viz-bold">5. Estimator</text>
+        </g>
+        <!-- arrows -->
+        <path d="M132,64 L132,88" class="edge accent" marker-end="url(#l41-arrow)"/>
+        <path d="M132,142 L132,166" class="edge accent" marker-end="url(#l41-arrow)"/>
+        <path d="M132,220 L132,244" class="edge accent" marker-end="url(#l41-arrow)"/>
+        <path d="M132,298 L132,322" class="edge accent" marker-end="url(#l41-arrow)"/>
+        <!-- bracket -->
+        <path d="M24,16 L16,16 L16,218 L24,218" class="edge"/>
+        <path d="M24,250 L16,250 L16,374 L24,374" class="edge"/>
+        <text x="10" y="117" class="viz-small colour s1" text-anchor="middle" transform="rotate(-90 10 117)">causal: argued</text>
+        <text x="10" y="312" class="viz-small colour s4" text-anchor="middle" transform="rotate(-90 10 312)">statistical</text>
+        <!-- examples -->
+        <g class="viz-small">
+          <text x="248" y="34">Does starting anticoagulation within 48 h of new</text>
+          <text x="248" y="50">AF onset reduce 90-day death in ICU patients?</text>
+          <text x="248" y="112">Risk of death by day 90 if all eligible patients started,</text>
+          <text x="248" y="128">minus the risk if none did (ATE, risk difference)</text>
+          <text x="248" y="190">One clear version of “start”; exchangeability given age,</text>
+          <text x="248" y="206">severity, bleeding risk…; some chance of both in every stratum</text>
+          <text x="248" y="268">Standardised risk among the treated minus among the</text>
+          <text x="248" y="284">untreated, over the covariate mix: observed data only</text>
+          <text x="248" y="346">IPW, g-formula, matching or TMLE (Lectures 4.3–4.4),</text>
+          <text x="248" y="362">with a confidence interval</text>
+        </g>
+        <text x="320" y="396" text-anchor="middle" class="viz-small viz-muted">Illustrative wording; the outcome and time window for Project 5A are design choices.</text>
+      </svg>
+      <figcaption>Steps 1–3 cannot be checked by fitting models: they are argued from how treatment is decided and what “treatment” means. A better estimator (step 5) cannot repair a wrong estimand or an implausible assumption.</figcaption>
+    </figure>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>“Association language is the safe choice.” Hernán (2018) called this the “C-word” problem: replacing “causal effect” with “association” does not remove the causal claim, it only removes the scrutiny. If the aim is causal, say so, name the estimand, and defend the assumptions. A purely descriptive or predictive aim is fine too, but then do not adjust for confounders or discuss interventions.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Building a house. The question is the brief, the estimand is the plan, the assumptions are the ground survey, and the estimator is the building crew. A brilliant crew working from the wrong plan builds the wrong house very well.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="estimands">
+    <h2>2. Causal estimands: ATE, ATT, ATU and their scale</h2>
+    <p class="point">ATE, ATT and ATU average the same individual effects over different people, so they differ whenever effects vary and treatment is targeted at those who benefit most (or least).</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The <strong>ATE</strong> (average treatment effect) averages over everyone in the target population. The <strong>ATT</strong> averages over those who were actually treated; the <strong>ATU</strong> (also called ATC) over those who were not. Each can be <strong>marginal</strong> (averaged over the whole group) or <strong>conditional</strong> (within a stratum, such as patients over 75), and on a difference or a ratio scale.</dd>
+      <dt>Why it matters</dt>
+      <dd>Each answers a different decision. “Should we treat everyone eligible?” is the ATE. “Did current practice help the people it reached?” is the ATT. “Would extending treatment to the untreated help them?” is the ATU. They also need different amounts of overlap (section 6).</dd>
+      <dt>How to read it</dt>
+      <dd>If clinicians give treatment to those with most to gain, the ATT is larger than the ATU. Heterogeneity depends on the scale: a constant risk ratio across patients with different baseline risks means the risk difference varies, so the ATT and ATE differ on the difference scale but not on the ratio scale.</dd>
+      <dt>What a change means</dt>
+      <dd>An ATT of −6 percentage points next to an ATU of −2 means current practice already reaches the patients who gain most; extending treatment to the rest would help, but much less per person treated.</dd>
+    </dl>
+
+    <div class="widget" data-widget="estimands-targeting">
+      <div class="widget-title">Same patients, three estimands</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Start with a constant risk ratio and random treatment: all three estimands agree. Then target treatment at high-risk patients and watch the risk differences separate while the ratios stay equal. Finally make the benefit depend on risk.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reporting the treatment coefficient from a logistic model with covariates as “the effect”. That is a conditional odds ratio. Odds ratios are <strong>non-collapsible</strong>: the conditional OR differs from the marginal OR even with no confounding at all, and it changes as you add covariates that predict the outcome. Choose a marginal risk difference or risk ratio, then get it by standardisation (Lecture 4.3).</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>The individual-level effect averaged within covariate strata is the CATE (conditional average treatment effect), the target of uplift modelling and the meta-learners in Lecture 4.4. ATE versus ATT is like evaluating a model on the deployment population versus the training population: the same function, averaged over a different covariate distribution, gives a different number.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="identification">
+    <h2>3. Identification versus estimation</h2>
+    <p class="point">Identification asks whether the estimand could be computed from the observed data if you had infinite data; estimation asks how to compute it well from the sample you actually have.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Potential outcomes are partly unobserved, so a causal estimand is not directly a feature of the data. Under consistency, conditional exchangeability given covariates \(L\), and positivity, the counterfactual risk equals an <strong>observed</strong> quantity: the outcome risk among people who got treatment \(a\), averaged over the covariate distribution of the target population. That observed-data expression is the <strong>statistical estimand</strong>.</dd>
+      <dt>Why it matters</dt>
+      <dd>No sample size, model or algorithm rescues an estimand that is not identified. Conversely, a correct identification argument can be ruined by a bad estimator: a misspecified model, extreme weights, or a coefficient that targets a different quantity.</dd>
+      <dt>How to read it</dt>
+      <dd>Keep the two apart in your write-up: “under these assumptions the ATE equals this expression; we estimated it with this method.” Two analyses with the same assumptions and different estimators should agree up to modelling error. If they disagree badly, look for an estimation problem (often poor overlap).</dd>
+      <dt>What a change means</dt>
+      <dd>Adding a variable to \(L\) changes the identification argument. Switching from IPW to the g-formula changes only the estimator.</dd>
+    </dl>
+
+    \[ \Pr[Y(a)=1] = \sum_{l} \Pr[Y=1 \mid A=a, L=l]\,\Pr[L=l] \]
+    <p>In words: within each covariate stratum, the treated stand in for what would have happened to everyone in that stratum under treatment; then you weight the strata by how common they are. This is <strong>standardisation</strong>, the oldest form of the g-formula. The left side is causal; the right side contains only observed quantities.</p>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>“With enough data and a flexible enough model, machine learning will find the causal effect.” Flexible models improve step 5 of the ladder. They do nothing for step 3. If a strong confounder is missing from the data, a perfect learner estimates the wrong statistical estimand perfectly.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>You have met identifiability before: the labels of components in a mixture model, or a regression with perfectly collinear features. More data does not help because many parameter values fit the data distribution equally well. Causal identification is the same idea: without the assumptions, many different counterfactual worlds are consistent with the observed joint distribution.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Identification asks whether there is a road to the town at all. Estimation asks which car and which route get you there with the least wobble. A faster car is no use if the bridge is out.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="consistency">
+    <h2>4. Consistency, well-defined interventions and no interference</h2>
+    <p class="point">Consistency says a person’s observed outcome is their potential outcome under the treatment they actually received; it only means something if “the treatment” is a well-defined intervention.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>Consistency</strong>: if you were treated, your observed outcome equals \(Y(1)\). It fails in practice when there are several <strong>versions of treatment</strong> with different effects. <strong>No interference</strong>: one person’s treatment does not change another person’s outcome. Together these are often called SUTVA (the stable unit treatment value assumption).</dd>
+      <dt>Why it matters</dt>
+      <dd>With several versions, the estimate is an average over whatever mix of versions happened in your data, which may match no policy anyone could adopt. With interference, “treated versus untreated” is not even well defined for an individual: their outcome depends on who else was treated.</dd>
+      <dt>How to read it</dt>
+      <dd>Ask: “what would we do to make someone exposed?” If the honest answer lists several very different procedures, the exposure is ill-defined. Expect interference with vaccines and infections, household or school exposures, and policies whose effects spill across borders.</dd>
+      <dt>What a change means</dt>
+      <dd>Narrowing “anticoagulation” to “therapeutic heparin started within 48 hours of AF onset” makes consistency more plausible, but shrinks the eligible population and the number of events. That trade-off is part of the protocol in target trial emulation (Lecture 4.5).</dd>
+    </dl>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Does obesity shorten life?</div>
+      <p>Hernán and Taubman (2008) asked what “the effect of obesity on mortality” could mean. Body mass index can be lowered by diet, exercise, surgery, smoking or a wasting illness, and each would have a different effect on death. Lecture 2.10 flagged the problem; the fix is to replace the exposure with an intervention you could describe, such as “a structured exercise programme of a stated dose”, and estimate its effect. The same applies to nationality, sex or ethnicity as “exposures”: ask instead about effects of things that could be changed, such as access to care or a specific policy.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">Gulf example · Project 4</div>
+      <p>“The GCC sugary-drink tax” comes in versions: Saudi Arabia and the UAE taxed sugary drinks in 2017, Bahrain late in 2017, Oman and Qatar in 2019, and Saudi Arabia and the UAE extended the tax to all sweetened drinks in December 2019. A pooled estimate averages these versions, so say which one you mean. Interference is also possible: people and retailers can buy across borders, and regional bottlers can shift supply between markets. If taxed-country demand spills into Kuwait, the never-taxed comparison is no longer untouched by the treatment.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Thinking consistency is a technicality that always holds. In EHR data, “treated” is often whatever the code list caught: any dose, any route, any start day. That is several treatments under one label. Define the version you care about, then check that your data can tell it apart from the others.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="exchangeability">
+    <h2>5. Conditional exchangeability: the untestable one</h2>
+    <p class="point">Conditional exchangeability means that, within levels of the measured covariates, who got treated is as good as random with respect to the outcome. No analysis of the data can confirm it.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Within each stratum of \(L\), the treated and untreated would have had the same risk under either treatment. A randomised trial gives exchangeability by design; a trial stratified on \(L\) gives it conditionally. In observational data it is an assumption, also called no unmeasured confounding, ignorability or unconfoundedness.</dd>
+      <dt>Why it matters</dt>
+      <dd>It is what confounder adjustment (Lecture 2.6) and DAGs (Lecture 4.2) are trying to secure. It fails when something that drove the treatment decision and affects the outcome is missing from \(L\), or is measured too crudely.</dd>
+      <dt>How to read it</dt>
+      <dd>Ask what the decision-maker knew at the moment of deciding. If clinicians used information that is not in your data, exchangeability is doubtful. You can probe it, not prove it: negative control outcomes, E-values (Lecture 2.13), and checking that your design reproduces a known trial result (Lecture 5.9).</dd>
+      <dt>What a change means</dt>
+      <dd>An estimate that moves a lot as you add each new confounder is a warning: the next unmeasured one might move it as much again. An estimate that is stable across sensible adjustment sets is reassuring, but still conditional on the DAG.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>“After weighting, every standardised mean difference is below 0.1, so confounding is solved.” Balance diagnostics check the <em>estimator</em> on the covariates you measured. They say nothing about the ones you did not. Exchangeability is argued from how treatment decisions are made.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Project 5A</div>
+      <p>Anticoagulation in the ICU is withheld from patients who are bleeding, frail, about to have surgery, or moving to comfort care. Severity scores and laboratory values are in MIMIC-IV; frailty and goals-of-care conversations are often recorded poorly or not at all in structured data. Those gaps are where exchangeability is weakest, so they are where the bias analysis in Project 5A should focus.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>No validation set can test exchangeability, because you never observe the counterfactual label. It is like assuming that no omitted feature drives both which rows got labelled and what their labels are. Cross-validated performance is blind to it.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="positivity">
+    <h2>6. Positivity: random and structural violations</h2>
+    <p class="point">Positivity means every kind of patient in the target population had some chance of each treatment; where that chance is zero, or close to it, the data say nothing and the model fills the gap by extrapolation.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>For every covariate pattern that occurs, the probability of each treatment is above zero. A <strong>structural</strong> violation means some people can never get a treatment: a contraindication, a rule, an eligibility criterion. A <strong>random</strong> (practical) violation means treatment was possible, but by chance nobody with that pattern got it in your sample, usually because strata are small or there are many covariates.</dd>
+      <dt>Why it matters</dt>
+      <dd>Inverse probability weights become huge or infinite. Outcome models extrapolate quietly into regions with no data. Standard errors do not show the problem, because they assume the model is right where there is no data to check it.</dd>
+      <dt>How to read it</dt>
+      <dd>Plot the propensity score (probability of treatment given covariates) by treatment group. Look at the share of people with scores near 0 or 1 (0.05 and 0.95 are common screening lines, not rules), the largest weights, and the effective sample size after weighting.</dd>
+      <dt>What a change means</dt>
+      <dd>As one covariate drives the decision more strongly, the groups separate and only a thin middle band of patients has look-alikes in the other group. The ATT needs untreated look-alikes for the treated; the ATU needs treated look-alikes for the untreated; the ATE needs both.</dd>
+    </dl>
+
+    <div class="widget" data-widget="positivity-explorer">
+      <div class="widget-title">How much overlap is there?</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Increase how strongly bleeding risk drives the decision and watch the two distributions pull apart. Then add contraindicated patients who are never anticoagulated: see which estimands lose support and which do not.</p>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Problem</th><th>Typical response</th><th>What it costs</th></tr></thead>
+        <tbody>
+          <tr><td>Structural: some patients can never be treated</td><td>Redefine the target population (exclude them, as a trial’s eligibility criteria would)</td><td>The answer applies to fewer people; say so</td></tr>
+          <tr><td>Random: sparse strata, many covariates</td><td>Coarsen covariates, simplify the treatment model, or get more data</td><td>Coarsening may leave residual confounding</td></tr>
+          <tr><td>Poor overlap in the tails</td><td>Target the ATT, use overlap weights, or trim extreme scores</td><td>The estimand changes to a population with equipoise</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Trimming silently changes the question. Crump and colleagues (2009) proposed dropping people with propensity scores outside about 0.1–0.9; overlap weights (Li, Morgan and Zaslavsky, 2018) smoothly down-weight the tails. Both are sensible, but they estimate the effect in people for whom either choice was realistic, not the ATE. Describe that population in the paper.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Contraindicated patients</div>
+      <p>In Project 5A, patients with active major bleeding or a recent intracranial haemorrhage essentially never start anticoagulation. Including them in an ATE asks the data what would happen if they were anticoagulated, and no patient like them was. The fix is design, not modelling: exclude them through the eligibility criteria of the target trial (Lecture 4.5). Note that they do not threaten the ATT, which only needs untreated look-alikes for the people who were treated.</p>
+    </div>
+
+    <pre><code>ps_fit &lt;- glm(anticoag ~ age + sofa + bleed_risk + platelets,
+              family = binomial, data = d)
+d$ps &lt;- predict(ps_fit, type = "response")
+tapply(d$ps, d$anticoag, summary)            # score range in each group
+mean(d$ps &lt; 0.05 | d$ps &gt; 0.95)              # share near 0 or 1
+library(ggplot2)
+ggplot(d, aes(ps, fill = factor(anticoag))) +
+  geom_histogram(bins = 40, alpha = 0.5, position = "identity")</code></pre>
+    <p>This fits a logistic propensity model, compares the score distributions of treated and untreated patients, and plots them on one axis. Look first at the tails: where one colour has bars and the other has none, positivity fails.</p>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>Positivity is overlap of support, the same issue as covariate shift. Importance weights (target density over source density) explode where the source has almost no mass, and no reweighting can create data in an empty region. A flexible outcome model predicting there is doing out-of-distribution prediction, with all the confidence and none of the evidence.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="argument">
+    <h2>7. Writing the identification argument</h2>
+    <p class="point">A reviewer judges a causal paper on whether each condition is stated, made plausible by design, and probed where it is weakest.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Condition</th><th>In plain words</th><th>How it usually fails</th><th>What to show</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Consistency</strong></td><td>The treatment is one well-defined thing</td><td>Many versions under one code; vague exposures</td><td>A precise treatment definition, with dose, timing and route</td></tr>
+          <tr><td><strong>No interference</strong></td><td>My treatment does not change your outcome</td><td>Infections, households, cross-border policy spillovers</td><td>A unit of analysis at which spillovers are small, or a spillover check</td></tr>
+          <tr><td><strong>Exchangeability</strong></td><td>No unmeasured common causes, given \(L\)</td><td>Decisions based on information not in the data</td><td>A DAG, the adjustment set, and a bias analysis</td></tr>
+          <tr><td><strong>Positivity</strong></td><td>Everyone could have got either treatment</td><td>Contraindications; sparse strata</td><td>Overlap plots, weight summaries, eligibility rules</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <dl class="facets">
+      <dt>Why it matters</dt>
+      <dd>Each later lecture swaps in different identifying assumptions: parallel trends in difference-in-differences (4.6), a valid instrument in IV (4.9), continuity at a threshold in regression discontinuity (4.9). The structure is always the same: name the estimand, state what makes it equal to an observed quantity, and say why that is believable here.</dd>
+      <dt>How to read it</dt>
+      <dd>Assumptions argued from the design (a randomised lottery, a sharp eligibility rule) are stronger than assumptions argued from a list of covariates. The weakest condition sets the credibility of the whole paper.</dd>
+    </dl>
+
+    <div class="callout key">
+      <div class="callout-title">Key</div>
+      <p>Identification is a property of the question, the data and the assumptions together. It is settled before estimation, and the estimator cannot repair it.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>A cohort paper uses “associated with” throughout, adjusts for 15 covariates chosen from the literature, and concludes that “clinicians should consider prescribing the drug”. What is wrong, and what would you ask the authors to add?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The recommendation is causal, so the analysis is causal whatever the wording. Adjusting for covariates only makes sense relative to a causal question, so ask for the estimand (population, intervention, comparison, outcome, horizon, scale), a DAG justifying the adjustment set, and a discussion of the conditions under which the adjusted estimate equals that estimand.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Clinicians give anticoagulation mostly to patients with the highest stroke risk. You estimate an ATT of −4 percentage points and an ATE of −2.5. A health system is considering a protocol to anticoagulate every eligible patient. Which number matters, and why do they differ?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The ATE answers “treat everyone eligible”; the ATU says what the newly treated would gain, which is the extra benefit of the protocol over current practice. They differ because benefit (on the difference scale) is larger in high-risk patients, and current practice treats those patients. The ATT overstates what the protocol would add.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A proposal aims to estimate “the effect of obesity on cardiovascular death in Saudi adults”. Which condition is the problem, and how would you reframe the question?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Consistency: obesity can be changed in many ways with different effects, so its “effect” is an average over unspecified versions. Reframe around an intervention you could describe, such as a defined weight-loss programme, bariatric surgery versus usual care, or a specific food policy, and estimate the effect of that.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>In your ICU data, patients with a platelet count below 30 are never anticoagulated. An analyst keeps them in and reports an ATE from a logistic outcome model. What has the model done for these patients, and what should you do instead?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>It has extrapolated: their outcome under anticoagulation comes entirely from the model’s functional form, fitted on other patients. That is a structural positivity violation. Exclude them from the target population (an eligibility criterion), report the estimand for the remaining population, or target the ATT, which does not need treated look-alikes for them.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Your propensity model has an AUC of 0.93, and after weighting all standardised mean differences are below 0.05. A colleague says the analysis is now unconfounded. Give two reasons for caution.</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>First, balance only covers measured covariates; exchangeability for unmeasured ones is untouched. Second, an AUC of 0.93 means treatment is very predictable from covariates, so overlap is probably poor: expect extreme weights, a small effective sample size, and estimates that lean on few patients. Check the score distributions and weight summaries before trusting the number.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Hernán &amp; Robins, <em>Causal Inference: What If</em> (Chapman &amp; Hall/CRC, free online), chapters 1–4: causal effects, randomised experiments, observational studies (exchangeability, positivity, consistency), effect modification.</li>
+      <li>Hernán, “The C-word: scientific euphemisms do not improve causal inference from observational data”, <em>American Journal of Public Health</em> (2018).</li>
+      <li>Lundberg, Johnson &amp; Stewart, “What is your estimand? Defining the target quantity connects statistical evidence to theory”, <em>American Sociological Review</em> (2021).</li>
+      <li>Hernán &amp; Taubman, “Does obesity shorten life? The importance of well-defined interventions to answer causal questions”, <em>International Journal of Obesity</em> (2008). VanderWeele &amp; Hernán, “Causal inference under multiple versions of treatment”, <em>Journal of Causal Inference</em> (2013).</li>
+      <li>Hudgens &amp; Halloran, “Toward causal inference with interference”, <em>Journal of the American Statistical Association</em> (2008).</li>
+      <li>Westreich &amp; Cole, “Invited commentary: positivity in practice”, <em>American Journal of Epidemiology</em> (2010). Petersen et al., “Diagnosing and responding to violations in the positivity assumption”, <em>Statistical Methods in Medical Research</em> (2012).</li>
+      <li>Crump, Hotz, Imbens &amp; Mitnik, “Dealing with limited overlap in estimation of average treatment effects”, <em>Biometrika</em> (2009). Li, Morgan &amp; Zaslavsky, “Balancing covariates via propensity score weighting”, <em>Journal of the American Statistical Association</em> (2018).</li>
+      <li>Cunningham, <em>Causal Inference: The Mixtape</em> (Yale University Press, free online), chapter 4: the potential outcomes causal model.</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="../block-3/3-09-time-series.html"><small>Previous</small>3.9 Time series for health data</a>
+    <a class="next" href="4-02-dags-adjustment-sets.html"><small>Next</small>4.2 DAGs and adjustment sets</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

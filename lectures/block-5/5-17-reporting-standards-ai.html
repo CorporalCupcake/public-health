@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>5.17 Reporting standards · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/5-17.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-5">Block 5</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 5.17</p>
+  <h1>Reporting standards: CONSORT-AI, SPIRIT-AI, DECIDE-AI, RECORD-PE</h1>
+  <div class="lecture-meta">
+    <span>Block 5 · Pharmacoepidemiology, real-world evidence, regulatory science and AI evaluation</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>Reporting guidelines list what a reader needs to judge a study. Each fits one stage of the evaluation pathway: model development, first clinical use, trial protocol, trial report, or observational study of routine data. Picking the right one is easy once you know the stage. The real value comes from using the checklist <strong>while designing</strong> the study, because most items that reviewers find missing are decisions nobody made, not sentences nobody wrote. Project 5A will be written to RECORD-PE and TARGET; Project 5B will use these checklists as its scoring frame.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#design">Checklists are design tools</a></li>
+      <li><a href="#map">Which guideline, when</a></li>
+      <li><a href="#items">The AI-specific items that matter most</a></li>
+      <li><a href="#status">What changed in 2024–2026</a></li>
+      <li><a href="#projects">Using them in Projects 5A and 5B</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="design">
+    <h2>1. Checklists are design tools</h2>
+    <p class="point">Open the checklist on the first day of planning, not the last day of writing: each item is a design question you must answer before you have data.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A reporting guideline is a consensus list of the minimum a paper must say for readers to judge its validity and reproduce it. It is not a quality score and does not make a weak design strong.</dd>
+      <dt>Why it matters</dt>
+      <dd>Journals require them, and reviewers check. More importantly, an item like “how were poor-quality inputs handled?” cannot be answered honestly after the trial if nobody decided it before.</dd>
+      <dt>How to read it</dt>
+      <dd>For each item, the honest answers are: done and reported, deliberately not done (say why), or not applicable. “Forgot” is the answer the checklist exists to prevent.</dd>
+    </dl>
+
+    <div class="callout example">
+      <div class="callout-title">Example · How AI trials actually report</div>
+      <p>Plana and colleagues reviewed 41 randomised trials of machine-learning interventions. None fully followed CONSORT-AI. The items most often missing were how poor-quality or unavailable input data were handled, analysis of performance errors, and whether the code or algorithm could be accessed. All three are decisions made at design time.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Treating a completed checklist as evidence of quality. A trial can tick every CONSORT-AI item and still be badly designed. The checklist makes the design visible; appraisal tools such as PROBAST+AI or the Cochrane risk-of-bias tool judge it.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>A pilot’s pre-flight checklist is read before take-off. Reading it after landing tells you what you forgot, too late to fix.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="map">
+    <h2>2. Which guideline, when</h2>
+    <p class="point">Match the guideline to the question the study answers and the stage it sits at; AI guidelines are extensions that sit on top of a base guideline, not replacements for it.</p>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · Reporting guidelines along the AI evaluation pathway</div>
+      <svg class="viz-svg" viewBox="0 0 640 330" role="img" aria-label="Four stages from left to right: development and validation, early clinical evaluation, comparative trial, observational real-world study. Under development: TRIPOD+AI, TRIPOD-LLM, STARD-AI and CLAIM. Under early clinical evaluation: DECIDE-AI. Under trials: SPIRIT-AI for protocols and CONSORT-AI for reports, used with SPIRIT and CONSORT 2025. Under observational studies: RECORD-PE and TARGET, built on STROBE and RECORD. Below development, PROBAST+AI is marked as an appraisal tool rather than a reporting guideline.">
+        <defs><marker id="l517-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead"/></marker></defs>
+        <g class="s1"><rect x="8" y="12" width="146" height="50" rx="8" class="node-fill"/></g>
+        <g class="s2"><rect x="166" y="12" width="146" height="50" rx="8" class="node-fill"/></g>
+        <g class="s4"><rect x="324" y="12" width="146" height="50" rx="8" class="node-fill"/></g>
+        <g class="s3"><rect x="482" y="12" width="146" height="50" rx="8" class="node-fill"/></g>
+        <line x1="155" y1="37" x2="165" y2="37" class="edge" marker-end="url(#l517-arrow)"/>
+        <line x1="313" y1="37" x2="323" y2="37" class="edge" marker-end="url(#l517-arrow)"/>
+        <line x1="471" y1="37" x2="481" y2="37" class="edge" marker-end="url(#l517-arrow)"/>
+        <g text-anchor="middle">
+          <text x="81" y="33" class="viz-bold">Development</text>
+          <text x="81" y="51" class="viz-small">and validation</text>
+          <text x="239" y="33" class="viz-bold">Early clinical</text>
+          <text x="239" y="51" class="viz-small">evaluation</text>
+          <text x="397" y="33" class="viz-bold">Comparative</text>
+          <text x="397" y="51" class="viz-small">trial</text>
+          <text x="555" y="33" class="viz-bold">Observational</text>
+          <text x="555" y="51" class="viz-small">routine data</text>
+          <text x="81" y="82" class="viz-small viz-muted">Is the model right?</text>
+          <text x="239" y="82" class="viz-small viz-muted">Does it work, safely, live?</text>
+          <text x="397" y="82" class="viz-small viz-muted">Does it improve outcomes?</text>
+          <text x="555" y="82" class="viz-small viz-muted">Effects in routine care?</text>
+        </g>
+
+        <g class="s5">
+          <rect x="16" y="96" width="130" height="30" rx="15" class="node"/>
+          <rect x="16" y="134" width="130" height="30" rx="15" class="node"/>
+          <rect x="16" y="172" width="130" height="30" rx="15" class="node"/>
+          <rect x="16" y="210" width="130" height="30" rx="15" class="node"/>
+          <rect x="174" y="96" width="130" height="30" rx="15" class="node"/>
+          <rect x="332" y="96" width="130" height="30" rx="15" class="node"/>
+          <rect x="332" y="134" width="130" height="30" rx="15" class="node"/>
+          <rect x="490" y="96" width="130" height="30" rx="15" class="node"/>
+          <rect x="490" y="134" width="130" height="30" rx="15" class="node"/>
+        </g>
+        <g text-anchor="middle">
+          <text x="81" y="115" class="viz-small viz-bold">TRIPOD+AI (2024)</text>
+          <text x="81" y="153" class="viz-small viz-bold">TRIPOD-LLM (2025)</text>
+          <text x="81" y="191" class="viz-small viz-bold">STARD-AI (2025)</text>
+          <text x="81" y="229" class="viz-small viz-bold">CLAIM (2024 update)</text>
+          <text x="239" y="115" class="viz-small viz-bold">DECIDE-AI (2022)</text>
+          <text x="239" y="146" class="viz-small viz-muted">first live use: users,</text>
+          <text x="239" y="162" class="viz-small viz-muted">workflow, safety</text>
+          <text x="397" y="115" class="viz-small viz-bold">SPIRIT-AI · protocol</text>
+          <text x="397" y="153" class="viz-small viz-bold">CONSORT-AI · report</text>
+          <text x="397" y="184" class="viz-small viz-muted">2020 extensions, used</text>
+          <text x="397" y="200" class="viz-small viz-muted">with SPIRIT/CONSORT 2025</text>
+          <text x="555" y="115" class="viz-small viz-bold">RECORD-PE (2018)</text>
+          <text x="555" y="153" class="viz-small viz-bold">TARGET (2025)</text>
+          <text x="555" y="184" class="viz-small viz-muted">built on STROBE</text>
+          <text x="555" y="200" class="viz-small viz-muted">and RECORD</text>
+        </g>
+
+        <line x1="8" y1="262" x2="628" y2="262" class="edge" stroke-dasharray="5 4"/>
+        <g class="s5"><rect x="16" y="278" width="130" height="30" rx="15" class="node" stroke-dasharray="4 3"/></g>
+        <text x="81" y="297" text-anchor="middle" class="viz-small viz-bold">PROBAST+AI (2025)</text>
+        <text x="162" y="290" class="viz-small viz-muted">Appraisal, not reporting: judges a prediction model’s risk of bias.</text>
+        <text x="162" y="306" class="viz-small viz-muted">Reporting guidelines say what to write; appraisal tools judge what was done.</text>
+      </svg>
+      <figcaption>Pick by stage first, then add specialised extensions: imaging (CLAIM), large language models (TRIPOD-LLM), cluster or stepped-wedge designs (the CONSORT cluster and stepped-wedge extensions, Lecture 5.15).</figcaption>
+    </figure>
+
+    <div class="widget" data-widget="guideline-chooser">
+      <div class="widget-title">Which guideline? A chooser</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Describe the study. The chooser names the guideline(s) to follow and the items most worth getting right at the design stage.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Using CONSORT-AI for a study that is not a trial. A prospective accuracy study of an AI-ECG is a diagnostic accuracy study (STARD-AI), and a first live deployment with 50 clinicians is an early clinical evaluation (DECIDE-AI). Using a trial guideline invites reviewers to judge the study as a failed trial.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="items">
+    <h2>3. The AI-specific items that matter most</h2>
+    <p class="point">Across the AI extensions, five items recur; they describe the tool as a reader would need to rebuild or deploy it.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Item</th><th>What to report</th><th>Why reviewers care</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Intended use</strong></td><td>Clinical problem, target users, setting, where in the pathway the output acts</td><td>Defines the population and comparator against which every result is judged</td></tr>
+          <tr><td><strong>Input data handling</strong></td><td>Inclusion criteria for inputs as well as patients; how poor-quality or missing inputs were detected and handled</td><td>A noisy ECG that the model silently scores is a hidden failure mode</td></tr>
+          <tr><td><strong>Human–AI interaction</strong></td><td>Who sees the output, in what form, with what training; how it feeds the decision; overrides</td><td>Impact runs through people (Lecture 5.15); this is the part of the intervention a reader most needs</td></tr>
+          <tr><td><strong>Error analysis</strong></td><td>How performance errors were identified and what they were, including in subgroups</td><td>Shows how the tool fails and who is harmed when it does</td></tr>
+          <tr><td><strong>Version and access</strong></td><td>Exact model version, any updates during the study, and whether code or the tool can be accessed</td><td>A result about “the model” is meaningless if the model changed mid-study (Lecture 5.16)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>These are model cards and datasheets made mandatory: intended use and out-of-scope use, data provenance, evaluation by subgroup, version. If you have written a model card, you have drafted half of the CONSORT-AI items.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reporting the algorithm in detail and the deployment not at all. Reviewers can rarely rerun your network, but they need to know whether clinicians saw a probability, a red flag or a sentence, and what they were expected to do with it.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="status">
+    <h2>4. What changed in 2024–2026</h2>
+    <p class="point">The base guidelines and several AI extensions were updated recently; as of late 2026, the AI trial extensions are still the 2020 versions.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Guideline</th><th>Status as of late 2026</th></tr></thead>
+        <tbody>
+          <tr><td><strong>CONSORT 2025, SPIRIT 2025</strong></td><td>Published together in April 2025, replacing CONSORT 2010 and SPIRIT 2013. Neither adds AI-specific items.</td></tr>
+          <tr><td><strong>CONSORT-AI, SPIRIT-AI</strong></td><td>Still the 2020 extensions (14 and 15 AI items), written against the older base statements. No updated version found; report the 2025 base items plus the AI items, and check EQUATOR for revisions.</td></tr>
+          <tr><td><strong>DECIDE-AI</strong></td><td>2022: 17 AI-specific items and 10 generic items for early-stage clinical evaluation of decision support.</td></tr>
+          <tr><td><strong>TRIPOD+AI</strong></td><td>2024: 27 items for prediction models built with regression or machine learning; replaces TRIPOD 2015. TRIPOD-LLM (January 2025) extends it to large language models.</td></tr>
+          <tr><td><strong>STARD-AI</strong></td><td>September 2025: 18 new or modified items added to STARD 2015 for AI diagnostic accuracy studies.</td></tr>
+          <tr><td><strong>CLAIM</strong></td><td>2024 update for AI in medical imaging: each item answered yes, no or not applicable; prefers “external testing” to “external validation”.</td></tr>
+          <tr><td><strong>RECORD-PE, TARGET</strong></td><td>RECORD-PE (2018): 15 items for pharmacoepidemiology on routinely collected data, used with RECORD and STROBE. TARGET (September 2025): 21 items for observational studies that emulate a target trial.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Citing CONSORT-AI as if it were built on CONSORT 2025. It was built on CONSORT 2010. Say plainly which base checklist you followed and that you added the CONSORT-AI items. Correspondence in <em>The Lancet</em> has pointed out that the 2025 statements are silent on AI, so editors will expect both.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="projects">
+    <h2>5. Using them in Projects 5A and 5B</h2>
+    <p class="point">For Project 5A the checklists shape the protocol; for Project 5B they become the measuring instrument.</p>
+
+    <dl class="facets">
+      <dt>Project 5A</dt>
+      <dd>Write the protocol to TARGET from day one: the target trial table (Lecture 4.5) is its core. Add the RECORD-PE items that bite hardest in MIMIC-IV: the source of drug exposure (orders versus administration records), a design diagram of lookback, time zero and follow-up, how AF onset was derived from the ECG and how that definition was validated, the linkage between MIMIC-IV-ECG and MIMIC-IV, a discussion of confounding by indication (and the quantitative bias analysis that addresses it), and access to code.</dd>
+      <dt>Project 5B</dt>
+      <dd>FDA decision summaries are not journal articles, so no checklist applies off the shelf. Start from the coding used by Wu and colleagues (2021) and extend it with the items that fit a device summary (intended use, study design rung, number of sites, prospective or not, subgroup results, human–AI interaction, version), pilot it on ten devices, use two independent extractors, and report agreement.</dd>
+      <dt>What a change means</dt>
+      <dd>In 5B, a device moving from “retrospective, one site, no subgroups” to “prospective, multi-site, subgroups reported” is a change in evidence and in reporting. Score the two separately, or you will mistake good writing for good evidence.</dd>
+    </dl>
+
+    <div class="callout gulf">
+      <div class="callout-title">In the Gulf</div>
+      <p>The same checklists apply to Gulf studies submitted to international journals, and the SFDA’s guidance on AI/ML-enabled devices (Lecture 5.14) asks manufacturers for clinical evidence and post-market monitoring that these items make visible. A Saudi AI-ECG study written to STARD-AI or DECIDE-AI from the start is easier to publish and easier for a regulator to read.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>In a reporting-quality review, scoring “not reported” as “not done”. A device summary that does not mention subgroup analyses may still have had them. Code what is reported, say so, and avoid claims about what manufacturers did.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>A team runs an AI-ECG silently on all ECGs in two hospitals for six months and compares its output with later echocardiograms. Which guideline fits?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>STARD-AI: it is a prospective diagnostic accuracy study. Nobody acted on the output, so it is not an early clinical evaluation (DECIDE-AI) or a trial (CONSORT-AI).</p></div>
+        </details>
+      </li>
+      <li>
+        <p>You are writing the protocol for a cluster randomised trial of an AI alert. Which checklists do you open?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>SPIRIT 2025 for the protocol, the SPIRIT-AI items for the AI intervention, and the cluster-trial items (ICC assumed, number of clusters, analysis accounting for clustering). Later, CONSORT 2025 with CONSORT-AI and the cluster extension for the report.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A trial report describes the network architecture in detail but never says what clinicians saw. Which item is missing, and why does it matter?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Human–AI interaction: the form of the output, who received it and how it fed the decision. The effect of an AI tool runs through clinicians, so without it the intervention cannot be understood, replicated or deployed.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Your Project 5A draft says “anticoagulant exposure was identified from prescriptions”. Which RECORD-PE item will a reviewer raise?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The item on the data source for drug exposure: was it prescribed, dispensed or administered? In MIMIC-IV, orders are not doses given; the administration records are closer to true exposure. State which you used and why.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Liu et al., “Reporting guidelines for clinical trial reports for interventions involving artificial intelligence: the CONSORT-AI extension”, <em>Nature Medicine</em>, <em>BMJ</em> and <em>The Lancet Digital Health</em> (2020).</li>
+      <li>Cruz Rivera et al., “Guidelines for clinical trial protocols for interventions involving artificial intelligence: the SPIRIT-AI extension”, <em>Nature Medicine</em>, <em>BMJ</em> and <em>The Lancet Digital Health</em> (2020).</li>
+      <li>Vasey et al., “Reporting guideline for the early-stage clinical evaluation of decision support systems driven by artificial intelligence: DECIDE-AI”, <em>Nature Medicine</em> and <em>BMJ</em> (2022).</li>
+      <li>Langan et al., “The reporting of studies conducted using observational routinely collected health data statement for pharmacoepidemiology (RECORD-PE)”, <em>BMJ</em> (2018).</li>
+      <li>Hopewell et al., “CONSORT 2025 statement: updated guideline for reporting randomised trials”, and Chan et al., “SPIRIT 2025 statement”, published simultaneously in several journals (2025).</li>
+      <li>Collins et al., “TRIPOD+AI statement”, <em>BMJ</em> (2024); Gallifant et al., “The TRIPOD-LLM reporting guideline for studies using large language models”, <em>Nature Medicine</em> (2025).</li>
+      <li>Sounderajah et al., “The STARD-AI reporting guideline for diagnostic accuracy studies using artificial intelligence”, <em>Nature Medicine</em> (2025).</li>
+      <li>Tejani et al., “Checklist for Artificial Intelligence in Medical Imaging (CLAIM): 2024 update”, <em>Radiology: Artificial Intelligence</em> (2024).</li>
+      <li>Cashin et al., “Transparent reporting of observational studies emulating a target trial: the TARGET statement”, <em>JAMA</em> and <em>BMJ</em> (2025).</li>
+      <li>Moons et al., “PROBAST+AI”, <em>BMJ</em> (2025).</li>
+      <li>Plana et al., “Randomized clinical trials of machine learning interventions in health care: a systematic review”, <em>JAMA Network Open</em> (2022).</li>
+      <li>EQUATOR Network library of reporting guidelines (equator-network.org): check for updates before submission.</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="5-16-post-deployment-monitoring.html"><small>Previous</small>5.16 Post-deployment monitoring</a>
+    <a class="next" href="../../index.html#block-6"><small>Next</small>Block 6 · Health protection</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

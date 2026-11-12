@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>5.9 Target trial emulation for regulators · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/5-09.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-5">Block 5</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 5.9</p>
+  <h1>Target trial emulation for regulatory decisions; benchmarking against trials</h1>
+  <div class="lecture-meta">
+    <span>Block 5 · Pharmacoepidemiology, real-world evidence, regulatory science and AI evaluation</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>Lecture 4.5 taught you how to write and emulate a target trial protocol. This lecture asks what it takes for a regulator to <em>believe</em> one. Regulators now name target trial emulation in their guidance, but the name buys nothing on its own: they judge the data source, the pre-specified protocol and the evidence that the method gets known answers right. Benchmarking projects such as RCT-DUPLICATE show that well-designed emulations often reproduce trial results, and that most failures come from questions that could not be emulated closely, not from bad statistics. For Project 5A there is no trial to benchmark against, so negative and positive controls have to do that job.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#regulators">How regulators view target trial emulation</a></li>
+      <li><a href="#benchmarking">Benchmarking against trials: RCT-DUPLICATE</a></li>
+      <li><a href="#divergence">What makes emulations diverge</a></li>
+      <li><a href="#agree">When an emulation should and should not agree</a></li>
+      <li><a href="#controls">Negative controls, calibration and pre-registration</a></li>
+      <li><a href="#project">Project 5A in regulatory-grade form</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="regulators">
+    <h2>1. How regulators view target trial emulation</h2>
+    <p class="point">Regulators accept real-world evidence case by case, and they judge it on three things: whether the data are fit for the question, whether the design was fixed before the results were seen, and whether the analysis can be reproduced.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A set of guidances, mostly from 2023 to 2026, that move real-world evidence from “supportive at best” to “acceptable when fit for purpose”. Several now name target trial emulation explicitly as the design framework for causal questions from routine data.</dd>
+      <dt>Why it matters</dt>
+      <dd>The same emulation can be published in a journal and still fail as regulatory evidence, because the bar is not “plausible” but “decision-grade”. Knowing what reviewers ask lets you build the study to answer it.</dd>
+      <dt>How to read it</dt>
+      <dd>Look for three recurring demands: early engagement with the agency, a protocol and analysis plan submitted <em>before</em> the analysis, and the agency’s ability to access or re-run the data.</dd>
+    </dl>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Body</th><th>Key document (as of late 2026)</th><th>What it adds</th></tr></thead>
+        <tbody>
+          <tr><td><strong>US FDA</strong></td><td>RWE Framework (2018); final guidances on regulatory use of RWD/RWE (August 2023) and on EHR and claims data (July 2024)</td><td>Justify why this data source; submit protocol and analysis plan before the study; FDA must be able to access patient-level data</td></tr>
+          <tr><td><strong>EMA</strong></td><td>Reflection paper on real-world data in non-interventional studies (2025); HMA-EMA catalogues of data sources and studies (2024)</td><td>Recommends target trial emulation for causal objectives; register studies in the public catalogue</td></tr>
+          <tr><td><strong>ICH</strong></td><td>M14, pharmacoepidemiological studies using RWD for safety assessment (Step 4, September 2025)</td><td>A shared international standard for planning, design and analysis, adopted by the FDA in March 2026</td></tr>
+          <tr><td><strong>SFDA</strong></td><td>Framework on RWD/RWE, version 1.0 (issued April 2026, in force July 2026)</td><td>Names target trial emulation and estimands; data must be fit for purpose, relevant, complete, coherent and timely</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>“We used target trial emulation, so this is regulatory grade.” TTE is a way to <em>state</em> the question and avoid self-inflicted biases such as immortal time (Lecture 5.3). It does nothing about unmeasured confounding, misclassified outcomes or a data source that cannot see the outcome. Reviewers read the protocol table to find the differences from the ideal trial, not to admire the format.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">In the Gulf</div>
+      <p>The SFDA’s RWD/RWE framework (version 1.0, effective 20 July 2026) explicitly lists target trial emulation as a design for causal questions and asks for a well-defined estimand, which links directly to ICH E9(R1) in Lecture 5.8. For a Saudi sponsor, that means a 5A-style protocol table and pre-specified analysis plan are expected, not optional extras. National data sources and common data models (Lecture 5.6) will decide which questions are feasible locally.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="benchmarking">
+    <h2>2. Benchmarking against trials: RCT-DUPLICATE</h2>
+    <p class="point">The most direct test of a method is to aim it at questions whose answers are known from randomised trials, before the trial results are seen, and count how often it agrees.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>RCT-DUPLICATE (Wang, Schneeweiss and colleagues, <em>JAMA</em> 2023) emulated 32 cardiovascular, diabetes and other drug trials in US claims databases (Optum, MarketScan, Medicare), each with a protocol registered before the analysis. Two trials were still running when the emulation was done, so their results were genuinely unknown.</dd>
+      <dt>Why it matters</dt>
+      <dd>It turned a debate (“can observational data replace trials?”) into numbers, and showed that the answer depends mainly on how closely the trial design can be emulated.</dd>
+      <dt>How to read it</dt>
+      <dd>Agreement was measured three ways: <strong>significance agreement</strong> (same conclusion about the null), <strong>estimate agreement</strong> (the real-world point estimate inside the trial’s 95% CI) and <strong>standardised difference agreement</strong> (the gap between estimates is within chance). Across all 32: correlation 0.82, significance agreement 75%, estimate agreement 66%, standardised difference agreement 75%.</dd>
+      <dt>What a change means</dt>
+      <dd>In the 16 trials judged, after the fact, to be closely emulable, correlation rose to 0.93 and agreement to 94%, 88% and 88%. In the 16 less closely emulated it fell to 0.53, with 56%, 50% and 69%. Both ongoing trials (CAROLINA and PRONOUNCE) were closely emulated and agreed on all three measures.</dd>
+    </dl>
+
+    <div class="widget" data-widget="benchmark-agreement">
+      <div class="widget-title">How often does an emulation “agree” with its trial?</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">24 made-up trial–emulation pairs in the style of RCT-DUPLICATE. Switch the agreement metric and the subset, then shrink the emulation differences to zero and see how much disagreement is left from chance alone.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reading 66% estimate agreement as “observational studies are wrong a third of the time”. A trial’s 95% CI misses a second, independent estimate of the same quantity quite often by chance alone, especially when the trial is small. Agreement metrics have ceilings well below 100%, which the widget shows when emulation differences are set to zero.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>Benchmarking is held-out validation for a causal pipeline: the trial result plays the role of the label. As in ML, the test is only honest if the protocol (the “model”) is frozen before the labels are seen. That is why RCT-DUPLICATE registered every emulation in advance.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="divergence">
+    <h2>3. What makes emulations diverge</h2>
+    <p class="point">Most disagreements trace to features of the trial that routine data cannot copy, so the gap is often a different question, not a wrong answer.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>RCT-DUPLICATE listed the <strong>emulation differences</strong> for each trial. The top three: a placebo comparator replaced by an active drug thought unrelated to the outcome (there is no “placebo” in claims data); trial features such as run-in periods, loading doses or titration that practice does not reproduce; and outcomes measured differently (adjudicated in the trial, coded in claims).</dd>
+      <dt>Why it matters</dt>
+      <dd>Each difference changes the estimand. A run-in period removes early non-adherers and early adverse events before randomisation; a claims cohort keeps them. Trials of stopping maintenance therapy at randomisation have no clean real-world equivalent.</dd>
+      <dt>How to read it</dt>
+      <dd>For every row of your protocol table (Lecture 4.5), write the ideal trial element, your emulation of it and the direction of bias the difference could cause. Reviewers look for that column.</dd>
+      <dt>What a change means</dt>
+      <dd>Time-varying effects are a quiet source of divergence: in some trials the benefit appears after two or three years, while patients in routine data stay on the drug for months. An emulation can be correct and still show no effect because follow-up never reaches the window where the effect lives.</dd>
+    </dl>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Why a cardiovascular outcome trial is hard to copy</div>
+      <p>Many diabetes outcome trials compared a new drug with placebo on top of usual care. A claims emulation must compare it with another active drug (for example a DPP-4 inhibitor, assumed neutral for heart outcomes). If the comparator has its own small effect, the emulation estimates a different contrast. RCT-DUPLICATE flagged this substitution in 10 of its 32 trials.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Tuning the emulation after seeing that it disagrees with the trial (changing the comparator, the grace period, the outcome definition) until it agrees. That turns benchmarking into curve-fitting, and the “validated” pipeline then fails on the next question where no trial exists.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="agree">
+    <h2>4. When an emulation should and should not agree</h2>
+    <p class="point">Disagreement has three sources: a different question, bias, and chance. Only bias is a failure of the method.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A decomposition to keep in mind whenever you compare an emulation with a trial: the gap between the two estimates is the sum of the difference in what they estimate (population, comparator, follow-up, estimand), the bias in the observational estimate, and sampling error in both.</dd>
+      <dt>Why it matters</dt>
+      <dd>An emulation in older, frailer patients from routine care <em>should</em> sometimes differ from a trial in selected volunteers; that difference is often the reason to do it. Agreement on a mismatched question can even hide two errors cancelling.</dd>
+      <dt>How to read it</dt>
+      <dd>Benchmark first on a question you can emulate closely, in the same data, with the same pipeline. If it agrees there, a later divergence on a new question is more credibly a real difference in population or practice.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · Why an emulation and its trial give different answers</div>
+      <svg class="viz-svg" viewBox="0 0 640 262" role="img" aria-label="The gap between an emulation estimate and the trial estimate splits into three parts. Different question: population, comparator, follow-up and estimand; this is expected and should be explained. Bias: confounding, misclassification and time-related biases; this is a failure and should be reduced or quantified. Chance: sampling error in both studies; this is expected and should be judged with standardised differences.">
+        <defs>
+          <marker id="l59-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" class="arrowhead"/>
+          </marker>
+        </defs>
+        <g class="s5"><rect x="200" y="10" width="240" height="46" rx="8" class="node"/></g>
+        <text x="320" y="31" text-anchor="middle" class="viz-small viz-bold">Emulation estimate − trial estimate</text>
+        <text x="320" y="47" text-anchor="middle" class="viz-small viz-muted">the observed gap</text>
+
+        <path d="M260,56 C200,80 130,80 110,98" class="edge" marker-end="url(#l59-arrow)"/>
+        <line x1="320" y1="56" x2="320" y2="96" class="edge" marker-end="url(#l59-arrow)"/>
+        <path d="M380,56 C440,80 510,80 530,98" class="edge" marker-end="url(#l59-arrow)"/>
+
+        <g class="s4"><rect x="10" y="100" width="200" height="72" rx="8" class="node-fill"/></g>
+        <text x="110" y="124" text-anchor="middle" class="viz-small viz-bold">Different question</text>
+        <text x="110" y="142" text-anchor="middle" class="viz-small">population, comparator,</text>
+        <text x="110" y="158" text-anchor="middle" class="viz-small">follow-up, estimand</text>
+
+        <g class="s3"><rect x="220" y="100" width="200" height="72" rx="8" class="node-fill"/></g>
+        <text x="320" y="124" text-anchor="middle" class="viz-small viz-bold">Bias</text>
+        <text x="320" y="142" text-anchor="middle" class="viz-small">confounding, misclassified</text>
+        <text x="320" y="158" text-anchor="middle" class="viz-small">outcomes, time-related bias</text>
+
+        <g class="s5"><rect x="430" y="100" width="200" height="72" rx="8" class="node-fill"/></g>
+        <text x="530" y="124" text-anchor="middle" class="viz-small viz-bold">Chance</text>
+        <text x="530" y="142" text-anchor="middle" class="viz-small">sampling error in both</text>
+        <text x="530" y="158" text-anchor="middle" class="viz-small">studies</text>
+
+        <text x="110" y="200" text-anchor="middle" class="viz-small viz-bold colour s4">Expected</text>
+        <text x="110" y="218" text-anchor="middle" class="viz-small viz-muted">list it in the protocol</text>
+        <text x="110" y="234" text-anchor="middle" class="viz-small viz-muted">table and explain it</text>
+        <text x="320" y="200" text-anchor="middle" class="viz-small viz-bold colour s3">A failure</text>
+        <text x="320" y="218" text-anchor="middle" class="viz-small viz-muted">reduce by design; quantify</text>
+        <text x="320" y="234" text-anchor="middle" class="viz-small viz-muted">with controls and QBA</text>
+        <text x="530" y="200" text-anchor="middle" class="viz-small viz-bold">Expected</text>
+        <text x="530" y="218" text-anchor="middle" class="viz-small viz-muted">judge with the</text>
+        <text x="530" y="234" text-anchor="middle" class="viz-small viz-muted">standardised difference</text>
+      </svg>
+      <figcaption>Benchmarking can only tell you about the middle box if the left box has been made small (a closely emulated question) and the right box is judged honestly.</figcaption>
+    </figure>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Treating the trial as truth for your population. The trial is the truth for <em>its</em> estimand in <em>its</em> population. When the emulation deliberately targets a different population, disagreement is a finding to explain, not an error to fix.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Calibrating a kitchen scale with a known 1 kg weight. If it reads 1 kg, you trust it with flour. If you weigh a different 1 kg bag and it reads 1.1, the scale might be off, or the bag might not be 1 kg. Benchmarking needs the known weight to be really the same thing.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="controls">
+    <h2>5. Negative controls, calibration and pre-registration</h2>
+    <p class="point">When there is no trial to compare with, use questions whose answer you already know: outcomes the drug cannot affect should show no effect, and the spread of those null results measures your study’s systematic error.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A <strong>negative control outcome</strong> shares the confounding structure of the real outcome but cannot plausibly be caused by the treatment (Lipsitch and colleagues, 2010). A <strong>positive control</strong> is an effect known to exist. <strong>Empirical calibration</strong> (Schuemie and colleagues, 2014) fits the distribution of estimates across many negative controls and widens the p-value and confidence interval of the main result to account for that systematic error.</dd>
+      <dt>Why it matters</dt>
+      <dd>In observational data, standard 95% CIs cover only random error. If negative controls show hazard ratios of 1.3 on average, your main estimate probably carries similar bias.</dd>
+      <dt>How to read it</dt>
+      <dd>Negative controls centred near 1 with little spread are reassuring. A shifted or wide null distribution is a warning that confounding or measurement problems remain. A positive control that fails to appear suggests the design cannot detect real effects.</dd>
+    </dl>
+
+    <pre><code>library(EmpiricalCalibration)
+nc &lt;- read.csv("negative_controls.csv")   # one row per negative control: logRr, seLogRr
+null &lt;- fitNull(logRr = nc$logRr, seLogRr = nc$seLogRr)
+null                                         # mean and SD of the systematic error
+calibrateP(null, logRr = log(0.85), seLogRr = 0.08)   # calibrated p for the main estimate
+plotCalibrationEffect(nc$logRr, nc$seLogRr, log(0.85), 0.08, null)</code></pre>
+    <p>Run the same pipeline on each negative control outcome, save its log hazard ratio and standard error, and <code>fitNull</code> estimates how far and how widely those estimates scatter from the null. <code>calibrateP</code> then gives a p-value for the main result that allows for that scatter; the plot shows the main estimate against the cloud of negative controls.</p>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Choosing a negative control that is detected differently between arms. In the AF example, a catheter-associated urinary infection looks like a neutral outcome, but anticoagulation causes haematuria, haematuria prompts urine tests, and more testing finds more infections. The control then shows an “effect” that is really detection bias.</p>
+    </div>
+
+    <dl class="facets">
+      <dt>Pre-registration</dt>
+      <dd>Register the protocol and analysis plan before touching outcome data: ClinicalTrials.gov (used by RCT-DUPLICATE), the HMA-EMA RWD catalogue (which replaced the EU PAS Register in 2024) or OSF. Use the <strong>HARPER</strong> protocol template (ISPE/ISPOR, 2022) to structure it.</dd>
+      <dt>Reporting</dt>
+      <dd>Report with <strong>TARGET</strong> (Transparent Reporting of Observational Studies Emulating a Target Trial, 2025): 21 items, including the target trial protocol and how each of its elements was emulated in the data.</dd>
+    </dl>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="project">
+    <h2>6. Project 5A in regulatory-grade form</h2>
+    <p class="point">No randomised trial has tested anticoagulation for new-onset AF in critically ill patients, so 5A cannot be benchmarked directly; it earns credibility through a frozen protocol, honest emulation differences, controls and bias analysis.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The same 5A question from Lecture 4.5, packaged as a regulator would want to read it: protocol table with an extra column for emulation differences and their likely direction of bias, pre-registration, a positive control (anticoagulation should increase major bleeding), negative control outcomes, and quantitative bias analysis for unmeasured confounding (Lecture 2.13).</dd>
+      <dt>Why it matters</dt>
+      <dd>Where trials are unlikely (the patients are too sick, the window too short), well-built emulations are the best available evidence. That is exactly the setting where regulators and guideline panels need to know how far to trust them.</dd>
+      <dt>How to read it</dt>
+      <dd>Work down the protocol elements and mark which ones MIMIC-IV can emulate closely and which carry high risk. The high-risk rows set your sensitivity analyses.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · Where the 5A emulation is closest to, and furthest from, its target trial</div>
+      <svg class="viz-svg" viewBox="0 0 640 344" role="img" aria-label="Six protocol elements with how MIMIC-IV emulates each and a risk rating. Eligibility via ECG-defined new-onset AF and prior history: medium risk. Treatment strategies via heparin and anticoagulant orders: medium risk. Time zero at the first AF ECG with a grace period: high risk if misaligned. Confounders such as severity scores and platelets: lower risk. Outcomes in hospital, stroke under-ascertained: high risk. Follow-up to discharge, with death available after discharge: medium risk.">
+        <text x="10" y="18" class="viz-small viz-bold viz-muted">Protocol element</text>
+        <text x="190" y="18" class="viz-small viz-bold viz-muted">How MIMIC-IV emulates it</text>
+        <text x="630" y="18" text-anchor="end" class="viz-small viz-bold viz-muted">Risk</text>
+        <line x1="10" y1="28" x2="630" y2="28" class="viz-grid"/>
+
+        <g class="s2"><rect x="10" y="38" width="160" height="40" rx="8" class="node-fill"/><circle cx="614" cy="58" r="9" class="dot"/></g>
+        <text x="90" y="62" text-anchor="middle" class="viz-small viz-bold">Eligibility</text>
+        <text x="190" y="54" class="viz-small">New-onset AF from ICU ECGs (Lecture 5.7), no AF in</text>
+        <text x="190" y="70" class="viz-small">earlier admissions; earlier care outside the system unseen</text>
+
+        <g class="s2"><rect x="10" y="90" width="160" height="40" rx="8" class="node-fill"/><circle cx="614" cy="110" r="9" class="dot"/></g>
+        <text x="90" y="114" text-anchor="middle" class="viz-small viz-bold">Treatment strategies</text>
+        <text x="190" y="106" class="viz-small">Therapeutic anticoagulation within a grace period vs none,</text>
+        <text x="190" y="122" class="viz-small">from infusions and orders; prophylactic doses must be split off</text>
+
+        <g class="s3"><rect x="10" y="142" width="160" height="40" rx="8" class="node-fill"/><circle cx="614" cy="162" r="9" class="dot"/></g>
+        <text x="90" y="166" text-anchor="middle" class="viz-small viz-bold">Time zero</text>
+        <text x="190" y="158" class="viz-small">First AF on ECG; clone–censor–weight over the grace</text>
+        <text x="190" y="174" class="viz-small">period (Lecture 4.5); late or early dating creates bias</text>
+
+        <g class="s1"><rect x="10" y="194" width="160" height="40" rx="8" class="node-fill"/><circle cx="614" cy="214" r="9" class="dot"/></g>
+        <text x="90" y="218" text-anchor="middle" class="viz-small viz-bold">Confounders</text>
+        <text x="190" y="210" class="viz-small">Severity, platelets, renal function, vasopressors charted</text>
+        <text x="190" y="226" class="viz-small">hourly; clinician judgement of bleeding risk is not</text>
+
+        <g class="s3"><rect x="10" y="246" width="160" height="40" rx="8" class="node-fill"/><circle cx="614" cy="266" r="9" class="dot"/></g>
+        <text x="90" y="270" text-anchor="middle" class="viz-small viz-bold">Outcomes</text>
+        <text x="190" y="262" class="viz-small">Stroke, major bleeding, death in hospital; strokes in</text>
+        <text x="190" y="278" class="viz-small">sedated patients are missed unless someone images them</text>
+
+        <g class="s2"><rect x="10" y="298" width="160" height="40" rx="8" class="node-fill"/><circle cx="614" cy="318" r="9" class="dot"/></g>
+        <text x="90" y="322" text-anchor="middle" class="viz-small viz-bold">Follow-up</text>
+        <text x="190" y="314" class="viz-small">Ends at discharge for stroke and bleeding; only death</text>
+        <text x="190" y="330" class="viz-small">is available after discharge</text>
+      </svg>
+      <figcaption>Red: high risk, amber: medium, teal: lower. Each red or amber row should have a named sensitivity analysis or bias analysis in the protocol.</figcaption>
+    </figure>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>A reviewer will ask</th><th>Your 5A answer should show</th></tr></thead>
+        <tbody>
+          <tr><td>Why this data source?</td><td>Fitness for purpose (Lecture 5.7): timed ECGs date onset; ICU charting captures severity and doses</td></tr>
+          <tr><td>Was anything decided after seeing outcomes?</td><td>Registered protocol and analysis plan (HARPER), with dated amendments</td></tr>
+          <tr><td>Does the design find known effects?</td><td>Positive control: more major bleeding on anticoagulation; negative controls near the null</td></tr>
+          <tr><td>How strong would hidden confounding need to be?</td><td>E-value and bias analysis for unmeasured frailty (Lecture 2.13)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Claiming that 5A “emulates a trial” as if a trial result existed to be reproduced. Say instead that it emulates a <em>hypothetical</em> target trial, list how the emulation differs from it, and be explicit that agreement with nothing is not validation.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>Negative controls are the epidemiological version of a label-permutation sanity check: run the full pipeline where the right answer is “nothing”, and see how often it reports something. A pipeline that finds signal in shuffled labels, or in outcomes the drug cannot touch, is leaking.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>An emulation of a placebo-controlled trial uses a different active drug as comparator and finds a hazard ratio of 0.95, while the trial found 0.80. Before calling the emulation wrong, what would you check?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Whether the comparator has its own effect on the outcome (which shrinks the contrast), whether follow-up in routine data reaches the period where the trial’s effect appeared, whether outcomes were defined the same way, and the standardised difference, given both confidence intervals. Only after those does residual confounding become the main suspect.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A team reports that their emulation reproduced a trial after they changed the grace period and the outcome definition. How convincing is that as validation of their pipeline?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Weak. Changes made after seeing the disagreement fit the pipeline to one answer. Validation requires a protocol frozen and registered before results, as in RCT-DUPLICATE. The post hoc version is a hypothesis to test on a new benchmark.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>In 5A, ten negative control outcomes give hazard ratios centred around 1.25. What does that tell you, and what do you do?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Systematic error pushes estimates upwards, probably because treated patients differ in ways the model does not capture or are monitored more closely. Investigate the design (time zero, confounders, detection), then report results calibrated against the negative-control distribution alongside the uncalibrated ones.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Why do both RCT-DUPLICATE trials that were still running at the time count for more than the 30 completed ones?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Because nobody knew the answer when the emulation was designed, so it could not have been tuned to agree, even unconsciously. They are the closest thing to a true prospective test.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A regulator asks why your 5A positive control matters if bleeding is not the question of interest.</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>It shows the design can detect an effect that is known to exist, with the same time zero, exposure definition and outcome capture. If anticoagulation did not appear to raise bleeding, something in the pipeline (exposure misclassification, misaligned time zero, poor outcome capture) would be hiding effects, including the one you care about.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Hernán &amp; Robins, <em>Causal Inference: What If</em> (Chapman &amp; Hall/CRC); Hernán &amp; Robins, “Using big data to emulate a target trial when a randomized trial is not available”, <em>American Journal of Epidemiology</em> (2016).</li>
+      <li>Wang, Schneeweiss et al., “Emulation of randomized clinical trials with nonrandomized database analyses: results of 32 clinical trials”, <em>JAMA</em> (2023); Franklin et al., “Emulating randomized clinical trials with nonrandomized real-world evidence studies: first results from the RCT DUPLICATE initiative”, <em>Circulation</em> (2021).</li>
+      <li>US FDA, <em>Framework for FDA’s Real-World Evidence Program</em> (2018); <em>Considerations for the Use of Real-World Data and Real-World Evidence to Support Regulatory Decision-Making for Drug and Biological Products</em> (2023); <em>Real-World Data: Assessing Electronic Health Records and Medical Claims Data</em> (2024).</li>
+      <li>EMA, <em>Reflection paper on use of real-world data in non-interventional studies to generate real-world evidence</em> (2025); HMA-EMA Catalogues of real-world data sources and studies.</li>
+      <li>ICH M14, <em>General principles on plan, design and analysis of pharmacoepidemiological studies that utilize real-world data for safety assessment of medicines</em> (2025).</li>
+      <li>Saudi Food and Drug Authority, <em>Framework on Real-World Data and Real-World Evidence</em>, version 1.0 (2026).</li>
+      <li>Cashin et al., TARGET guideline for reporting target trial emulations, <em>BMJ</em> and <em>JAMA</em> (2025); Wang et al., HARPER protocol template, <em>Value in Health</em> (2022).</li>
+      <li>Lipsitch, Tchetgen Tchetgen &amp; Cohen, “Negative controls: a tool for detecting confounding and bias in observational studies”, <em>Epidemiology</em> (2010); Schuemie et al., “Interpreting observational studies: why empirical calibration is needed”, <em>Statistics in Medicine</em> (2014).</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="5-08-clinical-trial-statistics.html"><small>Previous</small>5.8 Statistics of clinical trials</a>
+    <a class="next" href="5-10-external-synthetic-control-arms.html"><small>Next</small>5.10 External and synthetic control arms</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

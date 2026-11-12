@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>4.10 Mediation analysis · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/4-10.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-4">Block 4</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 4.10</p>
+  <h1>Mediation analysis</h1>
+  <div class="lecture-meta">
+    <span>Block 4 · Causal inference and policy evaluation</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>Mediation analysis asks how much of an effect runs <em>through</em> a particular intermediate: how much of salt’s effect on cardiovascular disease runs through blood pressure. The old recipe, “adjust for the mediator and see how much the coefficient drops”, is wrong whenever there is an interaction, a non-linear model, or a confounder of the mediator and outcome, which in epidemiology is nearly always. Modern definitions are precise but rest on strong, partly untestable assumptions. Your aim here is to read these papers critically and to know when the question is not worth asking.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#effects">Total, controlled direct, natural direct and indirect effects</a></li>
+      <li><a href="#difference">Why the difference method fails</a></li>
+      <li><a href="#crossworld">Mediator–outcome confounding and the cross-world assumption</a></li>
+      <li><a href="#alternatives">Interventional effects and sensitivity analysis</a></li>
+      <li><a href="#whennot">When to just not do it</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="effects">
+    <h2>1. Total, controlled direct, natural direct and indirect effects</h2>
+    <p class="point">Each mediation effect is a different hypothetical intervention on both the exposure and the mediator; they answer different questions and need different assumptions.</p>
+
+    \[ \text{NDE} = E[Y(1, M(0))] - E[Y(0, M(0))] \qquad \text{NIE} = E[Y(1, M(1))] - E[Y(1, M(0))] \]
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The <strong>total effect</strong> compares outcomes with and without the exposure. The <strong>controlled direct effect</strong> (CDE) compares them with the mediator fixed at one value for everyone (“everyone’s systolic BP held at 120”). The <strong>natural direct effect</strong> (NDE) changes the exposure but holds each person’s mediator at the level it <em>would have had</em> without exposure. The <strong>natural indirect effect</strong> (NIE) keeps the exposure on and shifts the mediator from its unexposed to its exposed level. NDE + NIE = total effect.</dd>
+      <dt>Why it matters</dt>
+      <dd>The CDE answers a policy question (“if we controlled BP with drugs, would cutting salt still help?”). The natural effects answer an explanatory one (“how much of salt’s harm is through BP?”). Papers often report the second while their readers want the first.</dd>
+      <dt>How to read it</dt>
+      <dd>“Proportion mediated” = NIE ÷ total effect. It is unstable when the total effect is small, can exceed 100% or go negative when direct and indirect effects pull in opposite directions, and on ratio scales depends on the scale. Always look at the two effects themselves.</dd>
+      <dt>What a change means</dt>
+      <dd>A proportion mediated of 60% means that, if the assumptions hold, removing the exposure’s effect on the mediator alone would remove 60% of the total effect. It does not mean that a drug lowering the mediator would prevent 60% of cases; that is a CDE question with its own assumptions.</dd>
+    </dl>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Salt, blood pressure and CVD (Lecture 1.9)</div>
+      <p>Project 1 assumes that salt harms the heart through blood pressure, and models the chain salt → BP → CVD. That is an assumption that the NIE is essentially the whole total effect. Lecture 1.9’s direct-outcome evidence, and the possibility of BP-independent effects (on the arterial wall, the heart muscle, the kidney), are claims about the NDE. A mediation analysis is the formal way to ask whether the BP pathway is the whole story.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>A river with two channels to the sea. The total effect is all the water that arrives. The indirect effect is what flows through the canal (the mediator); the direct effect is what flows down the old riverbed. The controlled direct effect asks how much would arrive if you set the canal gates to a fixed opening for everyone.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="difference">
+    <h2>2. Why the difference method fails</h2>
+    <p class="point">Subtracting the mediator-adjusted coefficient from the unadjusted one (“c − c′”, Baron and Kenny) gives the indirect effect only in linear models with no interaction and no mediator–outcome confounding.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The <strong>difference method</strong>: regress the outcome on exposure (coefficient c), then on exposure plus mediator (c′), and call c′ the direct effect and c − c′ the indirect one. The <strong>product method</strong> multiplies the exposure → mediator coefficient by the mediator → outcome coefficient. In the textbook linear case they agree.</dd>
+      <dt>Why it matters</dt>
+      <dd>It fails in three common situations. <strong>Interaction</strong>: if the mediator’s effect differs by exposure, there is no single direct effect for c′ to estimate. <strong>Non-linear models</strong>: odds ratios and hazard ratios are non-collapsible, so c′ differs from c when you add <em>any</em> predictor of the outcome, even one that mediates nothing. <strong>Mediator–outcome confounding</strong>: the mediator is a collider on the path exposure → mediator ← confounder → outcome, so adjusting for it biases c′ (Lecture 2.7).</dd>
+      <dt>How to read it</dt>
+      <dd>If a paper reports “the association was attenuated by 40% after adjustment for BMI, suggesting BMI mediates 40%”, it has used the difference method. Ask whether the model was logistic or Cox, whether an exposure × mediator interaction was checked, and what confounds BMI and the outcome.</dd>
+      <dt>What a change means</dt>
+      <dd>An odds ratio that falls from 1.8 to 1.5 after adding a mediator does not imply that a fixed share of the effect is mediated; part of the change is non-collapsibility. Use regression-based natural effects (VanderWeele) or weighting/simulation methods instead, which handle interactions and non-linear models.</dd>
+    </dl>
+
+    <div class="widget" data-widget="mediation-decomp">
+      <div class="widget-title">Split the effect of salt</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Salt is randomised here, as in a feeding trial, so the total effect is always right. Start with “Textbook case”: the difference method matches the truth. Then add an interaction, then a hidden confounder of BP and CVD, and watch the naive split drift while the total stays put.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>“The exposure was randomised, so the mediation analysis is unconfounded.” Randomisation protects the exposure → mediator and exposure → outcome links. It does nothing for the mediator → outcome link: people with higher BP differ in many ways besides salt. The hidden-confounder preset shows a randomised exposure with a badly biased split.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>The drop in a coefficient after adding a feature is the regression analogue of feature attribution, and it has the same limits: SHAP values or ablations split a <em>model’s</em> prediction among inputs, not causal pathways. Two correlated features share attribution arbitrarily; a mediator and a collider can look identical. Pathway questions need the causal structure, not the fitted model.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="crossworld">
+    <h2>3. Mediator–outcome confounding and the cross-world assumption</h2>
+    <p class="point">Natural effects need no unmeasured mediator–outcome confounding and, harder, no such confounder that is itself affected by the exposure; that second condition cannot be satisfied by any study design.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Identifying NDE and NIE needs four no-confounding conditions: for exposure–outcome, exposure–mediator, mediator–outcome, and a fourth <strong>cross-world</strong> assumption: no mediator–outcome confounder affected by the exposure. It is called cross-world because \(Y(1, M(0))\) mixes a world where the person is exposed with their mediator from a world where they are not, and no experiment, even in principle, can observe both.</dd>
+      <dt>Why it matters</dt>
+      <dd>If the exposure changes a variable L that then affects both mediator and outcome, natural effects are not identified, even if L is measured perfectly. Adjusting for L blocks part of the indirect effect; not adjusting leaves the mediator confounded.</dd>
+      <dt>How to read it</dt>
+      <dd>Draw the DAG and look for arrows from the exposure into any common cause of mediator and outcome. If there is one, a credible paper switches to controlled direct effects (identifiable with g-methods, Lecture 4.3) or interventional effects (section 4), and says why.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · The problematic case</div>
+      <svg class="viz-svg" viewBox="0 0 640 362" role="img" aria-label="Mediation DAG. Salt causes blood pressure, which causes CVD; salt also has a direct arrow to CVD. Salt causes kidney damage, which causes both blood pressure and CVD: a mediator-outcome confounder affected by the exposure. An unmeasured factor U also causes both blood pressure and CVD.">
+        <defs>
+          <marker id="l410-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead"/></marker>
+          <marker id="l410-arrow-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead accent"/></marker>
+          <marker id="l410-arrow-r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="dot s3"/></marker>
+        </defs>
+        <g class="s2"><rect x="30" y="130" width="120" height="44" rx="10" class="node-fill"/></g>
+        <g class="s1"><rect x="245" y="130" width="150" height="44" rx="10" class="node-fill"/></g>
+        <g class="s4"><rect x="490" y="130" width="120" height="44" rx="10" class="node-fill"/></g>
+        <g class="s3"><rect x="245" y="20" width="150" height="44" rx="10" class="node-fill"/></g>
+        <g class="s5"><rect x="390" y="196" width="120" height="36" rx="10" class="node"/></g>
+        <g text-anchor="middle">
+          <text x="90" y="157" class="viz-bold">Salt (A)</text>
+          <text x="320" y="157" class="viz-bold">Blood pressure (M)</text>
+          <text x="550" y="157" class="viz-bold">CVD (Y)</text>
+          <text x="320" y="47" class="viz-bold">Kidney damage (L)</text>
+          <text x="450" y="219" class="viz-small">Unmeasured (U)</text>
+        </g>
+        <!-- indirect path -->
+        <path d="M154,152 L239,152" class="edge accent" marker-end="url(#l410-arrow-a)"/>
+        <path d="M399,152 L484,152" class="edge accent" marker-end="url(#l410-arrow-a)"/>
+        <!-- direct path -->
+        <path d="M90,178 C110,385 530,385 548,180" class="edge strong" marker-end="url(#l410-arrow)"/>
+        <text x="320" y="354" text-anchor="middle" class="viz-small">direct effect (NDE)</text>
+        <text x="196" y="143" text-anchor="middle" class="viz-small colour s1">NIE</text>
+        <!-- exposure-induced confounder -->
+        <path d="M130,128 L250,66" class="stroke s3" stroke-width="2.2" fill="none" marker-end="url(#l410-arrow-r)"/>
+        <path d="M320,64 L320,124" class="stroke s3" stroke-width="2.2" fill="none" marker-end="url(#l410-arrow-r)"/>
+        <path d="M390,66 L512,126" class="stroke s3" stroke-width="2.2" fill="none" marker-end="url(#l410-arrow-r)"/>
+        <text x="408" y="38" class="viz-small colour s3">affected by salt; causes BP and CVD</text>
+        <!-- unmeasured -->
+        <path d="M415,196 L384,180" class="edge" stroke-dasharray="5 4" marker-end="url(#l410-arrow)"/>
+        <path d="M488,196 L516,180" class="edge" stroke-dasharray="5 4" marker-end="url(#l410-arrow)"/>
+      </svg>
+      <figcaption>Teal: the indirect path through BP. Red: kidney damage is caused by salt and confounds BP and CVD, which breaks the cross-world assumption; natural effects are then not identified even if it is measured. Dashed: an unmeasured BP–CVD confounder, which biases any mediator-adjusted analysis. Illustrative causal story.</figcaption>
+    </figure>
+
+    <div class="callout example">
+      <div class="callout-title">Example · The birth-weight paradox</div>
+      <p>Among low-birth-weight babies, those of smoking mothers have <em>lower</em> mortality than those of non-smokers. Conditioning on birth weight, a mediator of smoking’s effect, opens a path to unmeasured causes of low birth weight (such as birth defects) that are far more lethal than smoking (Hernández-Díaz, Schisterman and Hernán, 2006). It is the hidden-confounder preset in the widget, in real data.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">Gulf example</div>
+      <p>A study asking how much of the education gradient in diabetes among Saudi adults runs through income (Lecture 2.18) faces exactly this structure. Education shapes occupation, which affects both income and physical activity, and so diabetes: an exposure-induced mediator–outcome confounder. Natural effects are not identified; controlled or interventional effects are the honest targets.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="alternatives">
+    <h2>4. Interventional effects and sensitivity analysis</h2>
+    <p class="point">Interventional effects swap “each person’s own counterfactual mediator” for a random draw from its distribution, which avoids the cross-world assumption; sensitivity analysis then asks how much hidden confounding would change the answer.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>Interventional (randomised) direct and indirect effects</strong> (VanderWeele, Vansteelandt and Robins, 2014; Vansteelandt and Daniel, 2017) compare outcomes when the mediator is set to a value drawn at random from its distribution under exposure or no exposure, among people with the same covariates. They are identified even with exposure-induced confounders, given no unmeasured confounding.</dd>
+      <dt>Why it matters</dt>
+      <dd>They correspond to something you could, in principle, do: shift the population distribution of BP. That is often closer to the policy question than natural effects anyway. They handle several mediators too.</dd>
+      <dt>How to read it</dt>
+      <dd>Interventional direct and indirect effects add up to an “overall” effect that is close to, but not always equal to, the total effect. And with multiple mediators, a nonzero interventional indirect effect can appear even when the mediator does not affect the outcome for anyone, if mediators are correlated; read them as population-level shifts, not mechanisms in individuals.</dd>
+      <dt>What a change means</dt>
+      <dd>For sensitivity analysis, VanderWeele’s bias formulas and the <code>medsens()</code> function in the <code>mediation</code> package report how strong unmeasured mediator–outcome confounding would need to be to make the indirect effect vanish. If a modest correlation does it, report the indirect effect as fragile.</dd>
+    </dl>
+
+    <pre><code>library(mediation)
+med.fit &lt;- lm(sbp ~ salt + age + sex + egfr, data = d)
+out.fit &lt;- lm(cvd_risk ~ salt * sbp + age + sex + egfr, data = d)
+med &lt;- mediate(med.fit, out.fit, treat = "salt", mediator = "sbp", sims = 1000)
+summary(med)   # ACME (indirect) and ADE (direct), each under treatment and control</code></pre>
+    <p>The mediator model predicts BP from salt and confounders; the outcome model includes the salt × BP interaction. <code>mediate</code> simulates both potential mediators per person. With an interaction, “ADE (control)” is the NDE and “ACME (treated)” the NIE defined in section 1. <code>CMAverse</code> offers the same and more estimators, including interventional effects.</p>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Adding interventional effects as a label without changing the claim. They are population-level distribution shifts; a paper using them should not then say “40% of the effect works through the mechanism of BP in each patient”.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="whennot">
+    <h2>5. When to just not do it</h2>
+    <p class="point">If the mediator–outcome link is badly confounded, the mediator is poorly measured, or the question is really about a policy lever, skip natural-effect mediation and answer a cleaner question.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Situation</th><th>Better question</th></tr></thead>
+        <tbody>
+          <tr><td>The mediator is measured once, noisily (a single BP reading, one spot urine)</td><td>Measurement error in the mediator biases the split towards “direct”. Report the total effect; at most, describe attenuation</td></tr>
+          <tr><td>A strong exposure-induced confounder (occupation, kidney damage, comorbidity)</td><td>Controlled direct effect with g-methods, or interventional effects</td></tr>
+          <tr><td>The real interest is a lever (“would treating BP suffice?”)</td><td>Controlled direct effect, or a target trial of the intervention on the mediator (Lecture 4.5)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Treating mediation as a routine add-on (“we also explored mechanisms”). A mediation result carries every assumption of the main analysis plus three more, at least one untestable. If you cannot defend the mediator–outcome DAG in a paragraph, a reviewer will rightly ask why the analysis is there.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>A Cox model shows a hazard ratio for low education of 1.60, falling to 1.35 after adding income. The authors say income mediates 42% of the effect. Name two reasons to doubt the number.</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Hazard ratios are non-collapsible, so the HR changes when any predictor of the outcome is added, mediator or not. And income and death share confounders (health in early adulthood, occupation), some caused by education, which biases the adjusted HR and breaks the cross-world assumption. An interaction between education and income was also not considered.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>In a randomised trial of a salt substitute, a colleague wants to estimate how much of the reduction in stroke runs through blood pressure, and says no confounding is possible because the trial was randomised. What do you say?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Randomisation covers the effects of the salt substitute, not the BP → stroke link. People whose BP fell more may differ in adherence, diet, kidney function and baseline risk. They need to adjust for pre-randomisation confounders of BP and stroke, think about confounders affected by treatment, and run a sensitivity analysis for unmeasured BP–stroke confounding.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A policymaker asks: “If everyone’s blood pressure were controlled with medication, would cutting salt still prevent any heart disease?” Which effect answers this, and why not the NDE?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The controlled direct effect, with BP fixed at the controlled value for everyone. The NDE holds each person’s BP at the level it would have had without the salt change, which is not what treating everyone’s BP does. The CDE also needs no cross-world assumption, so it is identifiable with g-methods.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A paper reports a proportion mediated of 130%. Is it an error?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Not necessarily. If the direct effect runs in the opposite direction from the indirect one, the indirect effect can exceed the total, and the proportion goes above 100%. It is a sign that the proportion is a poor summary here; report the direct and indirect effects separately.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>VanderWeele, <em>Explanation in Causal Inference: Methods for Mediation and Interaction</em> (Oxford University Press, 2015), chapters 2–3 and 5.</li>
+      <li>Hernán &amp; Robins, <em>Causal Inference: What If</em> (Chapman &amp; Hall/CRC, 2020; free online), the technical points on direct and indirect effects.</li>
+      <li>Robins &amp; Greenland, “Identifiability and exchangeability for direct and indirect effects”, <em>Epidemiology</em> (1992). Pearl, “Direct and indirect effects”, <em>Proceedings of the 17th Conference on Uncertainty in Artificial Intelligence</em> (2001).</li>
+      <li>Baron &amp; Kenny, “The moderator–mediator variable distinction in social psychological research”, <em>Journal of Personality and Social Psychology</em> (1986): the classic recipe this lecture critiques.</li>
+      <li>VanderWeele, Vansteelandt &amp; Robins, “Effect decomposition in the presence of an exposure-induced mediator-outcome confounder”, <em>Epidemiology</em> (2014). Vansteelandt &amp; Daniel, “Interventional effects for mediation analysis with multiple mediators”, <em>Epidemiology</em> (2017).</li>
+      <li>Hernández-Díaz, Schisterman &amp; Hernán, “The birth weight ‘paradox’ uncovered?”, <em>American Journal of Epidemiology</em> (2006).</li>
+      <li>Imai, Keele &amp; Tingley, “A general approach to causal mediation analysis”, <em>Psychological Methods</em> (2010); Tingley et al., “mediation: R package for causal mediation analysis”, <em>Journal of Statistical Software</em> (2014). Shi et al., “CMAverse: a suite of functions for reproducible causal mediation analyses”, <em>Epidemiology</em> (2021).</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="4-09-regression-discontinuity-iv.html"><small>Previous</small>4.9 Regression discontinuity and IV</a>
+    <a class="next" href="4-11-natural-experiments.html"><small>Next</small>4.11 Natural experiments in public health policy</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

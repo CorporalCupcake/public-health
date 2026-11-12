@@ -75,6 +75,10 @@ Two research threads run through the curriculum, so your PhD application tells a
 
 **Primary textbooks:** Rose, *The Strategy of Preventive Medicine*; Briggs, Claxton & Sculpher, *Decision Modelling for Health Economic Evaluation*; the GBD 2021 risk factor methods appendix.
 
+**Papers to read:**
+- Nghiem N, Blakely T, Cobiac LJ, et al. (2015). Health and economic impacts of eight different dietary salt reduction interventions. *PLoS One* 10(4):e0123915. https://doi.org/10.1371/journal.pone.0123915 — the closest template for Project 1: a multistate life table with intervention-by-intervention salt inputs and probabilistic uncertainty.
+- Mason H, Shoaibi A, Ghandour R, et al. (2014). A cost effectiveness analysis of salt reduction policies to reduce coronary heart disease in four Eastern Mediterranean countries. *PLoS One* 9(1):e84445. https://doi.org/10.1371/journal.pone.0084445 — the regional precedent. Its limits (CHD only, 10-year horizon, no GCC country, no value of information) are Project 1's selling points.
+
 ---
 
 ## Block 2 — Epidemiology (weeks 13–32)
@@ -113,6 +117,10 @@ Two research threads run through the curriculum, so your PhD application tells a
 
 **Primary textbooks:** Rothman, Greenland & Lash, *Modern Epidemiology* (4th edition), selected chapters; *Cochrane Handbook* for lecture 2.12; Lash, Fox & Fink, *Applying Quantitative Bias Analysis to Epidemiologic Data* for lecture 2.13.
 
+**Papers to read:**
+- Powles J, Fahimi S, Micha R, et al. (2013). Global, regional and national sodium intakes in 1990 and 2010: a systematic analysis of 24 h urinary sodium excretion and dietary surveys worldwide. *BMJ Open* 3(12):e003733. https://doi.org/10.1136/bmjopen-2013-003733 — how 24-hour urine and dietary surveys are combined and calibrated; check which GCC sources fed its Gulf estimates.
+- Al-Jawaldeh A, Taktouk M, Chatila A, et al. (2021). Salt reduction initiatives in the Eastern Mediterranean Region and evaluation of progress towards the 2025 global target: a systematic review. *Nutrients* 13(8):2676. https://doi.org/10.3390/nu13082676 — the review Project 2 must beat: it lists intake from mixed methods with no pooling and no quality assessment.
+
 ---
 
 ## Block 3 — Biostatistics core (weeks 33–45)
@@ -144,6 +152,10 @@ Block 3 starts with a diagnostic, not 12 weeks of theory. Your MSc and ML work a
 
 **Primary textbooks:** Kirkwood & Sterne, *Essential Medical Statistics*; Lumley, *Complex Surveys: A Guide to Analysis Using R*; Wasserman, *All of Statistics* and Agresti, *Foundations of Linear and Generalized Linear Models*, for gap-fill notes only.
 
+**Papers to read:**
+- Yang Q, Liu T, Kuklina EV, et al. (2011). Sodium and potassium intake and mortality among US adults: prospective data from the Third National Health and Nutrition Examination Survey. *Arch Intern Med* 171(13):1183–1191. https://doi.org/10.1001/archinternmed.2011.257 — the template if Project 3 moves to dietary-recall Na/K (urinary Na/K is RDC-only); note its single-recall measurement error.
+- Ma Y, He FJ, Sun Q, et al. (2022). 24-hour urinary sodium and potassium excretion and cardiovascular risk. *N Engl J Med* 386(3):252–263. https://doi.org/10.1056/NEJMoa2109794 — why measurement matters: repeated 24-hour urines in six cohorts give a clear dose–response for Na/K and CVD.
+
 ---
 
 ## Block 4 — Causal inference and policy evaluation (weeks 46–57)
@@ -166,13 +178,17 @@ Block 3 starts with a diagnostic, not 12 weeks of theory. Your MSc and ML work a
 
 - **Data (all public):** FAOSTAT food balance sheets (sugar and sweetener supply per person, annual) as the primary outcome; UN Comtrade imports of sweetened drinks (HS 2202) as a secondary outcome; World Bank population and GDP as covariates.
 - **Why it replaced the Saudi bread-salt evaluation:** no public outcome series exists for the bread salt limit or calorie labelling. Predicted salt-policy impact stays in Project 1.
-- **Gap:** not yet checked. Earlier GCC evaluations compared year-on-year growth in proprietary industry sales data, with no counterfactual design. Check for newer work in week 46. Also confirm Kuwait's status: a 2020 paper expected a 2020 tax, but a 2025 report says Kuwait still has none.
+- **Gap:** partly checked (2026-11-12). Alsukait et al. 2020 (*Econ Hum Biol*) evaluated the 2017 Saudi tax against untaxed Gulf comparators using proprietary sales data, so a counterfactual design already exists. The novelty must come from staggered GCC adoption, the December 2019 extension, public supply data and synthetic control. Check for newer work in week 46. Also confirm Kuwait's status: a 2020 paper expected a 2020 tax, but a 2025 report says Kuwait still has none.
 - **Main weakness:** annual country-level data with few units, and supply is a proxy for consumption. Imports alone miss Saudi Arabia's large domestic bottling, which is why supply is the primary outcome. Use placebo and permutation tests for inference.
 - **Starts:** week 51, after lecture 4.6. Data assembly can start in week 46.
 - **Fallback as its own paper:** a methods-and-application paper on evaluating food taxes with public supply data when there are few countries.
 - **Target journals:** BMJ Global Health first; Public Health Nutrition as backup.
 
 **Primary textbooks:** Hernán & Robins, *Causal Inference: What If* (free); Cunningham, *Causal Inference: The Mixtape* (free).
+
+**Papers to read:**
+- Alsukait R, Wilde P, Bleich SN, et al. (2020). Evaluating Saudi Arabia's 50% carbonated drink excise tax: changes in prices and volume sales. *Econ Hum Biol* 38:100868. https://doi.org/10.1016/j.ehb.2020.100868 — the benchmark Project 4 must go beyond: the 2017 Saudi tax against untaxed Gulf comparators, using industry sales data.
+- Abadie A, Diamond A, Hainmueller J (2010). Synthetic control methods for comparative case studies: estimating the effect of California's tobacco control program. *J Am Stat Assoc* 105(490):493–505. https://doi.org/10.1198/jasa.2009.ap08746 — the founding synthetic control paper: donor weights, pre-period fit and placebo inference, exactly what few-country annual data needs.
 
 ---
 
@@ -203,7 +219,7 @@ Block 3 starts with a diagnostic, not 12 weeks of theory. Your MSc and ML work a
 **Project 5A: anticoagulation for new-onset atrial fibrillation in critically ill patients.** A target trial emulation in MIMIC-IV, with AF onset defined from the ECG itself (MIMIC-IV-ECG) rather than from diagnosis codes, plus a quantitative bias analysis.
 
 - **Data:** MIMIC-IV is free but needs PhysioNet credentialing (an application plus the CITI human-subjects course); MIMIC-IV-ECG is open access. Start credentialing in Block 1, since approval can take weeks.
-- **Gap:** not yet checked. Observational studies of this question exist, mostly from claims data, so the novelty has to come from the ECG-based onset definition and a modern target trial design. Check in week 58.
+- **Gap:** partly checked (2026-11-12). Bianchini et al. 2025 (*Heart Rhythm*) studied this question in MIMIC-IV itself, with code-based AF onset and exposure at discharge among survivors. The novelty has to come from the ECG-based onset definition and a target trial design with time zero at AF onset. Check in week 58.
 - **Starts:** week 61, after lecture 5.3. A feasibility count (eligible patients, treatment, events) is the go/no-go step.
 - **Why it matters:** the strongest single paper for an epidemiology or real-world-evidence PhD, and it uses your cardiac and ECG background directly.
 - **Target journals:** Pharmacoepidemiology and Drug Safety, Journal of Clinical Epidemiology, Critical Care Medicine.
@@ -216,6 +232,10 @@ Block 3 starts with a diagnostic, not 12 weeks of theory. Your MSc and ML work a
 - **Target journals:** npj Digital Medicine, The Lancet Digital Health, JAMA Network Open.
 
 **Primary textbooks:** Strom, Kimmel & Hennessy, *Pharmacoepidemiology*; Hernán & Robins, *Causal Inference: What If* (target trial chapters); the FDA's real-world evidence framework and guidances; the FDA's AI-enabled device list as a working dataset.
+
+**Papers to read:**
+- Bianchini L, Tramujas L, Besen BAMP, et al. (2025). Anticoagulation in critically ill patients with new-onset atrial fibrillation: insights from a retrospective cohort study. *Heart Rhythm* 22(11):2784–2790. https://doi.org/10.1016/j.hrthm.2025.02.040 — direct prior work on Project 5A's question in MIMIC-IV. Study how it defines new-onset AF and its exposure at discharge among survivors; your ECG-defined target trial must close both gaps.
+- Wu E, Wu K, Daneshjou R, et al. (2021). How medical AI devices are evaluated: limitations and recommendations from an analysis of FDA approvals. *Nat Med* 27(4):582–584. https://doi.org/10.1038/s41591-021-01312-x — the template for Project 5B: copy its coding of FDA-cleared devices (retrospective vs prospective, number of sites), then extend to cardiovascular and ECG devices.
 
 ---
 
@@ -245,6 +265,10 @@ The domain your earlier plan skipped: protecting populations from infectious dis
 - **Target journals:** Occupational and Environmental Medicine first; International Journal of Biometeorology as backup.
 
 **Primary textbooks:** Vynnycky & White, *An Introduction to Infectious Disease Modelling*; Gasparrini's DLNM tutorials (free) for lecture 6.9.
+
+**Papers to read:**
+- Al-Bouwarthan M, Quinn MM, Kriebel D, et al. (2019). Assessment of heat stress exposure among construction workers in the hot desert climate of Saudi Arabia. *Ann Work Expo Health* 63(5):505–520. https://doi.org/10.1093/annweh/wxz033 — on-site Saudi WBGT showing the midday ban missed the 9 am to noon peak; use it to sanity-check ERA5 WBGT.
+- Brimicombe C, Lo CHB, Pappenberger F, et al. (2023). Wet bulb globe temperature: indicating extreme heat risk on a global grid. *GeoHealth* 7(2):e2022GH000701. https://doi.org/10.1029/2022GH000701 — how to compute WBGT from ERA5 and validate it, the core data choice for Project 6.
 
 ---
 
@@ -276,6 +300,10 @@ The domain your earlier plan skipped: protecting populations from infectious dis
 
 **Primary textbooks:** Michie et al., *The Behaviour Change Wheel*; the WHO guidance on ethics and governance of AI for health.
 
+**Papers to read:**
+- Singhal K, Azizi S, Tu T, et al. (2023). Large language models encode clinical knowledge. *Nature* 620(7972):172–180. https://doi.org/10.1038/s41586-023-06291-2 — borrow its multi-axis clinician rating framework (consensus, harm, bias, omissions) for Project 7.
+- Williams G, Rutunda S, Nzabakira F, et al. (2026). Human evaluators vs. LLM-as-a-judge: toward scalable evaluation of GenAI in global health. *npj Digit Med* 9:878. https://doi.org/10.1038/s41746-026-02992-w — the closest model for validating an LLM rater: LLM judges vs clinicians, worse in Kinyarwanda than English, mirroring your dialect vs MSA test.
+
 ---
 
 ## Block 8 — Health systems, policy, global health and equity (weeks 96–107)
@@ -303,6 +331,10 @@ The domain your earlier plan skipped: protecting populations from infectious dis
 - **Target journals:** Health Policy and Planning, International Journal for Equity in Health.
 
 **Primary textbooks:** WHO, *Everybody's Business* (2007); Cookson, Griffin, Norheim & Culyer (eds), *Distributional Cost-Effectiveness Analysis* (Oxford, 2020); World Bank, *Analyzing Health Equity Using Household Survey Data* (free).
+
+**Papers to read:**
+- Watkins DA, Olson ZD, Verguet S, et al. (2016). Cardiovascular disease and impoverishment averted due to a salt reduction policy in South Africa: an extended cost-effectiveness analysis. *Health Policy Plan* 31(1):75–82. https://doi.org/10.1093/heapol/czv023 — the salt-policy equity precedent: health gains and poverty averted by income group; adapt its subgroup outputs for Project 8.
+- Asaria M, Griffin S, Cookson R (2016). Distributional cost-effectiveness analysis: a tutorial. *Med Decis Making* 36(1):8–19. https://doi.org/10.1177/0272989X15583266 — the DCEA recipe you follow when splitting the Project 1 model by subgroup.
 
 ---
 
@@ -332,6 +364,10 @@ The domain your earlier plan skipped: protecting populations from infectious dis
 - **Target journals:** BMJ Open first; Public Health Nutrition or Health Policy and Planning as backup.
 
 **Primary textbooks:** Green & Thorogood, *Qualitative Methods for Health Research*; Braun & Clarke, *Thematic Analysis: A Practical Guide*.
+
+**Papers to read:**
+- Damschroder LJ, Reardon CM, Widerquist MAO, et al. (2022). The updated Consolidated Framework for Implementation Research based on user feedback. *Implement Sci* 17(1):75. https://doi.org/10.1186/s13012-022-01245-0 — your Project 9 codebook: CFIR 2.0 domains and constructs for coding SFDA, GSO, WHO and industry documents.
+- McKenzie BL, Mustapha FI, Battumur BE, et al. (2024). Strengthening national salt reduction strategies using multiple methods process evaluations: case studies from Malaysia and Mongolia. *Public Health Nutr* 27(1):e89. https://doi.org/10.1017/S1368980023002781 — an applied template: why two national salt strategies stalled on mandatory limits and labelling, Project 9's compliance-gap question.
 
 ---
 

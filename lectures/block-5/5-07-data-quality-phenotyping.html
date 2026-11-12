@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>5.7 Data quality and phenotyping · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/5-07.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-5">Block 5</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 5.7</p>
+  <h1>Data quality and fitness for purpose; phenotyping and outcome validation</h1>
+  <div class="lecture-meta">
+    <span>Block 5 · Pharmacoepidemiology, real-world evidence, regulatory science and AI evaluation</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>Data are never “good” in general. They are good enough, or not, <strong>for one question</strong>. You check them in three layers: generic quality (are the values sound?), fitness for purpose (does this source hold the exposure, outcome and confounders this question needs, recorded reliably?), and the <strong>phenotypes</strong> that turn raw rows into “has new-onset AF at 14:20 on day 2”. Then you measure how wrong each phenotype is, and carry that error into the analysis. Project 5A stands or falls on one phenotype: AF onset defined from the ECG rather than from a discharge code.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#generic">Generic data quality: conformance, completeness, plausibility</a></li>
+      <li><a href="#fitness">Fitness for purpose: relevance and reliability</a></li>
+      <li><a href="#phenotypes">Computable phenotypes</a></li>
+      <li><a href="#validation">Validating against chart review</a></li>
+      <li><a href="#project5a">Project 5A: ECG-defined AF onset vs ICD codes</a></li>
+      <li><a href="#reporting">What a reviewer wants to see</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="generic">
+    <h2>1. Generic data quality: conformance, completeness, plausibility</h2>
+    <p class="point">Before asking whether a database can answer your question, ask whether its values are what they claim to be: in the right format, present when they should be, and believable.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Kahn and colleagues (2016) harmonised dozens of data-quality vocabularies into three categories. <strong>Conformance</strong>: values follow the specification (valid codes, units, date formats, foreign keys that point somewhere). <strong>Completeness</strong>: values are present where expected, regardless of what they are. <strong>Plausibility</strong>: values are believable (a heart rate of 900 is not; discharge before admission is not). Each is checked in two contexts: <em>verification</em>, against rules inside the dataset, and <em>validation</em>, against an outside reference such as national rates.</dd>
+      <dt>Why it matters</dt>
+      <dd>Every later step assumes the raw values mean what they say. A unit change in a lab feed, a hospital that stopped recording weight, or an extract that dropped one ICU for a year will bias results silently. These checks are cheap and catch the embarrassing errors first.</dd>
+      <dt>How to read it</dt>
+      <dd>Look at trends, not single numbers. A completeness of 60% for weight is fine if it is stable; a drop from 95% to 40% in one year is a pipeline problem. Plausibility failures cluster: if 2% of heart rates are implausible in one unit only, suspect a device or mapping issue there.</dd>
+      <dt>What a change means</dt>
+      <dd>Passing more checks means fewer gross errors, not a better answer. The OHDSI Data Quality Dashboard runs over 3,300 Kahn-style checks on an OMOP database (Lecture 5.6), and a database can pass almost all of them and still be useless for your question.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · From raw tables to an analysable variable</div>
+      <svg class="viz-svg" viewBox="0 0 640 300" role="img" aria-label="Two rows of four boxes joined by arrows. Top row, generic quality: raw tables, conformance, completeness, plausibility. An arrow drops to the bottom row, question-specific: fitness for purpose, phenotype, validation, analysis with bias analysis.">
+        <defs><marker id="l57-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead"/></marker></defs>
+        <text x="10" y="18" class="viz-small viz-bold viz-muted">GENERIC: is the data sound?</text>
+        <g class="s5"><rect x="10" y="30" width="138" height="84" rx="8" class="node-fill"/></g>
+        <g class="s1"><rect x="170" y="30" width="138" height="84" rx="8" class="node-fill"/></g>
+        <g class="s1"><rect x="330" y="30" width="138" height="84" rx="8" class="node-fill"/></g>
+        <g class="s1"><rect x="490" y="30" width="138" height="84" rx="8" class="node-fill"/></g>
+        <g text-anchor="middle">
+          <text x="79" y="56" class="viz-bold">Raw tables</text>
+          <text x="79" y="76" class="viz-small">chartevents, labs,</text>
+          <text x="79" y="92" class="viz-small">ECG reads, codes</text>
+          <text x="239" y="56" class="viz-bold">Conformance</text>
+          <text x="239" y="76" class="viz-small">valid codes, units,</text>
+          <text x="239" y="92" class="viz-small">dates, links</text>
+          <text x="399" y="56" class="viz-bold">Completeness</text>
+          <text x="399" y="76" class="viz-small">present when</text>
+          <text x="399" y="92" class="viz-small">expected, over time</text>
+          <text x="559" y="56" class="viz-bold">Plausibility</text>
+          <text x="559" y="76" class="viz-small">believable values</text>
+          <text x="559" y="92" class="viz-small">and sequences</text>
+        </g>
+        <line x1="148" y1="72" x2="168" y2="72" class="edge" marker-end="url(#l57-arrow)"/>
+        <line x1="308" y1="72" x2="328" y2="72" class="edge" marker-end="url(#l57-arrow)"/>
+        <line x1="468" y1="72" x2="488" y2="72" class="edge" marker-end="url(#l57-arrow)"/>
+        <path d="M559,114 L559,140 L79,140 L79,174" class="edge accent" marker-end="url(#l57-arrow)"/>
+        <text x="319" y="158" text-anchor="middle" class="viz-small viz-bold colour s2">QUESTION-SPECIFIC: can it answer this question?</text>
+        <g class="s2"><rect x="10" y="176" width="138" height="84" rx="8" class="node-fill"/></g>
+        <g class="s2"><rect x="170" y="176" width="138" height="84" rx="8" class="node-fill"/></g>
+        <g class="s2"><rect x="330" y="176" width="138" height="84" rx="8" class="node-fill"/></g>
+        <g class="s4"><rect x="490" y="176" width="138" height="84" rx="8" class="node-fill"/></g>
+        <g text-anchor="middle">
+          <text x="79" y="202" class="viz-bold">Fit for purpose</text>
+          <text x="79" y="222" class="viz-small">relevance and</text>
+          <text x="79" y="238" class="viz-small">reliability</text>
+          <text x="239" y="202" class="viz-bold">Phenotype</text>
+          <text x="239" y="222" class="viz-small">rule turning rows</text>
+          <text x="239" y="238" class="viz-small">into “AF at time t”</text>
+          <text x="399" y="202" class="viz-bold">Validation</text>
+          <text x="399" y="222" class="viz-small">chart review: PPV,</text>
+          <text x="399" y="238" class="viz-small">sensitivity, timing</text>
+          <text x="559" y="202" class="viz-bold">Analysis</text>
+          <text x="559" y="222" class="viz-small">with bias analysis</text>
+          <text x="559" y="238" class="viz-small">using those numbers</text>
+        </g>
+        <line x1="148" y1="218" x2="168" y2="218" class="edge" marker-end="url(#l57-arrow)"/>
+        <line x1="308" y1="218" x2="328" y2="218" class="edge" marker-end="url(#l57-arrow)"/>
+        <line x1="468" y1="218" x2="488" y2="218" class="edge" marker-end="url(#l57-arrow)"/>
+        <text x="320" y="290" text-anchor="middle" class="viz-small viz-muted">The top row is the same for every study. The bottom row is redone for every question.</text>
+      </svg>
+      <figcaption>Generic checks catch broken data; they cannot tell you whether the data hold what your question needs. That is the second row, and most of this lecture.</figcaption>
+    </figure>
+
+    <pre><code>-- MIMIC-IV: completeness and plausibility of heart rate, by ICU type
+SELECT i.first_careunit,
+       COUNT(*)                                                   AS n_values,
+       AVG(CASE WHEN c.valuenum IS NULL THEN 1.0 ELSE 0 END)      AS share_missing,
+       AVG(CASE WHEN c.valuenum &lt; 20 OR c.valuenum &gt; 300
+                THEN 1.0 ELSE 0 END)                              AS share_implausible
+FROM mimiciv_icu.chartevents c
+JOIN mimiciv_icu.icustays i ON i.stay_id = c.stay_id
+WHERE c.itemid = 220045                                           -- heart rate
+GROUP BY i.first_careunit
+ORDER BY share_implausible DESC;</code></pre>
+    <p>One verification check of each kind, split by care unit so that a local problem stands out. In an OMOP version of the data, the Data Quality Dashboard runs thousands of checks like this for you; the habit to keep is splitting the results by site, unit and calendar year.</p>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reading “missing” as “absent”. In EHRs a missing AF code, a missing troponin or a missing anticoagulant order usually means <em>not recorded here</em>, not <em>did not happen</em>. Completeness checks can only count blanks; they cannot see a diagnosis that was never coded.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Generic quality checks are a spell-checker. They catch typos in every document. They cannot tell you whether the essay answers the exam question.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>This is schema and data validation in an ML pipeline: type checks (conformance), null rates (completeness) and range checks (plausibility), monitored for drift. Same limitation too: a pipeline can pass every expectation while the labels are systematically wrong.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="fitness">
+    <h2>2. Fitness for purpose: relevance and reliability</h2>
+    <p class="point">Regulators do not ask “is this database good?”; they ask whether it is relevant to this question and whether its key variables are reliable enough to support a decision.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The FDA’s final guidance on EHR and claims data (July 2024) uses two words. <strong>Relevance</strong>: the source captures the exposure, outcome and key covariates, in enough representative patients, over a long enough window. <strong>Reliability</strong>: those data are accurate, complete and traceable, from the point of care through every curation step to the analysis file. EMA’s Data Quality Framework (December 2023) uses five dimensions: reliability, extensiveness, coherence, timeliness and relevance.</dd>
+      <dt>Why it matters</dt>
+      <dd>The FDA guidance asks sponsors to explain why they chose a source, and which others they considered and rejected. A study in a well-curated database can still fail review if the outcome is poorly captured there.</dd>
+      <dt>How to read it</dt>
+      <dd>Go variable by variable: for the exposure, the outcome, time zero and each key confounder, ask “is it recorded, when, by whom, and how often is it wrong?” One red cell in that table can sink the study.</dd>
+      <dt>What a change means</dt>
+      <dd>Moving a question from one source to another changes fitness, even with the same patients: MIMIC-IV records ICU heparin infusions to the minute but does not see strokes treated at other hospitals after discharge.</dd>
+    </dl>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Project 5A element</th><th>Relevant in MIMIC-IV?</th><th>Reliability concern</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Time zero: AF onset</strong></td><td>Yes: 12-lead ECGs and nurse-charted rhythm, with times</td><td>ECGs are intermittent; computer reads misclassify AF (section 5)</td></tr>
+          <tr><td><strong>Exposure: anticoagulation</strong></td><td>Yes: infusions and medication administration records</td><td>Prophylactic vs therapeutic heparin dose must be separated</td></tr>
+          <tr><td><strong>Outcome: death</strong></td><td>Yes: in hospital, plus state records up to one year after discharge</td><td>Deaths more than a year after discharge are censored by design</td></tr>
+          <tr><td><strong>Outcome: stroke, bleeding</strong></td><td>Only during the admission</td><td>Coded at discharge; events after discharge or elsewhere are invisible</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Judging fitness by size. A claims database of 50 million people is not fit for a question whose confounder (say, bleeding risk from a platelet count) it never records. A 10,000-patient ICU database with that variable may be.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">In the Gulf</div>
+      <p>The SFDA issued its <em>Framework on the Use of Real-World Data and Real-World Evidence to Support Effectiveness and Safety for Marketing Authorization of Medicinal Products</em> (version 1.0) on 20 April 2026, in force from 20 July 2026. It defines fit-for-purpose RWD in the same spirit: accurate longitudinal data, enough patients, the treatments, confounders and outcomes the question needs, a quality-assured source, and a sample that generalises to the target population. It recommends common data models to support quality control. A Saudi hospital EHR study submitted to the SFDA should therefore come with the same relevance-and-reliability table as an FDA one.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="phenotypes">
+    <h2>3. Computable phenotypes</h2>
+    <p class="point">A phenotype is a precise, runnable definition of a clinical state (“new-onset AF during this ICU stay, with onset time”), and every exposure, outcome and eligibility criterion in an RWD study is one.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>Rule-based</strong> phenotypes combine codes, labs, medicines, procedures and measurements with AND, OR, counts and time windows (“two AF codes 30 days apart”, “AF on an ECG and a rate-control drug within 24 hours”). <strong>Probabilistic or ML</strong> phenotypes give each patient a probability, from a model trained on chart-reviewed or “silver-standard” labels. Shared libraries hold reusable definitions: PheKB (from the eMERGE network) and the OHDSI Phenotype Library.</dd>
+      <dt>Why it matters</dt>
+      <dd>The phenotype decides who enters the study, when their clock starts, and what counts as an event. Changing “one AF code” to “two AF codes” can shrink the cohort a lot and shift it towards sicker, more persistent disease.</dd>
+      <dt>How to read it</dt>
+      <dd>Every phenotype trades <strong>sensitivity</strong> (share of true cases it catches) against <strong>PPV</strong> (share of flagged patients who truly have it). AND raises PPV and lowers sensitivity; OR does the reverse. For time zero, a third property matters: how close the phenotype’s date is to the true onset.</dd>
+      <dt>What a change means</dt>
+      <dd>Adding an exclusion based on history (“no AF in earlier admissions”) turns “has AF” into “has <em>new</em> AF”. It raises PPV for new onset but only as far as the history is visible: patients whose earlier care happened elsewhere slip through.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · The phenotype development and validation cycle</div>
+      <svg class="viz-svg" viewBox="0 0 640 320" role="img" aria-label="A cycle of five boxes joined by arrows: define the clinical idea; write the rule or model; run it and characterise the cohort; validate on a chart-review sample; refine, or accept and publish. The arrow from the last box returns to the second. In the middle: repeat for each data source and after any change to the data.">
+        <defs><marker id="l57-arrow2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead accent"/></marker></defs>
+        <g class="s1">
+          <rect x="235" y="10" width="170" height="58" rx="10" class="node-fill"/>
+          <rect x="455" y="96" width="175" height="58" rx="10" class="node-fill"/>
+          <rect x="385" y="238" width="180" height="58" rx="10" class="node-fill"/>
+          <rect x="75" y="238" width="180" height="58" rx="10" class="node-fill"/>
+        </g>
+        <g class="s2"><rect x="10" y="96" width="175" height="58" rx="10" class="node-fill"/></g>
+        <g text-anchor="middle">
+          <text x="320" y="34" class="viz-bold">1 · Define</text>
+          <text x="320" y="54" class="viz-small">the clinical idea, in words</text>
+          <text x="542" y="120" class="viz-bold">2 · Write the rule</text>
+          <text x="542" y="140" class="viz-small">codes, labs, drugs, ECG</text>
+          <text x="475" y="262" class="viz-bold">3 · Run and describe</text>
+          <text x="475" y="282" class="viz-small">counts, timing, by site/year</text>
+          <text x="165" y="262" class="viz-bold">4 · Validate</text>
+          <text x="165" y="282" class="viz-small">chart review sample</text>
+          <text x="97" y="120" class="viz-bold">5 · Refine or accept</text>
+          <text x="97" y="140" class="viz-small">publish definition + metrics</text>
+        </g>
+        <path d="M405,40 Q520,48 538,94" class="edge accent" marker-end="url(#l57-arrow2)"/>
+        <path d="M542,154 Q546,210 520,236" class="edge accent" marker-end="url(#l57-arrow2)"/>
+        <line x1="385" y1="267" x2="258" y2="267" class="edge accent" marker-end="url(#l57-arrow2)"/>
+        <path d="M120,238 Q96,200 97,156" class="edge accent" marker-end="url(#l57-arrow2)"/>
+        <path d="M185,112 Q320,88 452,118" class="edge" stroke-dasharray="5 4" marker-end="url(#l57-arrow)"/>
+        <text x="320" y="122" text-anchor="middle" class="viz-small viz-muted">refine: back to step 2</text>
+        <text x="320" y="178" text-anchor="middle" class="viz-small viz-bold">Repeat for each data source</text>
+        <text x="320" y="196" text-anchor="middle" class="viz-small viz-muted">and after any change to the data or coding</text>
+      </svg>
+      <figcaption>Validation is a step inside the loop, not a stamp at the end. A definition validated in one hospital’s data is a starting point in another.</figcaption>
+    </figure>
+
+    <div class="widget" data-widget="phenotype-builder">
+      <div class="widget-title">Build a phenotype for new-onset AF in the ICU</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">2,000 simulated ICU stays: some develop AF in the ICU, some had AF before admission, most have none. Switch data sources on and off, choose how to combine them, and watch sensitivity, PPV and the onset-time error move.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Training an ML phenotype on diagnosis codes as labels and then calling it “better than codes”. It has learned to predict the codes, errors included. Probabilistic phenotypes need some chart-reviewed truth, at least for evaluation.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>Rule-based phenotyping is weak supervision: each rule is a noisy labelling function. OHDSI’s PheValuator uses the same idea as anchor-based noisy-label learning. It takes patients who almost certainly have the condition (very specific criteria) and almost certainly do not, fits a diagnostic model, and uses its predicted probabilities as a “probabilistic gold standard” to estimate the sensitivity, specificity and PPV of any rule without chart review. Version 2.0 (2022) agreed better with chart-review PPVs than the original. It is a useful screen, not a replacement for reviewing charts.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="validation">
+    <h2>4. Validating against chart review</h2>
+    <p class="point">A validation study measures how wrong a phenotype is; to correct a relative risk you usually need both PPV and sensitivity, and you need them separately in the treated and the untreated.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Draw a sample, have trained reviewers judge each patient against an agreed reference definition (blinded to exposure), and compare with the phenotype. Lecture 2.11 gave you the accuracy measures. The design decides what you can estimate: sampling only phenotype-positives gives PPV, and nothing about missed cases.</dd>
+      <dt>Why it matters</dt>
+      <dd>Most published outcome validations report PPV alone, because reviewing positives is cheap. But PPV cannot reveal cases the phenotype missed, so it cannot tell you whether ascertainment differs between treated and untreated, which is the error that biases a ratio away from the truth in either direction (Lecture 2.8).</dd>
+      <dt>How to read it</dt>
+      <dd>For a rare outcome with non-differential error, specificity, which drives PPV, is what protects the risk ratio; sensitivity mostly matters for absolute risks. If sensitivity differs by exposure, the risk ratio is biased by roughly the ratio of the two sensitivities, and PPV will not show it.</dd>
+      <dt>What a change means</dt>
+      <dd>A PPV of 95% in both groups and equal sensitivity: the RR is nearly right. A PPV of 95% in both groups but sensitivity 90% in treated and 70% in untreated (treated patients are monitored more): the observed RR is inflated by about 90/70 ≈ 1.3.</dd>
+    </dl>
+
+    <div class="widget" data-widget="validation-bias">
+      <div class="widget-title">What PPV can and cannot fix</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">An outcome phenotype with given sensitivity and specificity. First keep the error non-differential and see that correcting by PPV recovers the true RR. Then switch to differential ascertainment: PPV barely moves, but the RR is wrong and the PPV correction no longer helps.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>“Corrected counts = observed counts × PPV.” That removes false positives but adds back none of the missed cases. It is a valid fix for a ratio only if sensitivity is the same in the groups being compared, which is exactly what a PPV-only study cannot show.</p>
+    </div>
+
+    <pre><code># v: chart-reviewed sample; algo = phenotype (0/1), truth = reviewer verdict (0/1)
+# Design: 50% of phenotype-positives and 5% of negatives were sampled
+v$w  &lt;- ifelse(v$algo == 1, 1 / 0.50, 1 / 0.05)        # weight back to the cohort
+pos  &lt;- subset(v, algo == 1)
+binom.test(sum(pos$truth), nrow(pos))                   # PPV with exact 95% CI
+sens &lt;- with(v, sum(w * (algo == 1 &amp; truth == 1)) / sum(w * truth))
+# Repeat both within treated and untreated: differential error is what matters
+by(v, v$anticoag, function(d) with(d, sum(w * (algo &amp; truth)) / sum(w * truth)))</code></pre>
+    <p>Sampling some phenotype-negatives is what makes sensitivity estimable. Because negatives are sampled at a lower rate, each one stands for more patients, so the sensitivity uses weights. The last line checks whether sensitivity differs by treatment; those group-specific numbers are the bias parameters for a quantitative bias analysis (Lecture 2.13).</p>
+
+    <div class="callout example">
+      <div class="callout-title">Example · How many charts?</div>
+      <p>If the outcome occurs in 3% of patients, a random sample of 300 phenotype-negatives contains only a handful of missed cases, so sensitivity comes with a very wide interval. That is why validation studies oversample patients who are “near” the definition (one code but not two, a suggestive lab, a relevant drug) and then weight back, as in the code above.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Checking a fishing net by inspecting the catch tells you how many of the fish in it are the species you wanted (PPV). It cannot tell you how many slipped through. For that you have to look in the water.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="project5a">
+    <h2>5. Project 5A: ECG-defined AF onset vs ICD codes</h2>
+    <p class="point">A discharge code can say that a patient had AF at some point; only a timed source such as the ECG can say when it started, and in a target trial emulation the start is the whole design.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>MIMIC-IV-ECG holds about 800,000 ten-second 12-lead diagnostic ECGs from nearly 160,000 MIMIC-IV patients (2008–2019), each with a timestamp, machine measurements and machine-generated report text, and links to cardiologist reports where one exists. Project 5A defines AF onset as the first ECG read as AF during the ICU stay, in a patient with no AF before.</dd>
+      <dt>Why it matters</dt>
+      <dd>ICD codes in MIMIC-IV are assigned per hospital admission at discharge. They carry no time, and they do not separate AF that started in the ICU from AF the patient arrived with. Using them for time zero would mix prevalent and new AF and create immortal time (Lectures 5.3 and 4.5).</dd>
+      <dt>How to read it</dt>
+      <dd>12-lead ECGs are snapshots. The true onset lies between the last ECG in sinus rhythm and the first in AF, so onset is interval-censored. Nurse-charted rhythm in the ICU charting tables is more frequent and can narrow that interval.</dd>
+      <dt>What a change means</dt>
+      <dd>Requiring a cardiologist-confirmed read, or AF on two ECGs, raises PPV but delays time zero for some patients and drops brief episodes. Each choice is a sensitivity analysis to pre-specify.</dd>
+    </dl>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>What to validate</th><th>Reference standard</th><th>Why it matters for 5A</th></tr></thead>
+        <tbody>
+          <tr><td><strong>AF is real</strong> (PPV of the computer read)</td><td>Two reviewers reading the waveform, blinded to treatment</td><td>Computer reads mislabel AF, often sinus rhythm with ectopics or artefact</td></tr>
+          <tr><td><strong>AF is new</strong></td><td>Earlier admissions, home medicines, notes</td><td>Prevalent AF has different prognosis and treatment patterns</td></tr>
+          <tr><td><strong>Onset time</strong></td><td>Charted rhythm and ECGs around the flagged time</td><td>Time zero, eligibility and the grace period all hang on it</td></tr>
+          <tr><td><strong>Error by treatment</strong></td><td>All of the above, split by anticoagulated vs not</td><td>Treated patients may get more ECGs, so earlier and more complete detection</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Computer reads of AF are not truth</div>
+      <p>Bogun and colleagues (2004) reviewed 2,298 ECGs that a computer had read as AF: 19% were wrong, affecting 35% of the patients, often sinus rhythm with atrial ectopics or artefact. Some of those patients were then started on antiarrhythmics or anticoagulants. For Project 5A this means two things: validate the machine read against the waveform on a sample, and consider requiring confirmation (a second AF ECG or charted AF rhythm) in the primary definition.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Validating AF onset only among anticoagulated patients because their charts are richer. If detection differs by treatment, which is plausible because treated patients are monitored more closely, the error is differential and the hazard ratio can move either way. Validate in both arms, and carry the arm-specific numbers into the bias analysis.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>You could train an AF detector on the raw MIMIC-IV-ECG waveforms and use it as the phenotype. That shifts the validation question rather than removing it: report the detector’s sensitivity and PPV against human-read waveforms in this population, and check that its errors do not differ by treatment arm. A model with excellent AUROC on a public benchmark is still an unvalidated phenotype here.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="reporting">
+    <h2>6. What a reviewer wants to see</h2>
+    <p class="point">Report each key definition so that someone else could run it, with the evidence that it works in this source, and with the analysis that shows how much residual error would matter.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Item</th><th>Good practice</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Definitions</strong></td><td>Full code lists, item IDs, time windows and logic in a supplement or a public repository</td></tr>
+          <tr><td><strong>Data quality</strong></td><td>Completeness and plausibility of key variables by site and year; how problems were handled</td></tr>
+          <tr><td><strong>Validation</strong></td><td>Sampling design, reference standard, reviewer agreement (kappa), PPV and sensitivity with CIs, by exposure group</td></tr>
+          <tr><td><strong>Impact</strong></td><td>Sensitivity analyses with alternative definitions, and a bias analysis using the validation numbers</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Citing someone else’s validation from a different database and decade as if it applied. PPV depends on prevalence and on local coding habits. Borrowed numbers are a starting point for a bias analysis, with wide ranges, not proof.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>A team reports that their OMOP database passed 99% of Data Quality Dashboard checks, so it is “regulatory grade” for a study of heart failure readmission. What do you ask?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Generic checks say the values are well-formed and believable; they say nothing about relevance. Is heart failure readmission captured when it happens at another hospital? Are ejection fraction and diuretic dose recorded? How was the readmission phenotype validated, and is it equally good in the groups compared?</p></div>
+        </details>
+      </li>
+      <li>
+        <p>An outcome validation reviewed 200 code-positive charts and found PPV 92%. The authors conclude misclassification “cannot explain” their RR of 1.4. Is that fair?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Not yet. A high PPV in the whole sample argues against false positives diluting the ratio, but it says nothing about sensitivity. If the exposed group is monitored more closely, its events are detected more completely, and an RR of 1.4 could be partly or wholly detection bias. They need PPV by exposure group and some evidence about sensitivity in each group, or a bias analysis over plausible ranges.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Why is “at least one ICD-10 I48 code during the admission” unsuitable as time zero for Project 5A, even if its PPV for AF were 100%?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>It has no time: the code is attached to the admission, not to the moment AF started. It also includes AF present before admission. Starting follow-up at admission would build in immortal time for anything that has to happen after onset; starting it at discharge would miss the ICU entirely. A timed source (ECG or charted rhythm) is needed.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>You change the 5A phenotype from “AF on one ECG” to “AF on two ECGs at least an hour apart”. What do you expect to happen to the cohort, and how do you report it?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Fewer patients, higher PPV, fewer brief self-terminating episodes, and a later time zero for some patients (at the second ECG). The cohort may be sicker, with more sustained AF. Pre-specify one as primary and the other as a sensitivity analysis, and report how the estimate changes.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A colleague proposes skipping chart review because PheValuator estimated the phenotype’s PPV at 0.9. When is that reasonable?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>As a screen for choosing between candidate definitions, or when chart review is impossible, with that limitation stated. For the primary exposure, outcome or time zero of a study meant to inform decisions, a chart-review sample in the same data is still expected. PheValuator’s reference is itself a model built from coded data, so it can share the codes’ blind spots.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Kahn et al., “A harmonized data quality assessment terminology and framework for the secondary use of electronic health record data”, <em>eGEMs</em> (2016).</li>
+      <li>Blacketer et al., “Increasing trust in real-world evidence through evaluation of observational data quality”, <em>JAMIA</em> (2021): the OHDSI Data Quality Dashboard.</li>
+      <li>US FDA, <em>Real-World Data: Assessing Electronic Health Records and Medical Claims Data to Support Regulatory Decision-Making for Drug and Biological Products</em>, final guidance (July 2024).</li>
+      <li>European Medicines Agency and HMA, <em>Data Quality Framework for EU medicines regulation</em> (2023), and its application to real-world data (2026).</li>
+      <li>Saudi Food and Drug Authority, <em>Framework on the Use of Real-World Data and Real-World Evidence to Support Effectiveness and Safety for Marketing Authorization of Medicinal Products</em>, version 1.0 (April 2026).</li>
+      <li>Swerdel, Hripcsak &amp; Ryan, “PheValuator: development and evaluation of a phenotype algorithm evaluator”, <em>Journal of Biomedical Informatics</em> (2019); PheValuator 2.0, same journal (2022).</li>
+      <li>Kirby et al., “PheKB: a catalog and workflow for creating electronic phenotype algorithms for transportability”, <em>JAMIA</em> (2016).</li>
+      <li>Yao et al., “Sensitivity, specificity, positive and negative predictive values of identifying atrial fibrillation using administrative data: a systematic review and meta-analysis”, <em>Clinical Epidemiology</em> (2019).</li>
+      <li>Bogun et al., “Misdiagnosis of atrial fibrillation and its clinical consequences”, <em>American Journal of Medicine</em> (2004).</li>
+      <li>Gow et al., <em>MIMIC-IV-ECG: Diagnostic Electrocardiogram Matched Subset</em> (PhysioNet, 2023); Johnson et al., “MIMIC-IV, a freely accessible electronic health record dataset”, <em>Scientific Data</em> (2023).</li>
+      <li>Strom, Kimmel &amp; Hennessy (eds), <em>Pharmacoepidemiology</em> (Wiley): chapters on validity of pharmacoepidemiologic data.</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="5-06-real-world-data-sources.html"><small>Previous</small>5.6 Real-world data sources and OMOP</a>
+    <a class="next" href="5-08-clinical-trial-statistics.html"><small>Next</small>5.8 Statistics of clinical trials</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

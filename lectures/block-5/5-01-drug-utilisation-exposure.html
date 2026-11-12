@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>5.1 Pharmacoepidemiology foundations · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/5-01.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-5">Block 5</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 5.1</p>
+  <h1>Pharmacoepidemiology foundations: drug utilisation, defining exposure from prescriptions and dispensing</h1>
+  <div class="lecture-meta">
+    <span>Block 5 · Pharmacoepidemiology, real-world evidence, regulatory science and AI evaluation</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>In a drug study, “exposed” is not a column in the data. You build it from records: orders, dispensings, administrations. The rules you choose (which record, how long a supply lasts, how big a gap counts as stopping, which time window matters) can move the answer as much as confounding does. This lecture shows how to count drug use, how to turn records into exposure, and how to make those rules explicit. In Project 5A you will build anticoagulant exposure, hour by hour, from MIMIC-IV administration records.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#dur">Drug utilisation: who uses what, how much</a></li>
+      <li><a href="#ladder">Prescribed, dispensed, administered, taken</a></li>
+      <li><a href="#adherence">Persistence and adherence: PDC and MPR</a></li>
+      <li><a href="#episodes">Building exposure episodes</a></li>
+      <li><a href="#definitions">Exposure definitions change the answer</a></li>
+      <li><a href="#p5a">Exposure in Project 5A</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="dur">
+    <h2>1. Drug utilisation: who uses what, how much</h2>
+    <p class="point">Before asking whether a drug helps or harms, count who uses it, at what dose and for how long; those counts are the denominator of every safety question and often a finding in themselves.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>Drug utilisation research</strong> describes prescribing and use in a population. Two WHO tools make counts comparable. The <strong>ATC</strong> (Anatomical Therapeutic Chemical) code classifies a drug in five levels: apixaban is B01AF02 (B blood, B01 antithrombotic agents, B01AF direct factor Xa inhibitors). The <strong>DDD</strong> (defined daily dose) is the assumed average maintenance dose per day for the drug’s main indication in adults: 10 mg for apixaban, 7.5 mg for warfarin.</dd>
+      <dt>Why it matters</dt>
+      <dd>Utilisation numbers give the denominator for pharmacovigilance (Lecture 5.12), show channelling (who gets which drug, Lecture 5.2), and decide feasibility. Prevalence of use (the share using in a period) and <strong>incidence of use</strong> (the share starting) answer different questions: safety studies of early harms need starters.</dd>
+      <dt>How to read it</dt>
+      <dd>Population use is reported as DDDs per 1,000 inhabitants per day. A value of 10 means that, on an average day, about 1% of the population takes one standard dose, if real doses match the DDD.</dd>
+      <dt>What a change means</dt>
+      <dd>DDDs rising while the number of users is flat means higher doses or longer use, not more patients. Incidence of use falling while prevalence rises means people stay on the drug longer, or the users are ageing in place.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reading DDDs as doses taken. The DDD is a unit of measurement, not a recommended dose. Apixaban 2.5 mg twice daily, the reduced dose in atrial fibrillation (AF) and the dose after hip or knee replacement, is 0.5 DDD a day. A switch towards reduced dosing halves the DDD count with no change in the number of people treated.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · The Project 5A feasibility count is a utilisation study</div>
+      <p>Before any protocol, count: of ICU patients with new AF on the ECG, how many start therapeutic anticoagulation, with which drug, and how many hours after onset? If almost nobody is treated, or almost everybody, there is no one to compare with. That is a positivity problem (Lecture 4.1), and it is the project’s go/no-go step.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="ladder">
+    <h2>2. Prescribed, dispensed, administered, taken</h2>
+    <p class="point">Each kind of record sits one step further along the path from a doctor’s intention to drug in the body; use the record closest to ingestion that your data have, and say what the gap is.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Record</th><th>Typical source</th><th>What it shows</th><th>What it misses</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Prescription or order</strong></td><td>EHR order entry; MIMIC-IV <code>hosp.prescriptions</code>, <code>hosp.pharmacy</code></td><td>A clinician intended the drug</td><td>Never filled, stopped early, doses held</td></tr>
+          <tr><td><strong>Dispensing</strong></td><td>Insurance claims, pharmacy systems</td><td>The patient collected it, with a days’ supply</td><td>Whether and when it was taken; cash or over-the-counter purchases</td></tr>
+          <tr><td><strong>Administration</strong></td><td>Hospital medication administration records; MIMIC-IV <code>hosp.emar</code>, ICU infusions in <code>icu.inputevents</code></td><td>A nurse gave a stated dose at a stated time</td><td>Anything before admission or after discharge</td></tr>
+          <tr><td><strong>In the body</strong></td><td>Drug levels, anti-Xa, INR; electronic pill bottles</td><td>The drug reached the patient</td><td>Rarely recorded outside trials</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · Exposure inferred from dispensings vs observed in administrations</div>
+      <svg class="viz-svg" viewBox="0 0 640 372" role="img" aria-label="Two panels. Top: community dispensing records over 120 days. Four dispensings of 30 days' supply at days 0, 30, 68 and 95. The supply bars are drawn by assumption; an 8-day gap between day 60 and 68 could be missed doses, a hospital stay or stopping, and a 3-day overlap at day 95 is an early refill. Bottom: ICU administration records over 72 hours. Subcutaneous prophylactic heparin doses at 2, 10 and 18 hours are scanned in hosp.emar. New AF appears on the ECG at 22 hours. A heparin infusion in icu.inputevents starts at 24 hours, its rate is lowered at 36 hours, it is held for 4 hours from 48 hours for a procedure, then resumes.">
+        <!-- Panel A -->
+        <text x="10" y="20" class="viz-bold">A. Community dispensing: exposure is inferred</text>
+        <text x="10" y="38" class="viz-small viz-muted">claims or pharmacy records; one row per fill, with a days’ supply</text>
+        <g class="s1">
+          <circle cx="40" cy="62" r="5.5" class="dot"/>
+          <circle cx="185" cy="62" r="5.5" class="dot"/>
+          <circle cx="368.7" cy="62" r="5.5" class="dot"/>
+          <circle cx="499.2" cy="62" r="5.5" class="dot"/>
+          <rect x="40" y="74" width="143" height="16" rx="3" class="fill-soft"/>
+          <rect x="185" y="74" width="143" height="16" rx="3" class="fill-soft"/>
+          <rect x="368.7" y="74" width="143" height="16" rx="3" class="fill-soft"/>
+          <rect x="499.2" y="94" width="120.8" height="16" rx="3" class="fill-soft"/>
+        </g>
+        <text x="48" y="58" class="viz-small">fill: 30 days</text>
+        <text x="112" y="86" text-anchor="middle" class="viz-small viz-muted">assumed supply</text>
+        <line x1="330" y1="98" x2="368.7" y2="98" class="stroke s3"/>
+        <text x="349" y="124" text-anchor="middle" class="viz-small colour s3">8-day gap: missed doses,</text>
+        <text x="349" y="139" text-anchor="middle" class="viz-small colour s3">a hospital stay, or stopped?</text>
+        <text x="572" y="124" text-anchor="middle" class="viz-small colour s2">early refill:</text>
+        <text x="572" y="139" text-anchor="middle" class="viz-small colour s2">stockpile or overlap?</text>
+        <line x1="40" y1="152" x2="620" y2="152" class="viz-axis"/>
+        <g class="viz-tick" text-anchor="middle">
+          <text x="40" y="168">0</text><text x="185" y="168">30</text><text x="330" y="168">60</text><text x="475" y="168">90</text><text x="620" y="168">120 days</text>
+        </g>
+
+        <!-- Panel B -->
+        <text x="10" y="200" class="viz-bold">B. ICU administration records (MIMIC-IV): exposure is observed</text>
+        <text x="10" y="218" class="viz-small viz-muted">every dose and rate change has a timestamp; every pause needs a rule</text>
+        <text x="10" y="244" class="viz-small">hosp.emar: scanned doses</text>
+        <g class="s5">
+          <line x1="56" y1="252" x2="56" y2="270" class="stroke"/>
+          <line x1="120.6" y1="252" x2="120.6" y2="270" class="stroke"/>
+          <line x1="185.1" y1="252" x2="185.1" y2="270" class="stroke"/>
+        </g>
+        <text x="226" y="266" class="viz-small viz-muted">← SC heparin, prophylactic dose</text>
+        <line x1="217.4" y1="232" x2="217.4" y2="338" class="edge accent" stroke-dasharray="5 4"/>
+        <text x="223" y="244" class="viz-small colour s1">new AF on the ECG (MIMIC-IV-ECG)</text>
+        <text x="10" y="290" class="viz-small">icu.inputevents: infusion rate</text>
+        <g class="s1">
+          <rect x="233.5" y="296" width="96.7" height="30" class="fill"/>
+          <rect x="330.2" y="306" width="96.7" height="20" class="fill"/>
+          <rect x="459.2" y="306" width="161" height="20" class="fill"/>
+        </g>
+        <text x="282" y="290" text-anchor="middle" class="viz-small">heparin infusion</text>
+        <text x="378.5" y="300" text-anchor="middle" class="viz-small">rate lowered</text>
+        <text x="443" y="300" text-anchor="middle" class="viz-small colour s3">held 4 h</text>
+        <line x1="40" y1="338" x2="620" y2="338" class="viz-axis"/>
+        <g class="viz-tick" text-anchor="middle">
+          <text x="40" y="354">0</text><text x="136.7" y="354">12</text><text x="233.5" y="354">24</text><text x="330.2" y="354">36</text><text x="426.9" y="354">48</text><text x="523.6" y="354">60</text><text x="608" y="354">72 h</text>
+        </g>
+      </svg>
+      <figcaption>In community data, exposure between fills is an assumption, and the gaps and overlaps are where the rules bite. In the ICU you see every dose, but the same drug can be prophylactic or therapeutic, injected or infused, and paused for an hour or stopped for good.</figcaption>
+    </figure>
+
+    <pre><code>-- Therapeutic heparin infusions charted in the ICU
+SELECT ie.stay_id, ie.starttime, ie.endtime, ie.rate, ie.rateuom, ie.amount
+FROM mimiciv_icu.inputevents ie
+JOIN mimiciv_icu.d_items di ON di.itemid = ie.itemid
+WHERE di.label ILIKE '%heparin%';
+-- Scanned administrations: enoxaparin, apixaban, warfarin, SC heparin
+SELECT e.hadm_id, e.charttime, e.medication, e.event_txt
+FROM mimiciv_hosp.emar e
+WHERE e.medication ILIKE ANY (ARRAY['%heparin%','%enoxaparin%','%apixaban%','%warfarin%'])
+  AND e.event_txt = 'Administered';</code></pre>
+    <p>The first query finds heparin infusions with their start, end and rate. The second finds scanned doses that were actually given (other values of <code>event_txt</code> include “Not Given” and “Delayed”). The label search is only a start: you still have to separate line flushes and prophylactic doses from therapeutic anticoagulation, using dose, rate and route from <code>emar_detail</code> and the infusion rows.</p>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reading “no record” as “not given”. The MIMIC-IV documentation notes that the eMAR system was introduced during 2011–2013, so eMAR data are not available for all patients. For earlier admissions, an empty <code>emar</code> means missing data, not an untreated patient. MIMIC-IV dates are shifted for privacy, so you cannot read the real year from a timestamp; <code>patients.anchor_year_group</code> (a three-year range such as 2008–2010) tells you roughly when care happened. Restrict to periods with eMAR, or use orders for earlier ones and say so.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">In the Gulf</div>
+      <p>The Saudi Ministry of Health’s Wasfaty e-prescription service links prescriptions written in its hospitals and primary care centres to community pharmacies, where the patient collects the medicine. The ministry reported more than 20 million prescriptions dispensed through it by the end of 2021. A record of this kind has both the prescription and the dispensing, so primary non-adherence (never collected) becomes visible. It covers only the ministry’s prescriptions; private-sector purchases are outside it. Whether such data can be used for research is a separate question of access and governance.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>A restaurant has the order slip, the kitchen ticket and the plate set down at the table. None of them proves the meal was eaten, but the plate on the table is much closer than the order slip.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="adherence">
+    <h2>3. Persistence and adherence: PDC and MPR</h2>
+    <p class="point">Persistence asks how long people stay on a drug; adherence asks how fully they take it while on it; PDC and MPR both estimate adherence from refills, and they disagree exactly when refills overlap.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The ABC taxonomy (Vrijens and colleagues, 2012) splits adherence into three phases: <strong>initiation</strong> (first dose taken), <strong>implementation</strong> (how closely dosing matches the regimen) and <strong>discontinuation</strong>. <strong>Persistence</strong> is the time from initiation to discontinuation. The <strong>medication possession ratio</strong> (MPR) adds up days’ supply and divides by the days in a period. The <strong>proportion of days covered</strong> (PDC) counts each calendar day at most once.</dd>
+      <dt>Why it matters</dt>
+      <dd>Adherence is an outcome in its own right (does a policy improve it?), a description of real-world use, and a dangerous variable to adjust for, because adherers differ from non-adherers in ways that predict health (Lecture 5.2).</dd>
+      <dt>How to read it</dt>
+      <dd>PDC of at least 80% is the usual threshold for “adherent” in quality measures. MPR can exceed 100% when patients refill early; PDC cannot. Report which measure, which period and how overlaps were handled.</dd>
+      <dt>What a change means</dt>
+      <dd>A PDC moving from 60% to 80% means one more day in five covered. An MPR moving from 90% to 120% may mean nothing more than earlier refills.</dd>
+    </dl>
+
+    \[ \text{PDC} = \frac{\text{days in the period with drug on hand}}{\text{days in the period}} \]
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Treating refill-based adherence as pills swallowed. Both measures show possession, not ingestion. They also say nothing about people who never filled the first prescription, the most common form of non-adherence for some drugs. Refill data cannot see it; e-prescription data with dispensing linked can.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>Adherence measured during follow-up is a post-treatment variable. Using it as a feature or as a subgroup (“among adherent patients the drug worked”) is conditioning on something the outcome process can affect, the same leak as using future information at prediction time. Lecture 5.2 shows the healthy adherer effect this produces.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="episodes">
+    <h2>4. Building exposure episodes</h2>
+    <p class="point">Dispensing data give you dots; exposure is the line you draw between them, and the grace period and stockpiling rules decide where that line breaks.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Each fill covers a <strong>days’ supply</strong> (quantity divided by daily dose). Consecutive fills join into a <strong>treatment episode</strong> unless the gap between them exceeds the <strong>grace period</strong> (a permissible gap, in days or as a percentage of the last supply). <strong>Stockpiling</strong> (carry-over) moves leftover supply from an early refill to the end of the current supply. The episode usually ends at the last day of supply plus the grace period.</dd>
+      <dt>Why it matters</dt>
+      <dd>These rules decide who is a “current user” on the day of an event, how long persistence is, and when people are censored in as-treated analyses (Lecture 5.2). They are analytic choices, so they belong in the protocol with a sensitivity analysis.</dd>
+      <dt>How to read it</dt>
+      <dd>For chronic drugs, grace periods of 30–90 days or 50–100% of the last supply are common. For an acute effect (bleeding on an anticoagulant) the grace period should be short, close to how long the drug acts. Show results for two or three values.</dd>
+      <dt>What a change means</dt>
+      <dd>A longer grace period gives fewer, longer episodes, so more events count as “exposed” and persistence looks better. If the hazard ratio moves a lot with the grace period, the effect depends on events that happen just after stopping, which is a finding to explain, not hide.</dd>
+    </dl>
+
+    <div class="widget" data-widget="exposure-episodes">
+      <div class="widget-title">Build exposure episodes from a dispensing record</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Patient A has gaps; patient B refills early, then stops. Change the grace period and switch stockpiling on and off. Watch the episodes, PDC and MPR, and move the event day to see how one event is labelled under different exposure definitions.</p>
+    </div>
+
+    <pre><code>library(AdhereR)
+ep &lt;- compute.treatment.episodes(
+  data = disp,                          # one row per dispensing
+  ID.colname = "id", event.date.colname = "date",
+  event.duration.colname = "days_supply", medication.class.colname = "drug",
+  consider.dosage.change = FALSE,
+  carryover.within.obs.window = TRUE,   # stockpiling on
+  maximum.permissible.gap = 30,         # grace period
+  maximum.permissible.gap.unit = "days",
+  maximum.permissible.gap.append.to.episode = TRUE,   # episode ends at supply + grace
+  followup.window.start = 0, followup.window.duration = 365,
+  date.format = "%Y-%m-%d")</code></pre>
+    <p>This returns one row per episode (<code>episode.start</code>, <code>episode.end</code>). Rerun with <code>maximum.permissible.gap</code> at 15 and 60, and with carry-over off, and keep all versions for the sensitivity table. <code>CMA7()</code> in the same package gives a PDC-like adherence measure that handles carry-over.</p>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Defining users as people with at least two fills, with follow-up from the first. To be a “user” they had to survive and stay in the data until the second fill, so the time between fills is immortal (Lecture 5.3). Either start follow-up at the second fill, or count everyone from the first fill.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · How much the grace period moves the answer</div>
+      <p>Take an anticoagulant study of bleeding. With a 0-day grace period, a bleed four days after the last tablet runs out counts as “unexposed”. If patients often stop because of early warning signs (bruising, a falling haemoglobin), bleeds pile up just after stopping, and the drug looks safer than it is. A grace period of a few days, or attributing events to the drug for a fixed time after stopping, protects against this. Lecture 5.3 calls it reverse causation.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="definitions">
+    <h2>5. Exposure definitions change the answer</h2>
+    <p class="point">Match the exposure window to how the drug could cause the outcome: acute effects need current use, cumulative effects need dose over time, and the mismatch dilutes or distorts the estimate.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Definition</th><th>Exposed if…</th><th>Suits</th><th>Typical problem</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Ever use</strong></td><td>Any fill before the event</td><td>Rarely right</td><td>Dilutes acute effects; easily creates immortal time</td></tr>
+          <tr><td><strong>Current / recent / past</strong></td><td>Supply covers the event day / ended within e.g. 90 days / ended earlier</td><td>Acute effects (bleeding, arrhythmia, falls)</td><td>Result depends on the grace period and on why people stopped</td></tr>
+          <tr><td><strong>Cumulative dose or duration</strong></td><td>Total DDDs or years of use up to the event</td><td>Slow effects (cancer, fractures)</td><td>Duration tracks survival and adherence; needs a lag (Lecture 5.3)</td></tr>
+          <tr><td><strong>Time-varying</strong></td><td>Status updated over follow-up</td><td>Most cohort analyses</td><td>Needs methods for time-varying confounding (Lecture 4.3)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <dl class="facets">
+      <dt>Why it matters</dt>
+      <dd>Misclassifying exposure is information bias (Lecture 2.8). If the drug acts only while taken, counting past users as exposed adds people with no effect to the exposed group and pulls the estimate towards 1.</dd>
+      <dt>How to read it</dt>
+      <dd>A good paper states the definition, the biological reason for it, and how results change under the alternatives. Current-use estimates far from past-use estimates, with past use near 1, fit an acute effect that wears off.</dd>
+      <dt>What a change means</dt>
+      <dd>An odds ratio of 2.0 for current use and 1.2 for ever use is not a contradiction: the ever-use group is mostly people who were no longer taking the drug.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Trying several definitions and reporting the one that “works”. That is the forking-paths problem with a pharmacoepidemiology accent. Choose the primary definition from the mechanism before seeing outcomes, and report the others as pre-specified sensitivity analyses.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Asking whether umbrellas keep people dry by comparing “ever owned an umbrella” with “never owned one”. The question is whether they were carrying it when it rained.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="p5a">
+    <h2>6. Exposure in Project 5A</h2>
+    <p class="point">In the ICU the clock runs in hours, the same drug serves two purposes, and every interruption needs a rule; write those rules down before you look at outcomes.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Decision</th><th>Why it is hard</th><th>A defensible default</th></tr></thead>
+        <tbody>
+          <tr><td><strong>What counts as anticoagulation</strong></td><td>Almost every ICU patient gets prophylactic-dose heparin; flushes keep lines open</td><td>Therapeutic dose only: heparin infusion, treatment-dose enoxaparin, oral anticoagulant; prophylaxis is the background</td></tr>
+          <tr><td><strong>Time zero</strong></td><td>AF onset from codes is days late or missing</td><td>First ECG showing AF without AF before (MIMIC-IV-ECG), aligned with eligibility</td></tr>
+          <tr><td><strong>Initiation window</strong></td><td>Treatment rarely starts the minute AF appears</td><td>Started within a set number of hours of onset, handled with a grace period in the target trial (Lecture 4.5)</td></tr>
+          <tr><td><strong>Interruptions</strong></td><td>Infusions are held for procedures and restarted</td><td>Pauses of a few hours are not stopping; a gap beyond a stated limit is</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Prophylaxis is not “no anticoagulation”</div>
+      <p>If your untreated group is defined as “no heparin in <code>inputevents</code>”, many of them are receiving prophylactic subcutaneous heparin recorded in <code>emar</code>. The real contrast is therapeutic versus prophylactic anticoagulation. That changes the estimand, the bleeding risk in the comparator arm and the wording of your conclusion. Lecture 5.2 takes up the comparator problem.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Starting the clock at ICU admission and classifying patients by whether they were ever anticoagulated. Treated patients must survive until treatment starts, which hands them free survival time. Lecture 2.16 introduced this; Lecture 5.3 measures it.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>National apixaban use measured in DDDs per 1,000 inhabitants per day fell by 15% in a year, while the number of patients dispensed apixaban rose. What could explain this, and what would you check?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>A shift to the reduced dose (2.5 mg twice daily is 0.5 DDD), shorter courses (more post-surgical prophylaxis, fewer long-term AF patients), or poorer persistence. Check the dose distribution, the indication mix and the number of days supplied per patient. DDDs measure volume, not people.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A study reports mean MPR of 1.15 for a statin and concludes adherence is “excellent”. Is that reasonable?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Not on its own. MPR above 1 means supply exceeded the days in the period, usually from early refills or overlapping fills. Patients can over-collect and still have long gaps. A PDC, which counts each day once, and the share of patients with PDC at least 80% would be more informative.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>You are studying hypoglycaemia on a sulfonylurea. Your colleague wants a 90-day grace period “to be safe”. What do you say?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Hypoglycaemia is an acute effect that wears off within days of stopping, so a 90-day grace period counts many unexposed days as exposed and dilutes the association. Use a short grace period close to the drug’s duration of action as the primary analysis, and show longer ones as sensitivity analyses.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>In MIMIC-IV, a patient whose <code>anchor_year_group</code> is 2008–2010 has anticoagulant orders in <code>prescriptions</code> but nothing in <code>emar</code>. How should your exposure algorithm treat this?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Not as unexposed. eMAR was introduced in 2011–2013, so administration data are probably missing for that admission. Either restrict the study to years with eMAR coverage, or use orders as the exposure source for earlier years with a sensitivity analysis. Mixing the two silently creates differential misclassification by calendar time.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A paper finds that current users of a drug have a lower risk of a bleed than past users who stopped in the last 30 days. Before calling the drug protective, what explanation should you rule out?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Reverse causation: patients stop drugs when early signs of the outcome appear, so events cluster just after stopping and are labelled “recent past use”. Check why patients stopped, extend the exposure window for a few days after the last supply, and look at an ITT-like analysis where stopping does not change the label.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Strom, Kimmel &amp; Hennessy (eds), <em>Pharmacoepidemiology</em> (Wiley): chapters on drug utilisation research and on exposure measurement in automated databases.</li>
+      <li>WHO Collaborating Centre for Drug Statistics Methodology, <em>Guidelines for ATC classification and DDD assignment</em>, and the online ATC/DDD Index (apixaban B01AF02, DDD 10 mg; warfarin B01AA03, DDD 7.5 mg).</li>
+      <li>Vrijens et al., “A new taxonomy for describing and defining adherence to medications”, <em>British Journal of Clinical Pharmacology</em> (2012).</li>
+      <li>Dima &amp; Dediu, “Computation of adherence to medication and visualization of medication histories in R with AdhereR”, <em>PLoS ONE</em> (2017); and the AdhereR package documentation.</li>
+      <li>Johnson et al., MIMIC-IV documentation (PhysioNet; mimic.mit.edu): the <code>emar</code>, <code>emar_detail</code>, <code>prescriptions</code>, <code>pharmacy</code>, <code>inputevents</code> and <code>ingredientevents</code> tables.</li>
+      <li>Saudi Ministry of Health, news releases on the Wasfaty e-prescription service (December 2021).</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="../block-4/4-11-natural-experiments.html"><small>Previous</small>4.11 Natural experiments in public health policy</a>
+    <a class="next" href="5-02-new-user-active-comparator.html"><small>Next</small>5.2 New-user and active-comparator designs</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>5.10 External and synthetic control arms · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/5-10.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-5">Block 5</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 5.10</p>
+  <h1>External and synthetic control arms</h1>
+  <div class="lecture-meta">
+    <span>Block 5 · Pharmacoepidemiology, real-world evidence, regulatory science and AI evaluation</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>When a trial gives everyone the new treatment, the comparison group has to come from somewhere else: an earlier trial, a registry, health records or a natural history study. That comparison is <strong>observational</strong>, even though half of it sits inside a trial. So it is judged by the rules of Lectures 4.5 and 5.9: same eligibility, same time zero, same outcome definition, and an honest account of what the weighting cannot fix. When some concurrent controls exist, <strong>Bayesian dynamic borrowing</strong> lets the external data help only as far as they agree with them. Regulators accept external controls in a narrow set of situations, and you should be able to say which.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#what">Single-arm trials need a comparator from outside</a></li>
+      <li><a href="#sources-ec">Where external controls come from</a></li>
+      <li><a href="#threats">What breaks the comparison</a></li>
+      <li><a href="#weighting">Making the external group resemble the trial</a></li>
+      <li><a href="#borrowing">Bayesian dynamic borrowing</a></li>
+      <li><a href="#judging">How regulators judge external controls</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="what">
+    <h2>1. Single-arm trials need a comparator from outside</h2>
+    <p class="point">A response rate of 40% means nothing until you know what would have happened without the drug; an external control supplies that “without”.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>An <strong>externally controlled trial</strong> compares patients treated in a trial with patients who were not in it: people treated earlier (a <em>historical</em> control) or elsewhere at the same time. Industry often calls this a “synthetic control arm”. The external patients were never randomised, so the comparison carries all the confounding risks of an observational study.</dd>
+      <dt>Why it matters</dt>
+      <dd>It is used where randomisation is hard: rare diseases with a few dozen patients worldwide, cancers with no effective standard treatment, and diseases so lethal that a placebo arm is unacceptable. In these settings it can be the difference between some comparative evidence and none.</dd>
+      <dt>How to read it</dt>
+      <dd>The case is strongest when the untreated course is predictable and well documented, the outcome is objective (death, a lab value), and the effect is large compared with the variation between patients. It is weakest for small effects, subjective outcomes or diseases whose course varies a lot.</dd>
+      <dt>What a change means</dt>
+      <dd>A gap between treated and external patients that shrinks sharply after weighting is a warning: the raw contrast was mostly differences in who was enrolled. A gap that survives weighting, negative-control checks and a bias analysis (Lecture 2.13) is more believable.</dd>
+    </dl>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th></th><th>Synthetic control <em>method</em> (Lecture 4.8)</th><th>Synthetic / external control <em>arm</em> (this lecture)</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Unit</strong></td><td>Whole regions or countries</td><td>Individual patients</td></tr>
+          <tr><td><strong>Data</strong></td><td>Long outcome series before and after a policy</td><td>Patient-level records from trials, registries, EHRs</td></tr>
+          <tr><td><strong>How the control is built</strong></td><td>Weighted mix of untreated units that tracks the treated unit before the policy</td><td>External patients chosen and weighted to look like the trial’s patients at baseline</td></tr>
+          <tr><td><strong>Key assumption</strong></td><td>Good pre-period fit implies a good counterfactual after</td><td>No unmeasured prognostic differences; outcomes measured the same way</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap · the name clash</div>
+      <p>“Synthetic control” means two different things. In policy evaluation (Lecture 4.8 and Project 4) it is Abadie’s method: a weighted mix of untreated regions that tracks the treated region before a policy. In drug development, a “synthetic control arm” is just an external control group of patients. They share a name and some weighting ideas, nothing else. When a paper or a vendor says “synthetic control”, check which one they mean.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Blinatumomab</div>
+      <p>The FDA granted blinatumomab accelerated approval in December 2014 for relapsed or refractory B-cell ALL, largely on a single-arm phase 2 trial of 189 adults. The sponsor compared it with a pooled historical cohort from European and US centres, reweighted to the trial’s mix of prognostic factors: 43% complete remission (with full or partial blood count recovery) on blinatumomab against 24% complete remission in the weighted historical patients, and median survival of 6.1 against 3.3 months. The randomised TOWER trial later confirmed a survival benefit (median 7.7 vs 4.0 months on chemotherapy, hazard ratio 0.71), and the approval became full in 2017.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Judging a new coach by comparing this season’s results with last season’s. It can work if the team, league and referees are the same. It fails quietly if any of them changed.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="sources-ec">
+    <h2>2. Where external controls come from</h2>
+    <p class="point">The best external control is the one whose patients, measurements and era most resemble the trial’s, which usually means another trial’s control arm, not routine records.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Source</th><th>Good for</th><th>Weak on</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Control arms of earlier trials</strong></td><td>Same kind of eligibility rules, scheduled visits, adjudicated outcomes</td><td>Older standard of care; trial patients are healthier than usual; data sharing can be slow</td></tr>
+          <tr><td><strong>Real-world data</strong> (EHRs, claims, registries; Lecture 5.6)</td><td>Concurrent patients; large numbers; current practice</td><td>Missing prognostic factors (performance status, stage); outcomes recorded irregularly; no fixed “index” moment</td></tr>
+          <tr><td><strong>Natural history studies</strong></td><td>Rare diseases where no trial exists; disease-specific measures</td><td>Small; different rating methods or visit intervals; who enrols may differ</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Cerliponase alfa (Brineura)</div>
+      <p>The FDA approved cerliponase alfa in April 2017 for CLN2 disease, a rare childhood form of Batten disease. The pivotal study treated about two dozen children with no randomised control. Their motor decline was compared with 42 untreated children in an independent natural history cohort, and treated children lost walking ability far more slowly. The FDA would not accept the same comparison for the <em>language</em> domain of the rating scale: the trial and the natural history study had not rated language comparably. The label claims motor benefit only. Same patients, same drug: one outcome was comparable across sources and one was not.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">In the Gulf</div>
+      <p>The SFDA’s <em>Framework on the Use of Real-World Data and Real-World Evidence</em> (version 1.0, issued 20 April 2026, in force from 20 July 2026) names external comparators for single-arm studies as a use of RWD, especially for orphan drugs when a controlled trial is not feasible or ethical. It also names two less common uses: <em>transportability</em>, using local Saudi data on effect modifiers to carry a multi-regional trial’s result over to Saudi patients, and using RWD to inform Bayesian priors. Consanguinity makes some recessive disorders more common in the Gulf than elsewhere. That makes national rare-disease registries potential natural history sources, provided their outcome measures match those used in trials.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Choosing the external source after seeing its outcomes. If three registries are available and the sponsor picks the one with the worst untreated survival, the comparison is biased before any statistics start. Regulators ask for the source, the selection rules and the analysis to be fixed in a protocol before the comparative outcomes are looked at.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="threats">
+    <h2>3. What breaks the comparison</h2>
+    <p class="point">Four things sink most external control analyses: who gets selected, when the clock starts, how the era has changed, and how outcomes are measured.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>An external control analysis is a target trial emulation (Lecture 4.5) in which one arm is real. The pipeline: define the index date in both groups, apply the trial’s eligibility rules to the external data, weight or match, and compare outcomes defined the same way.</dd>
+      <dt>Why it matters</dt>
+      <dd>Each step has its own failure, and weighting fixes only one of them: measured baseline differences. The others need design.</dd>
+      <dt>How to read it</dt>
+      <dd>For each threat, ask what the authors did about it by design, and what they left to a sensitivity analysis. “Adjusted for age, sex and stage” addresses only step 3.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · The external control pipeline and where it breaks</div>
+      <svg class="viz-svg" viewBox="0 0 640 330" role="img" aria-label="Four steps from left to right: define the index date, align eligibility, weight or match, compare outcomes. Below each step is the threat that most often breaks it: immortal time from mismatched index dates, selection when eligibility data are missing, unmeasured prognosis and changes in standard of care over time, and outcomes measured differently in the trial and in routine care.">
+        <defs><marker id="l510-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead accent"/></marker></defs>
+        <text x="320" y="22" text-anchor="middle" class="viz-small viz-muted">Trial patients and external patients go through the same four steps</text>
+
+        <g class="s1">
+          <rect x="8" y="44" width="140" height="84" rx="10" class="node-fill"/>
+          <rect x="166" y="44" width="140" height="84" rx="10" class="node-fill"/>
+          <rect x="324" y="44" width="140" height="84" rx="10" class="node-fill"/>
+          <rect x="482" y="44" width="150" height="84" rx="10" class="node-fill"/>
+        </g>
+        <g text-anchor="middle">
+          <text x="78" y="70" class="viz-bold">1 · Define index</text>
+          <text x="78" y="92" class="viz-small">time zero means the</text>
+          <text x="78" y="108" class="viz-small">same in both groups</text>
+          <text x="236" y="70" class="viz-bold">2 · Align eligibility</text>
+          <text x="236" y="92" class="viz-small">apply trial criteria</text>
+          <text x="236" y="108" class="viz-small">to the external data</text>
+          <text x="394" y="70" class="viz-bold">3 · Weight or match</text>
+          <text x="394" y="92" class="viz-small">reweight externals</text>
+          <text x="394" y="108" class="viz-small">to the trial patients</text>
+          <text x="557" y="70" class="viz-bold">4 · Compare</text>
+          <text x="557" y="92" class="viz-small">same outcome, same</text>
+          <text x="557" y="108" class="viz-small">definition, same clock</text>
+        </g>
+        <line x1="148" y1="86" x2="164" y2="86" class="edge accent" marker-end="url(#l510-arrow)"/>
+        <line x1="306" y1="86" x2="322" y2="86" class="edge accent" marker-end="url(#l510-arrow)"/>
+        <line x1="464" y1="86" x2="480" y2="86" class="edge accent" marker-end="url(#l510-arrow)"/>
+
+        <g class="s3">
+          <line x1="78" y1="128" x2="78" y2="176" class="stroke dashed" style="stroke-width:1.5"/>
+          <line x1="236" y1="128" x2="236" y2="176" class="stroke dashed" style="stroke-width:1.5"/>
+          <line x1="394" y1="128" x2="394" y2="176" class="stroke dashed" style="stroke-width:1.5"/>
+          <line x1="557" y1="128" x2="557" y2="176" class="stroke dashed" style="stroke-width:1.5"/>
+          <rect x="8" y="176" width="140" height="112" rx="8" class="node"/>
+          <rect x="166" y="176" width="140" height="112" rx="8" class="node"/>
+          <rect x="324" y="176" width="140" height="112" rx="8" class="node"/>
+          <rect x="482" y="176" width="150" height="112" rx="8" class="node"/>
+        </g>
+        <g text-anchor="middle">
+          <text x="78" y="200" class="viz-bold colour s3">Immortal time</text>
+          <text x="78" y="222" class="viz-small">trial index = first</text>
+          <text x="78" y="238" class="viz-small">dose; external index</text>
+          <text x="78" y="254" class="viz-small">= diagnosis or an</text>
+          <text x="78" y="270" class="viz-small">earlier line of therapy</text>
+          <text x="236" y="200" class="viz-bold colour s3">Selection</text>
+          <text x="236" y="222" class="viz-small">performance status,</text>
+          <text x="236" y="238" class="viz-small">labs, organ function</text>
+          <text x="236" y="254" class="viz-small">often missing in</text>
+          <text x="236" y="270" class="viz-small">routine records</text>
+          <text x="394" y="200" class="viz-bold colour s3">Prognosis and era</text>
+          <text x="394" y="222" class="viz-small">unmeasured factors;</text>
+          <text x="394" y="238" class="viz-small">supportive care and</text>
+          <text x="394" y="254" class="viz-small">diagnosis improve</text>
+          <text x="394" y="270" class="viz-small">over calendar time</text>
+          <text x="557" y="200" class="viz-bold colour s3">Outcome assessment</text>
+          <text x="557" y="222" class="viz-small">scheduled scans and</text>
+          <text x="557" y="238" class="viz-small">central review vs</text>
+          <text x="557" y="254" class="viz-small">irregular routine</text>
+          <text x="557" y="270" class="viz-small">imaging and notes</text>
+        </g>
+        <text x="320" y="316" text-anchor="middle" class="viz-small viz-muted">Weighting (step 3) cannot repair steps 1, 2 or 4: those need design</text>
+      </svg>
+      <figcaption>Each step has a typical failure. Only measured baseline differences are fixed by weighting. Index mismatch, missing eligibility data, calendar-time drift and different outcome measurement have to be designed out or tested in sensitivity analyses.</figcaption>
+    </figure>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Immortal time at index</div>
+      <p>A single-arm trial in second-line cancer starts the clock at first dose. The external cohort comes from a registry and starts the clock at diagnosis of relapse. Trial patients had to survive screening, referral and enrolment, often weeks, before their clock started. External patients who died in those weeks are counted. The external arm looks worse even if the drug does nothing. Fix: start external follow-up at the point where they <em>would have met</em> the trial’s eligibility criteria, such as the start of a new line of therapy. That is the time-zero rule of Lectures 5.3 and 5.9.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Treating response rate as equally measured everywhere. Trial patients have scans every 8 weeks read by a central panel. Routine patients have scans when a doctor orders one, and “response” is pulled from a report. More frequent, more careful assessment finds responses and progressions earlier. Overall survival is the most portable endpoint because death is recorded the same way in every source.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Comparing exam scores from two schools when one marks papers blind with a strict rubric and the other marks in class. A different average may say more about the marking than about the students.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="weighting">
+    <h2>4. Making the external group resemble the trial</h2>
+    <p class="point">Weight the external patients so their baseline mix matches the trial patients; the target is the effect in people like those enrolled.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Fit a propensity score for “being in the trial” rather than “being treated” (Lecture 5.4). Trial patients keep weight 1. External patients get <em>odds weights</em>, \( e/(1-e) \), so those who look like trial patients count more. This targets the <strong>average treatment effect in the treated</strong> (ATT): the effect in the trial’s population.</dd>
+      <dt>Why it matters</dt>
+      <dd>The trial population is what the label will describe, so the ATT is usually the right estimand. It also avoids extrapolating to external patients who would never have been eligible.</dd>
+      <dt>How to read it</dt>
+      <dd>Check balance after weighting (standardised mean differences under 0.1 is the usual target) and the <em>effective sample size</em> of the weighted external group. If 500 external patients shrink to an effective 40, a few heavily weighted people are driving the answer.</dd>
+      <dt>What a change means</dt>
+      <dd>If adding one more prognostic factor moves the hazard ratio from 0.55 to 0.80, the result depends on what was measured. Show that sensitivity rather than reporting the most flattering model.</dd>
+    </dl>
+
+    <pre><code>library(WeightIt); library(cobalt); library(survival)
+d$trial &lt;- as.integer(d$source == "trial")    # 1 = treated in the single-arm trial
+w &lt;- weightit(trial ~ age + ecog + prior_lines + stage + ldh + months_since_dx,
+              data = d, method = "glm", estimand = "ATT")
+bal.tab(w, stats = c("m", "ks"), thresholds = c(m = 0.1))   # balance after weighting
+summary(w)$effective.sample.size                            # how much the externals shrink
+fit &lt;- coxph(Surv(months, died) ~ trial, data = d,
+             weights = w$weights, robust = TRUE)            # weighted hazard ratio</code></pre>
+    <p><code>weightit</code> with <code>estimand = "ATT"</code> leaves trial patients at weight 1 and reweights the external patients towards them. <code>bal.tab</code> shows standardised mean differences and Kolmogorov–Smirnov statistics before and after. The effective sample size tells you how much information the external arm really carries. Bootstrap the whole pipeline for confidence intervals, and add an E-value or a tipping-point analysis (Lecture 2.13) for unmeasured prognosis.</p>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Imputing a prognostic factor that is missing in most of the external data, then claiming balance on it. If ECOG performance status is recorded for 30% of registry patients, and recording depends on how sick they were, the imputed balance is an assumption, not a finding. Report the analysis restricted to patients with the factor recorded as a check (Lecture 3.5).</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>This is covariate-shift correction. The trial is the target domain and the external data are the source. The odds weight \( e/(1-e) \) is the density ratio \( p_{\text{trial}}(x)/p_{\text{ext}}(x) \) up to a constant, estimated by a domain classifier. As in domain adaptation, weighting fixes a shift in \( p(x) \) only. If the outcome model \( p(y \mid x) \) itself differs between sources, because of era or measurement, no reweighting can recover it.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="borrowing">
+    <h2>5. Bayesian dynamic borrowing</h2>
+    <p class="point">If the trial has some concurrent controls, borrow external controls to add precision, and let the amount borrowed fall automatically when the two disagree.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A <em>hybrid</em> design randomises, say, 2:1 or 3:1 and tops up the small control arm with external controls through the prior. A <strong>power prior</strong> raises the external likelihood to a power \( a_0 \) between 0 and 1: 0 ignores it, 1 pools it fully. A <strong>commensurate prior</strong> estimates how similar the two control groups are and borrows more when they agree. A <strong>meta-analytic-predictive (MAP) prior</strong> pools several historical control arms with a random-effects model and predicts the next trial’s control rate. The between-trial spread decides how much it is worth. A <em>robust</em> MAP prior adds a vague component so the trial data can overrule it.</dd>
+      <dt>Why it matters</dt>
+      <dd>It cuts the number of patients randomised to control, which matters most in rare and paediatric diseases. It also makes the external data’s influence explicit and pre-specified.</dd>
+      <dt>How to read it</dt>
+      <dd>Look at the <strong>effective sample size</strong> (ESS) of the prior: how many trial patients it is worth. A prior worth 150 patients next to a 40-patient control arm dominates the result. Look also at how far ESS drops when the data conflict with it.</dd>
+      <dt>What a change means</dt>
+      <dd>Raising \( a_0 \) from 0.2 to 0.8 makes the estimate more precise when the sources agree and more biased when they do not. Dynamic methods aim to get the first without the second, but no method fully escapes the trade-off.</dd>
+    </dl>
+
+    \[ \pi(\theta \mid D, D_0) \;\propto\; L(\theta \mid D)\; L(\theta \mid D_0)^{a_0}\; \pi_0(\theta) \]
+    <p>The power prior in one line: the trial data \( D \) count fully, the external data \( D_0 \) count with weight \( a_0 \). With a binary endpoint and \( n_0 \) external patients, a fixed \( a_0 \) borrows roughly \( a_0 n_0 \) patients’ worth of information.</p>
+
+    <div class="widget" data-widget="dynamic-borrowing">
+      <div class="widget-title">Borrowing external controls: fixed vs adaptive</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Start with small drift and see both priors tighten the estimate. Then push drift to ±20 points: the fixed power prior keeps borrowing and becomes biased; the adaptive prior gives the external data less weight. Raise the external sample size to see why conflict matters more as the external data grow. Notice that the adaptive prior limits the damage but, at large drift, still does worse than not borrowing.</p>
+    </div>
+
+    <pre><code>library(RBesT)
+hist &lt;- data.frame(study = c("A", "B", "C"), n = c(60, 85, 50), r = c(18, 22, 17))
+map_mc &lt;- gMAP(cbind(r, n - r) ~ 1 | study, data = hist, family = binomial,
+               tau.dist = "HalfNormal", tau.prior = 0.5, beta.prior = 2)
+map  &lt;- automixfit(map_mc)                    # MAP prior as a mixture of betas
+rmap &lt;- robustify(map, weight = 0.2, mean = 0.5)   # add a 20% vague component
+ess(rmap)                                     # how many patients the prior is worth
+post &lt;- postmix(rmap, n = 30, r = 12)         # update with the concurrent controls</code></pre>
+    <p><code>gMAP</code> runs the random-effects meta-analysis of three historical control arms (made-up counts) and predicts the control rate in a new trial. The prior on the between-trial spread (<code>tau</code>) controls how much borrowing is possible. <code>robustify</code> adds the vague safety component, <code>ess</code> reports its worth in patients, and <code>postmix</code> combines it with the trial’s own controls.</p>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Assuming dynamic borrowing makes conflict harmless. With a small trial control arm, the data cannot tell a 5-point drift from noise. The prior keeps borrowing and the bias passes through. Adaptive methods protect against <em>large, obvious</em> conflict. Small, plausible drift, which is the usual kind, needs judgement about whether the sources are exchangeable before any data are seen. Simulate how the design behaves (false-positive rate and power) across a range of drifts. FDA’s draft guidance on Bayesian methods (January 2026) asks sponsors to justify the prior in advance and to report how much it is worth in effective sample size.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>This is transfer learning with a learned trust weight. The power prior is a fixed sample weight on source-domain examples. The commensurate and robust priors resemble hierarchical shrinkage: the model learns from the data how far the source parameter may sit from the target. ESS plays the role of an “effective number of source examples”.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="judging">
+    <h2>6. How regulators judge external controls</h2>
+    <p class="point">Regulators accept an external control when the effect is large, the outcome objective, the natural history predictable, and the analysis fixed in advance on patient-level data.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>ICH E10 (2000) already said external controls suit only cases where the effect is dramatic and the untreated course predictable. FDA’s draft guidance <em>Considerations for the Design and Conduct of Externally Controlled Trials for Drug and Biological Products</em> (February 2023; still a draft as of late 2026 as far as can be found) adds the practical rules. Write the protocol and analysis plan before comparing outcomes. Justify the choice of source. Align eligibility, index date and outcome definitions. Give the FDA patient-level data. EMA’s reflection paper on single-arm trials as pivotal evidence (final, adopted by its CHMP) states that judging efficacy needs comparative information, and leaves external controls themselves out of its scope.</dd>
+      <dt>Why it matters</dt>
+      <dd>The questions reviewers ask are mostly about design, not statistics. Was the source chosen before outcomes were seen? Do the index dates match? Is the outcome measured comparably?</dd>
+      <dt>How to read it</dt>
+      <dd>Approvals that lean on external controls are mostly in rare diseases or cancers with large effects. They often come through accelerated or conditional routes that require confirmation later (Lecture 5.11).</dd>
+    </dl>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Product (FDA)</th><th>External control</th><th>Why it was accepted</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Blinatumomab</strong>, 2014 (accelerated)</td><td>Weighted historical cohort from leukaemia study groups</td><td>Lethal disease, objective endpoints, large difference; later confirmed by a randomised trial</td></tr>
+          <tr><td><strong>Cerliponase alfa</strong>, 2017</td><td>Natural history cohort of untreated children</td><td>Predictable decline; motor outcome comparable (language was not)</td></tr>
+          <tr><td><strong>Tacrolimus (Prograf)</strong>, lung transplant, 2021</td><td>US transplant registry (SRTR) vs the known poor outcomes without immunosuppression</td><td>Large, well-documented effect; randomised trials in other organs as confirmatory evidence</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>“The FDA accepted an external control, so this method is validated.” Each acceptance rested on that disease’s context: a very large effect, a very predictable course, an objective outcome. The FDA’s Rare Disease Evidence Principles (announced September 2025) allow one adequate study, possibly single-arm, plus confirmatory evidence such as natural history data. They apply only to very small populations with no adequate alternative, and the request must come before the pivotal trial starts. None of this transfers to a common disease with a modest effect.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Your own cardiac work</div>
+      <p>Suppose a sponsor proposes a single-arm trial of a new antiarrhythmic in critically ill patients with new-onset AF, with MIMIC-IV patients as external controls. Run it through the pipeline. The index would need to be ECG-confirmed AF onset in both groups, as in Project 5A. Trial-style exclusions (haemodynamic instability, recent surgery) must be found in the records. Severity is poorly captured. Rhythm outcomes are measured by protocol in the trial but by whatever ECGs were ordered in the ICU. Effects in this setting are moderate, not dramatic. This is a poor candidate for an external control. It is a reasonable one for a randomised trial with Bayesian borrowing for a small control arm.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>A vendor pitches “synthetic control arms built with the same method economists use for tobacco taxes”. What do you ask?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Which method they mean. Abadie’s synthetic control (Lecture 4.8) weights whole units to match a pre-period outcome series. A patient-level external control arm reweights individuals on baseline covariates. Patient-level data do not have a long pre-treatment outcome series to fit. If they mean propensity weighting of external patients, the usual threats apply: index alignment, missing prognostic factors, era and outcome measurement. The economics name adds no protection.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>An external control analysis shows a hazard ratio for death of 0.45. The trial starts follow-up at first dose; the registry starts at diagnosis of metastatic disease. What is likely going on and how would you fix it?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Immortal time and selection. Trial patients survived long enough after diagnosis to be referred, screened and dosed. Registry patients who died early are counted against the external arm. Start registry follow-up at the point each patient would have met the trial’s criteria, for example starting the equivalent line of therapy with the same performance status and labs. Expect the hazard ratio to move towards 1.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Why is overall survival usually the preferred endpoint for an external comparison, even when response rate is the trial’s primary endpoint?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Death is recorded the same way in every source and does not depend on visit schedules, imaging frequency or who reads the scan. Response and progression depend on how often and how carefully patients are assessed, which differs between a trial and routine care. The Brineura language domain shows the same problem with a clinical rating scale.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A hybrid trial uses a power prior with \( a_0 = 1 \) on 300 historical controls, next to 30 concurrent controls. The historical response rate was 25%; the concurrent arm shows 40%. What worries you?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The prior is worth about 300 patients, ten times the concurrent arm. The posterior control rate will sit near 26–27%, ignoring a large conflict, and the treatment effect will be inflated. A conflict that size suggests the sources are not exchangeable (era, population or measurement). Use a dynamic method that cuts borrowing under conflict, report ESS before and after seeing the data, and show the result with no borrowing.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>When would you advise a sponsor not to use an external control at all?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>When the expected effect is modest, the natural history varies a lot between patients, the outcome is subjective or assessed differently in routine care, key prognostic factors are missing from available data, or standard of care is changing fast. In those cases bias of the same size as the effect is plausible, and only randomisation (perhaps unequal, perhaps with borrowing) can separate them.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>US FDA, <em>Considerations for the Design and Conduct of Externally Controlled Trials for Drug and Biological Products</em>, draft guidance (February 2023).</li>
+      <li>US FDA, <em>Use of Bayesian Methodology in Clinical Trials of Drug and Biological Products</em>, draft guidance (January 2026).</li>
+      <li>ICH E10, <em>Choice of Control Group and Related Issues in Clinical Trials</em> (2000).</li>
+      <li>EMA, <em>Reflection paper on establishing efficacy based on single-arm trials submitted as pivotal evidence in a marketing authorisation</em>.</li>
+      <li>Saudi Food and Drug Authority, <em>Framework on the Use of Real-World Data (RWD) and Real-World Evidence (RWE) to Support Effectiveness and Safety for Marketing Authorization of Medicinal Products</em>, version 1.0 (April 2026).</li>
+      <li>Pocock, “The combination of randomized and historical controls in clinical trials”, <em>Journal of Chronic Diseases</em> (1976).</li>
+      <li>Ibrahim &amp; Chen, “Power prior distributions for regression models”, <em>Statistical Science</em> (2000); Hobbs et al., “Hierarchical commensurate and power prior models for adaptive incorporation of historical information in clinical trials”, <em>Biometrics</em> (2011).</li>
+      <li>Neuenschwander et al., “Summarizing historical information on controls in clinical trials”, <em>Clinical Trials</em> (2010); Schmidli et al., “Robust meta-analytic-predictive priors in clinical trials with historical control information”, <em>Biometrics</em> (2014).</li>
+      <li>Gökbuget et al., “Blinatumomab vs historical standard therapy of adult relapsed/refractory acute lymphoblastic leukemia”, <em>Blood Cancer Journal</em> (2016); Kantarjian et al., “Blinatumomab versus chemotherapy for advanced acute lymphoblastic leukemia”, <em>NEJM</em> (2017).</li>
+      <li>US FDA, Drug Trials Snapshot: Brineura (2017); FDA, “FDA approves new use of transplant drug based on real-world evidence” (July 2021).</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="5-09-tte-regulatory-benchmarking.html"><small>Previous</small>5.9 Target trial emulation for regulators</a>
+    <a class="next" href="5-11-regulatory-science-hta.html"><small>Next</small>5.11 Regulatory science and HTA</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

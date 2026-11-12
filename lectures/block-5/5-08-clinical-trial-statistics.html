@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>5.8 Statistics of clinical trials · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/5-08.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-5">Block 5</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 5.8</p>
+  <h1>Statistics of clinical trials: randomisation, intention-to-treat, interim analyses (moved from Block 3)</h1>
+  <div class="lecture-meta">
+    <span>Block 5 · Pharmacoepidemiology, real-world evidence, regulatory science and AI evaluation</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>A trial is the benchmark every real-world study in this block is measured against, so you need to read one the way a regulator does. Randomisation buys exchangeability only if allocation is concealed. The <strong>estimand</strong> says which effect the trial targets once patients stop, switch or die. Analysis populations (ITT, per-protocol) are not interchangeable. Looking at the data early inflates false positives unless the alpha is spent carefully, and trials that stop early for benefit overstate it. Lecture 5.9 uses all of this to judge when a target trial emulation has matched its trial.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#randomisation">Randomisation and allocation concealment</a></li>
+      <li><a href="#estimands">Estimands and intercurrent events</a></li>
+      <li><a href="#itt">ITT, per-protocol and as-treated</a></li>
+      <li><a href="#noninferiority">Non-inferiority trials</a></li>
+      <li><a href="#samplesize">Sample size and covariate adjustment</a></li>
+      <li><a href="#interim">Interim analyses and alpha spending</a></li>
+      <li><a href="#truncated">Stopping early exaggerates effects</a></li>
+      <li><a href="#adaptive">Adaptive and platform trials</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="randomisation">
+    <h2>1. Randomisation and allocation concealment</h2>
+    <p class="point">Randomisation makes the arms exchangeable on average; concealment stops anyone from undoing it by choosing who gets enrolled next.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>Allocation concealment</strong> means nobody enrolling a patient can know or influence the next assignment (central web randomisation, not envelopes on the ward). It is different from <strong>blinding</strong>, which hides the assignment <em>after</em> allocation. Concealment is always possible; blinding is not.</dd>
+      <dt>Why it matters</dt>
+      <dd>If a clinician can foresee the next allocation, they can steer sicker patients away from the new drug, and confounding by indication (Lecture 2.16) returns inside the trial. Schulz and colleagues (1995) found odds ratios exaggerated by 41% in trials with inadequate concealment and 30% where it was unclear; later meta-epidemiological studies found smaller but consistent effects.</dd>
+      <dt>How to read it</dt>
+      <dd>Look in the methods for who generated the sequence, how it was concealed, and whether block sizes were varied. A baseline table with large imbalances in a big trial is a warning sign; small imbalances in a small trial are expected.</dd>
+    </dl>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Method</th><th>What it does</th><th>Watch out for</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Simple</strong></td><td>A coin toss per patient</td><td>Chance imbalance in arm sizes and covariates in small trials</td></tr>
+          <tr><td><strong>Permuted block</strong></td><td>Equal numbers in each arm every 4, 6 or 8 patients</td><td>Fixed small blocks in open-label trials let staff guess the last allocations</td></tr>
+          <tr><td><strong>Stratified</strong></td><td>Separate blocks within strata (site, severity)</td><td>Too many strata leave half-empty blocks; analyse with the strata as covariates</td></tr>
+          <tr><td><strong>Minimisation</strong></td><td>Assigns each patient to the arm that best balances several factors so far, usually with a random element</td><td>Needs central software; analysis should adjust for the minimisation factors</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Significance tests in the baseline table. If randomisation was done properly, any difference is chance by definition, so a p-value answers a question nobody asked. What matters is whether an imbalance is large in a <em>prognostic</em> variable, and the fix is to pre-specify adjustment for strong prognostic factors (section 5), not to test.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Dealing cards face down. Shuffling (randomisation) is useless if the dealer can see the next card and decide who gets it (no concealment).</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="estimands">
+    <h2>2. Estimands and intercurrent events</h2>
+    <p class="point">“The effect of the drug” is ambiguous until you say what happens to patients who stop it, switch, or die before the outcome can be measured.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The ICH E9(R1) addendum (adopted November 2019) defines an <strong>estimand</strong> by five attributes: treatment, population, variable (endpoint), how <strong>intercurrent events</strong> are handled, and the summary measure. Intercurrent events happen after randomisation and change how the outcome is interpreted or whether it exists: stopping the drug, rescue medication, switching arm, death. It names five strategies for them.</dd>
+      <dt>Why it matters</dt>
+      <dd>The estimand drives the design, the data you must keep collecting, the analysis and the missing-data assumptions. Lecture 4.1 gave you estimands as causal contrasts; E9(R1) is the regulatory vocabulary for the same idea, and target trial emulation protocols use it too (Lecture 5.9).</dd>
+      <dt>How to read it</dt>
+      <dd>Find the intercurrent events the trial expected and the strategy for each. If the paper never says, assume the analysis chose for it, usually by how missing data were handled.</dd>
+      <dt>What a change means</dt>
+      <dd>Moving from treatment policy to hypothetical usually makes a drug look better (it imagines away stopping for side effects) and requires untestable modelling assumptions.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · Five ways to handle stopping the drug after a bleed</div>
+      <svg class="viz-svg" viewBox="0 0 640 352" role="img" aria-label="Five rows, one per ICH E9(R1) strategy, for an anticoagulant trial where some patients stop the drug after a bleed. Each row shows a mini timeline from randomisation to the end of follow-up with the bleed marked, how follow-up after the bleed is used, and the question the strategy answers.">
+        <text x="10" y="18" class="viz-small viz-bold viz-muted">Strategy</text>
+        <text x="172" y="18" class="viz-small viz-bold viz-muted">Follow-up after the bleed</text>
+        <text x="350" y="18" class="viz-small viz-bold viz-muted">Question it answers</text>
+        <line x1="10" y1="28" x2="630" y2="28" class="viz-grid"/>
+
+        <!-- row 1 treatment policy -->
+        <g class="s1"><rect x="10" y="40" width="148" height="44" rx="8" class="node-fill"/></g>
+        <text x="84" y="67" text-anchor="middle" class="viz-small viz-bold">Treatment policy</text>
+        <g class="s1"><line x1="172" y1="62" x2="250" y2="62" class="stroke"/><line x1="250" y1="62" x2="330" y2="62" class="stroke"/></g>
+        <g class="s3"><circle cx="250" cy="62" r="6" class="dot"/></g>
+        <text x="350" y="56" class="viz-small">Effect of being assigned the drug, whatever</text>
+        <text x="350" y="74" class="viz-small">happens after. Closest to ITT.</text>
+
+        <!-- row 2 hypothetical -->
+        <g class="s4"><rect x="10" y="102" width="148" height="44" rx="8" class="node-fill"/></g>
+        <text x="84" y="129" text-anchor="middle" class="viz-small viz-bold">Hypothetical</text>
+        <g class="s4"><line x1="172" y1="124" x2="250" y2="124" class="stroke"/><line x1="250" y1="124" x2="330" y2="124" class="stroke dashed"/></g>
+        <g class="s3"><circle cx="250" cy="124" r="6" class="dot"/></g>
+        <text x="290" y="114" text-anchor="middle" class="viz-small viz-muted">modelled</text>
+        <text x="350" y="118" class="viz-small">Effect if patients had stayed on the drug.</text>
+        <text x="350" y="136" class="viz-small">Needs modelling of a world that did not happen.</text>
+
+        <!-- row 3 composite -->
+        <g class="s2"><rect x="10" y="164" width="148" height="44" rx="8" class="node-fill"/></g>
+        <text x="84" y="191" text-anchor="middle" class="viz-small viz-bold">Composite</text>
+        <g class="s2"><line x1="172" y1="186" x2="250" y2="186" class="stroke"/></g>
+        <g class="s3"><circle cx="250" cy="186" r="6" class="dot"/></g>
+        <text x="262" y="190" class="viz-small viz-bold colour s3">= outcome</text>
+        <text x="350" y="180" class="viz-small">Effect on “stroke, or stopping for a bleed”.</text>
+        <text x="350" y="198" class="viz-small">The event is part of the endpoint.</text>
+
+        <!-- row 4 while on treatment -->
+        <g class="s5"><rect x="10" y="226" width="148" height="44" rx="8" class="node-fill"/></g>
+        <text x="84" y="253" text-anchor="middle" class="viz-small viz-bold">While on treatment</text>
+        <g class="s5"><line x1="172" y1="248" x2="250" y2="248" class="stroke"/></g>
+        <g class="s3"><circle cx="250" cy="248" r="6" class="dot"/></g>
+        <text x="262" y="252" class="viz-small viz-muted">stop counting</text>
+        <text x="350" y="242" class="viz-small">Effect on outcomes while patients take it.</text>
+        <text x="350" y="260" class="viz-small">Arms can differ in how long that is.</text>
+
+        <!-- row 5 principal stratum -->
+        <g class="s5"><rect x="10" y="288" width="148" height="44" rx="8" class="node"/></g>
+        <text x="84" y="315" text-anchor="middle" class="viz-small viz-bold">Principal stratum</text>
+        <g class="s5"><line x1="172" y1="310" x2="330" y2="310" class="stroke"/></g>
+        <text x="251" y="300" text-anchor="middle" class="viz-small viz-muted">only people who would</text>
+        <text x="251" y="328" text-anchor="middle" class="viz-small viz-muted">never bleed on either arm</text>
+        <text x="350" y="304" class="viz-small">Effect in a subgroup defined by what would</text>
+        <text x="350" y="322" class="viz-small">happen on both arms: not directly observable.</text>
+
+        <line x1="10" y1="344" x2="630" y2="344" class="viz-grid"/>
+      </svg>
+      <figcaption>Same trial, same patients, five different questions. The red dot is the bleed that makes the patient stop. Choose the strategy before the trial, from the decision the result will inform.</figcaption>
+    </figure>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Treating “ITT analysis” and “treatment-policy estimand” as the same thing when outcomes after stopping were never collected. A treatment-policy estimand needs follow-up after discontinuation. If the trial stopped collecting data when patients stopped the drug, the “ITT” analysis is quietly imputing them, and the imputation model decides the answer.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">In the Gulf</div>
+      <p>The SFDA has been an ICH Regulatory Member since June 2021, so ICH E9(R1) is the shared vocabulary for trials submitted in Saudi Arabia, as at the FDA and EMA. The SFDA’s 2026 real-world evidence framework also asks for well-defined estimands in observational studies, which is the bridge to Lecture 5.9.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="itt">
+    <h2>3. ITT, per-protocol and as-treated</h2>
+    <p class="point">Intention-to-treat compares groups as randomised and keeps exchangeability; naive per-protocol and as-treated analyses compare groups formed after randomisation, so they bring back confounding.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>ITT</strong>: everyone analysed in the arm they were randomised to. <strong>Naive per-protocol</strong>: drop or censor patients who deviated from their assigned treatment. <strong>As-treated</strong>: analyse by the treatment actually received. A <strong>proper per-protocol effect</strong> (the effect of following the protocol) is a valid estimand, but it must be estimated with adjustment for why people deviated, for example by censoring at deviation and inverse-probability weighting (Lectures 4.3 and 4.5).</dd>
+      <dt>Why it matters</dt>
+      <dd>Who adheres is not random. People who stop a drug are often sicker, frailer or having side effects. Dropping them compares a selected group in one arm with a differently selected group in the other.</dd>
+      <dt>How to read it</dt>
+      <dd>ITT answers “what happens if we offer this drug”. When adherence is poor, the ITT effect is smaller than the effect of taking the drug. A large gap between ITT and per-protocol results is a reason to ask about adherence, not proof that per-protocol is right.</dd>
+    </dl>
+
+    <div class="callout example">
+      <div class="callout-title">Example · The Coronary Drug Project</div>
+      <p>In the clofibrate trial, five-year mortality in the placebo arm was 15.1% among good adherers and 28.3% among poor adherers. Placebo cannot save lives: adherence was a marker of a healthier person. Comparing adherers on the drug with everyone on placebo would have credited clofibrate with the healthy-adherer effect. The overall ITT comparison showed almost no difference (20.0% vs 20.9%).</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Calling an analysis that excludes non-adherers “per-protocol” and treating it as the effect of the drug. Without adjustment for the reasons for non-adherence, it is an observational comparison inside a trial, with all the biases of Lectures 5.2 to 5.4.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>This is the A/B-testing rule “analyse by assignment, not by exposure”. Users who actually saw the new feature differ from those assigned who never opened it. Analysing by exposure reintroduces selection; ITT is the assignment-level comparison that randomisation protects.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="noninferiority">
+    <h2>4. Non-inferiority trials</h2>
+    <p class="point">A non-inferiority trial asks whether a new treatment is not unacceptably worse than an established one, and everything rests on how “unacceptably worse” was chosen.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A pre-set <strong>margin</strong>: the largest loss of efficacy you would accept in exchange for other advantages (no monitoring, fewer bleeds, oral rather than injected). Non-inferiority is shown if the whole confidence interval lies on the good side of the margin. Regulators (FDA guidance, 2016) build the margin from the historical effect of the active control over placebo (M1), then keep a chosen fraction of it (M2).</dd>
+      <dt>Why it matters</dt>
+      <dd>There is no placebo arm, so the trial cannot itself show that the control worked. It relies on <strong>assay sensitivity</strong>: the assumption that the control would have beaten placebo in this trial, as it did historically (the constancy assumption).</dd>
+      <dt>How to read it</dt>
+      <dd>Read the upper CI limit against the margin, not the p-value against 1. A wide margin makes non-inferiority easy and meaningless.</dd>
+      <dt>What a change means</dt>
+      <dd>Sloppiness (poor adherence, crossover, mismeasured outcomes) pushes the arms together, which helps a non-inferiority claim. That is why ITT is not automatically conservative here, and why regulators want per-protocol analyses alongside it.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · Reading a non-inferiority result against the margin</div>
+      <svg class="viz-svg" viewBox="0 0 640 300" role="img" aria-label="Five horizontal confidence intervals for a hazard ratio (new versus standard, lower is better) against a line of no difference at 1 and a non-inferiority margin at 1.46. A: entirely below 1, superior. B: crosses 1 but stays below the margin, non-inferior. C: crosses the margin, inconclusive. D: entirely above 1 but below the margin, non-inferior yet statistically worse. E: entirely above the margin, inferior.">
+        <g>
+          <line x1="150" y1="250" x2="620" y2="250" class="viz-axis"/>
+          <text x="150" y="268" text-anchor="middle" class="viz-tick">0.6</text>
+          <text x="244" y="268" text-anchor="middle" class="viz-tick">0.8</text>
+          <text x="338" y="268" text-anchor="middle" class="viz-tick">1.0</text>
+          <text x="432" y="268" text-anchor="middle" class="viz-tick">1.2</text>
+          <text x="526" y="268" text-anchor="middle" class="viz-tick">1.4</text>
+          <text x="620" y="268" text-anchor="middle" class="viz-tick">1.6</text>
+          <text x="385" y="292" text-anchor="middle" class="viz-label">Hazard ratio, new vs standard (lower is better)</text>
+        </g>
+        <line x1="338" y1="30" x2="338" y2="250" class="edge strong" stroke-dasharray="4 4"/>
+        <text x="338" y="20" text-anchor="middle" class="viz-small viz-bold">no difference</text>
+        <g class="s3"><line x1="554" y1="30" x2="554" y2="250" class="stroke dashed"/></g>
+        <text x="554" y="20" text-anchor="middle" class="viz-small viz-bold colour s3">margin 1.46</text>
+
+        <g class="s1"><line x1="197" y1="55" x2="315" y2="55" class="stroke"/><circle cx="253" cy="55" r="6" class="dot"/></g>
+        <text x="10" y="59" class="viz-small viz-bold">A · Superior</text>
+        <g class="s1"><line x1="268" y1="95" x2="479" y2="95" class="stroke"/><circle cx="352" cy="95" r="6" class="dot"/></g>
+        <text x="10" y="99" class="viz-small viz-bold">B · Non-inferior</text>
+        <g class="s2"><line x1="291" y1="135" x2="600" y2="135" class="stroke"/><circle cx="432" cy="135" r="6" class="dot"/></g>
+        <text x="10" y="139" class="viz-small viz-bold">C · Inconclusive</text>
+        <g class="s2"><line x1="352" y1="175" x2="526" y2="175" class="stroke"/><circle cx="432" cy="175" r="6" class="dot"/></g>
+        <text x="10" y="172" class="viz-small viz-bold">D · Non-inferior,</text>
+        <text x="10" y="188" class="viz-small viz-bold">but worse</text>
+        <g class="s3"><line x1="568" y1="215" x2="634" y2="215" class="stroke"/><circle cx="601" cy="215" r="6" class="dot"/></g>
+        <text x="10" y="219" class="viz-small viz-bold colour s3">E · Inferior</text>
+      </svg>
+      <figcaption>Illustrative intervals; the margin of 1.46 is the one ROCKET AF used. D is the awkward case: by the pre-set rule the drug is non-inferior, yet it is also statistically worse than the standard.</figcaption>
+    </figure>
+
+    <div class="callout example">
+      <div class="callout-title">Example · ROCKET AF</div>
+      <p>Rivaroxaban was tested against warfarin in atrial fibrillation with a non-inferiority margin of 1.46 for the hazard ratio of stroke or systemic embolism. In the pre-specified on-treatment (per-protocol) population the hazard ratio was 0.79 (95% CI 0.66 to 0.96): non-inferior. By intention-to-treat it was 0.88 (0.74 to 1.03): still non-inferior, but not superior. Same trial, two populations, two different headlines. This is the kind of trial that Lecture 5.9’s benchmarking projects try to reproduce in claims data.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>“Non-inferior, so equivalent.” Non-inferiority only rules out being worse by more than the margin. The drug could be somewhat worse (case D), and a chain of trials, each non-inferior to the last, can drift towards placebo (“biocreep”).</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="samplesize">
+    <h2>5. Sample size and covariate adjustment</h2>
+    <p class="point">Power comes from events, not patients, and it falls with the square of the effect; adjusting for strong prognostic covariates buys precision for free.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>For a time-to-event trial with 1:1 allocation, the number of <em>events</em> needed is roughly (Schoenfeld):</dd>
+    </dl>
+    \[ d \approx \frac{4\,(z_{1-\alpha/2} + z_{1-\beta})^2}{(\ln \mathrm{HR})^2} \]
+    <dl class="facets">
+      <dt>How to read it</dt>
+      <dd>With two-sided 5% alpha and 90% power, a hazard ratio of 0.75 needs about 510 events; 0.80 needs about 840. A modest-looking change in the assumed effect changes the trial’s size by two-thirds. Patients are then recruited until that many events are likely.</dd>
+      <dt>Why it matters</dt>
+      <dd>Optimistic effect sizes are the commonest reason trials are underpowered. Event rates lower than planned (healthier recruits) have the same effect, which is why many trials extend follow-up rather than add patients.</dd>
+      <dt>What a change means</dt>
+      <dd>Adjusting the analysis for baseline covariates that predict the outcome (pre-specified, measured before randomisation) narrows the confidence interval without bias. For a continuous outcome the variance falls by roughly the share of outcome variance the covariates explain; covariates with R² = 0.3 save close to 30% of the sample. The FDA’s final guidance on adjusting for covariates (May 2023) endorses this for both superiority and non-inferiority trials.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Adjusting only for the covariates that happened to be imbalanced. Choose covariates for their prognostic strength, before unblinding. And for odds ratios and hazard ratios, adjusted and unadjusted estimates target different estimands (conditional vs marginal, because these measures are non-collapsible), so state which one you report.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>This is CUPED in online experiments: regress out the pre-experiment version of the metric and the treatment-effect variance shrinks. Same logic, same condition: the covariate must be measured before assignment, or it can absorb part of the effect.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="interim">
+    <h2>6. Interim analyses and alpha spending</h2>
+    <p class="point">Every look at accumulating data is another chance for noise to cross the line, so a trial that looks five times at p &lt; 0.05 has a false-positive rate near 14%, not 5%.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A <strong>group-sequential design</strong> fixes in advance how many interim looks there will be and a stricter boundary at each, so that the overall type I error stays at 5%. <strong>Pocock</strong> uses the same boundary at every look (about z = 2.41 for five looks). <strong>O’Brien–Fleming</strong> makes early looks very strict (z ≈ 4.56 at the first of five) and the final look almost unchanged (z ≈ 2.04). The Lan–DeMets <strong>alpha-spending</strong> approach lets the timing and number of looks flex while spending alpha along a chosen curve.</dd>
+      <dt>Why it matters</dt>
+      <dd>Data monitoring committees must be able to stop for overwhelming benefit or clear harm. Without a pre-set boundary, “stopping when it looks good” is optional stopping, and the p-value means nothing.</dd>
+      <dt>How to read it</dt>
+      <dd>O’Brien–Fleming is the usual choice for confirmatory trials: early stopping only for dramatic effects, and almost no penalty at the end. Pocock stops early more readily but needs a stricter final test, so the trial needs more patients for the same power.</dd>
+    </dl>
+
+    <div class="widget" data-widget="gs-boundaries">
+      <div class="widget-title">Peeking at a trial five times</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Each line is one simulated trial’s z-statistic as data accumulate. Start with no true effect and naive testing at 1.96 every look; then switch to Pocock or O’Brien–Fleming boundaries, and to a real effect, and compare how often trials “win”.</p>
+    </div>
+
+    <pre><code>library(rpact)
+of &lt;- getDesignGroupSequential(kMax = 5, alpha = 0.025, sided = 1, typeOfDesign = "OF")
+pk &lt;- getDesignGroupSequential(kMax = 5, alpha = 0.025, sided = 1, typeOfDesign = "P")
+of$criticalValues        # 4.56 3.23 2.63 2.28 2.04
+pk$criticalValues        # 2.41 at every look
+# Lan-DeMets spending with O'Brien-Fleming shape and unequal looks
+sp &lt;- getDesignGroupSequential(kMax = 4, alpha = 0.025, sided = 1, typeOfDesign = "asOF",
+                               informationRates = c(0.3, 0.5, 0.75, 1))
+summary(sp)              # boundaries and cumulative alpha spent at each look</code></pre>
+    <p>One-sided alpha of 2.5% is the regulatory equivalent of two-sided 5% for a benefit claim. The <code>asOF</code> design spends almost no alpha at the 30% look and keeps nearly all of it for the end; <code>summary</code> shows the boundary and cumulative alpha at each information fraction.</p>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reporting the final p-value from a group-sequential trial as if it were a fixed-size trial. Once stopping depends on the data, the naive p-value, point estimate and confidence interval are all biased; the trial should report stage-wise adjusted inference.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>The same problem as checking an A/B dashboard daily and shipping when p dips below 0.05. Industry fixes include sequential tests and “always-valid” p-values; trials use alpha spending. Either way, the rule must exist before the data do.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="truncated">
+    <h2>7. Stopping early exaggerates effects</h2>
+    <p class="point">Trials that stop early for benefit stop on a random high, so their estimates are too large even when the stopping rule controlled the false-positive rate.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>At an early look, an estimate crosses the boundary only if it happens to be extreme. Conditioning on crossing selects those lucky highs: the “winner’s curse”.</dd>
+      <dt>Why it matters</dt>
+      <dd>Bassler and colleagues (2010) matched 91 truncated trials with 424 similar trials that ran to completion: the relative risks in truncated trials were on average more extreme (ratio of relative risks 0.71), with the largest differences when the truncated trial had fewer than 500 events. Meta-analyses that include truncated trials inherit the bias.</dd>
+      <dt>How to read it</dt>
+      <dd>Treat an effect from a trial stopped early, on few events, as an upper bound. Strict early boundaries (O’Brien–Fleming) reduce, but do not remove, the overestimate.</dd>
+    </dl>
+
+    <div class="widget" data-widget="truncated-bias">
+      <div class="widget-title">Winner’s curse in trials stopped early</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">2,000 simulated trials with the same true hazard ratio, five looks. Each dot is one trial’s estimate when it stopped. Compare the trials that stopped early with the true value, under naive and O’Brien–Fleming stopping rules.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>“The boundary was O’Brien–Fleming, so the estimate is unbiased.” The boundary protects the type I error, not the point estimate. Those are different properties.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Judging a basketball player by the night they scored 40 points, chosen because it was the night they scored 40. Their next game will probably be closer to their average.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="adaptive">
+    <h2>8. Adaptive and platform trials</h2>
+    <p class="point">Adaptive designs change pre-planned features as data accrue; platform trials test many treatments against a shared control under one master protocol, adding and dropping arms over time.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Pre-specified adaptations include sample-size re-estimation, dropping arms, enrichment of a subgroup and response-adaptive randomisation. A <strong>platform trial</strong> runs indefinitely: arms enter and leave, and the control arm is shared. ICH E20 on adaptive designs reached its public-consultation draft in June 2025; check whether it has been finalised.</dd>
+      <dt>Why it matters</dt>
+      <dd>They answer more questions faster with fewer patients on ineffective treatments. The price is complexity: type I error must be controlled across adaptations, and comparisons with a shared control should use concurrent controls only, because care changes over time.</dd>
+      <dt>How to read it</dt>
+      <dd>Ask whether every adaptation was pre-specified, who saw unblinded data, and whether the controls compared with each arm were randomised at the same time.</dd>
+    </dl>
+
+    <div class="callout example">
+      <div class="callout-title">Example · RECOVERY</div>
+      <p>The UK RECOVERY platform trial randomised hospitalised COVID-19 patients to several treatments against usual care, with a simple primary outcome (28-day mortality) collected largely from routine NHS data. Dexamethasone reduced 28-day mortality in patients on invasive ventilation (rate ratio 0.64, 95% CI 0.51 to 0.81) and on oxygen (0.82, 0.72 to 0.94), but not in those on no respiratory support. Other arms, such as hydroxychloroquine, were stopped for lack of benefit. The subgroup gradient by respiratory support is a reminder that the estimand includes the population.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Comparing a new platform arm with every control patient ever enrolled. Non-concurrent controls were treated under older standards of care, which is the same problem as an external control arm (Lecture 5.10).</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>An open-label trial uses permuted blocks of 4 at each site and sealed envelopes kept at the nurses’ station. What worries you, and what would you have advised?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Both concealment and predictability. Envelopes can be opened or held to the light, and in open-label trials staff can deduce the last allocation in each block of 4. Central web-based randomisation with varied block sizes (or minimisation with a random element) would protect concealment.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>An anticoagulant trial reports a hazard ratio for stroke with patients censored when they stop the drug. Which estimand is that closest to, and what assumption is hidden in it?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>A while-on-treatment or hypothetical strategy, depending on interpretation. Censoring at stopping assumes those who stop have the same future stroke risk as those who continue (non-informative censoring). People who stop after a bleed or because of frailty probably do not, so without weighting for the reasons for stopping, the estimate is biased.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>In a non-inferiority trial, a colleague says “ITT is the conservative analysis, so we only need ITT.” Do you agree?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>No. Non-adherence and crossover make the arms more alike, which pushes the result towards “no difference” and so helps a non-inferiority claim. For non-inferiority, regulators want ITT and per-protocol analyses to agree.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A trial with five planned looks stopped at the second look with HR 0.55 and 90 events, crossing an O’Brien–Fleming boundary. How do you use this result in a guideline?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The benefit is probably real (the boundary was strict), but its size is probably overstated: stopping on few events selects a random high. Use the estimate cautiously, look for completed trials or longer follow-up, and in a meta-analysis consider the truncation.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>The planned HR was 0.75 but a reviewer thinks 0.80 is realistic. Without arithmetic, what happens to the required number of events, and to the trial?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Events depend on the square of the log hazard ratio, so moving from 0.75 to 0.80 needs roughly two-thirds more events. The trial must recruit more patients, follow them longer, or accept lower power. Adjusting for strong prognostic covariates can recover some of the precision.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>ICH E9(R1), <em>Addendum on estimands and sensitivity analysis in clinical trials</em> (Step 4, November 2019).</li>
+      <li>Schulz et al., “Empirical evidence of bias: dimensions of methodological quality associated with estimates of treatment effects in controlled trials”, <em>JAMA</em> (1995).</li>
+      <li>Coronary Drug Project Research Group, “Influence of adherence to treatment and response of cholesterol on mortality in the Coronary Drug Project”, <em>NEJM</em> (1980).</li>
+      <li>US FDA, <em>Non-Inferiority Clinical Trials to Establish Effectiveness</em>, guidance (2016); <em>Adjusting for Covariates in Randomized Clinical Trials for Drugs and Biological Products</em>, final guidance (May 2023).</li>
+      <li>Patel et al., “Rivaroxaban versus warfarin in nonvalvular atrial fibrillation” (ROCKET AF), <em>NEJM</em> (2011).</li>
+      <li>Schoenfeld, “Sample-size formula for the proportional-hazards regression model”, <em>Biometrics</em> (1983).</li>
+      <li>Jennison &amp; Turnbull, <em>Group Sequential Methods with Applications to Clinical Trials</em> (Chapman &amp; Hall); Pocock, <em>Biometrika</em> (1977); O’Brien &amp; Fleming, <em>Biometrics</em> (1979); Lan &amp; DeMets, <em>Biometrika</em> (1983).</li>
+      <li>Bassler et al., “Stopping randomized trials early for benefit and estimation of treatment effects”, <em>JAMA</em> (2010).</li>
+      <li>RECOVERY Collaborative Group, “Dexamethasone in hospitalized patients with Covid-19”, <em>NEJM</em> (2021).</li>
+      <li>Friedman, Furberg, DeMets et al., <em>Fundamentals of Clinical Trials</em> (Springer): randomisation, analysis populations and monitoring.</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="5-07-data-quality-phenotyping.html"><small>Previous</small>5.7 Data quality and phenotyping</a>
+    <a class="next" href="5-09-tte-regulatory-benchmarking.html"><small>Next</small>5.9 Target trial emulation for regulators</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

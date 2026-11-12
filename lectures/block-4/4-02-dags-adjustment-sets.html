@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>4.2 DAGs and adjustment sets · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/4-02.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-4">Block 4</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 4.2</p>
+  <h1>DAGs and choosing adjustment sets</h1>
+  <div class="lecture-meta">
+    <span>Block 4 · Causal inference and policy evaluation</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>Lectures 2.6 and 2.7 introduced confounders, colliders and backdoor paths. This lecture turns that into a procedure: read every path between treatment and outcome, decide which are open, and choose a set of covariates that closes the non-causal ones without blocking the causal ones. It also covers the variables that look like sensible adjustments and are not: mediators, colliders, descendants of treatment, M-structures and instruments. The adjustment set you choose here is the input to every estimator in Lectures 4.3–4.5, and to the protocol for Project 5A.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#dsep">d-separation in practice</a></li>
+      <li><a href="#backdoor">The backdoor criterion and minimal adjustment sets</a></li>
+      <li><a href="#downstream">Bad controls after treatment, and the Table 2 fallacy</a></li>
+      <li><a href="#upstream">Bad controls before treatment: M-bias and instruments</a></li>
+      <li><a href="#frontdoor">The front-door criterion</a></li>
+      <li><a href="#timevarying">Confounders affected by earlier treatment, and SWIGs</a></li>
+      <li><a href="#drawing">Drawing a DAG you can defend</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="dsep">
+    <h2>1. d-separation in practice</h2>
+    <p class="point">Association flows along any path between two variables, whatever direction the arrows point, unless something on the path blocks it.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A <strong>path</strong> is any sequence of edges joining two variables, ignoring arrow direction. Two variables are <strong>d-separated</strong> by a set \(Z\) when every path between them is blocked. A path is blocked if it passes through a non-collider that is in \(Z\), or through a collider that is not in \(Z\) and has no descendant in \(Z\).</dd>
+      <dt>Why it matters</dt>
+      <dd>d-separation is the bridge from a drawing to the data: if the DAG is right, d-separated variables are independent given \(Z\). That is what makes “adjusting for \(Z\) removes confounding” a checkable claim about the graph rather than a hope.</dd>
+      <dt>How to read it</dt>
+      <dd>Walk each path node by node. At a chain (→ M →) or fork (← C →), the path is open unless you condition on the middle node. At a collider (→ K ←), it is closed unless you condition on K or anything K causes.</dd>
+      <dt>What a change means</dt>
+      <dd>Adding one variable to \(Z\) can close some paths and open others at the same time. That is why “adjust for more” is not a monotone improvement.</dd>
+    </dl>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Structure</th><th>Left alone</th><th>Conditioned on the middle node</th></tr></thead>
+        <tbody>
+          <tr><td>Chain: A → M → Y</td><td>Open (carries effect)</td><td>Closed (the mediated part is removed)</td></tr>
+          <tr><td>Fork: A ← C → Y</td><td>Open (carries confounding)</td><td>Closed</td></tr>
+          <tr><td>Collider: A → K ← Y</td><td>Closed</td><td>Open, and so is conditioning on any descendant of K</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Thinking that only paths that follow the arrows matter. Association does not care about direction: A ← C → Y transmits association just as well as A → Y. Direction decides only which paths are <em>causal</em> (all arrows pointing away from the treatment) and which are biasing.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>This is the same d-separation that defines conditional independence in a Bayesian network. The difference is the reading of the arrows: in a Bayes net any factorisation consistent with the data will do, while in a causal DAG each arrow is a claim about what would change under intervention. Two DAGs can imply the same independencies and give opposite adjustment advice.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="backdoor">
+    <h2>2. The backdoor criterion and minimal adjustment sets</h2>
+    <p class="point">A set of covariates is enough to estimate the total effect if it blocks every backdoor path and contains nothing caused by the treatment.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A <strong>backdoor path</strong> starts with an arrow <em>into</em> the treatment. The <strong>backdoor criterion</strong> says a set \(Z\) is sufficient for the total effect of A on Y if (1) no member of \(Z\) is a descendant of A, and (2) \(Z\) blocks every backdoor path. A <strong>minimal sufficient set</strong> is a sufficient set from which no variable can be removed.</dd>
+      <dt>Why it matters</dt>
+      <dd>It turns “which confounders?” into a question with an answer, given the DAG. It also shows there is often more than one valid answer, so you can choose the set whose variables are best measured, least missing or cheapest to collect.</dd>
+      <dt>How to read it</dt>
+      <dd>Sufficiency is a property of the whole set, not of single variables. A variable can be needed in one set and unnecessary in another. If a minimal set contains a variable you did not measure, look for an alternative set that avoids it before giving up.</dd>
+      <dt>What a change means</dt>
+      <dd>Adding a pure cause of the outcome to a sufficient set keeps it sufficient and usually improves precision. Adding a pure cause of the treatment keeps it sufficient but costs precision (section 4).</dd>
+    </dl>
+
+    <div class="widget" data-widget="dag-adjustment">
+      <div class="widget-title">Choose an adjustment set for Project 5A</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Click a node to adjust for it (click again to undo). Every path from anticoagulation to death is listed below with its state. Aim for a set that closes every backdoor path while leaving both causal paths open. Then try adding Transfusion or Major bleed and see what breaks.</p>
+    </div>
+
+    <pre><code>library(dagitty)
+g &lt;- dagitty("dag {
+  Age -&gt; Anticoag ; Age -&gt; Death
+  Severity -&gt; Anticoag ; Severity -&gt; Death ; Severity -&gt; Transfusion
+  BleedRisk -&gt; Anticoag ; BleedRisk -&gt; Bleed ; Preference -&gt; Anticoag
+  Anticoag -&gt; Bleed ; Bleed -&gt; Death ; Bleed -&gt; Transfusion
+  Anticoag -&gt; Death
+}")
+adjustmentSets(g, exposure = "Anticoag", outcome = "Death")  # minimal sets
+paths(g, "Anticoag", "Death", Z = c("Age", "Severity"))    # open or closed
+impliedConditionalIndependencies(g)    # what the data should show if g is right</code></pre>
+    <p>This writes the widget’s DAG in dagitty’s syntax, asks for every minimal sufficient adjustment set for the total effect, lists each path with whether it is open given a candidate set, and prints the conditional independencies the DAG implies. <code>localTests(g, data)</code> then checks those against your data.</p>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Reading the widget’s answer</div>
+      <p>In this DAG the only minimal sufficient set is {age, illness severity, bleeding risk}. Bleeding risk is needed even though it has no arrow into death: the path Anticoag ← Bleeding risk → Major bleed → Death is open until you block it, and you cannot block it at Major bleed because that is on the causal path. Variables that matter only through another route are easy to drop by mistake.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Sealing a house against draughts. You need to close every gap that lets outside air in (backdoor paths) without bricking up the front door you actually want to use (the causal paths). Any set of seals that does this works; you choose the ones easiest to fit.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="downstream">
+    <h2>3. Bad controls after treatment, and the Table 2 fallacy</h2>
+    <p class="point">For a total effect, never adjust for anything the treatment could have caused: mediators remove part of the effect, and colliders or their descendants create new bias.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A <strong>mediator</strong> lies on a causal path (Anticoag → Major bleed → Death). A <strong>descendant of treatment</strong> is anything downstream of it, including variables that are also caused by other factors (Transfusion, caused by bleeding and by severity). Conditioning on such a variable can open a collider path between treatment and an outcome cause.</dd>
+      <dt>Why it matters</dt>
+      <dd>In clinical data, post-treatment variables look like ordinary covariates: day-3 creatinine, transfusion, length of stay. Adjusting for them “to account for how sick patients became” is one of the commonest errors in EHR studies, and it can push an estimate in either direction.</dd>
+      <dt>How to read it</dt>
+      <dd>For each covariate, ask: could the treatment have changed it? If yes, and you want the total effect, leave it out. If you want a direct effect, that is a different estimand with its own assumptions (Lecture 4.10).</dd>
+      <dt>What a change means</dt>
+      <dd>An estimate that moves towards the null when you add a post-treatment variable is not “more conservative”; it answers a different, usually ill-defined, question.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap · The Table 2 fallacy</div>
+      <p>Reading every coefficient in the adjusted model as an effect. The model was built so that the treatment’s coefficient is causal. For age or severity, the same model may adjust for their mediators (the treatment itself) and omit their confounders. Westreich and Greenland (2013) named this the Table 2 fallacy. Report the treatment effect; if another variable’s effect matters, build a separate DAG and model for it.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Adjusting for transfusion</div>
+      <p>Suppose an analyst adds “received a transfusion” to the Project 5A model to capture how sick patients were. Anticoagulation causes bleeding, bleeding causes transfusion, and severity also causes transfusion. Among transfused patients, an anticoagulated patient was more likely transfused because of a bleed, and an untreated one because of severe illness. So within that group, anticoagulated patients tend to be less severely ill, and the estimate is pushed towards benefit for reasons that have nothing to do with the drug. Toggle Transfusion in the widget to see the path open.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="upstream">
+    <h2>4. Bad controls before treatment: M-bias and instruments</h2>
+    <p class="point">Being measured before treatment does not make a variable safe to adjust for, but the pre-treatment traps are usually smaller than the confounding you risk by leaving real confounders out.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>M-bias</strong>: a pre-treatment variable that is a collider between an unmeasured cause of treatment and an unmeasured cause of the outcome; adjusting for it opens a path. An <strong>instrument</strong> affects the outcome only through treatment (prescriber preference, distance to a specialist centre). Adjusting for an instrument closes no backdoor path, increases variance, and amplifies any confounding that remains: <strong>bias amplification</strong>.</dd>
+      <dt>Why it matters</dt>
+      <dd>The two traps pull in opposite directions from the advice “adjust for all pre-treatment variables”. Knowing when they matter stops you from both over-adjusting and using them as an excuse to drop real confounders.</dd>
+      <dt>How to read it</dt>
+      <dd>Greenland (2003) and Ding and Miratrix (2015) showed M-bias is usually small unless the links are very strong, and that when the M-variable is also a confounder (the “butterfly”), adjusting usually leaves less bias. Bias amplification grows with the instrument’s strength and with how much confounding is left unmeasured (Myers and colleagues, 2011).</dd>
+      <dt>What a change means</dt>
+      <dd>If adding a strong predictor of treatment that has no plausible link to the outcome moves your estimate a lot, suspect amplification of residual confounding, not newly removed bias.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · Four motifs that catch careful analysts</div>
+      <svg class="viz-svg" viewBox="0 0 640 540" role="img" aria-label="Four small DAGs. M-bias: unmeasured U1 causes A and M, unmeasured U2 causes M and Y; M is a collider. Instrument: Z causes A, unmeasured U causes A and Y; adjusting for Z amplifies bias from U. Butterfly: as M-bias, but M also causes A and Y, so M is both a confounder and a collider. Time-varying confounding: A0 causes L1, L1 causes A1 and Y, unmeasured U causes L1 and Y.">
+        <defs>
+          <marker id="l42-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead"/></marker>
+          <marker id="l42-arrow-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead accent"/></marker>
+        </defs>
+        <line x1="320" y1="10" x2="320" y2="530" class="viz-grid"/>
+        <line x1="10" y1="270" x2="630" y2="270" class="viz-grid"/>
+
+        <!-- Panel 1: M-bias (origin 0,0) -->
+        <text x="160" y="24" text-anchor="middle" class="viz-bold">M-bias</text>
+        <g class="s5"><rect x="48" y="46" width="44" height="28" rx="7" class="node" stroke-dasharray="4 3"/><rect x="228" y="46" width="44" height="28" rx="7" class="node" stroke-dasharray="4 3"/></g>
+        <g class="s3"><rect x="138" y="101" width="44" height="28" rx="7" class="node-fill"/></g>
+        <g class="s1"><rect x="48" y="156" width="44" height="28" rx="7" class="node-fill"/></g>
+        <g class="s5"><rect x="228" y="156" width="44" height="28" rx="7" class="node"/></g>
+        <g text-anchor="middle" class="viz-small">
+          <text x="70" y="64">U1</text><text x="250" y="64">U2</text><text x="160" y="119" class="viz-bold">M</text><text x="70" y="174" class="viz-bold">A</text><text x="250" y="174" class="viz-bold">Y</text>
+        </g>
+        <path d="M70,74 L70,152" class="edge" marker-end="url(#l42-arrow)"/>
+        <path d="M92,70 L136,104" class="edge" marker-end="url(#l42-arrow)"/>
+        <path d="M228,70 L184,104" class="edge" marker-end="url(#l42-arrow)"/>
+        <path d="M250,74 L250,152" class="edge" marker-end="url(#l42-arrow)"/>
+        <path d="M92,170 L224,170" class="edge accent" marker-end="url(#l42-arrow-a)"/>
+        <g class="viz-small">
+          <text x="20" y="214">M is a collider of two unmeasured causes.</text>
+          <text x="20" y="230">Adjusting for M opens A ← U1 → M ← U2 → Y.</text>
+          <text x="20" y="246" class="viz-muted">Usually small: never drop real confounders for it.</text>
+        </g>
+
+        <!-- Panel 2: instrument (origin 320,0) -->
+        <text x="480" y="24" text-anchor="middle" class="viz-bold">Instrument: bias amplification</text>
+        <g class="s3"><rect x="338" y="156" width="44" height="28" rx="7" class="node-fill"/></g>
+        <g class="s1"><rect x="438" y="156" width="44" height="28" rx="7" class="node-fill"/></g>
+        <g class="s5"><rect x="568" y="156" width="44" height="28" rx="7" class="node"/><rect x="503" y="56" width="44" height="28" rx="7" class="node" stroke-dasharray="4 3"/></g>
+        <g text-anchor="middle" class="viz-small">
+          <text x="360" y="174" class="viz-bold">Z</text><text x="460" y="174" class="viz-bold">A</text><text x="590" y="174" class="viz-bold">Y</text><text x="525" y="74">U</text>
+        </g>
+        <path d="M382,170 L434,170" class="edge" marker-end="url(#l42-arrow)"/>
+        <path d="M512,84 L474,152" class="edge" marker-end="url(#l42-arrow)"/>
+        <path d="M538,84 L576,152" class="edge" marker-end="url(#l42-arrow)"/>
+        <path d="M482,170 L564,170" class="edge accent" marker-end="url(#l42-arrow-a)"/>
+        <g class="viz-small">
+          <text x="340" y="214">Z moves A but affects Y only through A.</text>
+          <text x="340" y="230">Adjusting for Z leaves the A variation that U drives,</text>
+          <text x="340" y="246" class="viz-muted">so any bias from unmeasured U gets larger.</text>
+        </g>
+
+        <!-- Panel 3: butterfly (origin 0,270) -->
+        <text x="160" y="294" text-anchor="middle" class="viz-bold">Butterfly: confounder and collider</text>
+        <g class="s5"><rect x="48" y="316" width="44" height="28" rx="7" class="node" stroke-dasharray="4 3"/><rect x="228" y="316" width="44" height="28" rx="7" class="node" stroke-dasharray="4 3"/></g>
+        <g class="s3"><rect x="138" y="371" width="44" height="28" rx="7" class="node-fill"/></g>
+        <g class="s1"><rect x="48" y="436" width="44" height="28" rx="7" class="node-fill"/></g>
+        <g class="s5"><rect x="228" y="436" width="44" height="28" rx="7" class="node"/></g>
+        <g text-anchor="middle" class="viz-small">
+          <text x="70" y="334">U1</text><text x="250" y="334">U2</text><text x="160" y="389" class="viz-bold">M</text><text x="70" y="454" class="viz-bold">A</text><text x="250" y="454" class="viz-bold">Y</text>
+        </g>
+        <path d="M70,344 L70,432" class="edge" marker-end="url(#l42-arrow)"/>
+        <path d="M92,340 L136,374" class="edge" marker-end="url(#l42-arrow)"/>
+        <path d="M228,340 L184,374" class="edge" marker-end="url(#l42-arrow)"/>
+        <path d="M250,344 L250,432" class="edge" marker-end="url(#l42-arrow)"/>
+        <path d="M146,399 L94,436" class="edge" marker-end="url(#l42-arrow)"/>
+        <path d="M174,399 L226,436" class="edge" marker-end="url(#l42-arrow)"/>
+        <path d="M92,450 L224,450" class="edge accent" marker-end="url(#l42-arrow-a)"/>
+        <g class="viz-small">
+          <text x="20" y="490">Adjusting for M closes A ← M → Y and opens</text>
+          <text x="20" y="506">the U1–U2 path. The confounding is usually</text>
+          <text x="20" y="522" class="viz-muted">the bigger bias, so adjust for M.</text>
+        </g>
+
+        <!-- Panel 4: time-varying (origin 320,270) -->
+        <text x="480" y="294" text-anchor="middle" class="viz-bold">Time-varying confounding</text>
+        <g class="s1"><rect x="338" y="426" width="44" height="28" rx="7" class="node-fill"/><rect x="498" y="426" width="44" height="28" rx="7" class="node-fill"/></g>
+        <g class="s3"><rect x="418" y="356" width="44" height="28" rx="7" class="node-fill"/></g>
+        <g class="s5"><rect x="580" y="426" width="44" height="28" rx="7" class="node"/><rect x="540" y="310" width="44" height="28" rx="7" class="node" stroke-dasharray="4 3"/></g>
+        <g text-anchor="middle" class="viz-small">
+          <text x="360" y="444" class="viz-bold">A0</text><text x="440" y="374" class="viz-bold">L1</text><text x="520" y="444" class="viz-bold">A1</text><text x="602" y="444" class="viz-bold">Y</text><text x="562" y="328">U</text>
+        </g>
+        <path d="M372,426 L420,386" class="edge" marker-end="url(#l42-arrow)"/>
+        <path d="M460,384 L504,424" class="edge" marker-end="url(#l42-arrow)"/>
+        <path d="M462,372 L584,428" class="edge" marker-end="url(#l42-arrow)"/>
+        <path d="M540,330 L464,362" class="edge" marker-end="url(#l42-arrow)"/>
+        <path d="M570,338 L596,422" class="edge" marker-end="url(#l42-arrow)"/>
+        <path d="M382,440 L494,440" class="edge accent" marker-end="url(#l42-arrow-a)"/>
+        <path d="M542,440 L576,440" class="edge accent" marker-end="url(#l42-arrow-a)"/>
+        <g class="viz-small">
+          <text x="340" y="490">L1 confounds A1 → Y, so it must be adjusted for;</text>
+          <text x="340" y="506">but A0 causes L1, so adjusting blocks part of A0’s</text>
+          <text x="340" y="522" class="viz-muted">effect and opens A0 → L1 ← U → Y. See Lecture 4.3.</text>
+        </g>
+      </svg>
+      <figcaption>Teal boxes are treatments, red boxes are the variable in question, dashed boxes are unmeasured. Teal arrows are treatment effects. (A direct A0 → Y arrow is omitted for clarity.)</figcaption>
+    </figure>
+
+    <div class="callout key">
+      <div class="callout-title">A practical rule when the DAG is uncertain</div>
+      <p>VanderWeele’s (2019) modified disjunctive cause criterion: adjust for each pre-treatment covariate that is a cause of the treatment, the outcome or both; remove any known instrument; and include good proxies for unmeasured common causes. It works whenever some subset of the measured variables is sufficient, without needing the full DAG.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>If you build a propensity model by throwing in every feature that predicts treatment, you will reward instruments: they predict treatment best precisely because they do nothing else. A higher AUC then buys more variance and amplified bias, not less confounding. The propensity model’s job is to balance confounders, not to predict treatment well (Lecture 4.3).</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="frontdoor">
+    <h2>5. The front-door criterion</h2>
+    <p class="point">When confounding cannot be blocked but the whole effect runs through a measured mediator that is itself unconfounded, the effect can still be identified, in two steps.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Pearl’s <strong>front-door criterion</strong>: if a mediator M intercepts every causal path from A to Y, nothing unmeasured confounds A and M, and every backdoor path from M to Y is blocked by A, then you can estimate A → M, then M → Y adjusting for A, and chain them. Pearl’s textbook example is smoking → tar in the lungs → cancer, with unmeasured genotype confounding smoking and cancer.</dd>
+      <dt>Why it matters</dt>
+      <dd>It shows identification is not only “adjust for confounders”: a different set of assumptions about the graph can identify an effect that the backdoor route cannot.</dd>
+      <dt>How to read it</dt>
+      <dd>Its conditions are strong and rarely all believable in epidemiology: the treatment must have no effect except through M, and M must be unconfounded with Y. Treat front-door claims with the same scrutiny as an instrument (Lecture 4.9).</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Confusing front-door estimation with mediation analysis. Front-door uses the mediator to recover the <em>total</em> effect when confounding is unmeasured. Mediation analysis (Lecture 4.10) splits an already identified total effect into direct and indirect parts.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="timevarying">
+    <h2>6. Confounders affected by earlier treatment, and SWIGs</h2>
+    <p class="point">When a covariate both confounds later treatment and is caused by earlier treatment, no adjustment set in an ordinary regression gives the effect of a treatment strategy; you need g-methods.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Treatment is decided repeatedly (A0, A1, …), and a time-varying covariate L1 sits between decisions: A0 affects L1, and L1 affects both A1 and the outcome. This is <strong>treatment–confounder feedback</strong>. Adjusting for L1 blocks part of A0’s effect and can open a collider path through unmeasured causes of L1; not adjusting leaves A1 confounded.</dd>
+      <dt>Why it matters</dt>
+      <dd>It is the normal situation in ICU and chronic-disease data. In Project 5A, daily anticoagulation decisions depend on platelet count and bleeding signs, which are themselves affected by earlier heparin. A Cox model with time-varying platelets cannot give the effect of “anticoagulate throughout”.</dd>
+      <dt>How to read it</dt>
+      <dd>Look for any covariate measured after baseline that both drives later treatment and could have been changed by earlier treatment. If you find one, the analysis needs inverse probability weighting of a marginal structural model or the g-formula (Lecture 4.3), or a design that fixes treatment at baseline (Lecture 4.5).</dd>
+    </dl>
+
+    <dl class="facets">
+      <dt>SWIGs</dt>
+      <dd><strong>Single-world intervention graphs</strong> (Richardson and Robins, 2013) split each treatment node into what was observed and what is set by the intervention, so potential outcomes appear on the graph. You can then read conditions such as “\(Y(a)\) is independent of A given L” straight off it by d-separation. They are most useful for time-varying and dynamic strategies (“start anticoagulation if platelets stay above a threshold”).</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>“We adjusted for time-varying confounders in a time-dependent Cox model, so the estimate is causal.” That handles confounding of each day’s treatment only if no confounder is affected by earlier treatment. With feedback, the conditional hazard ratio mixes blocked effects and collider bias, and does not correspond to any treatment strategy.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="drawing">
+    <h2>7. Drawing a DAG you can defend</h2>
+    <p class="point">A DAG is a summary of subject knowledge, drawn before looking at the data and built so that reviewers can disagree with specific arrows.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Start from treatment and outcome. Add every common cause of any two variables already on the graph, measured or not; a causal DAG must include them. Order variables in time. Then use the graph to find adjustment sets, and the data only to check the independencies it implies.</dd>
+      <dt>Why it matters</dt>
+      <dd>Tennant and colleagues (2021) reviewed 234 health studies that used DAGs: only 62% showed at least one DAG, about half reported the adjustment set it implied, and about a fifth stated their estimand. A DAG in the supplement with a matching adjustment set is a reasonable reviewer request.</dd>
+      <dt>How to read it</dt>
+      <dd>The missing arrows are the claims. Every pair of nodes with no arrow asserts no direct effect. Check the ones a clinician would dispute. If you are unsure about an arrow, draw both versions and see whether the adjustment set changes; often it does not.</dd>
+      <dt>What a change means</dt>
+      <dd>If <code>localTests</code> shows a strong dependence the DAG says should not exist, an arrow or a common cause is missing. Fix the graph from subject knowledge, not by deleting the test.</dd>
+    </dl>
+
+    <div class="callout gulf">
+      <div class="callout-title">Gulf example · A DAG for Project 4</div>
+      <p>For the sugary-drink taxes, the treatment is a country-year policy and the outcome is sugar supply per person. Common causes of tax timing and supply include fiscal pressure from oil prices, which also moves incomes and spending. Saudi Arabia and the UAE introduced 5% VAT on 1 January 2018, and Saudi Arabia raised its VAT to 15% on 1 July 2020: co-interventions that raise all prices and sit right next to the tax dates. Changes in the expatriate population move both the per-person denominator and dietary patterns. Drawing these before choosing a difference-in-differences specification (Lecture 4.6) tells you which ones parallel trends must survive.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Drawing the DAG from your variable list. The DAG must include what matters, measured or not; an unmeasured confounder you leave off the graph does not disappear, it just stops being argued about. Mark unmeasured nodes and say what you will do about them (proxies, bias analysis, Lecture 2.13).</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>A colleague adds ICU length of stay to the Project 5A model because “longer stays mean sicker patients”. What is wrong?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Length of stay is measured after treatment and is caused by it (bleeding prolongs stays) and by the outcome (death shortens them). Adjusting for it conditions on a descendant of treatment and a collider of treatment and outcome, which can create bias in either direction. Severity at baseline is the confounder; measure that instead.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>dagitty returns two minimal sufficient sets: {age, SOFA, bleeding risk} and {age, SOFA, platelets, prior bleed}. How do you choose?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>If the DAG is right, both remove confounding. Choose on measurement: which variables are recorded more accurately and completely, and which give more precision. Running both is a cheap check: if they disagree a lot, the DAG or the measurement is probably wrong somewhere.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Hospital site strongly predicts whether patients are anticoagulated, but you believe it has no effect on death except through prescribing. Should it go in the propensity model?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>If that belief is right, site is an instrument: leave it out, because it adds variance and amplifies residual confounding. But sites also differ in case mix and quality of care, which affect death directly. If that is plausible, site is a confounder and should stay. This is a subject-matter judgement; state it, and consider showing both.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A paper’s Table 2 lists adjusted odds ratios for the exposure, age, diabetes and smoking, and the discussion interprets each one. What do you say in review?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Only the exposure’s coefficient was designed to be causal. The others are adjusted for variables that may be their mediators, and their own confounders were never chosen. This is the Table 2 fallacy: ask the authors to report only the exposure effect, or justify each secondary effect with its own DAG and model.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Daily heparin lowers platelet counts in some patients, and low platelets make clinicians stop heparin and also predict death. Why can a Cox model with daily platelets as a time-varying covariate not give the effect of “anticoagulate throughout the ICU stay”?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Platelets confound later heparin decisions, so they must be accounted for, but they are also affected by earlier heparin, so conditioning on them blocks part of the effect and can open collider paths through unmeasured causes of platelets. Ordinary regression cannot do both. IPW of a marginal structural model or the g-formula (Lecture 4.3) can.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Hernán &amp; Robins, <em>Causal Inference: What If</em>, chapters 6–8 (causal diagrams, confounding, selection bias) and 19–20 (time-varying treatments, treatment–confounder feedback).</li>
+      <li>Pearl, Glymour &amp; Jewell, <em>Causal Inference in Statistics: A Primer</em> (Wiley, 2016), chapters 2–3: d-separation, the backdoor and front-door criteria. Greenland, Pearl &amp; Robins, “Causal diagrams for epidemiologic research”, <em>Epidemiology</em> (1999).</li>
+      <li>Textor et al., “Robust causal inference using directed acyclic graphs: the R package ‘dagitty’”, <em>International Journal of Epidemiology</em> (2016); dagitty documentation (<code>adjustmentSets</code>, <code>paths</code>, <code>localTests</code>).</li>
+      <li>Greenland, “Quantifying biases in causal models: classical confounding vs collider-stratification bias”, <em>Epidemiology</em> (2003). Ding &amp; Miratrix, “To adjust or not to adjust? Sensitivity analysis of M-bias and butterfly-bias”, <em>Journal of Causal Inference</em> (2015).</li>
+      <li>Pearl, “On a class of bias-amplifying variables that endanger effect estimates”, <em>Proceedings of UAI</em> (2010). Myers et al., “Effects of adjusting for instrumental variables on bias and precision of effect estimates”, <em>American Journal of Epidemiology</em> (2011).</li>
+      <li>Westreich &amp; Greenland, “The Table 2 fallacy: presenting and interpreting confounder and modifier coefficients”, <em>American Journal of Epidemiology</em> (2013). Cinelli, Forney &amp; Pearl, “A crash course in good and bad controls”, <em>Sociological Methods &amp; Research</em> (2024).</li>
+      <li>VanderWeele, “Principles of confounder selection”, <em>European Journal of Epidemiology</em> (2019). Tennant et al., “Use of directed acyclic graphs (DAGs) to identify confounders in applied health research: review and recommendations”, <em>International Journal of Epidemiology</em> (2021).</li>
+      <li>Richardson &amp; Robins, “Single World Intervention Graphs (SWIGs): a unification of the counterfactual and graphical approaches to causality”, Working Paper 128, Center for Statistics and the Social Sciences, University of Washington (2013).</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="4-01-potential-outcomes-identification.html"><small>Previous</small>4.1 Potential outcomes and identification</a>
+    <a class="next" href="4-03-ipw-g-formula.html"><small>Next</small>4.3 IPW and the g-formula</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

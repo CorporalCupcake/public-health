@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>4.8 Synthetic control · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/4-08.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-4">Block 4</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 4.8</p>
+  <h1>Synthetic control</h1>
+  <div class="lecture-meta">
+    <span>Block 4 · Causal inference and policy evaluation</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>When one country adopts a policy and no single other country is a good comparison, synthetic control builds one: a weighted average of untreated “donor” countries chosen to track the treated country before the policy. After the policy, the gap between the real and the synthetic country is the estimated effect. Inference comes from asking whether that gap is unusual compared with fake “effects” for donors that were never treated. It suits Project 4 well (a single large adopter, Saudi Arabia, and many untaxed countries), and its failure modes, short pre-periods and units outside the donors’ range, are exactly Project 4’s risks.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#idea">A weighted donor pool as the counterfactual</a></li>
+      <li><a href="#convex">Convex weights: interpolation, not extrapolation</a></li>
+      <li><a href="#fit">Pre-period fit, and overfitting it</a></li>
+      <li><a href="#placebo">Inference by placebos</a></li>
+      <li><a href="#donors">Choosing the donor pool</a></li>
+      <li><a href="#extensions">Augmented synthetic control and synthetic DiD</a></li>
+      <li><a href="#fails">When synthetic control fails</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="idea">
+    <h2>1. A weighted donor pool as the counterfactual</h2>
+    <p class="point">Synthetic control replaces “find a comparison country” with “build one”: weights on donor countries that make the weighted average follow the treated country’s path before the policy.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A treated unit, a <strong>donor pool</strong> of untreated units, and weights (non-negative, summing to one) chosen so the weighted donors match the treated unit’s pre-period outcomes and key predictors. The weighted donors are the <strong>synthetic control</strong>. The effect in each post year is the treated value minus the synthetic value.</dd>
+      <dt>Why it matters</dt>
+      <dd>DiD (Lecture 4.6) needs a comparison whose trend runs parallel; synthetic control searches for one that matches level and trend, and makes the choice data-driven and visible. Matching a long pre-period path also matches, roughly, the unobserved factors that drive it, which is the method’s core argument.</dd>
+      <dt>How to read it</dt>
+      <dd>Look at three things: the weights (which donors, how much), the pre-period fit (do the lines overlap?), and the post-period gap. A credible study shows close pre-period tracking over many years, then a gap that opens at the policy date and not before.</dd>
+      <dt>What a change means</dt>
+      <dd>A gap that opens at the policy date and widens is the signature of a growing effect. A gap that was already opening a year or two before points to anticipation or poor fit, not to the policy.</dd>
+    </dl>
+
+    <div class="callout example">
+      <div class="callout-title">Example · California’s Proposition 99</div>
+      <p>Abadie, Diamond and Hainmueller (2010) evaluated California’s 1988 tobacco control programme, which raised the cigarette tax by 25 cents a pack from January 1989 and funded anti-smoking campaigns. Using state cigarette sales per person from 1970 to 2000 (19 pre-policy years), synthetic California was a mix of Utah (0.33), Nevada (0.23), Montana (0.20), Colorado (0.16) and Connecticut (0.07); all other donors got zero. The donor pool of 38 states excluded states with their own large tobacco programmes or tax rises of 50 cents or more. Sales fell by an average of almost 20 packs per person a year over 1989–2000 (about 25%), and by about 26 packs by 2000.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Mixing paint to match a colour swatch: no tin on the shelf matches, but 40% of one, 35% of another and 25% of a third does. If the swatch is brighter than every tin, no mix will reach it.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="convex">
+    <h2>2. Convex weights: interpolation, not extrapolation</h2>
+    <p class="point">Because the weights are non-negative and sum to one, the synthetic unit always lies inside the range of the donors; that keeps the method honest, and it is also why it fails for extreme units.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A <strong>convex combination</strong> is a weighted average with weights between 0 and 1 that sum to 1. The set of all such combinations of the donors is their <strong>convex hull</strong>: picture the shape formed by stretching a rubber band around the donors’ points.</dd>
+      <dt>Why it matters</dt>
+      <dd>Regression can produce a counterfactual far outside the data (extrapolation) without warning. Convex weights forbid that: the synthetic unit is built only from what donors actually did. The weights are also usually sparse, a handful of donors, so a reader can judge whether the mix is plausible.</dd>
+      <dt>How to read it</dt>
+      <dd>Check that the treated unit sits inside the donors’ range on the pre-period outcome and the main predictors. If it is above or below every donor, the fit will be poor, and the method is telling you so.</dd>
+      <dt>What a change means</dt>
+      <dd>If dropping one donor moves the treated unit from inside to outside the hull, the result depends on that donor; leave-one-out checks (section 5) catch this.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · The convex hull of the donors</div>
+      <svg class="viz-svg" viewBox="0 0 640 300" role="img" aria-label="Two panels. Each shows six donor countries A to F as points by pre-tax level and pre-tax trend, with a shaded polygon around them, the convex hull; D lies inside it. Left: the taxed country sits inside the hull, so a weighted average of donors can match it. Right: the taxed country lies to the right of the hull, with a higher level than any donor; a dashed line joins it to the closest point the donors can reach, on the edge between F and C, which is still short.">
+        <text x="30" y="22" class="viz-bold">Inside the donors’ hull</text>
+        <text x="30" y="40" class="viz-small viz-muted">convex weights can match it: interpolation</text>
+        <polygon points="80,166 135,106 270,86 210,206 110,216" class="node-fill s5"/>
+        <circle cx="80" cy="166" r="5" class="dot s5"/>
+        <text x="66" y="170" class="viz-small viz-muted">A</text>
+        <circle cx="135" cy="106" r="5" class="dot s5"/>
+        <text x="129" y="96" class="viz-small viz-muted">B</text>
+        <circle cx="210" cy="206" r="5" class="dot s5"/>
+        <text x="214" y="224" class="viz-small viz-muted">C</text>
+        <circle cx="240" cy="141" r="5" class="dot s5"/>
+        <text x="220" y="145" class="viz-small viz-muted">D</text>
+        <circle cx="110" cy="216" r="5" class="dot s5"/>
+        <text x="104" y="236" class="viz-small viz-muted">E</text>
+        <circle cx="270" cy="86" r="5" class="dot s5"/>
+        <text x="278" y="80" class="viz-small viz-muted">F</text>
+        <circle cx="170" cy="161" r="7" class="dot s1"/>
+        <line x1="30" y1="246" x2="310" y2="246" class="viz-axis"/>
+        <line x1="30" y1="246" x2="30" y2="61" class="viz-axis"/>
+        <text x="170" y="264" text-anchor="middle" class="viz-label">pre-tax level of supply →</text>
+        <text x="22" y="153" text-anchor="middle" class="viz-label" transform="rotate(-90 22 153)">pre-tax trend →</text>
+        <text x="350" y="22" class="viz-bold">Outside the hull</text>
+        <text x="350" y="40" class="viz-small viz-muted">no convex weights reach it: extrapolation</text>
+        <polygon points="400,166 455,106 590,86 530,206 430,216" class="node-fill s5"/>
+        <circle cx="400" cy="166" r="5" class="dot s5"/>
+        <text x="386" y="170" class="viz-small viz-muted">A</text>
+        <circle cx="455" cy="106" r="5" class="dot s5"/>
+        <text x="449" y="96" class="viz-small viz-muted">B</text>
+        <circle cx="530" cy="206" r="5" class="dot s5"/>
+        <text x="534" y="224" class="viz-small viz-muted">C</text>
+        <circle cx="560" cy="141" r="5" class="dot s5"/>
+        <text x="540" y="145" class="viz-small viz-muted">D</text>
+        <circle cx="430" cy="216" r="5" class="dot s5"/>
+        <text x="424" y="236" class="viz-small viz-muted">E</text>
+        <circle cx="590" cy="86" r="5" class="dot s5"/>
+        <text x="598" y="80" class="viz-small viz-muted">F</text>
+        <line x1="605" y1="206" x2="545" y2="176" class="stroke s3" stroke-width="1.6" stroke-dasharray="4 3"/>
+        <circle cx="545" cy="176" r="4" class="node s2"/>
+        <circle cx="605" cy="206" r="7" class="dot s3"/>
+        <line x1="350" y1="246" x2="630" y2="246" class="viz-axis"/>
+        <line x1="350" y1="246" x2="350" y2="61" class="viz-axis"/>
+        <text x="490" y="264" text-anchor="middle" class="viz-label">pre-tax level of supply →</text>
+        <text x="342" y="153" text-anchor="middle" class="viz-label" transform="rotate(-90 342 153)">pre-tax trend →</text>
+        <g class="viz-small">
+          <circle cx="40" cy="288" r="6" class="dot s1"/><text x="52" y="292">taxed country (inside)</text>
+          <circle cx="232" cy="288" r="6" class="dot s3"/><text x="244" y="292">taxed country (outside)</text>
+          <circle cx="430" cy="288" r="4" class="node s2"/><text x="442" y="292">closest synthetic possible</text>
+        </g>
+      </svg>
+      <figcaption>The real problem is often one-dimensional: in Proposition 99, New Hampshire had the highest cigarette sales of any donor in every pre-policy year, so as a placebo it could not be fitted at all. Shaded area: every mix of donors that convex weights can produce.</figcaption>
+    </figure>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>Synthetic control is a constrained regression: regress the treated unit’s pre-period outcomes on the donors’ pre-period outcomes, with no intercept and weights on the simplex. The simplex fixes the L1 norm at 1, so, like the lasso, it tends to give sparse solutions. It is also matching, but on the whole pre-period trajectory rather than on a few covariates. The classic version (<code>Synth</code>) adds a second, outer optimisation choosing how much each predictor counts.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reading the weights as causal importance or similarity in every respect (“Saudi Arabia is 40% like Country X”). They are whatever reproduces the pre-period path. Different weight sets can fit almost equally well (try it in the next widget), so do not build a story on one donor’s weight.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="fit">
+    <h2>3. Pre-period fit, and overfitting it</h2>
+    <p class="point">A close pre-period fit is necessary but not sufficient: with few pre-years and many donors, the weights can fit noise, and a perfect fit then means nothing.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The <strong>pre-period RMSPE</strong> (root mean squared prediction error) is the typical gap between the treated unit and its synthetic version before the policy, in the outcome’s units. It is training error.</dd>
+      <dt>Why it matters</dt>
+      <dd>The method’s justification is that matching a long pre-period also matches the hidden factors behind it. Abadie (2021) stresses that this needs a long pre-period, and warns that with short ones, close fit can come from chance. Seven annual points with thirty donors is a short pre-period.</dd>
+      <dt>How to read it</dt>
+      <dd>Compare the pre-RMSPE with the size of the effect you hope to detect and with the year-to-year noise in the series. Illustrative numbers: a pre-RMSPE of 0.3 kg is reassuring for an effect of 4 kg; 2 kg is not.</dd>
+      <dt>What a change means</dt>
+      <dd>Holding out the last pre-years and fitting on the earlier ones (a placebo in time) tests whether the fit generalises. If the fit is good on the training years and poor on the held-out years, you were fitting noise.</dd>
+    </dl>
+
+    <div class="widget" data-widget="sc-playground">
+      <div class="widget-title">Synthetic control playground</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Start with equal weights (a plain average of donors, like a DiD comparison): the fit is poor. Press Optimise and read the pre-RMSPE and the post gap. Compare with “True mix”: different weights, similar fit. Then switch the treated country above every donor and optimise again.</p>
+    </div>
+
+    <pre><code>library(augsynth)
+sc &lt;- augsynth(sugar ~ taxed, unit = country, time = year,
+               data = p4_sa,              # Saudi Arabia + donor countries
+               progfunc = "None", scm = TRUE)   # plain synthetic control
+summary(sc)    # weights, average post-period effect, pre-period fit
+plot(sc)       # gap by year</code></pre>
+    <p><code>taxed</code> is 1 for Saudi Arabia in taxed years and 0 otherwise. With <code>progfunc = "None"</code> this is classic synthetic control; section 6 switches on the augmentation. <code>summary</code> also reports a conformal-inference interval, a newer alternative to placebo inference.</p>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Adding donors until the pre-period fit is perfect. Every extra donor is another free parameter. With more donors than pre-years, an exact fit is almost guaranteed, and the post-period gap then reflects noise as much as the policy. Keep the pool small and relevant, and test the fit out of sample.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>This is overfitting in the ordinary sense: pre-RMSPE is training loss, the post period is the test set, and you never see the test labels (the untreated outcome). The simplex constraint is regularisation; augmented synthetic control adds a ridge penalty (section 6). Rolling “backdating” checks are time-series cross-validation.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>A student who memorises last year’s seven exam answers scores perfectly on those questions and learns nothing about this year’s. Perfect recall of a short past is not understanding.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="placebo">
+    <h2>4. Inference by placebos</h2>
+    <p class="point">To judge whether the treated gap is real, pretend each donor was treated, compute its gap the same way, and see where the real one ranks.</p>
+
+    \[ p = \frac{\text{number of units with post/pre ratio} \ge \text{the treated unit's}}{J + 1} \]
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>Placebo in space</strong>: rerun the method with each of the \(J\) donors as the “treated” unit and the others as its donors. <strong>Placebo in time</strong>: pretend the policy started earlier and check that no gap appears. The <strong>post/pre RMSPE ratio</strong> scales each post-period gap by how well that unit was fitted before, so poorly fitted placebos do not look like big effects.</dd>
+      <dt>Why it matters</dt>
+      <dd>With one treated unit there is no sampling distribution in the usual sense. The placebo distribution asks: if the policy had been assigned to a random unit, how often would we see a ratio this large?</dd>
+      <dt>How to read it</dt>
+      <dd>In Proposition 99, California’s post-period MSPE was about 130 times its pre-period MSPE, larger than for any of the 38 placebo states, giving p = 1/39 ≈ 0.026. With \(J\) donors the smallest possible p is \(1/(J+1)\): with 6 donors you can never get below 0.14.</dd>
+      <dt>What a change means</dt>
+      <dd>Moving from rank 1 to rank 3 out of 20 changes p from 0.05 to 0.15. These p-values are coarse; report the rank and the placebo plot, not just p.</dd>
+    </dl>
+
+    <div class="widget" data-widget="sc-placebo">
+      <div class="widget-title">Placebo test: is the real gap unusual?</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">The thick line is the real gap; the thin lines are donors treated as fake-treated. Even when the taxed country ranks first, the p-value cannot go below 1/7. Shrink the effect towards zero, then put the treated country above every donor: its pre-fit collapses and its ratio sinks.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reading the permutation p-value as a classical p-value about sampling error. It is a statement about how unusual the treated unit is among the units you chose, under the fiction that the policy could have been assigned to any of them. Change the donor pool and it changes. Abadie and colleagues also showed versions excluding placebos fitted more than 20, 5 or 2 times worse than California before the policy; show such cut-offs as sensitivity analyses, not as a way to tune p.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>A runner claims new shoes cut their time. You time everyone in the club this week against their own recent form. If the runner’s improvement is the biggest of twenty, that is suggestive; if three others improved as much without new shoes, it is not.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="donors">
+    <h2>5. Choosing the donor pool</h2>
+    <p class="point">The donor pool should contain units that could plausibly stand in for the treated unit and that were not exposed to the same or a similar policy; choose it before you look at the gaps, and test how much each donor matters.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Abadie (2021) sets out three exclusion rules, the first of which the Proposition 99 study applied: drop units with a similar intervention during the study period, units hit by large idiosyncratic shocks, and units the policy may have affected (spillovers). Prefer units similar on the outcome’s drivers, which limits interpolation bias.</dd>
+      <dt>Why it matters</dt>
+      <dd>A contaminated donor biases the synthetic counterfactual. A donor that adopted its own sugary-drink tax pulls the synthetic line down and shrinks the estimated effect. A donor affected by cross-border shopping pulls it up and inflates it.</dd>
+      <dt>How to read it</dt>
+      <dd>The protocol should list every candidate donor and the reason for each exclusion. <strong>Leave-one-out</strong>: drop each donor with positive weight in turn and refit. If the effect survives every omission, it does not rest on one country.</dd>
+      <dt>What a change means</dt>
+      <dd>If dropping one donor halves the effect, report that prominently and explain what is special about it.</dd>
+    </dl>
+
+    <div class="callout gulf">
+      <div class="callout-title">Gulf example · A donor pool for Saudi Arabia</div>
+      <p>The other taxed GCC states cannot be donors after their own adoption, which leaves Kuwait plus non-GCC countries. Exclude countries with their own sugary-drink taxes during the study window (for example Mexico from 2014 and the United Kingdom from 2018) and those with major sugar-policy changes. Consider whether Kuwait is exposed to spillovers. Match on pre-tax supply, GDP per person and population growth, and keep the pool modest relative to the seven pre-tax years in FAOSTAT’s consistent series (2010–2016).</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Revising the donor pool after seeing the result, “because the fit is better”. That is specification search with a different name. If you must change it, report both pools.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Picking a jury: you excuse anyone with a stake in the case before the trial starts, not after hearing how they would vote.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="extensions">
+    <h2>6. Augmented synthetic control and synthetic DiD</h2>
+    <p class="point">Newer methods keep synthetic control’s weighting but relax its two weak points: imperfect pre-period fit and the requirement to match the treated unit’s level exactly.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Method</th><th>Unit weights</th><th>Level difference allowed?</th><th>Best when</th></tr></thead>
+        <tbody>
+          <tr><td>DiD</td><td>Equal</td><td>Yes (fixed effects)</td><td>Many comparable units with parallel trends</td></tr>
+          <tr><td>Synthetic control</td><td>Convex, fitted</td><td>No: must match levels</td><td>One treated unit inside the donors’ range, long pre-period</td></tr>
+          <tr><td>Augmented SC (Ben-Michael, Feller &amp; Rothstein 2021)</td><td>SC weights, corrected by an outcome model</td><td>Partly: small extrapolation allowed</td><td>Pre-fit is imperfect but close</td></tr>
+          <tr><td>Synthetic DiD (Arkhangelsky et al. 2021)</td><td>Fitted, plus weights on pre-years</td><td>Yes</td><td>Treated unit differs in level but moves like a donor mix</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>Augmented SC</strong> estimates the bias left by imperfect fit with a ridge regression of outcomes on pre-period outcomes, and subtracts it. <strong>Synthetic DiD</strong> chooses unit weights so that donors move like the treated unit (not necessarily at the same level), and time weights that emphasise pre-years most like the post-period, then takes a weighted DiD.</dd>
+      <dt>Why it matters</dt>
+      <dd>They rescue cases where classic SC fails narrowly, and synthetic DiD links Lectures 4.6 and 4.8: DiD with equal weights and synthetic control without intercepts are its two extremes.</dd>
+      <dt>How to read it</dt>
+      <dd>If classic SC, augmented SC and synthetic DiD agree, the result does not depend on the method. If only the augmented version shows an effect, look at how much extrapolation the correction did.</dd>
+      <dt>What a change means</dt>
+      <dd>A large augmentation correction (the estimate moves a lot) means the classic fit was poor and the answer now leans on the ridge model, which is extrapolation again, only regularised.</dd>
+    </dl>
+
+    <pre><code>library(synthdid)
+setup &lt;- panel.matrices(p4_sa, unit = "country", time = "year",
+                        outcome = "sugar", treatment = "taxed")
+sdid &lt;- synthdid_estimate(setup$Y, setup$N0, setup$T0)
+se &lt;- sqrt(vcov(sdid, method = "placebo"))   # placebo-based SE
+c(estimate = sdid, se = se)
+augsynth(sugar ~ taxed, country, year, p4_sa, progfunc = "Ridge", scm = TRUE)</code></pre>
+    <p><code>panel.matrices</code> turns long data into the outcome matrix with donors first; <code>synthdid_estimate</code> fits synthetic DiD; the placebo variance method suits a single treated unit. The last line fits augmented synthetic control with a ridge correction. For several treated units adopting at different times (all the GCC adopters together), <code>augsynth::multisynth</code> extends the idea to staggered adoption.</p>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Running all three estimators and reporting the one with the biggest effect. Name the primary estimator in the protocol and present the others as robustness checks, whatever they show.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="fails">
+    <h2>7. When synthetic control fails</h2>
+    <p class="point">Synthetic control fails openly when pre-period fit is poor, and quietly when the pre-period is short, the donors are contaminated, or something else changed in the treated unit at the policy date.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The main failure modes: the treated unit lies outside the donors’ hull, so the fit is poor; the pre-period is too short for fit to mean much; the donor pool is contaminated by similar policies or spillovers; and a co-intervention in the treated unit (VAT in January 2018) is absorbed into the gap.</dd>
+      <dt>Why it matters</dt>
+      <dd>Synthetic control controls for <em>shared</em> shocks through its donors, not for shocks specific to the treated unit. Like ITS (Lecture 4.7), it cannot separate the policy from anything else that happened only there.</dd>
+      <dt>How to read it</dt>
+      <dd>Abadie (2021) advises against using synthetic control when the pre-period fit is poor or the pre-period is short. A good fit is the price of admission, not the conclusion.</dd>
+      <dt>What a change means</dt>
+      <dd>Switching from levels to an index (2016 = 100) or demeaning changes the question from “match the level” to “match the path”. That can rescue an extreme unit, but it is a different assumption, closer to DiD.</dd>
+    </dl>
+
+    <div class="callout gulf">
+      <div class="callout-title">Gulf example · Is Saudi Arabia outside the hull?</div>
+      <p>Check before anything else: is Saudi Arabia’s pre-tax sugar and sweetener supply per person above every candidate donor’s in every year? If it is, classic synthetic control cannot match it, exactly like New Hampshire in the Proposition 99 study. Options in order of preference: add donors with similarly high supply (if they are otherwise valid), use synthetic DiD or demeaned synthetic control so that only the path must match, use augmented SC with its correction reported, or present the analysis as descriptive. Pre-specify which you will do, since the check itself uses only pre-period data.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Rescuing a poor fit by adding donors from very different contexts until something matches. A country that matches Saudi Arabia’s 2010–2016 sugar supply by coincidence, with a different economy and diet, is a weak counterfactual for 2017 onward. Good fit from implausible donors is the overfitting of section 3 in another form.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>A tailor can alter a suit from the rack to fit you, but not if you are taller than every suit in the shop. Stretching the cloth (extrapolation) works a little; past that, you need a different approach.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>A study reports a synthetic control with a near-perfect fit over 6 pre-policy years using 45 donor countries. The effect is large and the placebo rank is 1 of 46. How convinced are you?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Cautious. With 45 donors and 6 pre-years, a near-perfect fit is easy to get by fitting noise, so it says little about whether the synthetic tracks the unobserved drivers. I would ask for a placebo-in-time test (fit on the first years, check the last pre-years), a smaller and justified donor pool, leave-one-out results, and agreement with augmented SC or synthetic DiD.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>In your Project 4 synthetic control, Saudi Arabia ranks first of 15 on the post/pre RMSPE ratio. A co-author writes “p &lt; 0.05”. Is that right?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The permutation p-value is 1/15 ≈ 0.067, the smallest possible with 14 donors, so it cannot be below 0.05. More importantly, it measures how unusual Saudi Arabia is among these chosen units, not sampling error. Report the rank, the placebo plot and the size of the gap, and avoid the significance framing.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Why must weights be non-negative and sum to one? What would you lose by allowing any weights, as in ordinary regression?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Convex weights keep the synthetic unit inside the range of what donors actually did (interpolation), give sparse, interpretable weights, and prevent the counterfactual from leaning on extrapolation. Unrestricted weights fit the pre-period better but can produce counterfactuals far outside the data and overfit easily, especially with many donors and few pre-years.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Dropping one donor, Country X, halves the estimated effect. What do you do?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Report it prominently, and investigate Country X: did something happen there after 2017 (its own policy, an economic shock, a data revision) that pushed its supply up, inflating the gap? If it is contaminated, exclude it with that reason and show both results. If not, the effect is fragile and should be described as such.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Synthetic control for Saudi Arabia shows a clear gap opening in 2018. Name the alternative explanation that donors cannot remove, and one way to probe it.</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>VAT at 5% began in Saudi Arabia (and the UAE) in January 2018, a Saudi-specific price shock that donors do not share. Probe it with a control outcome under VAT but not the excise tax (a non-sugar food group), and compare the 2017 part-year, before VAT, with later years.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Abadie, Diamond &amp; Hainmueller, “Synthetic control methods for comparative case studies: estimating the effect of California’s tobacco control program”, <em>Journal of the American Statistical Association</em> (2010). Weights, donor pool, placebo and ratio inference.</li>
+      <li>Abadie, “Using synthetic controls: feasibility, data requirements, and methodological aspects”, <em>Journal of Economic Literature</em> (2021). When to use the method and when not to.</li>
+      <li>Abadie &amp; Gardeazabal, “The economic costs of conflict: a case study of the Basque Country”, <em>American Economic Review</em> (2003). Abadie, Diamond &amp; Hainmueller, “Comparative politics and the synthetic control method”, <em>American Journal of Political Science</em> (2015).</li>
+      <li>Ben-Michael, Feller &amp; Rothstein, “The augmented synthetic control method”, <em>Journal of the American Statistical Association</em> (2021), and “Synthetic controls with staggered adoption”, <em>Journal of the Royal Statistical Society Series B</em> (2022); the <code>augsynth</code> package.</li>
+      <li>Arkhangelsky, Athey, Hirshberg, Imbens &amp; Wager, “Synthetic difference-in-differences”, <em>American Economic Review</em> (2021); the <code>synthdid</code> package.</li>
+      <li>Bouttell, Craig, Lewsey, Robinson &amp; Popham, “Synthetic control methodology as a tool for evaluating population-level health interventions”, <em>Journal of Epidemiology and Community Health</em> (2018).</li>
+      <li>Cunningham, <em>Causal Inference: The Mixtape</em> (free online), chapter “Synthetic Control”. Huntington-Klein, <em>The Effect</em> (free online), chapter 21.</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="4-07-interrupted-time-series.html"><small>Previous</small>4.7 Interrupted time series</a>
+    <a class="next" href="4-09-regression-discontinuity-iv.html"><small>Next</small>4.9 Regression discontinuity and IV</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

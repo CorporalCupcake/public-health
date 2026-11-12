@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>5.16 Post-deployment monitoring · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/5-16.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-5">Block 5</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 5.16</p>
+  <h1>Post-deployment monitoring: drift, performance decay, feedback loops</h1>
+  <div class="lecture-meta">
+    <span>Block 5 · Pharmacoepidemiology, real-world evidence, regulatory science and AI evaluation</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>A validated model is validated for the patients, practice and coding of the past. Once deployed, all three keep changing, and the model itself changes the care it was trained on. Monitoring is pharmacovigilance for algorithms (Lecture 5.12): watch the right signals, use control charts that tell real change from noise, know which kind of drift you are seeing, and have a named person who acts. The hardest case is the feedback loop, where the model’s success makes it look broken.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#drift">Why deployed models decay: three kinds of drift</a></li>
+      <li><a href="#labels">Monitoring with and without labels</a></li>
+      <li><a href="#recal">Calibration drift and recalibration</a></li>
+      <li><a href="#spc">Telling change from noise: control charts</a></li>
+      <li><a href="#feedback">Feedback loops: when the model changes what it predicts</a></li>
+      <li><a href="#equity">Equity monitoring</a></li>
+      <li><a href="#governance">Governance: who acts</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="drift">
+    <h2>1. Why deployed models decay: three kinds of drift</h2>
+    <p class="point">A model learns a joint distribution of patients and outcomes; drift is any change in that distribution, and which part changes decides what breaks.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Drift</th><th>What changes</th><th>Typical cause</th><th>What it usually breaks</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Covariate shift</strong></td><td>Who arrives: the mix of predictors, P(X)</td><td>New referral pattern, new site, older population</td><td>Discrimination moves with case mix; calibration holds only if the model is right for the new patients</td></tr>
+          <tr><td><strong>Prior (label) shift</strong></td><td>How common the outcome is, P(Y)</td><td>Epidemic, new screening test, new outcome definition or coding</td><td>Calibration-in-the-large; ranking may survive</td></tr>
+          <tr><td><strong>Concept drift</strong></td><td>What the predictors mean, P(Y | X)</td><td>New treatment, practice change, new lab assay</td><td>Both calibration and discrimination</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <dl class="facets">
+      <dt>Why it matters</dt>
+      <dd>Each type needs a different response. Prior shift is often fixed by updating the intercept; concept drift needs new coefficients or a new model; covariate shift may need nothing, or a model that was never validated on these patients.</dd>
+      <dt>How to read it</dt>
+      <dd>Ask three questions when performance moves: did the inputs change, did the outcome rate change, or did the link between them change? Data errors (a broken feed, a renamed lab code) mimic all three, so rule them out first.</dd>
+      <dt>What a change means</dt>
+      <dd>An observed-to-expected ratio moving from 1.0 to 1.3 means 30% more events than the model predicts. If discrimination is unchanged, suspect prior shift or a coding change before concept drift.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · The monitoring loop, and what can drift</div>
+      <svg class="viz-svg" viewBox="0 0 640 270" role="img" aria-label="Five boxes in a loop: deploy, monitor, detect, diagnose, act. An arrow returns from act to deploy because every update is a new deployment. Below the diagnose step, four things that can change: covariate shift, prior shift, concept drift, and a feedback loop in which the model changes the outcome.">
+        <defs>
+          <marker id="l516-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead"/></marker>
+          <marker id="l516-arrow-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead accent"/></marker>
+        </defs>
+        <path d="M568,40 L568,22 L64,22 L64,38" class="edge accent" marker-end="url(#l516-arrow-a)"/>
+        <text x="316" y="14" text-anchor="middle" class="viz-small viz-muted">every update is a new deployment: monitor it again</text>
+
+        <g class="s1"><rect x="8" y="40" width="112" height="62" rx="8" class="node-fill"/></g>
+        <g class="s5"><rect x="134" y="40" width="112" height="62" rx="8" class="node-fill"/></g>
+        <g class="s2"><rect x="260" y="40" width="112" height="62" rx="8" class="node-fill"/></g>
+        <g class="s4"><rect x="386" y="40" width="112" height="62" rx="8" class="node-fill"/></g>
+        <g class="s3"><rect x="512" y="40" width="112" height="62" rx="8" class="node-fill"/></g>
+        <line x1="121" y1="71" x2="133" y2="71" class="edge" marker-end="url(#l516-arrow)"/>
+        <line x1="247" y1="71" x2="259" y2="71" class="edge" marker-end="url(#l516-arrow)"/>
+        <line x1="373" y1="71" x2="385" y2="71" class="edge" marker-end="url(#l516-arrow)"/>
+        <line x1="499" y1="71" x2="511" y2="71" class="edge" marker-end="url(#l516-arrow)"/>
+        <g text-anchor="middle">
+          <text x="64" y="62" class="viz-bold">Deploy</text>
+          <text x="64" y="79" class="viz-small">locked version,</text>
+          <text x="64" y="94" class="viz-small">named owner</text>
+          <text x="190" y="62" class="viz-bold">Monitor</text>
+          <text x="190" y="79" class="viz-small">inputs, alert rate,</text>
+          <text x="190" y="94" class="viz-small">delayed labels</text>
+          <text x="316" y="62" class="viz-bold">Detect</text>
+          <text x="316" y="79" class="viz-small">CUSUM or EWMA</text>
+          <text x="316" y="94" class="viz-small">crosses its limit</text>
+          <text x="442" y="62" class="viz-bold">Diagnose</text>
+          <text x="442" y="79" class="viz-small">what changed,</text>
+          <text x="442" y="94" class="viz-small">and why?</text>
+          <text x="568" y="62" class="viz-bold">Act</text>
+          <text x="568" y="79" class="viz-small">recalibrate,</text>
+          <text x="568" y="94" class="viz-small">retrain, roll back</text>
+        </g>
+
+        <line x1="442" y1="103" x2="442" y2="150" class="edge" marker-end="url(#l516-arrow)"/>
+        <line x1="8" y1="160" x2="628" y2="160" class="edge"/>
+        <line x1="442" y1="152" x2="442" y2="160" class="edge"/>
+        <text x="8" y="146" class="viz-small viz-muted">Diagnosis: which of these happened?</text>
+
+        <g class="s5"><rect x="8" y="172" width="150" height="74" rx="8" class="node"/></g>
+        <g class="s5"><rect x="165" y="172" width="150" height="74" rx="8" class="node"/></g>
+        <g class="s5"><rect x="322" y="172" width="150" height="74" rx="8" class="node"/></g>
+        <g class="s3"><rect x="479" y="172" width="150" height="74" rx="8" class="node"/></g>
+        <g text-anchor="middle">
+          <text x="83" y="195" class="viz-bold">Covariate shift</text>
+          <text x="83" y="214" class="viz-small">P(X) changes</text>
+          <text x="83" y="232" class="viz-small viz-muted">different case mix</text>
+          <text x="240" y="195" class="viz-bold">Prior shift</text>
+          <text x="240" y="214" class="viz-small">P(Y) changes</text>
+          <text x="240" y="232" class="viz-small viz-muted">outcome rate moves</text>
+          <text x="397" y="195" class="viz-bold">Concept drift</text>
+          <text x="397" y="214" class="viz-small">P(Y | X) changes</text>
+          <text x="397" y="232" class="viz-small viz-muted">new treatment, practice</text>
+          <text x="554" y="195" class="viz-bold colour s3">Feedback loop</text>
+          <text x="554" y="214" class="viz-small">the model changes Y</text>
+          <text x="554" y="232" class="viz-small viz-muted">its success hides signal</text>
+        </g>
+      </svg>
+      <figcaption>Detection only says that something changed. Diagnosis decides the action: an intercept update for prior shift, new coefficients for concept drift, a causal fix for a feedback loop, and nothing at all if the alarm was a broken data feed now repaired.</figcaption>
+    </figure>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Sepsis alerts and COVID-19</div>
+      <p>Across 24 US hospitals in four health systems, daily alerts from the Epic Sepsis Model rose by 43% after the pandemic began, even though hospital census fell by 35%. Case mix had shifted abruptly towards patients with fever and organ dysfunction from a viral illness. At Michigan Medicine, nurses reported alert volumes that felt untenable, and the hospital’s clinical AI governance committee stopped using the tool. Finlayson and colleagues use the case to show how a change in what a fever means (concept drift) breaks a sepsis model.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>“The AUC has held, so the model is fine.” Davis and colleagues followed models for hospital-acquired acute kidney injury across nine years of US Veterans Affairs admissions: discrimination held up, while calibration drifted into steady overprediction as AKI rates changed. A stable AUC with drifting calibration means the ranking is right and the numbers are wrong. Any decision made on a threshold is then wrong too.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>Same taxonomy as the dataset-shift literature. Under pure label shift you can estimate the new outcome rate from the model’s own outputs on unlabelled data (black-box shift estimation) and correct the intercept. Under covariate shift, importance weighting reweights old labelled data to look like new patients. Concept drift has no shortcut: you need new labels.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="labels">
+    <h2>2. Monitoring with and without labels</h2>
+    <p class="point">Labels (the true outcomes) arrive late, sometimes a year late, so monitoring runs in two speeds: fast signals that need no labels, and slow performance checks once they arrive.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Signal</th><th>Available</th><th>Catches</th><th>Misses</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Inputs</strong>: missingness, distributions, new codes</td><td>Same day</td><td>Broken feeds, covariate shift</td><td>Concept drift; tells you nothing about harm</td></tr>
+          <tr><td><strong>Outputs</strong>: score distribution, alert rate, overrides</td><td>Same day</td><td>Sudden shifts, alert-burden problems</td><td>Whether the alerts are right</td></tr>
+          <tr><td><strong>Performance</strong>: calibration, discrimination, by subgroup</td><td>When labels arrive (days to a year)</td><td>All three drift types</td><td>Anything that happened since the last labels</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <dl class="facets">
+      <dt>Why it matters</dt>
+      <dd>A 1-year mortality model cannot be checked on last month’s patients. Fast signals are your early warning; labelled performance is the verdict.</dd>
+      <dt>How to read it</dt>
+      <dd>An input alarm is a reason to look, not proof of harm. A falling alert rate with stable inputs points at the model or its plumbing; a rising rate with shifting inputs points at the population.</dd>
+      <dt>What a change means</dt>
+      <dd>If the alert rate jumps from 5% to 9% of patients overnight, check for a data or software change first. Real populations rarely change that fast, except in a pandemic.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Treating a change in the labels as a change in the patients. A new outcome definition (moving to Sepsis-3 criteria, say) or a new coding version changes P(Y) on paper overnight. The model looks miscalibrated against labels that now mean something else. Check the label pipeline before the model, as you would check outcome validation in Lecture 5.7.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>A car’s dashboard warning lights and its arrival time. The lights (inputs and outputs) come on instantly but do not say whether you will be late. Only arriving tells you that, and by then you are already there.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="recal">
+    <h2>3. Calibration drift and recalibration</h2>
+    <p class="point">Most drift shows first as miscalibration, and most miscalibration can be fixed with the smallest update that works: an intercept, then a slope, and only then a new model.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>Calibration-in-the-large</strong> compares the observed event rate with the mean predicted risk. The <strong>calibration slope</strong> shows whether predictions are too extreme (slope below 1) or too timid (above 1). Recalibration refits these two numbers on recent data and leaves the model’s internal weights alone.</dd>
+      <dt>Why it matters</dt>
+      <dd>Updating two parameters needs a few hundred events; refitting a model needs thousands, and a new model is a new device, which may need a regulatory route (the PCCP in Lecture 5.14).</dd>
+      <dt>How to read it</dt>
+      <dd>Observed/expected near 1 and slope near 1: fine. O/E off but slope fine: update the intercept. Slope off: logistic recalibration. Discrimination falling: recalibration will not help; the model needs new information.</dd>
+      <dt>What a change means</dt>
+      <dd>An intercept update moving from 0 to +0.3 on the log-odds scale raises every predicted odds by about 35%. It shifts all risks up without changing who ranks above whom.</dd>
+    </dl>
+
+    <pre><code>new$lp &lt;- qlogis(new$p_hat)                         # model's linear predictor
+itl   &lt;- glm(y ~ offset(lp), family = binomial, data = new)   # intercept only
+slope &lt;- glm(y ~ lp, family = binomial, data = new)           # intercept and slope
+coef(itl); coef(slope)            # near 0, and near (0, 1), mean no drift
+new$p_recal &lt;- predict(slope, type = "response")    # recalibrated risks
+library(CalibrationCurves); val.prob.ci.2(new$p_recal, new$y)   # check the curve</code></pre>
+    <p>The first model asks only “is the average risk off?”; the second also asks “are the risks too spread out or too squashed?”. Use recent patients only, and validate the update on the months after, not the months you fitted it on.</p>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Retraining from scratch at the first sign of drift. A full refit on a small recent sample overfits, throws away years of information, and creates a new device to validate. In Davis’s kidney injury models, the drift tracked the changing AKI rate, which an intercept update addresses directly.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="spc">
+    <h2>4. Telling change from noise: control charts</h2>
+    <p class="point">Monthly performance bounces around; a control chart accumulates small, persistent deviations and raises an alarm only when they add up to more than noise would.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>Statistical process control</strong>, borrowed from manufacturing. A <strong>CUSUM</strong> (cumulative sum) chart adds up each month’s standardised excess of observed over expected events, minus an allowance, and resets at zero. An <strong>EWMA</strong> chart tracks an exponentially weighted moving average, which forgets old months gradually.</dd>
+      <dt>Why it matters</dt>
+      <dd>Testing each month at p &lt; 0.05 gives a false alarm every 20 months and is slow to see a small shift. CUSUM sees small persistent shifts quickly while keeping false alarms rare.</dd>
+      <dt>How to read it</dt>
+      <dd>The allowance \(k\) is about half the shift you care about, in standard-deviation units (0.5 targets a 1-SD shift). The limit \(h\) sets the false-alarm rate: 4–5 is typical. The chart says <em>when</em> the change began: look back to where the sum started climbing.</dd>
+      <dt>What a change means</dt>
+      <dd>Lowering \(h\) from 5 to 3 catches drift sooner but trips more often on noise. Choose it by how costly a false alarm is compared with a missed drift.</dd>
+    </dl>
+
+    \[ S_t = \max\!\left(0,\; S_{t-1} + z_t - k\right) \]
+    <p>Here \(z_t\) is month \(t\)’s observed-minus-expected events, divided by its standard error. Alarm when \(S_t\) passes \(h\). Run a mirror-image chart for deficits.</p>
+
+    <div class="widget" data-widget="drift-monitor">
+      <div class="widget-title">Drift monitor: a deployed risk model, month by month</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Inject one kind of drift at a time. Prevalence shift trips the CUSUM; covariate shift lowers the AUC but leaves calibration alone; concept drift does both. After an alarm, press Recalibrate and see which problems it fixes.</p>
+    </div>
+
+    <pre><code>library(dplyr)
+m &lt;- scored |&gt; group_by(month) |&gt;
+  summarise(z = (sum(y) - sum(p_hat)) / sqrt(sum(p_hat * (1 - p_hat))))
+k &lt;- 0.5; h &lt;- 5
+m$cusum &lt;- Reduce(function(s, z) max(0, s + z - k), m$z, 0, accumulate = TRUE)[-1]
+m$month[which(m$cusum &gt; h)[1]]     # first alarm (NA if none)</code></pre>
+    <p>Each month gives one standardised excess, <code>z</code>; <code>Reduce(..., accumulate = TRUE)</code> runs the CUSUM along the months. Repeat with <code>-z</code> for a chart that catches overprediction.</p>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Borrowed from surgery</div>
+      <p>CUSUM charts have long been used to monitor surgeons’ and units’ outcomes against risk-adjusted expectations. A model-monitoring chart is the same tool, with the deployed model as the risk adjustment and the observed events as the outcome.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Your bathroom scale. One heavy morning means nothing. A running tally of how far above target you have been, which forgives small dips, will catch a real gain within weeks.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="feedback">
+    <h2>5. Feedback loops: when the model changes what it predicts</h2>
+    <p class="point">If flagged patients are treated and their events prevented, the data now say those patients were low risk; the model’s success hides its own signal.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A prediction that changes the outcome it predicts. In ML this is <strong>performative prediction</strong>. Lenert and colleagues put it bluntly: prognostic models will be victims of their own success.</dd>
+      <dt>Why it matters</dt>
+      <dd>Two things go wrong. Monitoring sees PPV fall and calls the model broken when it is working. Retraining on post-deployment data learns that high-risk features predict few events, so the next model stops flagging the people who most need it.</dd>
+      <dt>How to read it</dt>
+      <dd>If observed risk falls mainly among flagged patients, suspect the intervention, not decay. Compare flagged patients’ outcomes with what the model predicted for them <em>without</em> intervention, which needs a comparison group.</dd>
+      <dt>What a change means</dt>
+      <dd>An intervention that halves risk among flagged patients halves the observed PPV. A PPV drop from 40% to 20% can mean the model is doing exactly what it was meant to do.</dd>
+    </dl>
+
+    <div class="widget" data-widget="feedback-loop">
+      <div class="widget-title">Feedback loop: retraining on the model’s own success</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Patients above the threshold get an intervention that prevents some events. Step through retraining rounds with naive retraining, then switch to retraining that records who was treated.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · A deterioration alert on the wards</div>
+      <p>An early-warning model sends flagged ward patients for a rapid-response review, and many are moved to intensive care early. A year later, the data show that patients with the highest scores rarely had a cardiac arrest on the ward. A model retrained naively learns that those scores are reassuring. Recording the intervention, or keeping a small randomised share of alerts unshown, preserves the information needed to tell the truth.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Fixing the feedback loop by retraining only on unflagged patients. They are a selected group (everyone below the old threshold), so the model loses the high-risk range entirely. Record treatment and model it, or keep a randomised hold-out: a causal problem needs a causal fix.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>The same trap as a recommender trained on its own recommendations, or a fraud model trained on cases the old model flagged for review. The ML fixes carry over: log the action taken, keep an exploration slice (a small share of patients handled without the model), and use off-policy evaluation with known propensities.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="equity">
+    <h2>6. Equity monitoring</h2>
+    <p class="point">Drift rarely hits everyone equally, so monitor calibration, alert rates and actions in each group the tool serves, not just overall.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Running the same monitoring by subgroup: sex, age, nationality, region, insurance or payer. Check calibration in each group (are risks right?), alert and action rates (who gets flagged, who gets treated), and outcomes.</dd>
+      <dt>Why it matters</dt>
+      <dd>A model can be well calibrated overall and badly miscalibrated in a minority group, whose share of the data is too small to move the overall numbers.</dd>
+      <dt>How to read it</dt>
+      <dd>Equal AUC across groups does not mean equal treatment: a group can be ranked well yet systematically under-predicted, so fewer of its members cross the alert threshold.</dd>
+    </dl>
+
+    <div class="callout example">
+      <div class="callout-title">Example · The label is the bias</div>
+      <p>Obermeyer and colleagues studied a widely used US algorithm that predicted health-care costs as a stand-in for health needs. Because less was spent on Black patients with the same illness burden, Black patients at a given risk score were considerably sicker than White patients. The model predicted its label well; the label was wrong. Monitoring cost-calibration would never have found it; monitoring health outcomes by group did.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">In the Gulf</div>
+      <p>In Saudi Arabia and the wider GCC, nationals and non-national residents differ sharply in age structure, sex ratio and access to care. A deployed model should report calibration and alert rates separately for nationals and non-nationals, and by region. Some groups will be small, so use longer windows or pooled control charts rather than reading monthly noise as bias.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reading every subgroup difference in a small group as unfairness, or every non-significant one as fairness. Report the intervals; with 40 events a year in a group, a calibration difference of 30% can be noise, and a real one can hide.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="governance">
+    <h2>7. Governance: who acts</h2>
+    <p class="point">A monitoring dashboard that nobody owns is decoration; write down before go-live who watches, what triggers action, and who may pause the tool.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A monitoring plan with a named owner, the metrics and their limits, the cadence, the actions allowed (recalibrate, retrain, pause, roll back to the last version) and who signs each one off. Every update is versioned, and clinicians are told what changed.</dd>
+      <dt>Why it matters</dt>
+      <dd>Regulators increasingly expect it. In the US, planned model updates go through a predetermined change control plan (Lecture 5.14). In Saudi Arabia, the SFDA’s guidance on AI/ML-enabled medical devices (MDS-G010, first issued January 2023) asks manufacturers for a post-market surveillance plan and continuous monitoring of safety, effectiveness and performance, because these devices can keep learning.</dd>
+      <dt>How to read it</dt>
+      <dd>A good plan answers: who gets the alarm, within what time they must respond, and what happens to clinical use while they diagnose.</dd>
+    </dl>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Pausing is an action</div>
+      <p>Michigan Medicine’s response to its COVID-era sepsis alerts (Section 1) was a governance decision: a committee with the authority to stop a tool used it. Rolling back to a previous version, or to no model, is a legitimate outcome of monitoring, and the plan should say so in advance.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Leaving monitoring to the vendor alone. The vendor sees its own metrics across many sites; your hospital’s case mix, coding and workflow are what drift. The deploying organisation needs its own local monitoring, as well as the manufacturer’s.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>Six months after go-live, a readmission model’s AUC is unchanged but it predicts 12% readmissions when 18% occur. What kind of drift is most likely, and what is the smallest fix?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Prior shift (or a change in how readmissions are counted): the outcome rate moved while ranking held. Check the label pipeline first. If the change is real, update the intercept on recent data, then confirm calibration on the following months. No retraining needed.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>The alert rate of a deterioration model doubled overnight. Labels will not arrive for a month. What do you do first?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Check the plumbing: input distributions and missingness, a new lab code or unit, a software release, a change of EHR feed. Populations rarely double their risk overnight. If a data fault is found, fix it and consider pausing the tool until outputs return to their usual range.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A colleague proposes testing calibration every month and acting whenever p &lt; 0.05. Why would you suggest a CUSUM instead?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Monthly tests give a false alarm about once every 20 months and are poor at seeing small persistent drift, because each month is judged alone. A CUSUM accumulates evidence across months, so it catches small sustained shifts sooner while keeping false alarms rare, and it shows when the drift started.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>After a year, the PPV of a sepsis alert has fallen from 30% to 18%. The vendor proposes retraining on the past year’s data. What do you check first?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Whether flagged patients were treated earlier because of the alert. If so, the PPV fell partly because the tool worked, and naive retraining will teach the next model that high-risk features matter less. Ask whether treatment was recorded, model it in any retraining, and look at unflagged patients’ calibration, where no intervention distorted outcomes.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>An ICU model is well calibrated overall. Among non-Saudi patients, observed mortality is 40% above predicted, but there were only 30 deaths. How do you report it?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Report the O/E ratio with its confidence interval, and say it is imprecise but concerning. Keep monitoring that group on a longer window or a group-specific CUSUM, look for reasons (different case mix, later presentation, missing data patterns), and do not dismiss it because it is “not significant”.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Finlayson et al., “The clinician and dataset shift in artificial intelligence”, <em>New England Journal of Medicine</em> (2021).</li>
+      <li>Wong et al., “Quantification of sepsis model alerts in 24 US hospitals before and during the COVID-19 pandemic”, <em>JAMA Network Open</em> (2021).</li>
+      <li>Davis et al., “Calibration drift in regression and machine learning models for acute kidney injury”, <em>Journal of the American Medical Informatics Association</em> (2017).</li>
+      <li>Lenert, Matheny &amp; Walsh, “Prognostic models will be victims of their own success, unless…”, <em>Journal of the American Medical Informatics Association</em> (2019).</li>
+      <li>Perdomo, Zrnic, Mendler-Dünner &amp; Hardt, “Performative prediction”, <em>Proceedings of ICML</em> (2020).</li>
+      <li>Steyerberg, <em>Clinical Prediction Models</em> (2nd edition, Springer, 2019): chapters on updating and recalibration; Janssen et al., “Updating methods improved the performance of a clinical prediction model in new patients”, <em>Journal of Clinical Epidemiology</em> (2008).</li>
+      <li>Page, “Continuous inspection schemes”, <em>Biometrika</em> (1954): the original CUSUM.</li>
+      <li>Obermeyer, Powers, Vogeli &amp; Mullainathan, “Dissecting racial bias in an algorithm used to manage the health of populations”, <em>Science</em> (2019).</li>
+      <li>Lipton, Wang &amp; Smola, “Detecting and correcting for label shift with black box predictors”, <em>Proceedings of ICML</em> (2018).</li>
+      <li>Saudi Food and Drug Authority, <em>Guidance for Artificial Intelligence and Machine Learning (AI/ML)-Enabled Medical Devices</em> (MDS-G010, version 1.0, January 2023). Check the SFDA site for the current version.</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="5-15-causal-evaluation-deployed-ai.html"><small>Previous</small>5.15 Causal evaluation of deployed AI</a>
+    <a class="next" href="5-17-reporting-standards-ai.html"><small>Next</small>5.17 Reporting standards</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

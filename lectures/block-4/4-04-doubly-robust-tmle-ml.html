@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>4.4 Doubly robust estimation, TMLE and ML · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/4-04.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-4">Block 4</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 4.4</p>
+  <h1>Doubly robust estimation, TMLE and machine learning for causal effects</h1>
+  <div class="lecture-meta">
+    <span>Block 4 · Causal inference and policy evaluation</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>The g-formula bets everything on the outcome model; IPW bets everything on the propensity-score model. <strong>Doubly robust</strong> estimators use both and stay unbiased if <em>either</em> is right. That property is what lets you hand the two models to machine learning, provided you <strong>cross-fit</strong> so that overfitting does not leak into the estimate. None of this touches identification: unmeasured confounding and poor overlap are exactly as damaging as before. In Project 5A, AIPW or TMLE with a SuperLearner is a natural main analysis for the anticoagulation effect, with the g-formula and IPW as sensitivity checks.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#two-models">Two models, two ways to fail</a></li>
+      <li><a href="#aipw">AIPW: two chances to be right</a></li>
+      <li><a href="#tmle">TMLE: a targeted update</a></li>
+      <li><a href="#sl">Machine learning for the nuisance models</a></li>
+      <li><a href="#crossfit">Cross-fitting and double/debiased ML</a></li>
+      <li><a href="#positivity">Positivity still matters</a></li>
+      <li><a href="#cate">Heterogeneous effects: CATE and causal forests</a></li>
+      <li><a href="#report">What to report</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="two-models">
+    <h2>1. Two models, two ways to fail</h2>
+    <p class="point">Once you have an adjustment set, every estimator needs a model of something; the question is which model you are willing to bet on.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The <strong>outcome model</strong> \(\mu_a(X) = E[Y \mid A=a, X]\) predicts the outcome from treatment and confounders; the g-formula (Lecture 4.3) averages its predictions with everyone set to treated, then to untreated. The <strong>propensity-score model</strong> \(e(X) = P(A=1 \mid X)\) predicts treatment; IPW reweights people by its inverse. Both are called <strong>nuisance models</strong>: you need them, but you do not care about their coefficients.</dd>
+      <dt>Why it matters</dt>
+      <dd>Each estimator is only as good as its one model. If the outcome model misses a curve or an interaction, the g-formula is biased. If the PS model misses one, the weights fail to balance the confounders and IPW is biased. Adding more people does not shrink these biases.</dd>
+      <dt>How to read it</dt>
+      <dd>A paper that reports one estimator from one parametric model has made a bet it rarely states. When the g-formula and IPW agree, you have mild reassurance that neither model is badly wrong. When they disagree, at least one is, and you do not know which.</dd>
+      <dt>What a change means</dt>
+      <dd>An estimate that moves from HR 0.80 to 0.95 when you add a spline for age in the PS model is telling you the linear-age model was not balancing age. Treat that sensitivity as a finding, not noise.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>“Our propensity score had a C-statistic of 0.85, so it was a good model.” The PS is not a prediction model. Its job is to balance confounders between groups, judged by standardised mean differences after weighting (Lecture 4.3). A very high C-statistic usually signals a positivity problem, not success.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Two independent witnesses to the same event. Rely on one and you are stuck if they are mistaken. Hear both and you can still reconstruct what happened as long as one of them got it right.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="aipw">
+    <h2>2. AIPW: two chances to be right</h2>
+    <p class="point">Augmented IPW starts from the outcome model’s prediction and adds a propensity-weighted correction built from its errors; if either model is right, the combination is unbiased.</p>
+
+    \[ \hat\psi_{\text{AIPW}} = \frac{1}{n}\sum_i \Big[\hat\mu_1(X_i) - \hat\mu_0(X_i) + \frac{A_i\,(Y_i - \hat\mu_1(X_i))}{\hat e(X_i)} - \frac{(1-A_i)\,(Y_i - \hat\mu_0(X_i))}{1 - \hat e(X_i)}\Big] \]
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>In words: take the g-formula estimate, then add the weighted average of the outcome model’s residuals in the treated and the untreated. If the outcome model is right, residuals average to zero and the correction vanishes, whatever the weights. If the PS model is right, the weighted residuals exactly undo the outcome model’s bias.</dd>
+      <dt>Why it matters</dt>
+      <dd>You get two chances instead of one. When both models are right, AIPW also has the smallest variance any estimator can have without extra assumptions (it is <strong>semiparametrically efficient</strong>), so you pay little for the insurance.</dd>
+      <dt>How to read it</dt>
+      <dd>Report AIPW with its influence-function standard error (the per-person bracket above, whose variance gives the SE directly, no bootstrap needed). Compare it with the g-formula and IPW: if all three agree, good; if AIPW sits with one of them, the other model is probably the misspecified one.</dd>
+      <dt>What a change means</dt>
+      <dd>A large correction term (AIPW far from the g-formula estimate) means the outcome model was leaving systematic residuals in one group. Find out where: which confounder, which range.</dd>
+    </dl>
+
+    <div class="widget" data-widget="dr-misspec">
+      <div class="widget-title">Misspecify one model, then both</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Start with the outcome model right and the PS model wrong: IPW drifts off, AIPW stays on the truth. Swap them. Then make both wrong. Try 3,200 patients per study to see that more data shrinks the spread but not the bias, and slide the curvature to zero to see when “wrong” stops mattering.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reading “doubly robust” as “robust to everything”. When both models are wrong it has no chance left, and Kang and Schafer (2007) showed that with both models mildly wrong and some propensities near zero, AIPW can do <em>worse</em> than plain regression, because the weights amplify the outcome model’s errors. It is robust to one model failing, not to confounding you did not measure.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Project 5A</div>
+      <p>Outcome: death within 90 days of AF onset. The outcome model predicts death from anticoagulation, SOFA score, age, CHA₂DS₂-VASc, bleeding risk, platelets and vasopressor use; the PS model predicts who is anticoagulated from the same set. Severity probably acts non-linearly on both (the sickest are both likeliest to die and likeliest to be denied anticoagulation for bleeding fear). AIPW protects you if one of the two models captures that curve.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="tmle">
+    <h2>3. TMLE: a targeted update</h2>
+    <p class="point">TMLE fits an outcome model, then nudges its predictions just enough, in the direction the propensity score points, to remove the bias for the one effect you care about.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>Targeted maximum likelihood estimation</strong> (van der Laan and Rubin, 2006). Step 1: an initial outcome model. Step 2: a small regression of the outcome on a “clever covariate” built from the propensity score, using the initial predictions as a fixed offset; this shifts the predictions. Step 3: plug the updated predictions into the g-formula. The update is <em>targeted</em> because it is chosen to fix bias for the treatment effect only, not to improve prediction in general.</dd>
+      <dt>Why it matters</dt>
+      <dd>It is doubly robust and efficient, like AIPW. Because it ends as a plug-in g-formula estimate, it respects the outcome’s range: risks stay between 0 and 1, which AIPW’s correction term can break when weights are large.</dd>
+      <dt>How to read it</dt>
+      <dd>In practice AIPW and TMLE usually give very similar answers. TMLE tends to be steadier with rare binary outcomes and near-violations of positivity. Report one as primary and say so in advance; reporting whichever looks better is p-hacking.</dd>
+      <dt>What a change means</dt>
+      <dd>If the targeting step moves the estimate a lot (initial g-formula 0.06 risk difference, targeted 0.02), the initial outcome model was biased for this contrast. As with AIPW, that is a diagnostic about your outcome model.</dd>
+    </dl>
+
+    <pre><code>library(tmle); library(SuperLearner)
+sl  &lt;- c("SL.glm", "SL.glmnet", "SL.ranger", "SL.xgboost")
+res &lt;- tmle(Y = d$died90, A = d$anticoag, W = d[, covs], family = "binomial",
+            Q.SL.library = sl, g.SL.library = sl)
+res$estimates$ATE      # risk difference with SE and 95% CI
+res$estimates$RR       # risk ratio
+summary(res$g$g1W)     # estimated propensity scores: check the extremes</code></pre>
+    <p><code>Q</code> is the outcome model and <code>g</code> the propensity model, each fitted by a SuperLearner over the four candidate learners. <code>W</code> holds the confounders chosen from your DAG (Lecture 4.2), never every column available.</p>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>A tailor’s final fitting. The suit (outcome model) is already cut; the tailor does not remake it, but takes in the one seam that matters for how it hangs, using a measurement (the propensity score) taken specifically for that purpose.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="sl">
+    <h2>4. Machine learning for the nuisance models</h2>
+    <p class="point">Because the coefficients of the nuisance models do not matter, you can fit them with flexible ML and avoid betting on a functional form; SuperLearner picks the mix for you.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>SuperLearner</strong> (van der Laan, Polley and Hubbard, 2007) is cross-validated stacking: you list candidate learners (logistic regression, lasso, random forest, boosting, splines), it estimates each one’s out-of-fold predictions, and finds the weighted combination with the lowest cross-validated loss. In large samples it does about as well as the best candidate in the list.</dd>
+      <dt>Why it matters</dt>
+      <dd>The usual misspecification is not a wrong variable but a wrong shape: linear age, no interaction between severity and renal function. Flexible learners catch those without you guessing them in advance.</dd>
+      <dt>How to read it</dt>
+      <dd>Always include simple learners (main-terms GLM, even the mean) in the library, so the ensemble can fall back to them. Look at the SuperLearner weights: if all weight goes to one random forest, check overlap and overfitting. Report the library in the methods.</dd>
+      <dt>What a change means</dt>
+      <dd>If swapping a GLM for a SuperLearner moves your estimate substantially, the parametric model was missing structure that matters for confounding. If it changes nothing, that is reassuring evidence of robustness, worth one sentence in the paper.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Plugging ML into IPW or the g-formula alone. Flexible learners trade bias for variance and converge slowly; with a single-model estimator, that leftover bias passes straight into the effect and the confidence interval does not cover. Doubly robust estimators are what make ML safe here, because the two models’ errors multiply rather than add (section 5).</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>This is ML in its comfort zone: two supervised prediction tasks, \(Y\) from \((A, X)\) and \(A\) from \(X\), scored on held-out loss. The causal part is everything around them: which \(X\) (the DAG), what estimand, and how the two predictions are combined. A model with the best AUC for treatment is not the goal; one that balances confounders and keeps propensities away from 0 and 1 is. Python: <code>DoubleML</code> and <code>EconML</code> do the same jobs.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="crossfit">
+    <h2>5. Cross-fitting and double/debiased ML</h2>
+    <p class="point">Fit the nuisance models on one part of the data and compute each person’s contribution from models that never saw them; otherwise an overfitted model grades its own homework and biases the effect.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>Cross-fitting</strong>: split the data into K folds. For each fold, fit the outcome and PS models on the other folds, predict for this fold, and compute the AIPW contributions there. Pool all contributions into one estimate. <strong>Double/debiased machine learning</strong> (DML; Chernozhukov and colleagues, 2018) is this recipe plus an estimating equation that is <strong>Neyman orthogonal</strong>: small errors in the nuisance models have no first-order effect on the answer. AIPW’s equation already has this property.</dd>
+      <dt>Why it matters</dt>
+      <dd>A random forest fitted to all the data can nearly memorise each person’s outcome, so in-sample residuals are too small and the correction term too timid. Cross-fitting removes that own-observation bias. Orthogonality means the two nuisance errors enter as a product, so each model only has to be moderately good, not perfect.</dd>
+      <dt>How to read it</dt>
+      <dd>K = 5 or 10 is typical. Results depend a little on the random split; good practice repeats the cross-fitting with several seeds and reports the median estimate. Zivich and Breskin (2021) found that flexible learners without cross-fitting gave confidence intervals that covered the truth too rarely, and cross-fit estimators repaired this.</dd>
+      <dt>What a change means</dt>
+      <dd>If estimates swing noticeably between seeds, the nuisance models are unstable, usually because of small samples, rare outcomes or extreme propensities. Fix that before reporting a single number.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · Three-fold cross-fitting</div>
+      <svg class="viz-svg" viewBox="0 0 640 318" role="img" aria-label="Three rows, one per round. In round 1, folds 2 and 3 fit the outcome and propensity models, which then predict for fold 1, where the AIPW contributions are computed. Rounds 2 and 3 rotate which fold is held out. Every person gets a contribution from models that never saw them; all contributions are pooled into one estimate and one standard error.">
+        <defs>
+          <marker id="l44-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead"/></marker>
+          <marker id="l44-arrow-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead accent"/></marker>
+        </defs>
+        <g text-anchor="middle" class="viz-small viz-muted">
+          <text x="155" y="22">Fold 1</text><text x="275" y="22">Fold 2</text><text x="395" y="22">Fold 3</text>
+        </g>
+        <g class="viz-bold"><text x="10" y="59">Round 1</text><text x="10" y="129">Round 2</text><text x="10" y="199">Round 3</text></g>
+        <!-- Round 1 -->
+        <g class="s2"><rect x="100" y="34" width="110" height="40" rx="6" class="node-fill"/></g>
+        <g class="s1"><rect x="220" y="34" width="110" height="40" rx="6" class="node-fill"/><rect x="340" y="34" width="110" height="40" rx="6" class="node-fill"/></g>
+        <!-- Round 2 -->
+        <g class="s1"><rect x="100" y="104" width="110" height="40" rx="6" class="node-fill"/><rect x="340" y="104" width="110" height="40" rx="6" class="node-fill"/></g>
+        <g class="s2"><rect x="220" y="104" width="110" height="40" rx="6" class="node-fill"/></g>
+        <!-- Round 3 -->
+        <g class="s1"><rect x="100" y="174" width="110" height="40" rx="6" class="node-fill"/><rect x="220" y="174" width="110" height="40" rx="6" class="node-fill"/></g>
+        <g class="s2"><rect x="340" y="174" width="110" height="40" rx="6" class="node-fill"/></g>
+        <g text-anchor="middle" class="viz-small">
+          <text x="155" y="58">score</text><text x="275" y="58">fit</text><text x="395" y="58">fit</text>
+          <text x="155" y="128">fit</text><text x="275" y="128">score</text><text x="395" y="128">fit</text>
+          <text x="155" y="198">fit</text><text x="275" y="198">fit</text><text x="395" y="198">score</text>
+        </g>
+        <!-- outputs -->
+        <path d="M454,54 L512,54" class="edge" marker-end="url(#l44-arrow)"/>
+        <path d="M454,124 L512,124" class="edge" marker-end="url(#l44-arrow)"/>
+        <path d="M454,194 L512,194" class="edge" marker-end="url(#l44-arrow)"/>
+        <g class="viz-small"><text x="518" y="51">contributions</text><text x="518" y="65">for fold 1</text>
+          <text x="518" y="121">contributions</text><text x="518" y="135">for fold 2</text>
+          <text x="518" y="191">contributions</text><text x="518" y="205">for fold 3</text></g>
+        <path d="M608,54 L626,54 M608,124 L626,124 M608,194 L626,194" class="edge accent"/>
+        <path d="M626,54 L626,236 L330,236 L330,252" class="edge accent" marker-end="url(#l44-arrow-a)"/>
+        <g class="s1"><rect x="180" y="256" width="300" height="34" rx="8" class="node-fill"/></g>
+        <text x="330" y="277" text-anchor="middle" class="viz-bold">pool all n contributions → estimate, SE</text>
+        <!-- legend -->
+        <g class="viz-small">
+          <rect x="10" y="302" width="12" height="12" rx="2" class="node-fill s1"/><text x="28" y="312">fit outcome and PS models here</text>
+          <rect x="250" y="302" width="12" height="12" rx="2" class="node-fill s2"/><text x="268" y="312">predict here and compute each person’s AIPW term</text>
+        </g>
+      </svg>
+      <figcaption>Each person’s contribution comes from models trained without them, so overfitting cannot shrink their residual. Pooling all contributions keeps the full sample size for the estimate and its standard error.</figcaption>
+    </figure>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Confusing cross-fitting with cross-validation for tuning. SuperLearner’s internal cross-validation chooses the learner mix; cross-fitting is an outer split that decides which model predicts for whom. You need both. The <code>k_split</code> argument below is the outer one.</p>
+    </div>
+
+    <pre><code>library(AIPW); library(SuperLearner)
+sl   &lt;- c("SL.mean", "SL.glm", "SL.glmnet", "SL.ranger")
+aipw &lt;- AIPW$new(Y = d$died90, A = d$anticoag, W = d[, covs],
+                 Q.SL.library = sl, g.SL.library = sl,
+                 k_split = 5, verbose = FALSE)
+aipw$fit()$summary(g.bound = 0.025)   # RD, RR, OR with CIs; PS bounded at 0.025
+aipw$plot.p_score()                   # overlap of propensity scores by group</code></pre>
+    <p><code>k_split = 5</code> requests five-fold cross-fitting. <code>g.bound</code> truncates the estimated propensities at 0.025 and 0.975, a guard against huge weights; report that you did it and how many people it touched.</p>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>This is out-of-fold prediction, as in stacking or target encoding without leakage. Scoring a person with a model that saw their label is the causal version of evaluating on the training set: the error looks small and the inference is overconfident.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="positivity">
+    <h2>6. Positivity still matters</h2>
+    <p class="point">No estimator can learn the effect of treatment in people who never get it; flexible models just hide the gap by extrapolating confidently.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Positivity (Lecture 4.1): at every confounder pattern, both treatments must be possible. In practice the threat is <strong>near-violation</strong>: groups with propensities like 0.01 or 0.99, where a few people get enormous weights.</dd>
+      <dt>Why it matters</dt>
+      <dd>AIPW and TMLE divide by the propensity, so they inherit IPW’s instability there. The outcome model’s predictions in those regions are pure extrapolation. Double robustness assumes positivity; it does not supply it.</dd>
+      <dt>How to read it</dt>
+      <dd>Plot the propensity distributions by group before any effect estimate. Report the largest weights and the effective sample size. Options when overlap is poor: <strong>truncate</strong> the propensities (bias for variance), <strong>trim</strong> people outside a range such as 0.1–0.9 (Crump and colleagues, 2009), or use <strong>overlap weights</strong>. Trimming and overlap weights change the estimand to “the effect in people for whom both options were realistic”; say so.</dd>
+      <dt>What a change means</dt>
+      <dd>If truncating at 0.01 versus 0.05 moves the estimate a lot, the answer is being driven by a handful of people in the tails. Report the effect for the overlap population and be honest that the whole-population effect is not identified by these data.</dd>
+    </dl>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Project 5A</div>
+      <p>Patients with active bleeding or very low platelets are essentially never anticoagulated, so their propensity is near zero. Do not estimate an effect for them: exclude them by eligibility (a trial would), which is cleaner than trimming after the fact. That is a design decision for the protocol in Lecture 4.5.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Adding more covariates to the PS model “to be safe”. Variables that predict treatment but not the outcome (instruments, such as which ICU the patient landed in, if units differ in habit but not in case mix) push propensities towards 0 and 1, inflating variance and, with any unmeasured confounding, amplifying bias. Choose covariates from the DAG.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="cate">
+    <h2>7. Heterogeneous effects: CATE and causal forests</h2>
+    <p class="point">The conditional average treatment effect (CATE) asks who benefits more; ML can estimate it, but individual predictions are noisy and should be tested, not trusted.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The <strong>CATE</strong> \(\tau(x)\) is the average effect among people with covariates \(x\). <strong>Causal forests</strong> (Wager and Athey, 2018; the <code>grf</code> package) grow trees that split where the treatment effect differs, using <strong>honest</strong> splitting: one subsample chooses splits, another estimates effects in the leaves. Meta-learners (T-, S-, X-, R-, DR-learners) build CATEs from ordinary prediction models.</dd>
+      <dt>Why it matters</dt>
+      <dd>An average benefit can hide harm in a subgroup, which is the real question in anticoagulation: high stroke risk versus high bleeding risk. CATE estimates can suggest who to treat, but they are hypotheses for confirmation, not clinical rules.</dd>
+      <dt>How to read it</dt>
+      <dd>Do not read a forest’s individual CATEs as personal effects. Test whether heterogeneity exists at all (<code>test_calibration</code>), rank people by predicted benefit and check whether the top-ranked group really gains more (rank-weighted average treatment effect, RATE), and summarise along a few pre-specified variables (<code>best_linear_projection</code>).</dd>
+      <dt>What a change means</dt>
+      <dd>CATEs ranging from −5 to +10 points across patients sound like strong heterogeneity, but if the calibration test finds none, that spread is mostly noise. Real heterogeneity shows as a stable gradient across ranked groups.</dd>
+    </dl>
+
+    <pre><code>library(grf)
+cf &lt;- causal_forest(X = as.matrix(d[, covs]), Y = d$died90, W = d$anticoag)
+average_treatment_effect(cf)            # doubly robust ATE from the forest
+test_calibration(cf)                    # is there detectable heterogeneity?
+best_linear_projection(cf, d[, c("cha2ds2vasc", "has_bled")])</code></pre>
+    <p><code>causal_forest</code> fits the forest (it estimates the outcome and propensity models internally, out of bag). The last line summarises how the effect changes with stroke and bleeding scores, a pre-specified question rather than a fishing trip.</p>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Treating CATE as prediction. A model that predicts who will die is not a model of who will benefit: the sickest patients have the highest risk but may gain least, or be harmed. You can never check a CATE against observed individual effects, because nobody has both potential outcomes; validation has to go through ranked groups and, ideally, a trial.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">Gulf example</div>
+      <p>In Saudi or Emirati hospital data, a forest may “find” that effects differ by nationality. Before reading that as biology, ask what nationality proxies for: age, insurance, length of stay, and whether follow-up after discharge is captured for workers who leave the country. Differential follow-up can create apparent heterogeneity on its own.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="report">
+    <h2>8. What to report</h2>
+    <p class="point">A reader must be able to see the estimand, the two nuisance models, the overlap and how sensitive the answer is; ML makes this more necessary, not less.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Report</th><th>Why a reviewer asks</th></tr></thead>
+        <tbody>
+          <tr><td>Estimand (ATE, ATT, overlap population), on risk difference and ratio scales</td><td>Trimming or weighting choices change who the answer is about</td></tr>
+          <tr><td>Confounders and their source (DAG)</td><td>ML cannot fix a wrong adjustment set</td></tr>
+          <tr><td>Learner library, SuperLearner weights, number of folds, seeds</td><td>So the analysis can be reproduced and stability judged</td></tr>
+          <tr><td>Propensity overlap plot, largest weights, truncation and how many affected</td><td>Positivity is where doubly robust estimators fail quietly</td></tr>
+          <tr><td>Balance after weighting (standardised differences)</td><td>Shows the PS model did its actual job</td></tr>
+          <tr><td>g-formula, IPW and AIPW/TMLE side by side; E-value or bias analysis</td><td>Agreement is reassuring; unmeasured confounding remains (Lecture 2.13)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>“We used machine learning, so confounding was fully controlled.” ML controls the <em>shape</em> of measured confounding. It does nothing for frailty that is not in the record, a clinician’s gestalt, or a confounder measured after treatment started. Say so in the limitations and quantify it.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>Your g-formula gives a risk difference of −4 points, IPW gives −1 point and AIPW gives −1.2 points. What is the most likely story, and what do you check?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>AIPW agrees with IPW, which suggests the PS model is closer to right and the outcome model is misspecified (AIPW’s correction pulled it away from the g-formula). Check the outcome model for missing non-linearity or interactions, especially in severity, and confirm good balance after weighting. Also check overlap: if weights are extreme, the agreement could be fragile.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A colleague fits a random forest PS on all the data, then IPW, and reports a tight confidence interval. What two concerns do you raise?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>First, a single-model estimator with a slowly converging learner carries leftover bias straight into the effect, and its usual standard errors do not account for it; use a doubly robust estimator. Second, without cross-fitting the forest can overfit, pushing propensities towards 0 and 1 and making the weights and the interval misleading. Cross-fit AIPW or TMLE, and show the overlap plot.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>In Project 5A, 8% of patients have estimated propensities below 0.02. Truncating at 0.01 gives a risk difference of −3 points; at 0.05, −0.5 points. How do you report this?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The answer depends on a small group in the tail, so the whole-population effect is not well identified. Look at who those patients are; if they are people who would be ineligible in a real trial (active bleeding, very low platelets), exclude them by protocol. Report the effect in the overlap population as the primary result, state the estimand clearly, and show the truncation sensitivity.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A causal forest predicts that 30% of patients would be harmed by anticoagulation. A clinician wants to use these predictions to decide who to treat. What do you say?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Individual CATEs are noisy and cannot be checked against individual truth. First test whether there is detectable heterogeneity at all, then check whether people ranked as most likely to benefit actually show larger effects in held-out data. Even then, the result is a hypothesis about subgroups (for example by bleeding risk) that needs confirmation, ideally in a trial, before it guides treatment.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Why does double robustness make it reasonable to use ML for nuisance models, when ML in a single-model estimator is risky?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>In AIPW and TMLE, the bias depends on the product of the outcome model’s error and the PS model’s error, and small errors have no first-order effect. So two moderately good flexible models give a small bias, and standard errors remain valid with cross-fitting. In a single-model estimator, the learner’s own slowly shrinking error goes straight into the estimate.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Hernán &amp; Robins, <em>Causal Inference: What If</em> (Chapman &amp; Hall/CRC, 2020; free online), chapters 12–13 (IPW, the g-formula and doubly robust estimation) and 18 (variable selection, high-dimensional data and machine learning).</li>
+      <li>Bang &amp; Robins, “Doubly robust estimation in missing data and causal inference models”, <em>Biometrics</em> (2005). Robins, Rotnitzky &amp; Zhao, “Estimation of regression coefficients when some regressors are not always observed”, <em>JASA</em> (1994).</li>
+      <li>Kang &amp; Schafer, “Demystifying double robustness: a comparison of alternative strategies for estimating a population mean from incomplete data”, <em>Statistical Science</em> (2007), with discussion.</li>
+      <li>van der Laan &amp; Rubin, “Targeted maximum likelihood learning”, <em>International Journal of Biostatistics</em> (2006). van der Laan &amp; Rose, <em>Targeted Learning</em> (Springer, 2011). Gruber &amp; van der Laan, “tmle: an R package for targeted maximum likelihood estimation”, <em>Journal of Statistical Software</em> (2012).</li>
+      <li>van der Laan, Polley &amp; Hubbard, “Super learner”, <em>Statistical Applications in Genetics and Molecular Biology</em> (2007); <code>SuperLearner</code> package documentation.</li>
+      <li>Chernozhukov et al., “Double/debiased machine learning for treatment and structural parameters”, <em>The Econometrics Journal</em> (2018). Zivich &amp; Breskin, “Machine learning for causal inference: on the use of cross-fit estimators”, <em>Epidemiology</em> (2021).</li>
+      <li>Crump, Hotz, Imbens &amp; Mitnik, “Dealing with limited overlap in estimation of average treatment effects”, <em>Biometrika</em> (2009). Li, Morgan &amp; Zaslavsky, “Balancing covariates via propensity score weighting”, <em>JASA</em> (2018).</li>
+      <li>Wager &amp; Athey, “Estimation and inference of heterogeneous treatment effects using random forests”, <em>JASA</em> (2018); <code>grf</code> package documentation and vignettes. <code>AIPW</code> package documentation (Zhong et al.).</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="4-03-ipw-g-formula.html"><small>Previous</small>4.3 IPW and the g-formula</a>
+    <a class="next" href="4-05-target-trial-emulation.html"><small>Next</small>4.5 Target trial emulation</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

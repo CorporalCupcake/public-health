@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>5.11 Regulatory science and HTA · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/5-11.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-5">Block 5</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 5.11</p>
+  <h1>Regulatory science and HTA: how drugs and devices are approved (FDA, EMA, SFDA), how regulators use real-world evidence, and how HTA differs</h1>
+  <div class="lecture-meta">
+    <span>Block 5 · Pharmacoepidemiology, real-world evidence, regulatory science and AI evaluation</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>A regulator asks whether a product’s benefits outweigh its risks for the people on its label. A health technology assessment (HTA) body asks whether it is worth paying for, compared with what patients get now. Different questions need different evidence, and evidence good enough for one often fails the other. This lecture maps the main routes to market in the US, EU and Saudi Arabia for drugs and devices. It shows where real-world evidence (RWE) is actually used, and how HTA picks up where licensing stops. You need this map to design studies that someone can act on, and to read the decision summaries behind Project 5B.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#two-questions">Two different questions: licence and value</a></li>
+      <li><a href="#drugs">How drugs and biologics reach the market</a></li>
+      <li><a href="#devices">How devices reach the market</a></li>
+      <li><a href="#rwe">Where regulators use real-world evidence</a></li>
+      <li><a href="#hta">How HTA judges value</a></li>
+      <li><a href="#navigator">Planning evidence for both audiences</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="two-questions">
+    <h2>1. Two different questions: licence and value</h2>
+    <p class="point">The regulator decides whether a product <em>may</em> be sold; the HTA body or payer decides whether the health system <em>will</em> pay for it, and at what price.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>Regulators</strong> (FDA in the US, EMA with the European Commission in the EU, SFDA in Saudi Arabia) judge quality, safety and efficacy, and grant a licence with a label. <strong>HTA bodies</strong> (NICE in England, the EU joint clinical assessment, Saudi pricing and HTA units) judge added benefit and value for money against current care. They use the economic evaluation of Lectures 1.10–1.12.</dd>
+      <dt>Why it matters</dt>
+      <dd>Most products need to pass both. A trial against placebo with a surrogate endpoint can win a licence and still fail HTA, because the HTA body wants a comparison with current treatment on outcomes patients feel.</dd>
+      <dt>How to read it</dt>
+      <dd>When you read a “positive” decision, ask whose decision it was and what question it answered. “Approved” says nothing about price, reimbursement or how the product compares with alternatives.</dd>
+    </dl>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th></th><th>Regulator</th><th>HTA body or payer</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Question</strong></td><td>Do benefits outweigh risks for the labelled use?</td><td>Is it better than current care, and worth its price?</td></tr>
+          <tr><td><strong>Comparator</strong></td><td>Placebo or active control are both acceptable</td><td>What patients in this health system actually get now</td></tr>
+          <tr><td><strong>Outcomes</strong></td><td>Validated surrogates acceptable, especially in expedited routes</td><td>Survival, quality of life, costs; QALYs</td></tr>
+          <tr><td><strong>Output</strong></td><td>Licence, label, post-marketing duties</td><td>Recommendation, price, reimbursement conditions</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · A product’s life and the decisions along it</div>
+      <svg class="viz-svg" viewBox="0 0 640 360" role="img" aria-label="A timeline from preclinical work through phases 1, 2 and 3, regulatory review, and launch and post-marketing. Above the line are regulator decisions: permission to start human trials, expedited designations, marketing authorisation, and post-marketing duties. Below the line are HTA and payer decisions: early dialogue on comparators during phase 3, the HTA appraisal after approval that sets price and reimbursement, and later reassessment. Real-world evidence can feed in at trial design, as external controls, in safety surveillance, in label expansions and in reassessment.">
+        <defs><marker id="l511-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead"/></marker></defs>
+        <text x="10" y="20" class="viz-bold colour s1">REGULATOR</text>
+        <text x="10" y="312" class="viz-bold colour s4">HTA / PAYER</text>
+
+        <g class="s5">
+          <rect x="10" y="160" width="80" height="40" rx="6" class="node-fill"/>
+          <rect x="96" y="160" width="70" height="40" rx="6" class="node-fill"/>
+          <rect x="172" y="160" width="70" height="40" rx="6" class="node-fill"/>
+          <rect x="248" y="160" width="86" height="40" rx="6" class="node-fill"/>
+          <rect x="340" y="160" width="80" height="40" rx="6" class="node-fill"/>
+          <rect x="426" y="160" width="204" height="40" rx="6" class="node-fill"/>
+        </g>
+        <g text-anchor="middle" class="viz-small">
+          <text x="50" y="184">Preclinical</text>
+          <text x="131" y="184">Phase 1</text>
+          <text x="207" y="184">Phase 2</text>
+          <text x="291" y="184">Phase 3</text>
+          <text x="380" y="184">Review</text>
+          <text x="528" y="184">Launch and post-marketing</text>
+        </g>
+
+        <g class="s1">
+          <line x1="93" y1="82" x2="93" y2="158" class="stroke dashed" style="stroke-width:1.5"/>
+          <line x1="207" y1="124" x2="207" y2="158" class="stroke dashed" style="stroke-width:1.5"/>
+          <line x1="380" y1="82" x2="380" y2="158" class="stroke dashed" style="stroke-width:1.5"/>
+          <line x1="560" y1="124" x2="560" y2="158" class="stroke dashed" style="stroke-width:1.5"/>
+          <circle cx="93" cy="78" r="5" class="dot"/>
+          <circle cx="207" cy="120" r="5" class="dot"/>
+          <circle cx="380" cy="78" r="5" class="dot"/>
+          <circle cx="560" cy="120" r="5" class="dot"/>
+        </g>
+        <g text-anchor="middle">
+          <text x="93" y="48" class="viz-small viz-bold">Start human trials</text>
+          <text x="93" y="64" class="viz-small viz-muted">IND (US), CTA (EU)</text>
+          <text x="207" y="90" class="viz-small viz-bold">Designations</text>
+          <text x="207" y="106" class="viz-small viz-muted">breakthrough, PRIME, BMP</text>
+          <text x="380" y="48" class="viz-small viz-bold">Marketing authorisation</text>
+          <text x="380" y="64" class="viz-small viz-muted">benefit–risk, label</text>
+          <text x="560" y="90" class="viz-small viz-bold">Post-marketing duties</text>
+          <text x="560" y="106" class="viz-small viz-muted">confirmatory trials, safety</text>
+        </g>
+
+        <g class="s4">
+          <line x1="291" y1="202" x2="291" y2="232" class="stroke dashed" style="stroke-width:1.5"/>
+          <line x1="455" y1="202" x2="455" y2="270" class="stroke dashed" style="stroke-width:1.5"/>
+          <line x1="580" y1="202" x2="580" y2="232" class="stroke dashed" style="stroke-width:1.5"/>
+          <circle cx="291" cy="236" r="5" class="dot"/>
+          <circle cx="455" cy="274" r="5" class="dot"/>
+          <circle cx="580" cy="236" r="5" class="dot"/>
+        </g>
+        <g text-anchor="middle">
+          <text x="291" y="258" class="viz-small viz-bold">Early dialogue</text>
+          <text x="291" y="274" class="viz-small viz-muted">which comparator, outcomes</text>
+          <text x="455" y="296" class="viz-small viz-bold">HTA appraisal</text>
+          <text x="455" y="312" class="viz-small viz-muted">value → price, reimbursement</text>
+          <text x="580" y="258" class="viz-small viz-bold">Reassessment</text>
+          <text x="572" y="274" class="viz-small viz-muted">real-world outcomes</text>
+        </g>
+
+        <line x1="10" y1="214" x2="630" y2="214" class="edge" marker-end="url(#l511-arrow)" style="stroke-width:1"/>
+        <text x="10" y="346" class="viz-small colour s2">Real-world evidence feeds in at: trial design · external controls · safety · label expansion · reassessment</text>
+      </svg>
+      <figcaption>Regulators act at the start (permission to test), in development (designations), at approval and after it. HTA bodies act mainly after approval, but an early dialogue on the comparator during phase 3 avoids designing a trial HTA cannot use.</figcaption>
+    </figure>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reading “FDA approved” as “worth using”. Approval means benefits outweigh risks for the labelled use, compared with whatever control the trials used. It does not mean the product beats current treatment, or that it is good value. Those are HTA questions.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>A driving test and a car purchase. The licensing authority checks that a car is roadworthy. Whether you buy it depends on what you drive now, what it costs and what you get for the money.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="drugs">
+    <h2>2. How drugs and biologics reach the market</h2>
+    <p class="point">Each regulator has one standard route and a few faster ones; the faster routes trade certainty at approval for obligations after it.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>In the US a sponsor files a New Drug Application (NDA) or, for biologics, a Biologics License Application (BLA). In the EU most innovative medicines go through the <strong>centralised procedure</strong>: EMA’s CHMP gives an opinion and the European Commission grants one licence valid across the EU. The SFDA runs a full review, or <strong>reliance</strong> routes that lean on FDA and EMA decisions.</dd>
+      <dt>Why it matters</dt>
+      <dd>The route sets the evidence bar and the obligations afterwards. Expedited routes are where single-arm trials, surrogate endpoints and external controls (Lecture 5.10) are most often accepted.</dd>
+      <dt>How to read it</dt>
+      <dd>Check whether an approval was standard, accelerated or conditional. An accelerated or conditional approval means the regulator is waiting for confirmatory evidence.</dd>
+      <dt>What a change means</dt>
+      <dd>The EU agreed a major reform of its pharmaceutical law in December 2025. As of late 2026 it is going through its final adoption steps. It changes data protection periods and incentives more than the routes described here.</dd>
+    </dl>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th></th><th>Standard route</th><th>Faster or special routes</th></tr></thead>
+        <tbody>
+          <tr><td><strong>FDA</strong></td><td>NDA or BLA</td><td>Fast track; breakthrough therapy; priority review; <em>accelerated approval</em> on a surrogate endpoint “reasonably likely” to predict benefit, with a confirmatory trial</td></tr>
+          <tr><td><strong>EMA</strong></td><td>Centralised procedure (CHMP opinion, Commission decision)</td><td>PRIME (early support); accelerated assessment (150 instead of 210 days); <em>conditional marketing authorisation</em>, renewed yearly until confirmatory data arrive</td></tr>
+          <tr><td><strong>SFDA</strong></td><td>Full registration review</td><td><em>Verification</em> (product approved by both FDA and EMA) and <em>abridged</em> (approved by one) reliance routes; Breakthrough Medicines Program; priority review; conditional approval</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Treating accelerated approval as proof of clinical benefit. It rests on a surrogate, such as tumour response, that is expected to predict benefit. Some confirmatory trials have failed, and some have been slow to finish. Since 2022 the FDA can require the confirmatory trial to be under way before it grants accelerated approval, and it has a faster process for withdrawing the approval.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · One drug, two regulators</div>
+      <p>Blinatumomab (Lecture 5.10) got FDA accelerated approval in December 2014 on a single-arm trial with a historical comparison. The EU granted a conditional marketing authorisation in 2015. After the randomised TOWER trial showed a survival benefit, the FDA converted to full approval in 2017 and the EU to a full authorisation in 2018. Both regulators took the same calculated risk and asked for the same confirmation.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">In the Gulf</div>
+      <p>Most innovative medicines reach Saudi Arabia after FDA or EMA approval, so the SFDA’s reliance routes matter. The <em>verification</em> route covers products already approved by both FDA and EMA. The <em>abridged</em> route covers those approved by one. The SFDA concentrates its own review on Saudi-specific questions rather than repeating the whole assessment. The SFDA also runs a Breakthrough Medicines Program (launched 2023) and a conditional approval route. Reliance shortens the wait. It also means Saudi patients inherit the evidence gaps in the original approval, which local RWE can help fill.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="devices">
+    <h2>3. How devices reach the market</h2>
+    <p class="point">Devices are regulated by risk class, and in the US most moderate-risk devices are <em>cleared</em> by showing they resemble an existing device, not by proving they improve outcomes.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The FDA sorts devices into classes I–III by risk. A <strong>510(k)</strong> clears a device that is “substantially equivalent” to a legally marketed <em>predicate</em>. <strong>De Novo</strong> creates a new low-to-moderate-risk device type when no predicate exists. <strong>Premarket approval (PMA)</strong> is for high-risk class III devices and usually needs a pivotal clinical study. In the EU, under the Medical Device Regulation (MDR, applied since May 2021), private <em>notified bodies</em> assess most devices before the CE mark. The SFDA issues a Medical Device Marketing Authorization (MDMA), classes A–D, with a reliance route for devices already authorised by recognised regulators.</dd>
+      <dt>Why it matters</dt>
+      <dd>The large majority of AI-enabled devices on the FDA’s list came through 510(k). Their decision summaries usually report accuracy against a reference standard on retrospective data, not effects on patient outcomes. That gap is exactly what Project 5B measures.</dd>
+      <dt>How to read it</dt>
+      <dd>“Cleared” means 510(k) or De Novo. “Approved” means PMA. A clearance shows similarity and adequate performance. It does not show that using the device changes care or outcomes.</dd>
+      <dt>What a change means</dt>
+      <dd>The EU extended the MDR transition for legacy devices (to the end of 2027 for higher-risk and 2028 for lower-risk devices, with conditions) and proposed a targeted revision of the MDR in December 2025. As of late 2026 that revision is still going through the legislative process.</dd>
+    </dl>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Risk</th><th>FDA</th><th>EU MDR</th><th>SFDA</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Low</strong></td><td>Class I, mostly exempt</td><td>Class I, self-declared</td><td>Class A</td></tr>
+          <tr><td><strong>Moderate</strong></td><td>Class II: 510(k), or De Novo if no predicate</td><td>Class IIa / IIb, notified body</td><td>Class B / C</td></tr>
+          <tr><td><strong>High</strong></td><td>Class III: PMA</td><td>Class III, notified body with clinical investigation</td><td>Class D</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reading “FDA-cleared AI-ECG” as “shown to improve care”. A 510(k) for an ECG algorithm may rest on sensitivity and specificity against cardiologist reads in a retrospective dataset. That is diagnostic accuracy (Lecture 2.15), not impact. Whether the tool changes treatment or outcomes is a separate question, answered by the designs in Lecture 5.15. Lecture 5.14 covers AI-specific rules such as change control plans and the EU AI Act.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>A 510(k) is like approving a new recipe because it is close to one already on the menu. Nobody re-tests whether diners end up healthier; the question is only whether it is close enough.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="rwe">
+    <h2>4. Where regulators use real-world evidence</h2>
+    <p class="point">Regulators use RWE routinely for safety, sometimes to expand a label, and rarely as the main evidence that a new drug works.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Real-world data (RWD) are routinely collected health data: EHRs, claims, registries. RWE is the clinical evidence drawn from analysing them. The FDA set up its RWE programme with a framework in December 2018, as the 21st Century Cures Act required. It has since issued guidances on registries (final December 2023), EHR and claims data (final July 2024), and RWE for devices (final December 2025). EMA built <strong>DARWIN EU</strong>, a network of data partners using the OMOP common data model (Lecture 5.6). It had delivered about 110 studies since 2022 by 2026. <strong>ICH M14</strong> (adopted September 2025) harmonises how RWD safety studies are planned and analysed.</dd>
+      <dt>Why it matters</dt>
+      <dd>Your Block 5 skills (target trial emulation, new-user designs, phenotype validation) are what decide whether a regulator can use an RWE study. Regulators judge whether the data are relevant and reliable for the question, and whether the design emulates a trial.</dd>
+      <dt>How to read it</dt>
+      <dd>The further a use is from “does this new drug work?”, the more readily RWE is accepted. Safety signals and natural history are routine. Label expansion for an approved drug happens in selected cases. Primary evidence of efficacy for a new drug is rare.</dd>
+    </dl>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Use</th><th>How often RWE carries it</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Safety surveillance</strong></td><td>Routine</td><td>FDA Sentinel and DARWIN EU studies (Lecture 5.12)</td></tr>
+          <tr><td><strong>External or natural history controls</strong></td><td>Selected rare diseases and cancers</td><td>Cerliponase alfa, 2017 (Lecture 5.10)</td></tr>
+          <tr><td><strong>New indication for an approved drug</strong></td><td>Occasional</td><td>Tacrolimus for lung transplant (2021, registry study); palbociclib for men with breast cancer (2019, EHR and claims data)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Palbociclib in men</div>
+      <p>Men with breast cancer were rarely enrolled in the trials of palbociclib. In April 2019 the FDA extended the label to men, partly on data from insurance claims, an oncology EHR database and the sponsor’s safety database. The EHR analysis included only a handful of men and used response as recorded in routine care. The approval was accepted because the drug’s mechanism and effect in women were established, and men were a small population unlikely to be studied in a trial. The RWE confirmed rather than discovered.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">In the Gulf</div>
+      <p>The SFDA issued its <em>Framework on the Use of RWD and RWE to Support Effectiveness and Safety for Marketing Authorization of Medicinal Products</em> on 20 April 2026, in force from 20 July 2026. It calls for fit-for-purpose data and defined estimands, and favours target trial emulation when trials are not feasible. It lists uses including external comparators, transportability with local data, and informing Bayesian priors. For a Saudi researcher, the transportability use is the opening: a well-built local cohort that describes how Saudi patients differ on effect modifiers is directly useful to the regulator.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Assuming the regulator will accept a study because the data are big. A million records with an outcome recorded inconsistently, or an exposure defined with immortal time, are not fit for purpose. FDA’s data guidances and the SFDA framework both start from relevance and reliability for the specific question (Lecture 5.7), not from size.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="hta">
+    <h2>5. How HTA judges value</h2>
+    <p class="point">HTA asks how much extra health a product buys over current care and at what cost, so it needs the right comparator, outcomes that matter and a model to the time horizon.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>HTA combines a <em>clinical</em> assessment (relative effectiveness against current care) with, in most systems, an <em>economic</em> one (cost per QALY from a decision model; Lectures 1.10–1.11) and an assessment of uncertainty (Lecture 1.12). NICE’s standard threshold rose from £20,000–£30,000 to <strong>£25,000–£35,000 per QALY</strong> in April 2026. Since 12 January 2025 the EU runs a <strong>joint clinical assessment</strong> (JCA) for new cancer medicines and advanced therapies; orphan medicines join in 2028. The JCA is clinical only, and pricing stays national.</dd>
+      <dt>Why it matters</dt>
+      <dd>A product that is licensed but not reimbursed barely reaches patients. Designing trials and RWE studies with HTA in mind (the right comparator, quality of life measured, long enough follow-up) avoids a second round of evidence.</dd>
+      <dt>How to read it</dt>
+      <dd>An incremental cost-effectiveness ratio under the threshold, with stable conclusions across the sensitivity analyses, is a strong case. A ratio that depends on extrapolating survival far beyond the trial, or on an indirect comparison with no common comparator, is weak. Expect restrictions, discounts or managed access.</dd>
+      <dt>What a change means</dt>
+      <dd>Raising a threshold from £30,000 to £35,000 per QALY lets in products that buy health less cheaply. The opportunity cost argument from Lecture 1.10 says the money comes from care that would have bought health more cheaply.</dd>
+    </dl>
+
+    <div class="callout example">
+      <div class="callout-title">Example · The first EU joint clinical assessment</div>
+      <p>One of the first two JCAs, announced in April 2025, was tovorafenib for paediatric low-grade glioma, a medicine developed with single-arm evidence. Member states asked for comparisons across eight population–intervention–comparator–outcome questions (PICOs); for six of them there were no comparative data. A regulator can licence a drug on a single-arm trial with a large response rate. An HTA body asking “better than what we use now, for whom?” finds most of its questions unanswered.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">In the Gulf</div>
+      <p>HTA in Saudi Arabia is young and growing fast. The SFDA sets medicine prices, mainly by international reference pricing. It now asks for economic evaluation studies (cost-effectiveness, cost-utility or budget impact, using Saudi data where possible) for innovative and biological medicines going through pricing. A national Centre of Health Technology Assessment evaluates value to inform reimbursement decisions. Hospital formularies are still largely set by local committees. Block 8 (8.3, 8.9) returns to how these pieces fit together.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Assuming evidence that satisfied the regulator will satisfy HTA. A single-arm trial with an external control (Lecture 5.10) may be enough for an accelerated licence. For HTA it gives no direct comparison with current care, and the cost-effectiveness model inherits all of the external control’s uncertainty. Value-of-information analysis (Lecture 1.12) tells you whether more research is worth funding before a decision.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>Regulators and HTA bodies use different loss functions on the same data. The regulator applies a threshold to a benefit–risk balance. The payer maximises expected net monetary benefit (QALYs × threshold − cost) against alternatives, and prices the uncertainty. A model that is “significant” can still have negative expected value once cost and opportunity cost enter the objective.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="navigator">
+    <h2>6. Planning evidence for both audiences</h2>
+    <p class="point">Before designing a study, name the decision it is for, the route the product is on, and what that route accepts; then check what the HTA body will need on top.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Evidence planning works backwards from the decisions in the lifecycle diagram. Pick the regulatory route, then the evidence it expects, then where RWE can fill gaps, then what HTA adds: the comparator, outcomes and time horizon. Regulators and HTA bodies offer joint or parallel scientific advice so both can be asked early.</dd>
+      <dt>Why it matters</dt>
+      <dd>A study designed for the wrong decision is wasted, however good its methods. A post-marketing safety study, an external control and a cost-effectiveness input need different designs, even from the same database.</dd>
+      <dt>How to read it</dt>
+      <dd>For any RWE proposal, the first line should say which decision-maker it serves and which question it answers for them.</dd>
+    </dl>
+
+    <div class="widget" data-widget="pathway-navigator">
+      <div class="widget-title">Which pathway? A simplified navigator</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Pick a product and its situation. Compare a new drug for a rare, serious disease with a generic; then switch to a moderate-risk AI software device with and without a predicate. Watch how the evidence bar and the role of RWE change.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Project 5B</div>
+      <p>Take an FDA-cleared AI tool that flags low ejection fraction from a 12-lead ECG. In the navigator: software, new, moderate risk. With a predicate it is a 510(k); without one, De Novo. Either way the expected evidence is analytic and clinical validation, usually retrospective. A hospital buying it, or an HTA body, wants to know whether flagged patients get echocardiography and treatment sooner and do better. That needs a pragmatic or stepped-wedge trial (Lecture 5.15). Project 5B classifies each cleared cardiovascular device by which of these two kinds of evidence its decision summary reports.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Treating any pathway tool, including this one, as a substitute for reading the current guidance and talking to the regulator. Routes depend on the exact intended use and claims, and they change. The point of the navigator is the <em>logic</em>: risk and novelty set the route, the route sets the evidence, and RWE fits where the route leaves gaps.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>A cancer drug gets FDA accelerated approval on response rate in a single-arm trial. Six months later NICE does not recommend it. Is that a contradiction?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>No. The FDA judged that a surrogate effect, reasonably likely to predict benefit, outweighed the risks, pending confirmation. NICE asked whether the drug gives enough extra QALYs over current English practice at its price. With no comparison against current care and uncertain survival gain, the cost per QALY is too uncertain or too high. Different questions, both reasonable answers.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A colleague says an AI-ECG device is “FDA approved, so its benefit is proven”. Correct them in two sentences.</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Most such devices are <em>cleared</em> through 510(k) or De Novo, which shows substantial equivalence or adequate performance, usually as retrospective accuracy. Neither shows that using the device changes treatment or patient outcomes; that needs an impact study.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Rank these uses by how readily a regulator accepts RWE: (a) primary evidence of efficacy for a new drug in a common disease; (b) a post-marketing safety study; (c) a new indication for an established drug in a small, hard-to-trial population.</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>(b), then (c), then (a). Safety studies are routine and often the only option. A new indication can rest on RWE when the drug’s mechanism and effect are known and a trial is impractical (palbociclib in men). Primary efficacy for a new drug in a common disease is where randomisation is feasible and expected, so RWE alone is rarely accepted.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A new drug is approved by the FDA but not yet by the EMA. Which SFDA route is likely, and what does relying on the FDA imply for Saudi patients?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The abridged route, which relies on one reference approval. It speeds access but imports the original evidence base, including its gaps. If Saudi patients differ in effect modifiers (age, diabetes prevalence, genetics), local RWE on transportability or post-marketing safety is the way to check the result holds here.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>You are designing an RWE study of a new anticoagulant in Saudi AF patients. How does the design change if it is for the SFDA (safety) versus for a pricing and HTA submission?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>For the regulator: a new-user, active-comparator safety study with validated bleeding outcomes, following ICH M14 and the SFDA RWE framework. For HTA: comparative effectiveness against the anticoagulant used now in Saudi practice, outcomes that feed a model (stroke, major bleeding, death), Saudi costs and utilities, and enough follow-up to inform the time horizon. Same database, different comparator, outcomes and outputs.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>US FDA, <em>Framework for FDA’s Real-World Evidence Program</em> (December 2018); guidances <em>Real-World Data: Assessing Registries…</em> (December 2023), <em>Real-World Data: Assessing Electronic Health Records and Medical Claims Data…</em> (July 2024), <em>Use of Real-World Evidence to Support Regulatory Decision-Making for Medical Devices</em> (December 2025).</li>
+      <li>US FDA, “FDA approves new use of transplant drug based on real-world evidence” (July 2021); <em>The Cancer Letter</em>, “How FDA, Pfizer, and Flatiron Health did it” (April 2019), on palbociclib in men.</li>
+      <li>ICH M14, <em>General principles on plan, design and analysis of pharmacoepidemiological studies that utilize real-world data for safety assessment of medicines</em> (Step 4, September 2025).</li>
+      <li>EMA, Data Analysis and Real World Interrogation Network (DARWIN EU) web pages; EMA pages on PRIME, accelerated assessment and conditional marketing authorisation.</li>
+      <li>Regulation (EU) 2017/745 on medical devices, and Regulation (EU) 2023/607 extending its transition; Regulation (EU) 2021/2282 on health technology assessment.</li>
+      <li>SFDA, <em>Guidance on Drug Registration through Verification and Abridged Pathways</em>; <em>Breakthrough Medicines Program</em>; <em>Framework on the Use of RWD and RWE…</em>, version 1.0 (April 2026); medical device reliance guidance MDS-G030.</li>
+      <li>NICE, “Changes to NICE’s cost-effectiveness thresholds confirmed” (2026); Office of Health Economics, “Around the World in HTAs: Saudi Arabia” (September 2025).</li>
+      <li>Drummond et al., <em>Methods for the Economic Evaluation of Health Care Programmes</em> (Oxford University Press): the HTA background for Lectures 1.10–1.12.</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="5-10-external-synthetic-control-arms.html"><small>Previous</small>5.10 External and synthetic control arms</a>
+    <a class="next" href="5-12-pharmacovigilance.html"><small>Next</small>5.12 Pharmacovigilance</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

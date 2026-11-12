@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>4.11 Natural experiments · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/4-11.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-4">Block 4</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 4.11</p>
+  <h1>Natural experiments in public health policy</h1>
+  <div class="lecture-meta">
+    <span>Block 4 · Causal inference and policy evaluation</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>Most policies are never randomised, but many are rolled out in ways that create an <strong>as-if random</strong> contrast: a date, a border, a threshold, a staggered start. A natural-experiment evaluation finds that contrast, picks the design that matches it (the DiD, ITS, synthetic control, RD and IV of Lectures 4.6–4.9), and then attacks its own result with the threats that design is weakest against. This lecture ties the block together into one decision, and turns it on the policies that matter for you: Project 4’s sugary-drink taxes, Saudi salt limits and menu calorie labelling.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#natural">What makes an experiment “natural”</a></li>
+      <li><a href="#choose">Match the design to the source of variation</a></li>
+      <li><a href="#classics">Two classic evaluations and what they teach</a></li>
+      <li><a href="#gulf">GCC policies: opportunities and data</a></li>
+      <li><a href="#timing">Timing: announcements, anticipation, pre-registration</a></li>
+      <li><a href="#threats">Spillovers, co-interventions and triangulation</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="natural">
+    <h2>1. What makes an experiment “natural”</h2>
+    <p class="point">A natural experiment is an event the researcher did not control that splits people into exposed and unexposed groups in a way unrelated to their outcomes; “natural” describes who assigned the exposure, not how good the evidence is.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Exposure is set by a law, a start date, a boundary, an eligibility rule or a supply shock rather than by individual choice. The question is always the same: <strong>what process decided who was exposed, and when?</strong> If that process is unrelated to the outcome’s other causes, the comparison behaves like a trial.</dd>
+      <dt>Why it matters</dt>
+      <dd>Population policies (taxes, bans, labelling rules) cannot be randomised, and their effects per person are small but spread over millions. The UK Medical Research Council’s guidance (Craig and colleagues, 2012) argues natural experiments are worth evaluating when the population affected is large, the likely effect is important, and there is real uncertainty about its size.</dd>
+      <dt>How to read it</dt>
+      <dd>A strong study describes the assignment process in detail, shows why it is unrelated to outcomes, and tests that claim. A weak one says “we used a natural experiment” and then runs a before–after comparison.</dd>
+      <dt>What a change means</dt>
+      <dd>Moving from “admissions fell after the ban” to “admissions fell 2.4% more than the pre-ban trend predicted” is the move from description to a counterfactual design. Most of the drop in a raw before–after number is often trend.</dd>
+    </dl>
+
+    <p>The MRC guidance (2012) set out when and how to use natural experiments. The same team’s 2017 review (Craig, Katikireddi, Leyland and Popham) set out the design menu used in this lecture, from regression adjustment and propensity scores to DiD, ITS, synthetic control, IV and RD. A full MRC/NIHR framework updated the guidance in 2025 (Craig and colleagues). It adds a broader definition, a design-by-design assessment of likely biases, and a role for qualitative, mixed-methods and economic evaluation.</p>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reading “natural experiment” as a quality label. The phrase only says nobody planned the exposure. A policy targeted at the places with the worst trends (which is common: governments act where problems are growing) is the opposite of as-if random.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>A road closed by a landslide is a natural experiment on traffic. It tells you something only if the closure had nothing to do with traffic levels. A road closed <em>because</em> it was congested tells you nothing about what closing roads does.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="choose">
+    <h2>2. Match the design to the source of variation</h2>
+    <p class="point">Each design exploits one kind of variation, so the choice is made by how the policy was assigned and what data exist, not by which method you like.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A cut-off gives RD. Something that nudges uptake gives IV. Unexposed comparison units give DiD, or synthetic control when there are only one or a few exposed units and a long pre-period. A single exposed series with a long history gives ITS.</dd>
+      <dt>Why it matters</dt>
+      <dd>Every design swaps the untestable “no unmeasured confounding” for a different untestable assumption. Choosing the design means choosing which assumption you can best defend for <em>this</em> policy.</dd>
+      <dt>How to read it</dt>
+      <dd>In a paper, check that the design fits the assignment. An ITS of a policy that started on different dates in different regions throws away its best variation; a DiD with one treated country and clustered standard errors overstates its precision.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · Choosing a natural-experiment design</div>
+      <svg class="viz-svg" viewBox="0 0 640 428" role="img" aria-label="Decision tree. Question 1: does a cut-off assign exposure? Yes leads to regression discontinuity. No leads to question 2: is there a nudge that shifts uptake only? Yes leads to instrumental variables. No leads to question 3: are there comparable unexposed units? No leads to interrupted time series if there is a long pre-series. Yes leads to question 4: one or a few exposed units with many donors and a long pre-period? Yes leads to synthetic control; no leads to difference-in-differences.">
+        <defs>
+          <marker id="l411-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead"/></marker>
+          <marker id="l411-arrow-acc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead accent"/></marker>
+        </defs>
+        <!-- question boxes -->
+        <g class="s5">
+          <rect x="16" y="16" width="320" height="52" rx="10" class="node"/>
+          <rect x="16" y="98" width="320" height="52" rx="10" class="node"/>
+          <rect x="16" y="180" width="320" height="52" rx="10" class="node"/>
+          <rect x="16" y="262" width="320" height="52" rx="10" class="node"/>
+        </g>
+        <g text-anchor="middle">
+          <text x="176" y="38" class="viz-bold">1 · Does a cut-off assign exposure?</text>
+          <text x="176" y="56" class="viz-small viz-muted">a threshold on a score, an age or a date</text>
+          <text x="176" y="120" class="viz-bold">2 · A nudge that shifts uptake only?</text>
+          <text x="176" y="138" class="viz-small viz-muted">it affects the outcome only through uptake</text>
+          <text x="176" y="202" class="viz-bold">3 · Comparable unexposed units?</text>
+          <text x="176" y="220" class="viz-small viz-muted">observed over the same period</text>
+          <text x="176" y="284" class="viz-bold">4 · Only one or a few exposed units?</text>
+          <text x="176" y="302" class="viz-small viz-muted">with many donors and a long pre-period</text>
+        </g>
+        <!-- result boxes -->
+        <g class="s1">
+          <rect x="420" y="16" width="204" height="52" rx="10" class="node-fill"/>
+          <rect x="420" y="98" width="204" height="52" rx="10" class="node-fill"/>
+          <rect x="420" y="262" width="204" height="52" rx="10" class="node-fill"/>
+          <rect x="66" y="344" width="220" height="52" rx="10" class="node-fill"/>
+        </g>
+        <g class="s2"><rect x="420" y="180" width="204" height="52" rx="10" class="node-fill"/></g>
+        <g text-anchor="middle">
+          <text x="522" y="38" class="viz-bold">Regression discontinuity</text>
+          <text x="522" y="56" class="viz-small viz-muted">4.9 · effect at the cut-off</text>
+          <text x="522" y="120" class="viz-bold">Instrumental variables</text>
+          <text x="522" y="138" class="viz-small viz-muted">4.9 · effect in compliers</text>
+          <text x="522" y="202" class="viz-bold">Interrupted time series</text>
+          <text x="522" y="220" class="viz-small viz-muted">4.7 · only with a long pre-series</text>
+          <text x="522" y="284" class="viz-bold">Synthetic control</text>
+          <text x="522" y="302" class="viz-small viz-muted">4.8 · weighted donor pool</text>
+          <text x="176" y="366" class="viz-bold">Difference-in-differences</text>
+          <text x="176" y="384" class="viz-small viz-muted">4.6 · staggered: Callaway–Sant’Anna</text>
+        </g>
+        <!-- right arrows -->
+        <path d="M336,42 L416,42" class="edge accent" marker-end="url(#l411-arrow-acc)"/>
+        <path d="M336,124 L416,124" class="edge accent" marker-end="url(#l411-arrow-acc)"/>
+        <path d="M336,206 L416,206" class="edge accent" marker-end="url(#l411-arrow-acc)"/>
+        <path d="M336,288 L416,288" class="edge accent" marker-end="url(#l411-arrow-acc)"/>
+        <g text-anchor="middle" class="viz-small viz-bold">
+          <text x="376" y="34">yes</text><text x="376" y="116">yes</text>
+          <text x="376" y="198">no</text><text x="376" y="280">yes</text>
+        </g>
+        <!-- down arrows -->
+        <path d="M176,68 L176,94" class="edge" marker-end="url(#l411-arrow)"/>
+        <path d="M176,150 L176,176" class="edge" marker-end="url(#l411-arrow)"/>
+        <path d="M176,232 L176,258" class="edge" marker-end="url(#l411-arrow)"/>
+        <path d="M176,314 L176,340" class="edge" marker-end="url(#l411-arrow)"/>
+        <g class="viz-small viz-bold">
+          <text x="186" y="86">no</text><text x="186" y="168">no</text>
+          <text x="186" y="250">yes</text><text x="186" y="332">no</text>
+        </g>
+        <text x="522" y="250" text-anchor="middle" class="viz-small viz-muted">short series? see note below</text>
+        <text x="320" y="420" text-anchor="middle" class="viz-small colour s2">No branch fits? There is no credible counterfactual: simulate, or plan data for the next policy.</text>
+      </svg>
+      <figcaption>Ask the questions in this order: the assignment mechanism first (cut-off, nudge), then the data (comparison units, length of series). More than one design often fits, and running two that rest on different assumptions is stronger than running one (section 6).</figcaption>
+    </figure>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Design</th><th>Variation it uses</th><th>Key assumption</th><th>Typical failure</th></tr></thead>
+        <tbody>
+          <tr><td><strong>DiD</strong> (4.6)</td><td>Exposed vs unexposed units, before vs after</td><td>Parallel trends</td><td>Policy targeted where trends were already diverging</td></tr>
+          <tr><td><strong>ITS</strong> (4.7)</td><td>One series, before vs after a date</td><td>The pre-trend would have continued</td><td>Something else changed at the same time</td></tr>
+          <tr><td><strong>Synthetic control</strong> (4.8)</td><td>One exposed unit vs a weighted mix of donors</td><td>Good pre-period fit carries forward</td><td>Short pre-period; donors hit by their own shocks</td></tr>
+          <tr><td><strong>RD</strong> (4.9)</td><td>Just above vs just below a cut-off</td><td>Continuity at the cut-off</td><td>Sorting or heaping at the cut-off</td></tr>
+          <tr><td><strong>IV</strong> (4.9)</td><td>Whatever shifts uptake</td><td>Exclusion and monotonicity</td><td>Instrument linked to the outcome another way</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="widget" data-widget="design-chooser">
+      <div class="widget-title">Design chooser</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Pick an example or answer the questions for your own policy. You get the designs that fit, the assumption each rests on, the main threat for this policy, and the lecture to revisit.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Choosing the design first and the policy second, for example running synthetic control on everything because it is fashionable. Synthetic control on a policy with hundreds of exposed regions, or ITS on a policy with a perfectly good unexposed comparison group, wastes the variation that would have made the result credible.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="classics">
+    <h2>3. Two classic evaluations and what they teach</h2>
+    <p class="point">The best-known public health natural experiments show that the design and data source change the size of the answer, and that even strong evaluations get revised.</p>
+
+    <dl class="facets">
+      <dt>Smoke-free laws</dt>
+      <dd>After Scotland’s smoke-free law (March 2006), Pell and colleagues (2008) found admissions for acute coronary syndrome fell 17% in nine hospitals, against 4% in England, which had no law yet. When England’s law came in (July 2007), Sims and colleagues (2010) ran an ITS on national hospital data with five years of pre-law trend. They found a 2.4% fall in emergency heart-attack admissions, about 1,200 fewer in the first year.</dd>
+      <dt>Why the gap</dt>
+      <dd>A before–after comparison in selected hospitals versus a national series that models the existing downward trend and seasonality. The authors also pointed to lower second-hand smoke exposure in England before its law. Both found a benefit; the national ITS is the more conservative design.</dd>
+      <dt>UK Soft Drinks Industry Levy</dt>
+      <dd>Announced in March 2016, in force from April 2018, charged on drinks with at least 5 g of sugar per 100 mL, with a higher rate from 8 g. A controlled ITS (Scarborough and colleagues, 2020) showed manufacturers cut sugar to get under the bands. ITS studies then linked the levy to an 8% relative fall in obesity in girls aged 10–11 (none in boys or younger children) and a 12% fall in hospital admissions for children’s tooth extractions for decay (Rogers and colleagues).</dd>
+    </dl>
+
+    <div class="callout example">
+      <div class="callout-title">Example · A correction worth knowing</div>
+      <p>A 2021 <em>BMJ</em> paper reported that the levy cut sugar bought in soft drinks by 10% per household. The authors later found an error in their analysis. The paper was retracted and a corrected version in <em>BMJ Open</em> (2023) puts the fall at about 3% (8 g per household per week). The authors did the right thing, but the 10% figure still circulates. Check for corrections before citing, and publish your code so errors are found early.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reading the SDIL obesity result as settled. It comes from a single-country ITS: there is no unexposed comparison, so any other change around 2018 that affected girls’ weight would be absorbed into the estimate. The authors say this themselves. The finding that only girls benefited is a pattern to explain, not a design check.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="gulf">
+    <h2>4. GCC policies: opportunities and data</h2>
+    <p class="point">The Gulf has run several ambitious food policies since 2017, but the binding constraint on evaluating them is outcome data, not methods.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Policy</th><th>Source of variation</th><th>Public outcome data</th><th>Best design</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Sugary-drink excise taxes</strong> (Saudi Arabia and UAE 2017, Bahrain late 2017, Oman and Qatar 2019; extended to all sweetened drinks in Saudi Arabia and UAE, December 2019)</td><td>Staggered start dates; Kuwait untaxed (to confirm)</td><td>FAOSTAT sugar and sweetener supply (annual); UN Comtrade drink imports</td><td>Staggered DiD + synthetic control (Project 4)</td></tr>
+          <tr><td><strong>Saudi bread salt limit</strong> (1 g per 100 g of bread, enforced in bakeries from May 2019)</td><td>One national date</td><td>No outcome series: scattered 24-hour urine studies (Project 2), SFDA compliance monitoring</td><td>No credible impact design; simulate (Project 1)</td></tr>
+          <tr><td><strong>Saudi menu calorie labelling</strong> (voluntary 2017, enforced 2019)</td><td>One national date</td><td>None routinely; small surveys and compliance audits</td><td>Compliance studies now; plan ITS on purchase data if it can be obtained</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <dl class="facets">
+      <dt>Why it matters</dt>
+      <dd>Earlier evaluations of the GCC drink taxes mostly compared year-on-year growth in proprietary industry sales data, with no counterfactual. Saudi Arabia’s 50% tax on carbonated drinks was described as among the largest sugary-drink taxes anywhere, so a credible estimate would matter well beyond the region.</dd>
+      <dt>How to read it</dt>
+      <dd>For calorie labelling, the published evidence is thin: one early study compared intake a few months before and after enforcement and found no significant change, and a 2023 audit found 43% of “healthy food” restaurants on a delivery app were not complying. Short before–after windows and partial compliance both bias towards finding nothing.</dd>
+    </dl>
+
+    <div class="callout gulf">
+      <div class="callout-title">GCC angle · Project 4’s co-intervention</div>
+      <p>Saudi Arabia and the UAE introduced 5% VAT in January 2018, months after their drink taxes, and Saudi Arabia raised VAT to 15% in July 2020. Any price-sensitive outcome moves with these. That is a reason to look at drinks relative to other foods (VAT hit both, the excise tax only drinks) and to check whether the estimated effect jumps at VAT dates rather than at tax dates.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>Where official series don’t exist, ML can build them: scraping menu and price data from delivery apps, classifying products by sugar band from ingredient text, or extracting calorie labels from menu images. This creates outcome and compliance series that a later ITS or DiD can use. Start collecting before the next policy, because no one can scrape the past.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Running an ITS on modelled estimates, such as GBD sodium intake, to evaluate the salt limit. Modelled series are smoothed and partly driven by covariates, and most do not include any data from after the policy. Any “effect” found is the model’s assumptions, not evidence.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="timing">
+    <h2>5. Timing: announcements, anticipation, pre-registration</h2>
+    <p class="point">A policy starts affecting behaviour when people learn about it, not when it legally starts, so the “intervention date” is a choice you must justify and fix before seeing the results.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>Anticipation</strong>: firms reformulate, consumers stockpile or retailers change prices between announcement and start. Placing the break at the start date then either misses the effect or counts it as part of the pre-trend, biasing towards zero.</dd>
+      <dt>Why it matters</dt>
+      <dd>For the SDIL, an analysis of sales data found most of the fall in sugar from reformulation happened in the two years between announcement and start (Dickson and colleagues, 2023). An ITS with the break at April 2018 would see little.</dd>
+      <dt>How to read it</dt>
+      <dd>Good studies define the announcement and start dates in advance, model both (or exclude the window between them), and show event-study leads (Lecture 4.6). A dip in the leads is anticipation, or a sign the comparison is wrong.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · Announcement versus start: the UK sugar levy</div>
+      <svg class="viz-svg" viewBox="0 0 640 206" role="img" aria-label="Timeline from 2015 to 2020. The levy was announced in March 2016 and started in April 2018. The shaded window between them is when most reformulation happened. A break placed at the start date misses it; a break at announcement, or dropping the window, captures it.">
+        <rect x="182" y="62" width="216" height="58" class="fill-soft s2"/>
+        <line x1="40" y1="120" x2="600" y2="120" class="viz-axis"/>
+        <g class="viz-tick" text-anchor="middle">
+          <text x="60" y="138">2015</text><text x="164" y="138">2016</text><text x="268" y="138">2017</text>
+          <text x="372" y="138">2018</text><text x="476" y="138">2019</text><text x="580" y="138">2020</text>
+        </g>
+        <g class="viz-grid"><line x1="60" y1="116" x2="60" y2="124"/><line x1="164" y1="116" x2="164" y2="124"/><line x1="268" y1="116" x2="268" y2="124"/><line x1="372" y1="116" x2="372" y2="124"/><line x1="476" y1="116" x2="476" y2="124"/><line x1="580" y1="116" x2="580" y2="124"/></g>
+        <g class="s3"><line x1="182" y1="40" x2="182" y2="120" class="stroke" style="stroke-width:2"/></g>
+        <g class="s1"><line x1="398" y1="40" x2="398" y2="120" class="stroke" style="stroke-width:2"/></g>
+        <text x="182" y="18" text-anchor="middle" class="viz-bold colour s3">Announced</text>
+        <text x="182" y="34" text-anchor="middle" class="viz-small viz-muted">March 2016</text>
+        <text x="398" y="18" text-anchor="middle" class="viz-bold colour s1">Levy starts</text>
+        <text x="398" y="34" text-anchor="middle" class="viz-small viz-muted">April 2018</text>
+        <text x="290" y="86" text-anchor="middle" class="viz-bold">anticipation window</text>
+        <text x="290" y="104" text-anchor="middle" class="viz-small">most reformulation happened here</text>
+        <text x="40" y="170" class="viz-small"><tspan class="viz-bold colour s3">Break at the start date:</tspan> misses the effect, or counts it as pre-trend</text>
+        <text x="40" y="192" class="viz-small"><tspan class="viz-bold colour s1">Break at announcement, or drop the window:</tspan> captures it</text>
+      </svg>
+      <figcaption>Dates from the levy’s announcement and implementation. The same question applies to Project 4: when did GCC firms and shoppers first know a tax was coming?</figcaption>
+    </figure>
+
+    <pre><code>d$t     &lt;- seq_len(nrow(d))                      # monthly time index
+d$ann   &lt;- d$month &gt;= as.Date("2016-03-01")      # after announcement
+d$start &lt;- d$month &gt;= as.Date("2018-04-01")      # after levy starts
+t_a &lt;- min(d$t[d$ann]); t_s &lt;- min(d$t[d$start])
+fit &lt;- glm(sugar ~ t + ann + I((t - t_a) * ann) + start + I((t - t_s) * start) +
+             factor(cal_month), family = quasipoisson, data = d)
+summary(fit)   # level and slope changes at each date</code></pre>
+    <p>A segmented ITS (Lecture 4.7) with two breaks: <code>ann</code> and <code>start</code> give level changes, the <code>I(...)</code> terms give slope changes after each date, and calendar-month dummies absorb seasonality. Fix both dates in your protocol before fitting.</p>
+
+    <dl class="facets">
+      <dt>Pre-registration</dt>
+      <dd>Write down, before looking at post-policy outcomes, the dates, outcomes, comparison or donor units, and the main model, and post it (for example on OSF). Public data already exist, so it isn’t blinding; it limits the choices you could make after seeing results (the “garden of forking paths” of Lecture 3.1). For Project 4, register before downloading post-2017 outcomes.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Picking the break date that gives the biggest effect, or moving it “because the effect seems to start earlier”. Data-chosen breaks find effects in noise. If you suspect anticipation, say so in the protocol and test the announcement date as a pre-specified alternative.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="threats">
+    <h2>6. Spillovers, co-interventions and triangulation</h2>
+    <p class="point">The three threats that sink most policy evaluations are effects leaking into the comparison group, other changes at the same time, and trusting a single design; triangulation across designs is the main defence.</p>
+
+    <dl class="facets">
+      <dt>Spillovers</dt>
+      <dd>The policy changes the comparison units too: shoppers cross a border to buy untaxed drinks, firms reformulate for a whole region, a national media debate reaches untaxed neighbours. Spillovers break the “no interference” part of consistency (Lecture 4.1) and usually bias towards zero, or double-count if comparison sales rise.</dd>
+      <dt>Co-interventions</dt>
+      <dd>Policies come in packages. A single-series ITS cannot separate a tax from a simultaneous VAT rise or campaign; a comparison unit exposed to the other change but not the policy can. <strong>Negative-control outcomes</strong> help: an outcome the policy can’t affect but the co-intervention or confounding would (for example, untaxed food sales).</dd>
+      <dt>Triangulation</dt>
+      <dd>Run designs whose biases point in different directions or come from different sources: DiD against Kuwait, synthetic control from non-GCC donors, ITS within each country, and different outcomes (supply, imports). If they agree, no single bias is likely to explain them all (Lawlor, Tilling and Davey Smith, 2016).</dd>
+    </dl>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Reviewers ask</th><th>A convincing answer</th></tr></thead>
+        <tbody>
+          <tr><td>How was exposure assigned, and could that relate to outcomes?</td><td>A documented assignment process; balance or pre-trend evidence</td></tr>
+          <tr><td>Does the design fit the variation?</td><td>The choice argued from the decision tree, not from habit</td></tr>
+          <tr><td>What else could explain it?</td><td>Named co-interventions, negative controls, placebo dates and units</td></tr>
+          <tr><td>Were choices fixed in advance?</td><td>A registered protocol; deviations reported</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>ITS and synthetic control are forecasting problems: predict the counterfactual series, then compare. Bayesian structural time-series (Google’s <code>CausalImpact</code>) does this with a flexible model. Treat it like any forecaster: backtest by pretending the policy started earlier (a placebo in time) and check the error. A model that can’t predict the pre-period can’t be trusted after it.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Calling it triangulation when three analyses share the same weakness, for example three ITS models on the same national series with different smoothers. Triangulation needs designs with <em>different</em> key assumptions, so a single failure can’t produce agreement.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>A city taxes sugary drinks; its neighbour doesn’t. Sales fall 20% in the taxed city and rise 5% in the neighbour. A report calls the tax effect a 25% fall. What is wrong?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The rise in the neighbour is probably cross-border shopping, a spillover caused by the tax. Using the neighbour as the comparison counts the diverted sales twice. Some of the 20% fall is also diversion, not reduced drinking. Use a comparison area too far away for shoppers to cross, and look at combined sales across both cities.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A national policy starts in the same month as a large media campaign on the same topic. You have six years of monthly data before. What can an ITS tell you?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Only the combined effect of the policy and campaign. A single series can’t separate two changes on the same date. To isolate the policy, you need a comparison unit that saw the campaign but not the policy, or an outcome the campaign would affect but the policy couldn’t (or the reverse). Otherwise report it honestly as a package effect.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>For the same eligibility rule, an RD and a DiD give different estimates. Does one have to be wrong?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>No. They estimate different things: the RD gives the effect for people near the cut-off; the DiD gives the average effect in the exposed group, which includes people far from it. Effects that differ by distance from the cut-off would make both right. Check which population each describes before calling it a contradiction.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A reviewer asks why you pre-registered Project 4 when FAOSTAT data were already public. What do you say?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Registration fixed the tax dates, outcomes, donor pool and model before I looked at post-tax data. With few countries and many reasonable choices, results can be tuned by those choices. The registration shows which analysis was planned and which were added later. It isn’t about blinding the data; it’s about limiting choices made after seeing results.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A colleague wants to evaluate the Saudi bread salt limit with an ITS on yearly GBD estimates of sodium intake. Your view?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>It won’t work. GBD intake estimates are modelled, smoothed and partly driven by covariates, and probably contain no Saudi measurements from after 2019. Any break would come from the model, not from behaviour. Better options: predict the impact with a simulation model (Project 1), pool measured intake (Project 2), and push for a 24-hour urine survey that could serve as a baseline before the next limit.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Craig et al., “Using natural experiments to evaluate population health interventions: new Medical Research Council guidance”, <em>Journal of Epidemiology and Community Health</em> (2012). Craig, Katikireddi, Leyland &amp; Popham, “Natural experiments: an overview of methods, approaches, and contributions to public health intervention research”, <em>Annual Review of Public Health</em> (2017). Craig et al., “Using natural experiments to evaluate population health interventions: a framework for producers and users of evidence”, <em>Public Health Research</em> (2025), MRC/NIHR.</li>
+      <li>Cunningham, <em>Causal Inference: The Mixtape</em> (2021) and Huntington-Klein, <em>The Effect</em> (2021): chapters on difference-in-differences, synthetic control, regression discontinuity and instrumental variables, for the design menu.</li>
+      <li>Pell et al., “Smoke-free legislation and hospitalizations for acute coronary syndrome”, <em>NEJM</em> (2008). Sims, Maxwell, Bauld &amp; Gilmore, “Short term impact of smoke-free legislation in England: retrospective analysis of hospital admissions for myocardial infarction”, <em>BMJ</em> (2010).</li>
+      <li>Scarborough et al., “Impact of the announcement and implementation of the UK Soft Drinks Industry Levy on sugar content, price, product size and number of available soft drinks”, <em>PLOS Medicine</em> (2020). Rogers et al., obesity in English schoolchildren, <em>PLOS Medicine</em> (2023), and carious tooth extractions, <em>BMJ Nutrition, Prevention &amp; Health</em> (2023). Pell et al., household purchases, retracted from <em>BMJ</em> (2021), corrected in <em>BMJ Open</em> (2023). Dickson, Gehrsitz &amp; Kemp, “Does a spoonful of sugar levy help the calories go down?”, <em>Review of Economics and Statistics</em> (2023).</li>
+      <li>Alsukait et al., “Sugary drink excise tax policy process and implementation: case study from Saudi Arabia”, <em>Food Policy</em> (2020). SFDA announcements on the bread salt limit (2019). Alangari et al., restaurants’ compliance with calorie labelling on delivery apps, <em>Frontiers in Nutrition</em> (2023). Bin Sunaid et al., “Saudi Arabia’s healthy food strategy: progress &amp; hurdles in the 2030 road”, <em>Nutrients</em> (2021).</li>
+      <li>Lawlor, Tilling &amp; Davey Smith, “Triangulation in aetiological epidemiology”, <em>International Journal of Epidemiology</em> (2016). Lipsitch, Tchetgen Tchetgen &amp; Cohen, “Negative controls”, <em>Epidemiology</em> (2010). Brodersen et al., “Inferring causal impact using Bayesian structural time-series models”, <em>Annals of Applied Statistics</em> (2015).</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="4-10-mediation-analysis.html"><small>Previous</small>4.10 Mediation analysis</a>
+    <a class="next" href="../block-5/5-01-drug-utilisation-exposure.html"><small>Next</small>5.1 Pharmacoepidemiology foundations</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

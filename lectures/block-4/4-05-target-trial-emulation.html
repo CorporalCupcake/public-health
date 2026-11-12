@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>4.5 Target trial emulation · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/4-05.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-4">Block 4</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 4.5</p>
+  <h1>Target trial emulation</h1>
+  <div class="lecture-meta">
+    <span>Block 4 · Causal inference and policy evaluation</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>Before analysing observational data, write the protocol of the randomised trial you would run if you could, then copy it as closely as the data allow. This does not remove confounding, but it removes the <strong>self-inflicted</strong> biases (immortal time, prevalent users, eligibility defined by the future) that come from starting the clock at the wrong moment. Most famous observational–trial disagreements trace back to those design errors rather than to the statistics. Project 5A is built on this frame: the protocol table in section 2 is a draft of its methods section.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#question">Ask the trial question first</a></li>
+      <li><a href="#protocol">The protocol, component by component</a></li>
+      <li><a href="#align">Eligibility, assignment and time zero must coincide</a></li>
+      <li><a href="#ccw">Grace periods and clone–censor–weight</a></li>
+      <li><a href="#sequential">Sequential trials</a></li>
+      <li><a href="#itt">Intention-to-treat and per-protocol analogues</a></li>
+      <li><a href="#limits">What emulation cannot fix, and how to report it</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="question">
+    <h2>1. Ask the trial question first</h2>
+    <p class="point">A target trial is the hypothetical randomised trial that would answer your question; emulating it forces you to say exactly which intervention, in whom, from when.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Two steps (Hernán and Robins, 2016). First, specify the <strong>target trial</strong>: the protocol of a pragmatic randomised trial you would ideally run. Second, <strong>emulate</strong> it: apply each component to observational data, and note every place the emulation falls short.</dd>
+      <dt>Why it matters</dt>
+      <dd>“Does anticoagulation help AF patients in the ICU?” is not yet a causal question. “Does starting therapeutic anticoagulation within 48 hours of new-onset AF, compared with not starting it, change 90-day death and stroke in ICU patients without contraindications?” is. The sharper version tells you who to include, when the clock starts, and what to compare; the vague version lets the data decide those things by accident.</dd>
+      <dt>How to read it</dt>
+      <dd>In a paper, look for an explicit protocol table with both columns, target and emulation. If the authors cannot name time zero or the treatment strategies, they have not emulated a trial, whatever the title says.</dd>
+      <dt>What a change means</dt>
+      <dd>Changing the strategies (start within 24 versus 72 hours, or therapeutic versus any dose) changes the question, and so the answer. Different emulations of “the same” drug question can disagree simply because they emulate different trials.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Thinking the target trial must be feasible or ethical. It only has to be well defined. You will never randomise ICU patients to have AF, but you can imagine randomising those who develop it to two anticoagulation strategies. If you cannot even imagine the trial (randomising sex, or “obesity”), the question needs rewriting as an intervention.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Writing the recipe before shopping. Walk into the market without one and you come home with whatever was on offer, then call it dinner. The recipe makes clear what you need, and what substitutions you made.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="protocol">
+    <h2>2. The protocol, component by component</h2>
+    <p class="point">Seven components define the trial; each one becomes a column entry for the emulation, and the gaps between the two columns are your limitations section.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Eligibility criteria, treatment strategies, assignment procedure, follow-up (starting at time zero), outcome, causal contrast, and analysis plan. Time zero is part of follow-up but deserves its own row, because it is where most errors happen.</dd>
+      <dt>Why it matters</dt>
+      <dd>Each component maps to a specific bias if done wrong: eligibility using future information (selection), strategies defined by what happened later (immortal time), no confounder adjustment (confounding), outcome ascertained differently by arm (information bias).</dd>
+      <dt>How to read it</dt>
+      <dd>A good emulation column is concrete: which codes, which table, which time window. “Patients on anticoagulants” is not a strategy; “therapeutic-dose heparin infusion or a therapeutic dose of a direct oral anticoagulant started within 48 hours of time zero” is.</dd>
+    </dl>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Component</th><th>Target trial</th><th>Emulation in MIMIC-IV (Project 5A)</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Eligibility</strong></td><td>Adults in ICU with new-onset AF; no prior AF; not already anticoagulated; no definite indication (e.g. mechanical valve, venous thrombosis) or contraindication (active bleeding, very low platelets)</td><td>First 12-lead ECG showing AF (MIMIC-IV-ECG) after an earlier ECG in sinus rhythm during the stay; prior AF and anticoagulant use from diagnosis and medication history; criteria checked only with data available at that ECG</td></tr>
+          <tr><td><strong>Strategies</strong></td><td>(1) Start therapeutic anticoagulation within 48 h of AF onset; (2) do not start it within 48 h. Prophylactic doses allowed in both</td><td>Therapeutic versus prophylactic dosing identified from infusion rates and doses: the main measurement problem, to validate early</td></tr>
+          <tr><td><strong>Assignment</strong></td><td>Randomised, open label</td><td>Assumed as good as random given baseline confounders: age, SOFA, CHA₂DS₂-VASc, bleeding-risk features, platelets, creatinine, vasopressors, recent surgery</td></tr>
+          <tr><td><strong>Time zero</strong></td><td>Randomisation, at AF onset</td><td>Time of the first AF ECG, the same for both strategies</td></tr>
+          <tr><td><strong>Follow-up</strong></td><td>From time zero to outcome, death or 90 days</td><td>In-hospital events from the record; death after discharge only as far as MIMIC-IV’s linked death data reach (check the window in the documentation)</td></tr>
+          <tr><td><strong>Outcomes</strong></td><td>Ischaemic stroke or systemic embolism; major bleeding; death</td><td>Codes, imaging reports and transfusion records, with validation in a sample; death as a competing event for stroke (Lecture 3.7)</td></tr>
+          <tr><td><strong>Causal contrast</strong></td><td>Intention-to-treat and per-protocol effects</td><td>Per-protocol analogue: the effect of following each strategy</td></tr>
+          <tr><td><strong>Analysis</strong></td><td>Risk difference and ratio at 30 and 90 days; adherence-adjusted analysis for per-protocol</td><td>Clone–censor–weight (section 4), weighted cumulative incidence, bootstrap CIs, E-value and quantitative bias analysis</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Defining new-onset AF from diagnosis codes. Codes are assigned at discharge and do not carry a time, so “AF onset” drifts to admission or to whenever someone noticed. Using the first AF ECG gives a timestamp, which is exactly what time zero needs. Its own weakness: a 12-lead ECG is taken some time after AF actually starts (continuous monitor strips are not in MIMIC-IV-ECG), so onset is detected late and unevenly. State that, and test sensitivity to it.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">Gulf example</div>
+      <p>MIMIC-IV comes from one Boston hospital. Saudi ICUs differ in case mix and in anticoagulation habits, so the effect may not transport. The protocol is what travels: the same table, run in a Saudi or wider GCC ICU database when one is available, is a replication with a pre-specified design rather than a new fishing trip.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="align">
+    <h2>3. Eligibility, assignment and time zero must coincide</h2>
+    <p class="point">In a trial, a patient becomes eligible, is assigned and starts follow-up at the same moment; an emulation that separates these three creates bias before any model is fitted.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Three moments that must line up. <strong>Eligibility</strong>: when the person meets the criteria. <strong>Assignment</strong>: when their strategy is fixed. <strong>Time zero</strong>: when outcome counting starts.</dd>
+      <dt>Why it matters</dt>
+      <dd>If follow-up starts before assignment, the treated must survive until treatment to be called treated: <strong>immortal time</strong> (Lecture 2.2). If follow-up starts after assignment, you study <strong>prevalent users</strong>, who survived the early period of treatment while early failures have gone (Lecture 2.16). If eligibility uses information from after time zero (“had at least two days of ICU stay”), you select on the future.</dd>
+      <dt>How to read it</dt>
+      <dd>For any observational treatment study, ask: at the moment the clock starts, could I have known who is eligible and which group each person is in? If the answer needs information from later, there is a time-related bias. Hernán and colleagues (2016) showed that many classic biases are of this kind and disappear once the target trial is specified.</dd>
+      <dt>What a change means</dt>
+      <dd>A hazard ratio that moves from 0.6 to 1.0 when you realign time zero was mostly bias. The size of the shift grows with the delay to treatment and with early mortality, which is why the ICU, with high early death rates and staggered treatment starts, is a dangerous setting.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · Aligned and misaligned starts</div>
+      <svg class="viz-svg" viewBox="0 0 640 352" role="img" aria-label="Three timelines. Top: eligibility, assignment and time zero at the same moment, the target-trial standard. Middle: eligibility and time zero at AF onset, but treatment assignment later; the gap is immortal time for those later called treated. Bottom: eligibility and treatment start early, but follow-up starts later; early events and early stoppers are missing, the prevalent-user problem.">
+        <!-- Row 1: aligned -->
+        <text x="10" y="22" class="viz-bold">A. Aligned: the target-trial standard</text>
+        <line x1="40" y1="60" x2="610" y2="60" class="edge strong"/>
+        <line x1="200" y1="44" x2="200" y2="76" class="stroke s2" stroke-width="4"/>
+        <path d="M200,53 l7,7 l-7,7 l-7,-7Z" class="dot s1"/>
+        <text x="214" y="48" class="viz-small">eligible + assigned + clock starts, together (AF onset)</text>
+        <text x="200" y="94" text-anchor="middle" class="viz-small viz-muted">time zero</text>
+        <text x="604" y="80" text-anchor="end" class="viz-small viz-muted">follow-up →</text>
+
+        <!-- Row 2: immortal time -->
+        <text x="10" y="132" class="viz-bold colour s3">B. Clock starts before assignment → immortal time</text>
+        <rect x="160" y="160" width="190" height="20" class="fill-soft s2"/>
+        <line x1="40" y1="170" x2="610" y2="170" class="edge strong"/>
+        <line x1="160" y1="154" x2="160" y2="186" class="stroke s2" stroke-width="4"/>
+        <path d="M350,163 l7,7 l-7,7 l-7,-7Z" class="dot s1"/>
+        <text x="255" y="153" text-anchor="middle" class="viz-small colour s2">must survive this to be “treated”</text>
+        <text x="160" y="204" text-anchor="middle" class="viz-small">eligible + clock starts</text>
+        <text x="350" y="204" text-anchor="middle" class="viz-small">assigned (treatment starts)</text>
+
+        <!-- Row 3: prevalent users -->
+        <text x="10" y="242" class="viz-bold colour s3">C. Clock starts after assignment → prevalent users</text>
+        <rect x="140" y="270" width="200" height="20" class="fill-soft s3"/>
+        <line x1="40" y1="280" x2="610" y2="280" class="edge strong"/>
+        <path d="M140,273 l7,7 l-7,7 l-7,-7Z" class="dot s1"/>
+        <line x1="340" y1="264" x2="340" y2="296" class="stroke s2" stroke-width="4"/>
+        <text x="240" y="263" text-anchor="middle" class="viz-small colour s3">early events and early stoppers unseen</text>
+        <text x="140" y="314" text-anchor="middle" class="viz-small">eligible + treated</text>
+        <text x="340" y="314" text-anchor="middle" class="viz-small">clock starts (e.g. study entry)</text>
+
+        <!-- legend -->
+        <g class="viz-small">
+          <path d="M16,334 l7,7 l-7,7 l-7,-7Z" class="dot s1"/><text x="30" y="345">assignment (strategy fixed)</text>
+          <line x1="226" y1="333" x2="226" y2="349" class="stroke s2" stroke-width="4"/><text x="236" y="345">time zero (outcomes start counting)</text>
+        </g>
+      </svg>
+      <figcaption>Only row A matches a trial. Row B favours the treatment because the treated are guaranteed to survive the shaded stretch. Row C usually favours it too, because the people harmed or failing early were never enrolled. Both are design errors that no amount of adjustment repairs.</figcaption>
+    </figure>
+
+    <div class="callout example">
+      <div class="callout-title">Example · The hormone therapy puzzle</div>
+      <p>The Nurses’ Health Study found less coronary disease in women using postmenopausal hormones; the Women’s Health Initiative trial did not (Lecture 2.6). Hernán and colleagues (2008) reanalysed the cohort as a series of emulated trials of <em>initiators</em> versus non-initiators, with time zero at initiation. Much of the gap with the trial closed. A large part of the original discrepancy came from analysing mostly prevalent users, who had survived the early period when the trial showed excess risk.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>Misaligned time zero is leakage. Defining exposure or eligibility with information from after the clock starts is like computing features after the prediction time: the model looks brilliant and the result is meaningless. The fix is the same discipline: everything used at time zero must be knowable at time zero.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="ccw">
+    <h2>4. Grace periods and clone–censor–weight</h2>
+    <p class="point">When a strategy allows treatment to start any time within a window, people are compatible with both strategies at time zero; cloning them, censoring each clone when it deviates and weighting for that censoring keeps time zero aligned.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A <strong>grace period</strong> is the window in which a strategy may begin (here 48 hours), as real trials and real clinicians allow. At time zero, nobody’s strategy is yet revealed, so: <strong>clone</strong> each patient into both arms; <strong>censor</strong> a clone when its data stop matching its strategy (a “start within 48 h” clone not started by 48 h; a “no start” clone that starts within 48 h); <strong>weight</strong> the remaining clones by the inverse probability of staying uncensored, given measured prognostic factors.</dd>
+      <dt>Why it matters</dt>
+      <dd>It solves immortal time without throwing away the early deaths: a patient who dies at 20 hours without treatment is consistent with both strategies and counts as an event in both. Censoring is artificial and depends on prognosis (sicker patients are less often started), so without the weights it creates selection bias of its own.</dd>
+      <dt>How to read it</dt>
+      <dd>Check that the paper says what happened to deaths during the grace period, how censoring weights were modelled (with time-varying covariates such as SOFA), how extreme the weights got, and that confidence intervals come from a bootstrap, because each person appears twice.</dd>
+      <dt>What a change means</dt>
+      <dd>If the unweighted and weighted clone analyses differ a lot, censoring was strongly related to prognosis, and the answer now leans heavily on the censoring model. A longer grace period means more censoring and more weight on that model.</dd>
+    </dl>
+
+    <div class="widget" data-widget="time-zero">
+      <div class="widget-title">Start the clock four ways</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Anticoagulation here does nothing. Step through the four analyses and watch the risk ratio: the first two make a useless drug look protective. Then slide “passed over” upwards: clone–censor breaks once censoring depends on severity, and the weights repair it.</p>
+    </div>
+
+    <pre><code>library(dplyr)
+# d: one row per patient; t_start = hours to therapeutic anticoagulation (NA if never),
+#    t_end = hours to death or end of follow-up, died = 0/1
+arm1 &lt;- d |&gt; mutate(arm = "start48",
+          cens  = (is.na(t_start) | t_start &gt; 48) &amp; t_end &gt; 48,
+          t_out = ifelse(cens, 48, t_end), ev = ifelse(cens, 0, died))
+arm0 &lt;- d |&gt; mutate(arm = "no48",
+          cens  = !is.na(t_start) &amp; t_start &lt;= 48,
+          t_out = ifelse(cens, t_start, t_end), ev = ifelse(cens, 0, died))
+clones &lt;- bind_rows(arm1, arm0)
+# next: split time, model P(censored) from time-varying SOFA, bleeding risk etc.,
+# weight by 1 / cumulative P(uncensored), weighted cumulative incidence, bootstrap by id</code></pre>
+    <p>The first block makes the “start within 48 h” clones: censored at 48 hours if still alive and not started. The second makes the “no start” clones: censored the moment treatment starts within the window. Deaths before 48 hours without treatment stay as events in both. The weighting step is the same machinery as IPW in Lecture 4.3, applied to censoring.</p>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Using a landmark at 48 hours instead (“compare those treated by 48 h with those not, among survivors to 48 h”) and calling it the same thing. It is valid but answers a different question, in a different population: it excludes the patients who die early, who in the ICU are many and the sickest. Say which estimand you chose, and why.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Surgery in older lung cancer patients</div>
+      <p>Maringe and colleagues (2020) estimated the effect of major surgery within six months of diagnosis on 1-year survival in English patients aged 70–89 with early-stage lung cancer. Surgery cannot happen on the day of diagnosis, so a naive comparison hands the operated group guaranteed survival. The naive Kaplan–Meier difference in 1-year survival was 22 percentage points; cloning without weights gave 17; cloning with weights for the informative censoring gave 11, still a benefit but half the naive figure. The same three steps as the widget, on real data, with R and Stata code: a good tutorial for Project 5A.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="sequential">
+    <h2>5. Sequential trials</h2>
+    <p class="point">When people become eligible again and again (every day without treatment, every clinic visit), emulate a new trial at each eligible moment and pool them.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Start a trial at each time point (each hour block, day or month): include everyone eligible at that moment, classify them as initiating or not, and follow them. A person not treated today may be a non-initiator in today’s trial and an initiator in next week’s. Pool the trials, adjusting for the trial start time.</dd>
+      <dt>Why it matters</dt>
+      <dd>It uses all the data without picking one arbitrary eligible moment per person, and it handles questions like “start now versus wait” naturally. Danaei and colleagues (2013) emulated sequential trials of statin initiation for primary prevention in UK primary-care records: initiators against non-initiators gave a coronary heart disease HR of 0.89 (95% CI 0.73–1.09), whereas a conventional current-versus-never-user comparison gave 1.31, a reversal they attributed to confounding.</dd>
+      <dt>How to read it</dt>
+      <dd>The same person appears in many trials, so use robust or bootstrap standard errors. Check how many trials contribute and whether the effect varies by trial start (for example by time since AF onset).</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Choosing one eligible moment per person after looking at their data (“their first visit with a high reading that was followed by treatment”). That uses the future to define eligibility. Either fix the rule in advance (the first eligible moment) or use all eligible moments as sequential trials.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="itt">
+    <h2>6. Intention-to-treat and per-protocol analogues</h2>
+    <p class="point">Observational data have no randomisation record, so the intention-to-treat effect becomes “initiating versus not”, and the per-protocol effect needs adherence handled with weights.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The <strong>ITT analogue</strong> compares people by the strategy they began at time zero, whatever they did later. The <strong>per-protocol analogue</strong> compares people as if they had followed their strategy throughout: censor at deviation, and weight by the inverse probability of continuing to adhere, given time-varying factors.</dd>
+      <dt>Why it matters</dt>
+      <dd>Clinicians and patients usually want the per-protocol answer (“what if I take it as intended?”). But stopping is often driven by prognosis (bleeding, a procedure, deterioration), so naive censoring at stopping is biased, and the weights must capture why people deviate.</dd>
+      <dt>How to read it</dt>
+      <dd>When strategies have a grace period, an ITT analogue is not well defined, because treatment is not decided at time zero; clone–censor–weight is a per-protocol design. Say this plainly rather than labelling the result “ITT”.</dd>
+      <dt>What a change means</dt>
+      <dd>An ITT-analogue risk ratio of 0.95 alongside a per-protocol one of 0.80 suggests that many stopped or switched, diluting the effect. Before believing the larger effect, look at the adherence weights: if they are extreme, the per-protocol estimate is fragile.</dd>
+    </dl>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>A gym membership. ITT asks what buying the membership does for your fitness; per-protocol asks what going three times a week does. The second is the more interesting question, but the people who keep going differ from those who quit.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="limits">
+    <h2>7. What emulation cannot fix, and how to report it</h2>
+    <p class="point">Target trial emulation fixes design errors; it does nothing for unmeasured confounding, poorly measured treatments or outcomes, or missing overlap.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The emulation’s assignment row is an assumption: no unmeasured confounding given the baseline covariates. In the ICU, the doctor’s judgement of bleeding risk and frailty drives anticoagulation and is only partly in the record. Treatment and outcome misclassification (dose category, stroke codes) and positivity (Lecture 4.4) remain too.</dd>
+      <dt>Why it matters</dt>
+      <dd>A clean protocol table can make a confounded study look trial-like. Reviewers now expect the emulation label to come with a frank list of where the emulation departs from the trial, and with quantitative bias analysis.</dd>
+      <dt>How to read it</dt>
+      <dd>Benchmarks help: if your emulation of a question already answered by a trial reproduces the trial result, trust in the new question rises (Lecture 5.9). Negative-control outcomes, which the treatment cannot plausibly affect, detect residual confounding. E-values (Lecture 2.13) say how strong an unmeasured confounder would need to be.</dd>
+      <dt>What a change means</dt>
+      <dd>An E-value of 1.3 for your main result means quite modest unmeasured confounding by indication could explain it; 3 would take a strong confounder. In the ICU, with judgement-driven prescribing, even large E-values should be argued, not assumed.</dd>
+    </dl>
+
+    <div class="callout key">
+      <div class="callout-title">Reporting: the TARGET guideline</div>
+      <p><strong>TARGET</strong> (Transparent Reporting of Observational Studies Emulating a Target Trial) was published in 2025, simultaneously in <em>JAMA</em> and <em>The BMJ</em>, after an EQUATOR-style consensus process. Its 21-item checklist asks authors to label the study as an emulation, state the causal question, specify the target trial protocol and how each component was emulated, and report estimates with sensitivity analyses. Its first version covers emulations of individually randomised, parallel-group trials that adjust for baseline confounding; use it as the skeleton of the Project 5A paper.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>“We emulated a target trial, so our estimate is causal.” The label describes the design discipline, not the strength of the evidence. A well-aligned emulation with heavy confounding by indication is still confounded. The right claim is narrower: the time-related biases were designed out; residual confounding is assessed in the bias analysis.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>A study of ICU patients with AF compares those “ever anticoagulated during the stay” with those never anticoagulated, with follow-up from ICU admission. Mortality is 40% lower in the anticoagulated. What is your first concern, and how would you redesign?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Immortal time: to be “ever anticoagulated” a patient must survive until the start, and the time before that start is credited to the treated. The sickest die early and fall into the untreated group by default. Redesign as a target trial: time zero at AF onset, strategies “start within X hours” versus “do not”, and clone–censor–weight (or sequential trials), so both groups start counting at the same moment.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Your emulation requires eligible patients to have “at least 24 hours of ECG data after AF onset” to confirm sustained AF. What is wrong, and what is a better rule?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Eligibility now depends on the future: patients who die or leave the ICU within 24 hours are excluded, which selects on survival. Use only information available at time zero (for example, AF on the 12-lead ECG at onset), or move time zero to 24 hours and accept that the question becomes one about patients alive and in AF at 24 hours.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>In your clone–censor analysis, the unweighted risk ratio is 0.78 and the weighted one 0.97. Which do you report and what does the difference tell you?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Report the weighted estimate as primary: the artificial censoring is related to prognosis (sicker patients are less often started, so they are censored from the “start” arm), and the weights correct for that. The big gap tells you that censoring is strongly informative, so the result depends on a good censoring model. Show the weight distribution and check robustness to how severity is modelled.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A colleague says target trial emulation is pointless because it still cannot remove unmeasured confounding. How do you respond?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>True, it cannot, but it removes a separate set of biases that are entirely self-inflicted, such as immortal time, prevalent-user bias and selection on the future, which are often larger than residual confounding. The hormone therapy reanalysis is the classic illustration. Unmeasured confounding is then handled honestly with negative controls, benchmarking and quantitative bias analysis.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Why is a bootstrap needed for confidence intervals in a clone–censor–weight analysis?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Each patient appears in both arms as two clones, so the rows are not independent, and the weights are themselves estimated. Resampling patients (not rows) and repeating the whole cloning, censoring and weighting in each resample gives intervals that reflect both.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Hernán &amp; Robins, <em>Causal Inference: What If</em> (Chapman &amp; Hall/CRC, 2020; free online), chapter 22 on target trial emulation, and chapters 12 and 17 on weighting and censoring.</li>
+      <li>Hernán &amp; Robins, “Using big data to emulate a target trial when a randomized trial is not available”, <em>American Journal of Epidemiology</em> (2016).</li>
+      <li>Hernán, Sauer, Hernández-Díaz, Platt &amp; Shrier, “Specifying a target trial prevents immortal time bias and other self-inflicted injuries in observational analyses”, <em>Journal of Clinical Epidemiology</em> (2016).</li>
+      <li>Hernán et al., “Observational studies analyzed like randomized experiments: an application to postmenopausal hormone therapy and coronary heart disease”, <em>Epidemiology</em> (2008).</li>
+      <li>Danaei, García Rodríguez, Fernández Cantero, Logan &amp; Hernán, “Observational data for comparative effectiveness research: an emulation of randomised trials of statins and primary prevention of coronary heart disease”, <em>Statistical Methods in Medical Research</em> (2013).</li>
+      <li>Maringe et al., “Reflection on modern methods: trial emulation in the presence of immortal-time bias. Assessing the benefit of major surgery for elderly lung cancer patients using observational data”, <em>International Journal of Epidemiology</em> (2020).</li>
+      <li>Cashin, Hansford, Hernán et al., “Transparent reporting of observational studies emulating a target trial: the TARGET Statement”, <em>JAMA</em> and <em>BMJ</em> (2025); checklist and explanation at target-guideline.org.</li>
+      <li>Johnson et al., “MIMIC-IV, a freely accessible electronic health record dataset”, <em>Scientific Data</em> (2023), and the MIMIC-IV and MIMIC-IV-ECG documentation on PhysioNet.</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="4-04-doubly-robust-tmle-ml.html"><small>Previous</small>4.4 Doubly robust estimation, TMLE and ML</a>
+    <a class="next" href="4-06-difference-in-differences.html"><small>Next</small>4.6 Difference-in-differences</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

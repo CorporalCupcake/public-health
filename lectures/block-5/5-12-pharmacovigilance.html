@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>5.12 Pharmacovigilance · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/5-12.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-5">Block 5</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 5.12</p>
+  <h1>Pharmacovigilance: spontaneous reporting, disproportionality analysis, signal detection</h1>
+  <div class="lecture-meta">
+    <span>Block 5 · Pharmacoepidemiology, real-world evidence, regulatory science and AI evaluation</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>Trials are too small and too short to find rare or delayed harms. Most new drug safety problems are first noticed in reports from clinicians and patients. Pharmacovigilance turns millions of these reports into a short list of <em>signals</em>: possible new risks worth a closer look. Lecture 2.16 introduced the reporting odds ratio. This lecture covers what makes reports misleading, why small counts need Bayesian shrinkage, how a signal is validated and acted on, and where active surveillance and machine learning now fit. A signal is a reason to investigate, never a finding.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#systems">Spontaneous reporting systems</a></li>
+      <li><a href="#drivers">What drives reporting, beyond the drug</a></li>
+      <li><a href="#shrinkage">Small counts and Bayesian shrinkage</a></li>
+      <li><a href="#masking">Masking and other traps in the database</a></li>
+      <li><a href="#signals">From signal to action</a></li>
+      <li><a href="#active">Active surveillance and machine learning</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="systems">
+    <h2>1. Spontaneous reporting systems</h2>
+    <p class="point">A spontaneous reporting system collects case reports of suspected adverse reactions; it tells you that harms happen, not how often.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Clinicians, patients and manufacturers send reports of a suspected drug–event link to a national centre. Manufacturers are legally required to report; health professionals and patients mostly report voluntarily. Each report holds the drugs, the events (coded in MedDRA), and some patient detail and narrative. National databases feed the WHO global database, VigiBase, run by the Uppsala Monitoring Centre (UMC).</dd>
+      <dt>Why it matters</dt>
+      <dd>Reports cover every patient on every drug, from launch onwards, at low cost. They are the main way rare, unexpected harms are first noticed, especially harms that a clinician recognises as unusual.</dd>
+      <dt>How to read it</dt>
+      <dd>There is no denominator. You know how many reports mention a drug and event, but not how many people took the drug, nor how many events went unreported. Read counts as “this has been seen”, not as a rate.</dd>
+    </dl>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>System</th><th>Run by</th><th>Notes (as of late 2026)</th></tr></thead>
+        <tbody>
+          <tr><td><strong>VigiBase</strong></td><td>WHO / UMC</td><td>More than 40 million reports from over 160 countries</td></tr>
+          <tr><td><strong>FAERS, now AEMS</strong></td><td>US FDA</td><td>In March 2026 the FDA began merging FAERS, the vaccine system VAERS and its other reporting systems into one Adverse Event Monitoring System (AEMS)</td></tr>
+          <tr><td><strong>EudraVigilance</strong></td><td>EMA</td><td>Reports for medicines authorised in the European Economic Area</td></tr>
+          <tr><td><strong>Saudi Vigilance</strong></td><td>SFDA National Pharmacovigilance Centre</td><td>Centre set up in 2009; online reporting for professionals, patients and companies</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Comparing raw report counts between drugs. A drug with 3,000 reports of bleeding is not “more dangerous” than one with 300. It may have ten times as many users, be newer, or have been in the news. Counts reflect use and reporting behaviour as much as risk.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>A complaints box. A spike in complaints about one dish tells you to check the kitchen. It does not tell you what share of diners got ill, because most never write in.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">In the Gulf</div>
+      <p>Saudi reporting is growing but, as everywhere, a small fraction of reactions are reported. Most new drugs reach Saudi Arabia after years of use elsewhere (Lecture 5.11), so VigiBase usually holds far more reports on them than the national database. The Saudi data matter most for questions the global data cannot answer: local prescribing patterns, products used mainly in the region, and reactions that may differ by genetic background.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="drivers">
+    <h2>2. What drives reporting, beyond the drug</h2>
+    <p class="point">Whether a reaction is reported depends on how serious, new and newsworthy it seems, so reporting is biased in predictable ways.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Three forces shape the database. <strong>Under-reporting</strong>: only a small and unknown share of reactions are ever reported, and the share varies by drug and event. <strong>Stimulated (notoriety) reporting</strong>: publicity, a regulatory warning or a lawsuit makes reports surge. <strong>Duplicates</strong>: the same case reported by the doctor, the patient and the company.</dd>
+      <dt>Why it matters</dt>
+      <dd>Disproportionality compares reporting patterns, not risks. Anything that changes how one drug–event pair is reported changes its ratio, even if the true risk is unchanged.</dd>
+      <dt>How to read it</dt>
+      <dd>Look at when reports arrived. A burst of reports just after a media story, mostly from lawyers or consumers, with thin clinical detail, points to stimulated reporting. Reports from clinicians, with dates and rechallenge information, are worth more.</dd>
+      <dt>What a change means</dt>
+      <dd>A ratio that doubles in the month after a safety warning tells you about the warning, not about the drug.</dd>
+    </dl>
+
+    <div class="callout example">
+      <div class="callout-title">Example · The Weber effect</div>
+      <p>In 1984 Weber described reports for anti-inflammatory drugs in the UK rising after launch, peaking around the end of the second year, then falling. This pattern became a standard warning: compare a new drug with an old one and the new drug looks worse. Hoffman and colleagues (2014) looked at FAERS reports for 62 drugs approved in 2006–2010 and found little evidence that this pattern still holds. The broader lesson stands: time since launch and publicity change reporting, so check time trends before comparing drugs.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Assuming under-reporting is the same for every drug, so that it cancels out. It does not. Serious, unusual reactions to new drugs are reported far more than common, mild reactions to old ones. That is why disproportionality is a screening tool, not a measure of relative risk.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="shrinkage">
+    <h2>3. Small counts and Bayesian shrinkage</h2>
+    <p class="point">When a pair has only one or two reports, its observed-to-expected ratio is mostly noise; shrinkage pulls it towards 1 until the reports pile up.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Disproportionality compares <em>O</em>, the reports for a drug–event pair, with <em>E</em>, the number expected if drug and event were unrelated. E is the drug’s total reports times the event’s total reports, divided by all reports. Lecture 2.16 used the PRR and ROR. With millions of pairs, many have tiny E, so one report gives a huge ratio. Bayesian methods add a little prior information that shrinks ratios built on few reports.</dd>
+      <dt>Why it matters</dt>
+      <dd>Screening millions of pairs is a massive multiple-testing problem. Without shrinkage, the top of the list fills with single-report pairs that are chance. Shrinkage ranks pairs by how sure we are of an excess, not by how big the raw ratio is.</dd>
+      <dt>How to read it</dt>
+      <dd>The two widely used methods report a shrunk estimate and a lower bound. UMC’s <strong>information component</strong> (IC, from the BCPNN method) is on a log2 scale; a signal is screened in when the lower 95% bound, <strong>IC025</strong>, is above 0. The FDA’s <strong>multi-item gamma Poisson shrinker</strong> (MGPS) gives the empirical Bayes geometric mean (<strong>EBGM</strong>); a common screening rule is a lower 5% bound, <strong>EB05</strong>, of at least 2.</dd>
+      <dt>What a change means</dt>
+      <dd>An IC rising from 0.5 to 2 means reports went from about 1.4 to 4 times the expected number. A rising IC025 means the excess is becoming more certain as reports accumulate.</dd>
+    </dl>
+
+    <p>A simple form of the IC, with shrinkage built in, is the one formula worth remembering:</p>
+    <p>\[ \mathrm{IC} = \log_2 \frac{O + 0.5}{E + 0.5} \]</p>
+    <p>Adding 0.5 to both counts barely moves a pair with O = 40, E = 10. It drags a pair with O = 1, E = 0.05 from a ratio of 20 down to under 3.</p>
+
+    <div class="widget" data-widget="shrinkage">
+      <div class="widget-title">Shrinkage at work on ten drug–event pairs</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Start at 0.5, then slide to 0 and to 5. Watch the pairs with one or two reports (A, B, H), and count the real reactions found and false alarms raised. More shrinkage removes false alarms but starts to miss real reactions with few reports (C, then I).</p>
+    </div>
+
+    <p>In R, the <code>openEBGM</code> package implements MGPS. Each row of <code>dat</code> is one drug–event pair within a report (<code>var1</code> drug, <code>var2</code> event, <code>id</code> report).</p>
+<pre><code>library(openEBGM)
+proc &lt;- processRaw(dat, stratify = FALSE, zeroes = FALSE)  # counts O and E per pair
+squashed &lt;- squashData(proc)                               # compress pairs to speed fitting
+theta_init &lt;- data.frame(alpha1 = c(1, 2, 3), beta1 = c(1, 2, 3),
+                         alpha2 = c(2, 4, 5), beta2 = c(2, 4, 5),
+                         p = c(.1, .2, .3))                 # starting values for the prior
+hyper_estimate &lt;- autoHyper(squashed, theta_init = theta_init,
+                            zeroes = FALSE, squashed = TRUE, N_star = 1)
+ebout &lt;- ebScores(proc, hyper_estimate = hyper_estimate,
+                  quantiles = c(5, 95))                    # EBGM, EB05, EB95
+print(ebout, threshold = 2)                               # pairs with EB05 at or above 2</code></pre>
+    <p><code>processRaw</code> counts O and E for every pair. <code>autoHyper</code> fits a two-part gamma prior to all pairs at once; this is the “empirical” in empirical Bayes. <code>ebScores</code> then shrinks each pair towards that prior and returns EBGM with its 5% and 95% bounds.</p>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Thinking shrinkage removes bias. It only handles <em>chance</em> from small counts. A pair inflated by stimulated reporting or confounding by indication (Drug J in the widget) has plenty of reports, so shrinkage leaves it alone, and it still screens in.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>This is additive (Laplace) smoothing and empirical Bayes, the same idea as smoothing click-through rates for items with few impressions. The +0.5 is a fixed pseudo-count; MGPS learns the prior from all pairs, as hierarchical models do. Ranking by the lower bound rather than the point estimate is the same move as ranking by a lower confidence bound to avoid rewarding items with three lucky clicks.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="masking">
+    <h2>4. Masking and other traps in the database</h2>
+    <p class="point">Every ratio is relative to the rest of the database, so what else is in the database can hide or create a signal.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>Masking</strong>: when one drug is reported very often with an event, it inflates the background rate of that event. Other drugs with a real excess then look ordinary. <strong>Confounding by indication</strong> (Lecture 5.4) also works in reports: drugs for diabetes are reported with diabetic complications. <strong>Event coding</strong> matters too. The same harm split across several MedDRA terms can fall below every threshold.</dd>
+      <dt>Why it matters</dt>
+      <dd>A clean result does not mean no risk. Wang and colleagues (2010) showed that masking can hide real signals, especially for events dominated by one well-known drug.</dd>
+      <dt>How to read it</dt>
+      <dd>For an important null result, ask which drugs dominate the event’s reports, and re-run without them. Check whether grouping related MedDRA terms changes the picture. Compare against drugs with the same indication to reduce confounding by indication.</dd>
+    </dl>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Hidden by a famous neighbour</div>
+      <p>Suppose half of all rhabdomyolysis reports in a database name one statin that was in the news. A new lipid-lowering drug with a real but smaller excess now has a ratio near 1, because the expected count is computed from a background swollen by the famous statin. Exclude that statin’s reports, and the new drug’s excess appears. Report both analyses, and say why you did the second.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reading a disproportionality ratio as an odds ratio or relative risk for patients. Even a strong, shrunk, unmasked signal says only that this pair is reported more than expected <em>relative to other pairs</em>. Turning that into a risk needs a population study with a denominator.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="signals">
+    <h2>5. From signal to action</h2>
+    <p class="point">Statistical detection is the first of several steps; most of the work, and the decision, comes after it.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Signal management follows a fixed sequence, set out for the EU in EMA’s Good Pharmacovigilance Practices (GVP) Module IX. Detect a possible signal; validate it by reading the cases; prioritise by seriousness and public health impact; assess all the evidence; recommend action. Detection draws on spontaneous reports, the literature, studies and active surveillance.</dd>
+      <dt>Why it matters</dt>
+      <dd>Most statistical signals are closed at validation: duplicates, a known reaction, an obvious other cause, or cases that do not hold up. The ones that survive get a structured assessment, often with a population study (Lectures 5.2–5.5).</dd>
+      <dt>How to read it</dt>
+      <dd>At validation, look for timing that fits, improvement when the drug stopped (dechallenge), return when restarted (rechallenge), and no better explanation. A few well-documented cases can outweigh hundreds of thin ones.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · The signal management cycle</div>
+      <svg class="viz-svg" viewBox="0 0 640 200" role="img" aria-label="Five boxes in sequence: detection, validation, prioritisation, assessment, action. Inputs from spontaneous reports, literature, studies and active surveillance feed into detection. Under each box is its key question. A return arrow from action back to detection shows that monitoring continues and new data can reopen a signal.">
+        <defs><marker id="l512-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead"/></marker></defs>
+        <text x="8" y="16" class="viz-small viz-muted">Inputs: spontaneous reports, literature,</text>
+        <text x="8" y="31" class="viz-small viz-muted">studies, active surveillance</text>
+        <line x1="40" y1="38" x2="40" y2="80" class="edge" marker-end="url(#l512-arrow)"/>
+
+        <text x="360" y="54" text-anchor="middle" class="viz-small colour s4">Keep monitoring: new data can reopen or close a signal</text>
+        <path d="M580,82 L580,62 L100,62 L100,80" class="edge" style="fill:none" marker-end="url(#l512-arrow)"/>
+
+        <g class="s1">
+          <rect x="4" y="84" width="112" height="40" rx="6" class="node-fill"/>
+        </g>
+        <g class="s5">
+          <rect x="134" y="84" width="112" height="40" rx="6" class="node-fill"/>
+          <rect x="264" y="84" width="112" height="40" rx="6" class="node-fill"/>
+          <rect x="394" y="84" width="112" height="40" rx="6" class="node-fill"/>
+        </g>
+        <g class="s3">
+          <rect x="524" y="84" width="112" height="40" rx="6" class="node-fill"/>
+        </g>
+        <g text-anchor="middle" class="viz-bold">
+          <text x="60" y="109">Detection</text>
+          <text x="190" y="109">Validation</text>
+          <text x="320" y="109">Prioritisation</text>
+          <text x="450" y="109">Assessment</text>
+          <text x="580" y="109">Action</text>
+        </g>
+        <g>
+          <line x1="116" y1="104" x2="132" y2="104" class="edge" marker-end="url(#l512-arrow)"/>
+          <line x1="246" y1="104" x2="262" y2="104" class="edge" marker-end="url(#l512-arrow)"/>
+          <line x1="376" y1="104" x2="392" y2="104" class="edge" marker-end="url(#l512-arrow)"/>
+          <line x1="506" y1="104" x2="522" y2="104" class="edge" marker-end="url(#l512-arrow)"/>
+        </g>
+        <g text-anchor="middle" class="viz-small viz-muted">
+          <text x="60" y="146">More reports</text>
+          <text x="60" y="161">than expected?</text>
+          <text x="60" y="176">IC025, EB05</text>
+          <text x="190" y="146">Real cases?</text>
+          <text x="190" y="161">Duplicates?</text>
+          <text x="190" y="176">Other causes?</text>
+          <text x="320" y="146">How serious?</text>
+          <text x="320" y="161">How many exposed?</text>
+          <text x="320" y="176">Already known?</text>
+          <text x="450" y="146">All evidence:</text>
+          <text x="450" y="161">studies, mechanism,</text>
+          <text x="450" y="176">dose, rechallenge</text>
+          <text x="580" y="146">Label change,</text>
+          <text x="580" y="161">letter to doctors,</text>
+          <text x="580" y="176">study, or none</text>
+        </g>
+      </svg>
+      <figcaption>A simplified version of the GVP Module IX steps (the EU adds a confirmation step between validation and prioritisation). Detection is the only step that is mostly statistical.</figcaption>
+    </figure>
+
+    <div class="callout example">
+      <div class="callout-title">Example · SGLT2 inhibitors and ketoacidosis</div>
+      <p>SGLT2 inhibitors lower glucose by making the kidneys excrete it. In May 2015 the FDA issued a safety communication after finding 20 FAERS reports of diabetic ketoacidosis between March 2013 and June 2014. Many cases were unusual: blood glucose was only mildly raised, so the ketoacidosis was easy to miss. In December 2015, with 73 cases, the labels gained a ketoacidosis warning. The signal came from clinicians noticing an atypical picture and reporting it; cohort studies followed to quantify the risk.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Skipping validation because the statistics are strong. A high EB05 built on duplicated, lawyer-filed reports with no clinical detail is weaker evidence than five case reports with positive rechallenge. Always read the cases.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Smoke alarms and fire investigators. The alarm (detection) is cheap and sensitive, and it often goes off for toast. The investigator (validation and assessment) decides whether there is a fire and what to do.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="active">
+    <h2>6. Active surveillance and machine learning</h2>
+    <p class="point">Active surveillance answers the questions reports cannot, with denominators from EHR and claims data; machine learning mostly helps with the volume of reports.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The FDA’s <strong>Sentinel</strong> system queries claims and EHR data from partner organisations in a common data model. Its <strong>ARIA</strong> tools (Active Risk Identification and Analysis) run standard cohort and self-controlled analyses (Lecture 5.5) quickly. By law, the FDA must consider whether ARIA could answer a safety question before it requires a company to run a post-marketing study. In the EU, DARWIN EU plays a similar role (Lecture 5.11). Machine learning and natural language processing (NLP) are now used to read case narratives, find duplicates and triage reports.</dd>
+      <dt>Why it matters</dt>
+      <dd>Active surveillance gives incidence and comparisons, so it can confirm or refute a signal from reports. The 2026 merger of FDA reporting systems into AEMS, and its use of AI, means more of the first pass will be automated.</dd>
+      <dt>How to read it</dt>
+      <dd>For an active surveillance result, apply the full Block 5 toolkit: new users, an active comparator, validated outcomes, time-related biases. For an ML triage tool, ask what it misses. Its sensitivity for <em>serious, unexpected</em> cases matters more than overall accuracy.</dd>
+    </dl>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Task</th><th>Example</th><th>What to check</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Duplicate detection</strong></td><td>UMC’s probabilistic record matching (vigiMatch)</td><td>Merged cases that were really different patients</td></tr>
+          <tr><td><strong>Reading narratives</strong></td><td>FDA’s InfoViP NLP tool for FAERS case narratives</td><td>Errors on drug names, dates, negation (“no rash”)</td></tr>
+          <tr><td><strong>Confirming a signal</strong></td><td>Sentinel ARIA analyses</td><td>Outcome validity in claims, comparator choice</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Judging an AI triage tool by overall accuracy. Most reports are non-serious and expected, so a tool can be 95% accurate while missing the rare serious case that matters. Ask for performance on serious, unlabelled reactions, checked against expert assessors, and for monitoring over time (Lecture 5.16).</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · From your cardiac background</div>
+      <p>A spontaneous-report signal of QT prolongation with a new antimicrobial is a classic case. Validation looks for cases with ECGs and timing that fit. Active surveillance then asks the population question: a self-controlled case series (Lecture 5.5) of ventricular arrhythmia or sudden death around exposure, in claims or EHR data. A hospital ECG database, like MIMIC-IV-ECG in Project 5A, could add measured QTc before and after starting the drug, which neither reports nor claims provide.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>Signal detection is anomaly detection under heavy, non-random label noise: the “labels” are reports shaped by publicity and habit. Treat a large language model reading narratives like any other model. Validate it against human coders on held-out cases, report recall by seriousness, and monitor it for drift as reporting patterns change.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>Drug X has 2 reports of a liver event where 0.2 were expected (ratio 10). Drug Y has 50 where 20 were expected (ratio 2.5). Which is the stronger signal?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Drug Y, on the statistics. Two reports could easily be chance, and shrinkage pulls X’s ratio well down. Y’s smaller excess rests on enough reports to be fairly sure it is real. Both still need validation: Y’s excess could come from stimulated reporting or confounding by indication.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>After a TV story, reports of hair loss with a drug triple in a month. What happens to its disproportionality, and what should you do?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The ratio rises, and shrinkage will not stop it because the counts are now large. Look at report dates relative to the story, who reported and how much clinical detail there is. If the question matters, answer it with a population study that has a denominator, not with more reports.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A new diabetes drug shows no pancreatitis signal. A colleague notices that one older drug accounts for most pancreatitis reports in the database. What do you do?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Suspect masking. Re-run the analysis excluding the dominant drug’s reports, and compare with other diabetes drugs to limit confounding by indication. Report both results. A null result from a database dominated by one drug is weak reassurance.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A manager wants to announce “1 in 500 patients on Drug Z get this reaction”, using reports divided by prescriptions. What is wrong?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Reports are an unknown and variable fraction of real cases, so this is a reporting rate, not an incidence. It could be off by a factor of ten or more, in either direction relative to other drugs. Incidence needs a cohort with complete outcome capture, such as a Sentinel or DARWIN EU study.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A vendor offers the SFDA an AI tool that triages incoming reports and “is 96% accurate”. What two things do you ask?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>First, its sensitivity for serious and unexpected reactions, checked against expert assessors on Saudi reports, including Arabic narratives. Overall accuracy is dominated by easy, non-serious cases. Second, how its performance will be monitored over time, since reporting patterns, drugs and language change.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Strom BL, Kimmel SE, Hennessy S (eds). <em>Pharmacoepidemiology</em>, 6th ed. Wiley-Blackwell, 2019: chapters on spontaneous reporting and signal detection.</li>
+      <li>Bate A, Lindquist M, Edwards IR, et al. A Bayesian neural network method for adverse drug reaction signal generation. <em>Eur J Clin Pharmacol</em> 1998;54:315–321.</li>
+      <li>DuMouchel W. Bayesian data mining in large frequency tables, with an application to the FDA spontaneous reporting system. <em>Am Stat</em> 1999;53:177–190.</li>
+      <li>Norén GN, Hopstadius J, Bate A. Shrinkage observed-to-expected ratios for robust and transparent large-scale pattern discovery. <em>Stat Methods Med Res</em> 2013;22:57–69.</li>
+      <li>Evans SJW, Waller PC, Davis S. Use of proportional reporting ratios (PRRs) for signal generation from spontaneous adverse drug reaction reports. <em>Pharmacoepidemiol Drug Saf</em> 2001;10:483–486.</li>
+      <li>Wang HW, Hochberg AM, Pearson RK, Hauben M. An experimental investigation of masking in the US FDA adverse event reporting system database. <em>Drug Saf</em> 2010;33:1117–1133.</li>
+      <li>Weber JCP. Epidemiology of adverse reactions to nonsteroidal antiinflammatory drugs. In: Rainsford KD, Velo GP (eds). <em>Advances in Inflammation Research</em>, vol. 6. Raven Press, 1984:1–7. Hoffman KB, et al. The Weber effect and the United States Food and Drug Administration’s Adverse Event Reporting System (FAERS): analysis of sixty-two drugs approved from 2006 to 2010. <em>Drug Saf</em> 2014;37:283–294.</li>
+      <li>EMA, <em>Guideline on good pharmacovigilance practices (GVP), Module IX: Signal management</em>.</li>
+      <li>US FDA, Drug Safety Communication on SGLT2 inhibitors and ketoacidosis (May 2015, updated December 2015); FDA Sentinel Initiative and ARIA pages; FDA announcement of the Adverse Event Monitoring System (March 2026).</li>
+      <li>Canida T, Ihrie J. openEBGM: an R implementation of the Gamma-Poisson shrinker data mining model. <em>R Journal</em> 2017;9(2):499–519.</li>
+      <li>Uppsala Monitoring Centre, VigiBase pages; SFDA National Pharmacovigilance Centre pages.</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="5-11-regulatory-science-hta.html"><small>Previous</small>5.11 Regulatory science and HTA</a>
+    <a class="next" href="5-13-prediction-models.html"><small>Next</small>5.13 Prediction models in health</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>4.6 Difference-in-differences · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/4-06.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-4">Block 4</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 4.6</p>
+  <h1>Difference-in-differences, including staggered adoption and event studies</h1>
+  <div class="lecture-meta">
+    <span>Block 4 · Causal inference and policy evaluation</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>Difference-in-differences (DiD) estimates a policy’s effect by asking how much more the treated group changed than a comparison group did. It needs no randomisation and no measured confounders, but it trades them for one strong, untestable assumption: without the policy, the two groups would have moved in parallel. When units adopt the policy at different times, the familiar regression with unit and year fixed effects can give the wrong answer, even the wrong sign, and newer estimators fix that. Project 4 (GCC sugary-drink taxes, five adopters at three dates, one never-taxed neighbour, annual data) is a staggered DiD with very few units, so every section here becomes a choice in its protocol.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#twobytwo">The 2×2 design and parallel trends</a></li>
+      <li><a href="#comparison">Choosing the comparison group</a></li>
+      <li><a href="#twfe">Two-way fixed effects and staggered adoption</a></li>
+      <li><a href="#modern">Heterogeneity-robust estimators</a></li>
+      <li><a href="#eventstudy">Event studies, pre-trends and anticipation</a></li>
+      <li><a href="#inference">Inference with few clusters</a></li>
+      <li><a href="#project4">Project 4 as a staggered DiD</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="twobytwo">
+    <h2>1. The 2×2 design and parallel trends</h2>
+    <p class="point">DiD subtracts the comparison group’s change from the treated group’s change; it is right only if the treated group would otherwise have changed by the same amount.</p>
+
+    \[ \widehat{\text{DiD}} = (\bar Y_{\text{T,post}} - \bar Y_{\text{T,pre}}) - (\bar Y_{\text{C,post}} - \bar Y_{\text{C,pre}}) \]
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Two groups, two periods. The first difference (before vs after) removes anything fixed about each group, such as one country always having a higher sugar supply than the other. The second difference (treated vs comparison) removes anything that hits both groups in the same year, such as a regional price shock or COVID-19. What is left is the effect, <em>if</em> nothing else changed differently in the treated group at the same time.</dd>
+      <dt>Why it matters</dt>
+      <dd>The identifying assumption is <strong>parallel trends</strong>: the treated group’s untreated potential outcome (Lecture 4.1) would have changed by the same amount as the comparison group’s. Levels can differ; changes cannot. The target is the <strong>ATT</strong>, the average effect on the treated units, not on everyone.</dd>
+      <dt>How to read it</dt>
+      <dd>A DiD of −4 kg per person per year means the taxed country’s supply fell 4 kg more than the comparison’s did over the same years. Ask first: what is the counterfactual line, and why should I believe it? The estimate is only as good as the answer.</dd>
+      <dt>What a change means</dt>
+      <dd>If the treated group was already drifting down 0.5 kg a year faster before the tax, a DiD averaging six post years against seven pre years absorbs about 0.5 × 6.5 ≈ 3 kg of that drift into the “effect”. Small differences in trend become large biases over long follow-up.</dd>
+    </dl>
+
+    <div class="widget" data-widget="did-2x2">
+      <div class="widget-title">The 2×2 DiD explorer</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Start with parallel trends: the estimate equals the truth. Then add a pre-trend gap and watch the bias grow. Finally press “Looks parallel, isn’t”: the pre-period is perfect, yet the estimate is wrong, because the trends part only after 2017.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>“The pre-trends are parallel, so the assumption holds.” Parallel trends is about the post-period counterfactual, which is never observed. Parallel pre-trends are <em>evidence</em> that the groups move together, not proof that they kept doing so after the policy date, when a co-intervention or a shock to one group can break it. Also, parallel trends depends on the scale: if it holds in levels it cannot also hold in logs when the groups start at different levels. Choose the scale (kg or log kg) on substantive grounds before you look.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · The classic 2×2</div>
+      <p>Card and Krueger (1994) compared fast-food employment in New Jersey, which raised its minimum wage in 1992, with neighbouring eastern Pennsylvania, which did not, surveying the same restaurants before and after. Employment did not fall in New Jersey relative to Pennsylvania. The design’s credibility rested on the argument that restaurants on either side of the border face the same economy.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Two runners on parallel treadmills set to slightly different speeds. Give one new shoes; the shoe effect is how much further that runner pulls ahead than the gap that was already opening. If someone also nudged that runner’s treadmill speed the same day, you cannot tell shoes from speed.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="comparison">
+    <h2>2. Choosing the comparison group</h2>
+    <p class="point">The comparison group is the whole design: pick the units whose untreated path is most believable as the treated group’s, and defend it with context, not just a pre-trend plot.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Three options in a staggered rollout: <strong>never-treated</strong> units (Kuwait), <strong>not-yet-treated</strong> units (Oman and Qatar before 2019, as controls for the 2017 adopters), and <strong>external</strong> units outside the policy region (non-GCC countries). Conditional parallel trends adds covariates (GDP per person, population growth) so that trends need only be parallel among similar units.</dd>
+      <dt>Why it matters</dt>
+      <dd>Each option fails differently. Never-treated units may differ for a reason (why did Kuwait not tax?). Not-yet-treated units may change behaviour in anticipation of their own tax. External units share fewer shocks. And DiD needs <strong>no spillovers</strong>: the policy must not change the comparison group’s outcome.</dd>
+      <dt>How to read it</dt>
+      <dd>A good comparison shares the treated group’s shocks (prices, migration, economic cycle) and none of its policy. Check pre-trends on the outcome and on a few covariates, and say what would break the comparison.</dd>
+      <dt>What a change means</dt>
+      <dd>If the estimate moves from −4 to −1 when you swap Kuwait for not-yet-treated GCC states, one comparison is wrong or effects differ by comparison; report both and explain which you trust.</dd>
+    </dl>
+
+    <div class="callout gulf">
+      <div class="callout-title">Gulf example · Spillovers in Project 4</div>
+      <p>Cross-border shopping (Saudis buying cheaper drinks in Kuwait or Bahrain before Bahrain’s tax) would push Kuwait’s supply up and inflate the effect. Re-exports matter for the secondary outcome: the UAE is a regional trade hub, so its Comtrade imports of sweetened drinks (HS 2202) include goods that leave again. Kuwait’s status must also be confirmed in week 46: a 2020 paper expected a tax in 2020, a 2025 report says there is still none.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Choosing the comparison by which one gives the best-looking pre-trend plot or the biggest effect. That is specification search, and pre-trends chosen this way are no longer evidence of anything (section 5). Pre-specify the comparison and the covariates, then show the alternatives as sensitivity analyses.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="twfe">
+    <h2>3. Two-way fixed effects and staggered adoption</h2>
+    <p class="point">With staggered adoption and effects that change over time, the standard regression with unit and year fixed effects uses already-treated units as controls and can badly misstate the average effect.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>Two-way fixed effects</strong> (TWFE) regresses the outcome on a treated-now indicator plus a dummy for each unit and each year. In a 2×2 it equals DiD exactly. With staggered timing, Goodman-Bacon (2021) showed it is a weighted average of every possible 2×2 in the data, including <strong>forbidden comparisons</strong>: late adopters treated as “treated” and early adopters, already taxed, used as “controls”.</dd>
+      <dt>Why it matters</dt>
+      <dd>If the early adopters’ effect is still growing, their change after the late adoption date contains effect, not just trend, and subtracting it biases the late comparison. The weights also favour units treated in the middle of the panel, and some treated unit-years get <em>negative</em> weight (de Chaisemartin and D’Haultfœuille 2020). With constant effects none of this matters; with dynamic effects it can flip the sign.</dd>
+      <dt>How to read it</dt>
+      <dd>Run the Goodman-Bacon decomposition (<code>bacondecomp::bacon()</code>): it lists each 2×2, its estimate and its weight. Much weight on “later vs earlier treated” with estimates unlike the clean ones is a red flag.</dd>
+      <dt>What a change means</dt>
+      <dd>A TWFE estimate of −2 beside clean estimates of −4 means the forbidden comparisons are pulling towards zero, the typical result when a tax’s effect builds as habits and product recipes change.</dd>
+    </dl>
+
+    <div class="widget" data-widget="twfe-stagger">
+      <div class="widget-title">Staggered adoption: TWFE vs the truth</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">With a constant effect all three numbers agree. Let the effect grow and TWFE falls behind; switch off the never-taxed unit and press “Sign flip”. The lower panel shows why: long-exposed unit-years, where the effect is largest, get small or negative weight.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Believing TWFE is safe because “it controls for unit and time”. The fixed effects are fine; the problem is which comparisons the single coefficient averages and with what weights. Even with no noise and perfect parallel trends, as in the widget, TWFE can be wrong.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>TWFE is OLS, and OLS weights observations by their leverage on the residualised regressor, not by policy relevance. After removing unit and year means, an early adopter in a late year looks “less treated than average”, so its residualised treatment can turn negative. It is the same reason a linear model fitted to heterogeneous data reports a slope no subgroup has.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="modern">
+    <h2>4. Heterogeneity-robust estimators</h2>
+    <p class="point">The modern estimators share one idea: only ever compare treated units with units that are not treated at that moment, then average the clean comparisons with weights you choose.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Estimator</th><th>Idea in one line</th><th>R</th></tr></thead>
+        <tbody>
+          <tr><td>Callaway &amp; Sant’Anna (2021)</td><td>Estimate a 2×2 for each adoption cohort and year (a group-time ATT) against never- or not-yet-treated units, then aggregate</td><td><code>did</code></td></tr>
+          <tr><td>Sun &amp; Abraham (2021)</td><td>An event-study regression with cohort × event-time interactions, so cohorts are never used as each other’s controls</td><td><code>fixest::sunab()</code></td></tr>
+          <tr><td>de Chaisemartin &amp; D’Haultfœuille (2020)</td><td>Compare units that switch with units that do not, period by period; handles treatment turning on and off</td><td><code>DIDmultiplegt</code></td></tr>
+          <tr><td>Borusyak, Jaravel &amp; Spiess (2024)</td><td>Fit unit and year effects on untreated observations only, impute each treated unit’s untreated outcome, average the differences</td><td><code>didimputation</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>All four assume parallel trends (and no anticipation) and differ mainly in which controls they use and how they weight. With a never-treated group and balanced data they usually agree closely.</dd>
+      <dt>Why it matters</dt>
+      <dd>Reviewers now expect one of these whenever timing is staggered, plus TWFE for comparison. A large gap between them is itself a finding: effects differ across cohorts or over time.</dd>
+      <dt>How to read it</dt>
+      <dd>Report the aggregation you chose: a simple overall ATT, an event-study path (effect by years since adoption), or effects by cohort. In Project 4 the cohort view matters: the 2017 and 2019 adopters may have responded differently.</dd>
+      <dt>What a change means</dt>
+      <dd>Switching the control group from never-treated to not-yet-treated changes which units carry the counterfactual. Stable results across both are reassuring; diverging ones point to anticipation or a poor never-treated unit.</dd>
+    </dl>
+
+    <pre><code>library(did)
+cs &lt;- att_gt(yname = "log_sugar", tname = "year", idname = "id",
+             gname = "first_tax_year",       # 0 = never taxed (Kuwait)
+             control_group = "notyettreated",
+             data = p4)
+aggte(cs, type = "simple")                   # one overall ATT
+es &lt;- aggte(cs, type = "dynamic")            # effect by years since tax
+ggdid(es)                                    # event-study plot</code></pre>
+    <p><code>att_gt</code> estimates one 2×2 per cohort and year; <code>idname</code> must be a numeric country id. <code>aggte</code> averages them into an overall effect or an event-study path. With six countries, read its default standard errors with suspicion (section 6).</p>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Thinking the new estimators rescue a bad comparison. They fix the <em>weighting</em> problem of TWFE, nothing else. If Kuwait’s trend would not have matched Saudi Arabia’s, Callaway–Sant’Anna is just as biased as TWFE.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>The imputation estimator is “train on controls, predict the counterfactual”: fit a model of the untreated outcome on untreated cells only, predict treated cells, and average treated-minus-predicted. Synthetic control (Lecture 4.8) is the same move with a different model, and the T-learner in Lecture 4.4 is its individual-level cousin.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="eventstudy">
+    <h2>5. Event studies, pre-trends and anticipation</h2>
+    <p class="point">An event-study plot shows the effect for each year relative to adoption; the years before adoption are a falsification check and the years after are the effect’s path.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Coefficients for each <strong>event time</strong> (years since adoption). <strong>Leads</strong> (negative event times) estimate “effects” before the policy; <strong>lags</strong> (zero and positive) estimate effects after. One period, usually −1, is the <strong>reference</strong> and fixed at zero.</dd>
+      <dt>Why it matters</dt>
+      <dd>It shows whether the effect is immediate, builds, or fades, and whether treated and control units were already diverging. A single DiD number hides both.</dd>
+      <dt>How to read it</dt>
+      <dd>Leads should hover around zero with no drift. Lags trace the effect. Late lags rest on fewer cohorts (only the 2017 adopters reach five years after), so their intervals widen and their composition changes.</dd>
+      <dt>What a change means</dt>
+      <dd>Leads drifting steadily downward towards −1 suggest a pre-existing trend or anticipation, and the lags inherit it. A spike at −1 then a drop at 0 is the classic stockpiling signature.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · How to read an event-study plot</div>
+      <svg class="viz-svg" viewBox="0 0 640 330" role="img" aria-label="Event-study plot with event time from minus 5 to plus 4. Leads from minus 5 to minus 2 hover around zero with confidence intervals covering zero. The reference year minus 1 is a hollow point fixed at zero. A dashed vertical line between minus 1 and 0 marks when the tax starts. Lags from 0 to 4 fall from about minus 1.5 to minus 5, with confidence intervals that widen at later lags.">
+        <!-- y grid and ticks: y(v) = 140 - 11 v -->
+        <g class="viz-tick" text-anchor="end">
+          <text x="68" y="122">2</text><text x="68" y="144">0</text><text x="68" y="166">−2</text><text x="68" y="188">−4</text><text x="68" y="210">−6</text>
+        </g>
+        <line x1="76" y1="118" x2="610" y2="118" class="viz-grid"/>
+        <line x1="76" y1="162" x2="610" y2="162" class="viz-grid"/>
+        <line x1="76" y1="184" x2="610" y2="184" class="viz-grid"/>
+        <line x1="76" y1="206" x2="610" y2="206" class="viz-grid"/>
+        <line x1="76" y1="140" x2="610" y2="140" class="viz-axis"/>
+        <line x1="76" y1="72" x2="76" y2="240" class="viz-axis"/>
+        <text x="14" y="160" class="viz-label" text-anchor="middle" transform="rotate(-90 14 160)">Effect estimate</text>
+        <!-- policy line -->
+        <line x1="340" y1="64" x2="340" y2="240" class="edge accent" stroke-dasharray="5 4"/>
+        <text x="346" y="250" class="viz-small colour s1">tax starts</text>
+        <!-- leads: x = 106 + (e+5)*52 -->
+        <g class="s5">
+          <line x1="106" y1="115.8" x2="106" y2="155.4" class="stroke" stroke-width="2"/><circle cx="106" cy="135.6" r="5" class="dot"/>
+          <line x1="158" y1="125.7" x2="158" y2="160.9" class="stroke" stroke-width="2"/><circle cx="158" cy="143.3" r="5" class="dot"/>
+          <line x1="210" y1="118" x2="210" y2="151" class="stroke" stroke-width="2"/><circle cx="210" cy="134.5" r="5" class="dot"/>
+          <line x1="262" y1="126.8" x2="262" y2="157.6" class="stroke" stroke-width="2"/><circle cx="262" cy="142.2" r="5" class="dot"/>
+          <circle cx="314" cy="140" r="5.5" class="node"/>
+        </g>
+        <!-- lags -->
+        <g class="s1">
+          <line x1="366" y1="140" x2="366" y2="173" class="stroke" stroke-width="2"/><circle cx="366" cy="156.5" r="5" class="dot"/>
+          <line x1="418" y1="154.3" x2="418" y2="191.7" class="stroke" stroke-width="2"/><circle cx="418" cy="173" r="5" class="dot"/>
+          <line x1="470" y1="165.3" x2="470" y2="207.1" class="stroke" stroke-width="2"/><circle cx="470" cy="186.2" r="5" class="dot"/>
+          <line x1="522" y1="168.6" x2="522" y2="217" class="stroke" stroke-width="2"/><circle cx="522" cy="192.8" r="5" class="dot"/>
+          <line x1="574" y1="166.4" x2="574" y2="223.6" class="stroke" stroke-width="2"/><circle cx="574" cy="195" r="5" class="dot"/>
+        </g>
+        <!-- x axis -->
+        <line x1="76" y1="240" x2="610" y2="240" class="viz-axis"/>
+        <g class="viz-tick" text-anchor="middle">
+          <text x="106" y="268">−5</text><text x="158" y="268">−4</text><text x="210" y="268">−3</text><text x="262" y="268">−2</text><text x="314" y="268">−1</text>
+          <text x="366" y="268">0</text><text x="418" y="268">1</text><text x="470" y="268">2</text><text x="522" y="268">3</text><text x="574" y="268">4</text>
+        </g>
+        <text x="343" y="290" class="viz-label" text-anchor="middle">Years relative to the tax (event time)</text>
+        <!-- annotations -->
+        <text x="106" y="40" class="viz-small viz-bold colour s5">Leads: “effects” before the tax</text>
+        <text x="106" y="56" class="viz-small viz-muted">want: near zero, no drift</text>
+        <text x="366" y="40" class="viz-small viz-bold colour s1">Lags: the effect, year by year</text>
+        <text x="366" y="56" class="viz-small viz-muted">bars = 95% CIs; widen as cohorts drop out</text>
+        <line x1="296" y1="198" x2="311" y2="147" class="edge"/>
+        <text x="92" y="200" class="viz-small">Reference year (−1): fixed at 0;</text>
+        <text x="92" y="216" class="viz-small">every point is a contrast with it</text>
+        <text x="20" y="318" class="viz-small viz-muted">Illustrative numbers. Anticipation would show as leads at −2 or −1 already moving down.</text>
+      </svg>
+      <figcaption>Read the leads first (is there a pre-trend?), then the reference year (is it a clean, unaffected year?), then the lags (shape of the effect, and how many cohorts each one rests on).</figcaption>
+    </figure>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>“The leads are not significant, so there is no pre-trend.” With six countries, pre-trend tests have little power, and Roth (2022) showed that keeping only studies that pass them can make the remaining bias <em>worse</em>. Better: ask how large a violation would overturn the result. Rambachan and Roth’s <code>HonestDiD</code> reports the effect’s interval when post-period trends may differ by up to some multiple of the worst pre-period difference. Also, TWFE event studies with staggered timing contaminate each lead with other periods’ effects (Sun and Abraham 2021): use a robust estimator for the plot too.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Anticipation</div>
+      <p>An excise tax is announced months before it starts, so retailers and households can stock up just before and buy less just after. Annual supply then rises in the last untaxed year and dips in the first taxed one, exaggerating the immediate effect. Fix it by making the reference period the last year before the announcement (shift the base back with <code>anticipation = 1</code> in <code>att_gt</code>), and treat the first year’s drop with caution.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="inference">
+    <h2>6. Inference with few clusters</h2>
+    <p class="point">Policy varies by country, so errors must be clustered by country; with six countries the usual cluster-robust standard errors are far too small, and even the fixes are fragile.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Outcomes within a country are correlated over years, so the effective sample is closer to the number of countries than to country-years. <strong>Cluster-robust standard errors</strong> handle this but need many clusters: they are known to under-cover with fewer than roughly 30–50 (Cameron and Miller 2015). The <strong>wild cluster bootstrap</strong> (Cameron, Gelbach and Miller 2008) resamples by flipping the signs of whole clusters’ residuals and does much better with few clusters.</dd>
+      <dt>Why it matters</dt>
+      <dd>Project 4 has six GCC countries, five treated and one never treated. A conventional clustered p-value of 0.01 could easily be 0.2 in truth. With very few treated or very few control clusters, MacKinnon and Webb (2017) showed even the wild bootstrap can over- or under-reject badly.</dd>
+      <dt>How to read it</dt>
+      <dd>With six clusters, sign flips allow only \(2^6 = 64\) distinct bootstrap samples, so the p-value is coarse; Webb’s six-point weights give more. Report the bootstrap p-value and its weight type, and treat it as one strand of evidence.</dd>
+      <dt>What a change means</dt>
+      <dd>Adding non-GCC comparison countries raises the number of clusters (better inference) but weakens parallel trends (worse identification). That trade is the real decision, and it is why Project 4 also uses synthetic control with permutation inference (Lecture 4.8).</dd>
+    </dl>
+
+    <pre><code>library(fwildclusterboot)   # archived from CRAN in 2024: install from GitHub
+fit &lt;- lm(log_sugar ~ taxed + factor(country) + factor(year), data = p4)
+boottest(fit, param = "taxed", clustid = "country",
+         B = 9999, type = "webb")   # Webb weights for very few clusters</code></pre>
+    <p>This bootstraps the TWFE coefficient by country, imposing the null hypothesis, which behaves best with few clusters. It does not fix TWFE’s weighting problem (section 3); use it to show how much the conventional standard error understates uncertainty, and pair it with permutation tests.</p>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Clustering by country-year or not clustering at all because “there are 78 observations”. Thirteen years of six countries is not 78 independent pieces of information about the tax. The tax varies across six countries, and that is your sample size for the policy question.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Tasting six pots of soup, a spoonful a day for thirteen days. You have 78 spoonfuls, but if you want to know whether a new spice works, you have six pots.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="project4">
+    <h2>7. Project 4 as a staggered DiD</h2>
+    <p class="point">Write the design as a grid of countries by years before you write any code: it shows the cohorts, the clean comparisons, the forbidden ones and the awkward cells.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Units: six GCC countries (plus optional non-GCC countries). Time: years in FAOSTAT’s food balance sheets. Outcome: sugar and sweetener supply per person (log scale if you expect proportional effects). Cohorts from Curriculum.md: Saudi Arabia and the UAE in 2017, Bahrain late in 2017, Oman and Qatar in 2019; Kuwait never.</dd>
+      <dt>Why it matters</dt>
+      <dd>Annual data with mid-year adoption means partly treated years. Saudi Arabia’s tax started in June 2017 and the UAE’s in October 2017, so 2017 is part-treated for both, and Bahrain’s 2017 is almost wholly untaxed. The December 2019 widening to all sweetened drinks in Saudi Arabia and the UAE is a second dose that a simple on/off coding ignores.</dd>
+      <dt>How to read it</dt>
+      <dd>Pre-specify the coding: first full taxed year as adoption (2018 for the 2017 adopters), or drop part-treated years. Show the other as a sensitivity analysis. Treat 2020 as a common shock that year effects absorb only if COVID-19 hit all six similarly.</dd>
+      <dt>What a change means</dt>
+      <dd>If moving adoption from 2017 to 2018 changes the estimate a lot, the first-year effect (or anticipation) is doing the work; report the event-study path rather than a single number.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · Project 4 adoption grid and the comparisons it allows</div>
+      <svg class="viz-svg" viewBox="0 0 640 318" role="img" aria-label="Grid of six GCC countries by year from 2010 to 2022. Saudi Arabia and the UAE are part-taxed in 2017 and taxed from 2018, with the scope widened at the end of 2019. Bahrain is taxed from 2018. Oman and Qatar are part-taxed in 2019 and taxed from 2020. Kuwait is never taxed. Oman and Qatar before 2019 are outlined as clean not-yet-taxed comparisons; Saudi Arabia, UAE and Bahrain from 2019 are outlined as forbidden comparisons.">
+        <g class="viz-tick" text-anchor="middle">
+          <text x="167" y="34">2010</text><text x="239" y="34">2012</text><text x="311" y="34">2014</text><text x="383" y="34">2016</text><text x="455" y="34">2018</text><text x="527" y="34">2020</text><text x="599" y="34">2022</text>
+        </g>
+        <g class="viz-small">
+          <text x="10" y="59">Saudi Arabia</text><text x="10" y="89">UAE</text><text x="10" y="119">Bahrain</text>
+          <text x="10" y="149">Oman</text><text x="10" y="179">Qatar</text><text x="10" y="209">Kuwait</text>
+        </g>
+        <!-- untaxed cells drawn as outline row backgrounds -->
+        <g class="s5">
+          <rect x="150" y="42" width="466" height="24" rx="3" class="node" stroke-width="1"/>
+          <rect x="150" y="72" width="466" height="24" rx="3" class="node" stroke-width="1"/>
+          <rect x="150" y="102" width="466" height="24" rx="3" class="node" stroke-width="1"/>
+          <rect x="150" y="132" width="466" height="24" rx="3" class="node" stroke-width="1"/>
+          <rect x="150" y="162" width="466" height="24" rx="3" class="node" stroke-width="1"/>
+          <rect x="150" y="192" width="466" height="24" rx="3" class="node" stroke-width="1"/>
+        </g>
+        <!-- columns: x = 150 + (year-2010)*36 -->
+        <g class="s2">
+          <rect x="402" y="42" width="34" height="24" class="fill-soft"/>
+          <rect x="402" y="72" width="34" height="24" class="fill-soft"/>
+          <rect x="474" y="132" width="34" height="24" class="fill-soft"/>
+          <rect x="474" y="162" width="34" height="24" class="fill-soft"/>
+        </g>
+        <g class="s1">
+          <rect x="438" y="42" width="178" height="24" class="fill-soft"/>
+          <rect x="438" y="72" width="178" height="24" class="fill-soft"/>
+          <rect x="438" y="102" width="178" height="24" class="fill-soft"/>
+          <rect x="510" y="132" width="106" height="24" class="fill-soft"/>
+          <rect x="510" y="162" width="106" height="24" class="fill-soft"/>
+        </g>
+        <g class="s4">
+          <path d="M510,47 l5,7 l-5,7 l-5,-7Z" class="fill"/>
+          <path d="M510,77 l5,7 l-5,7 l-5,-7Z" class="fill"/>
+        </g>
+        <text x="214" y="209" class="viz-small viz-muted">never taxed (confirm in week 46)</text>
+        <!-- clean comparison outline -->
+        <rect x="147" y="129" width="326" height="60" rx="5" class="edge accent" fill="none"/>
+        <text x="160" y="148" class="viz-small colour s1">not yet taxed: clean controls</text>
+        <text x="160" y="178" class="viz-small colour s1">for the 2017 adopters</text>
+        <!-- forbidden outline -->
+        <rect x="471" y="39" width="148" height="90" rx="5" class="stroke s3" stroke-width="2" stroke-dasharray="6 4" fill="none"/>
+        <!-- legend -->
+        <g class="viz-small">
+          <rect x="10" y="236" width="14" height="12" class="fill-soft s2"/><text x="30" y="246">part-taxed year</text>
+          <rect x="140" y="236" width="14" height="12" class="fill-soft s1"/><text x="160" y="246">taxed all year</text>
+          <path d="M268,236 l5,6 l-5,6 l-5,-6Z" class="fill s4"/><text x="280" y="246">scope widened to all sweetened drinks</text>
+          <rect x="10" y="258" width="14" height="12" class="stroke s3" stroke-width="2" stroke-dasharray="4 3" fill="none"/><text x="30" y="268" class="colour s3">already taxed: forbidden as controls for Oman and Qatar’s 2019 adoption</text>
+          <text x="10" y="292" class="viz-muted">Bahrain was taxed at the very end of 2017, so its first taxed year is coded 2018.</text>
+          <text x="10" y="308" class="viz-muted">Months for Oman and Qatar: check in week 46.</text>
+        </g>
+      </svg>
+      <figcaption>Clean comparisons use Kuwait in every year and Oman and Qatar until they are taxed. TWFE also uses the 2017 adopters as controls for the 2019 adoption, which is biased if their effect is still building.</figcaption>
+    </figure>
+
+    <div class="callout gulf">
+      <div class="callout-title">Gulf example · A defensible primary analysis</div>
+      <p>A reasonable protocol: Callaway–Sant’Anna with not-yet-treated and never-treated controls, adoption coded as the first full taxed year, log supply per person, an event-study plot with the year before the announcement as reference, wild cluster bootstrap and permutation p-values, and synthetic control for Saudi Arabia (the largest market) as a separate strand. Report TWFE only to show how it differs.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Using FAOSTAT years before 2010 to lengthen the pre-period. The food balance sheets were recompiled with a new method from 2010 onward, and the old-method series (to 2013) does not match it where they overlap. Splicing them puts a measurement break inside your pre-period (Lecture 4.7 returns to this).</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>A colleague shows an event-study plot for a city’s soda tax: all leads are small and not significant, so they write “parallel trends is confirmed”. What do you say?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Parallel trends concerns the post-period counterfactual, which is never observed; flat leads are supportive evidence, not confirmation. With few units the leads have little power to detect a modest pre-trend. Ask how large a trend violation would overturn the result (HonestDiD-style sensitivity), and whether anything else changed in the city when the tax began.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>In a staggered rollout, TWFE gives an effect of −0.5 and Callaway–Sant’Anna gives −3.0. Which do you report, and what does the gap tell you?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Report the heterogeneity-robust estimate as primary, and TWFE alongside. The gap says effects differ across cohorts or grow over time, so TWFE’s forbidden comparisons (earlier adopters as controls) are pulling it towards zero. A Goodman-Bacon decomposition would show how much weight sits on those comparisons. Show the event-study path, since the effect clearly is not one number.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Your DiD has six countries. The conventional cluster-robust p-value is 0.004; the wild cluster bootstrap p-value is 0.16. How do you write this up?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Lead with the bootstrap result and explain why: conventional clustered standard errors are badly too small with six clusters. Say the data are compatible with no effect at conventional thresholds, give the point estimate and the event-study pattern, and add permutation and synthetic-control evidence. Do not report 0.004 as the main inference.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>For Project 4, should Oman and Qatar serve as controls for Saudi Arabia in 2018? In 2020?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>In 2018, yes, as not-yet-treated units, provided they were not already changing behaviour in anticipation of their own 2019 tax. In 2020, no: they are taxed by then, so they are no longer valid untreated comparisons. Clean estimators make exactly this switch automatically.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Supply rose sharply in Saudi Arabia in 2016 and fell in 2017. Your DiD uses 2016 as the reference year. What worries you?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Anticipation (stockpiling before an announced tax) would make 2016 an unusually high baseline, inflating the estimated drop. Check when the tax was announced, use an earlier reference year (the last year before announcement), and compare with a version that averages several pre-years. Also check whether 2016 is a data artefact, such as a revision in the food balance sheets.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Cunningham, <em>Causal Inference: The Mixtape</em> (Yale University Press, 2021; free online), chapter “Difference-in-Differences”, including the Goodman-Bacon decomposition and event studies. Huntington-Klein, <em>The Effect</em> (CRC Press, 2021; free online), chapter 18.</li>
+      <li>Wing, Simon &amp; Bello-Gomez, “Designing difference in difference studies: best practices for public health policy research”, <em>Annual Review of Public Health</em> (2018).</li>
+      <li>Roth, Sant’Anna, Bilinski &amp; Poe, “What’s trending in difference-in-differences? A synthesis of the recent econometrics literature”, <em>Journal of Econometrics</em> (2023). The best single map of this lecture.</li>
+      <li>Goodman-Bacon, “Difference-in-differences with variation in treatment timing”, <em>Journal of Econometrics</em> (2021). de Chaisemartin &amp; D’Haultfœuille, “Two-way fixed effects estimators with heterogeneous treatment effects”, <em>American Economic Review</em> (2020).</li>
+      <li>Callaway &amp; Sant’Anna, “Difference-in-differences with multiple time periods”, <em>Journal of Econometrics</em> (2021), and the <code>did</code> package vignettes. Sun &amp; Abraham, “Estimating dynamic treatment effects in event studies with heterogeneous treatment effects”, <em>Journal of Econometrics</em> (2021). Borusyak, Jaravel &amp; Spiess, “Revisiting event-study designs: robust and efficient estimation”, <em>Review of Economic Studies</em> (2024).</li>
+      <li>Roth, “Pretest with caution: event-study estimates after testing for parallel trends”, <em>American Economic Review: Insights</em> (2022). Rambachan &amp; Roth, “A more credible approach to parallel trends”, <em>Review of Economic Studies</em> (2023), and the <code>HonestDiD</code> package.</li>
+      <li>Cameron, Gelbach &amp; Miller, “Bootstrap-based improvements for inference with clustered errors”, <em>Review of Economics and Statistics</em> (2008). Cameron &amp; Miller, “A practitioner’s guide to cluster-robust inference”, <em>Journal of Human Resources</em> (2015). MacKinnon &amp; Webb, “Wild bootstrap inference for wildly different cluster sizes”, <em>Journal of Applied Econometrics</em> (2017).</li>
+      <li>Card &amp; Krueger, “Minimum wages and employment: a case study of the fast-food industry in New Jersey and Pennsylvania”, <em>American Economic Review</em> (1994).</li>
+      <li>FAO, notes on the new food balance sheet methodology (series from 2010) and its differences from the old series, FAOSTAT documentation.</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="4-05-target-trial-emulation.html"><small>Previous</small>4.5 Target trial emulation</a>
+    <a class="next" href="4-07-interrupted-time-series.html"><small>Next</small>4.7 Interrupted time series</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

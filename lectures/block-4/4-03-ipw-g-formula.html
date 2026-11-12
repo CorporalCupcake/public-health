@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>4.3 IPW and the g-formula · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/4-03.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-4">Block 4</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 4.3</p>
+  <h1>Inverse probability weighting and the g-formula</h1>
+  <div class="lecture-meta">
+    <span>Block 4 · Causal inference and policy evaluation</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>Once an effect is identified (Lecture 4.1) and you have an adjustment set (Lecture 4.2), there are two classic ways to estimate it. <strong>Inverse probability weighting</strong> (IPW) models who gets treated and reweights people until treatment no longer depends on the confounders. The <strong>g-formula</strong> models the outcome and predicts what would happen to everyone under each strategy. Both give marginal effects, both extend to treatments that change over time, where ordinary regression fails, and they fail in different ways. Project 5A will use one or both, so the diagnostics here become its methods section.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#pseudo">IPW: building a pseudo-population</a></li>
+      <li><a href="#psmodel">The propensity score model</a></li>
+      <li><a href="#diagnostics">Stabilised weights and weight diagnostics</a></li>
+      <li><a href="#gformula">The g-formula: simulate each world</a></li>
+      <li><a href="#timevarying">Time-varying treatment: why regression fails</a></li>
+      <li><a href="#msm">Marginal structural models and the parametric g-formula</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="pseudo">
+    <h2>1. IPW: building a pseudo-population</h2>
+    <p class="point">Weighting each person by the inverse of the probability of the treatment they actually got creates a pseudo-population in which treatment is independent of the measured confounders, as if it had been randomised.</p>
+
+    \[ W_i = \frac{1}{\Pr[A = A_i \mid L_i]} \]
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A treated person whose covariates made treatment unlikely (probability 0.2) gets weight 5: they stand in for themselves and four similar people who went untreated in the real data. An untreated person with the same covariates gets weight 1/0.8 = 1.25. In the weighted data, every stratum of \(L\) contributes its full size to both arms, so a simple weighted comparison of outcomes estimates the ATE.</dd>
+      <dt>Why it matters</dt>
+      <dd>It separates the two modelling jobs: you model treatment (the propensity score) and then compare outcomes with almost no outcome model. It extends naturally to treatments that change over time (section 6), and it is the logic behind censoring weights for informative drop-out.</dd>
+      <dt>How to read it</dt>
+      <dd>Weights near 1–3 are comfortable. A handful of weights of 50 or more means a few people are carrying a large share of the analysis: the positivity warning from Lecture 4.1, in numbers.</dd>
+      <dt>What a change means</dt>
+      <dd>As treatment probabilities in a stratum move towards 0 or 1, the weights for the rare people in that stratum explode and the estimate becomes noisier, even though it stays unbiased in large samples.</dd>
+    </dl>
+
+    <div class="widget" data-widget="ipw-pseudo">
+      <div class="widget-title">Weight a population until severity no longer predicts treatment</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Clinicians treat high-severity patients more often, and severity raises death. Compare the crude estimate with IPW and standardisation. Then push the high-severity treatment probability towards 95% and watch the weights for the few untreated high-severity patients grow.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Thinking the weighted analysis “has more patients”. Unstabilised weights sum to about twice the sample size, but there is no new information: standard errors must account for the weighting (robust or bootstrap), and the effective sample size is usually <em>smaller</em> than the real one.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Survey weights (Lecture 3.4). A survey that under-samples young men gives each young man a larger weight so the sample looks like the population. IPW does the same, except the “population” it targets is everyone under treatment, and everyone under no treatment.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>This is importance weighting under covariate shift. The treated arm is a sample from \(p(L \mid A=1)\); you want averages over \(p(L)\); the importance weight \(p(L)/p(L \mid A=1)\) is proportional to \(1/\Pr[A=1 \mid L]\). Everything you know about importance weighting carries over, including its failure mode: unbounded weights where the source has little support.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="psmodel">
+    <h2>2. The propensity score model</h2>
+    <p class="point">The propensity model is judged by whether it balances the confounders, not by how well it predicts treatment.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A model for \(\Pr[A=1 \mid L]\), usually logistic regression with splines and the interactions clinicians would expect. The covariates are the adjustment set from your DAG. Adding pure predictors of the outcome usually helps precision; adding pure predictors of treatment (instruments) hurts (Brookhart and colleagues, 2006).</dd>
+      <dt>Why it matters</dt>
+      <dd>IPW is only as good as this model. A misspecified propensity model leaves residual imbalance, and with it residual confounding, in a way the outcome comparison cannot repair.</dd>
+      <dt>How to read it</dt>
+      <dd>Fit it, weight, then check balance on every covariate, including squares and interactions you think matter. If balance is poor, revise the model (add a spline, an interaction) and check again. The outcome is never looked at during this loop, which keeps the analysis honest.</dd>
+      <dt>What a change means</dt>
+      <dd>Switching from logistic regression to boosted trees or another ensemble can reduce bias when the true treatment model is both non-linear and non-additive (Lee, Lessler and Stuart, 2010). A flexible model that overfits can also push scores towards 0 and 1 and create extreme weights. Judge it on balance and weights, not on cross-validated accuracy.</dd>
+    </dl>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background · Why AUC is the wrong target</div>
+      <p>A propensity model is a classifier, but its job is different. A very high AUC means treatment is nearly predictable from covariates, which is a positivity problem, not a success. The easiest way to raise AUC is to add instruments, which increases variance and amplifies residual bias (Lecture 4.2). Westreich and colleagues (2011) pointed out that a high c-statistic is neither necessary nor sufficient for controlling confounding, and that chasing it can reduce overlap. Target balance (standardised mean differences) and well-behaved weights; methods such as entropy balancing or CBPS optimise balance directly. Python users: <code>DoWhy</code> or <code>econml</code> wrap the same steps.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Putting post-treatment variables in the propensity model because they “improve the fit”. Anything measured after treatment starts (day-3 labs, transfusion) is a descendant of treatment: it predicts treatment well because treatment caused it. It belongs in neither the propensity model nor the adjustment set.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="diagnostics">
+    <h2>3. Stabilised weights and weight diagnostics</h2>
+    <p class="point">Before looking at any effect estimate, check three things: the weights are well-behaved, the effective sample size is reasonable, and the confounders are balanced.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>Stabilised weights</strong> put the marginal probability of the treatment received in the numerator: \(\Pr[A=A_i] / \Pr[A=A_i \mid L_i]\). They have mean close to 1 and smaller spread. <strong>Truncation</strong> caps weights at a percentile (often the 1st and 99th). <strong>Balance</strong> is measured by the <strong>standardised mean difference</strong> (SMD): the difference in a covariate’s mean between arms, divided by its pooled standard deviation.</dd>
+      <dt>Why it matters</dt>
+      <dd>For a single time point, stabilising changes the variance of a saturated estimate little, but it makes problems visible: a mean stabilised weight far from 1 signals a misspecified model or positivity trouble (Cole and Hernán, 2008). For time-varying treatments and MSMs with few parameters, stabilisation genuinely improves precision.</dd>
+      <dt>How to read it</dt>
+      <dd>Report the mean, range and percentiles of the weights, and the effective sample size in each arm. An absolute SMD below 0.1 after weighting is the usual threshold for adequate balance (Austin, 2009). Show a Love plot: every covariate, SMD before and after.</dd>
+      <dt>What a change means</dt>
+      <dd>Truncating at the 99th percentile instead of not at all usually cuts the largest weights sharply and narrows the interval, at the cost of some residual confounding. If the estimate moves a lot as you tighten truncation, the result depends on a few people: report it as fragile.</dd>
+    </dl>
+
+    <div class="widget" data-widget="weight-diagnostics">
+      <div class="widget-title">Diagnose a propensity model</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Clinicians here avoid anticoagulation at both very low and very high SOFA scores, a curved relationship. Fit the main-terms model and look at SOFA² in the balance plot. Add the squared term. Then make treatment more strongly driven by covariates and try truncating the weights.</p>
+    </div>
+
+    <pre><code>library(WeightIt); library(cobalt); library(marginaleffects); library(splines)
+W &lt;- weightit(anticoag ~ ns(age, 3) + ns(sofa, 3) + bleed_risk + creat + sex,
+              data = d, method = "glm", estimand = "ATE")
+summary(W)                                        # weight range, effective sample size
+bal.tab(W, stats = "m", thresholds = c(m = 0.1))  # SMDs before and after
+love.plot(W, thresholds = c(m = 0.1))
+fit &lt;- glm_weightit(death ~ anticoag, data = d, weightit = W, family = binomial)
+avg_comparisons(fit, variables = "anticoag")      # marginal risk difference, robust SE</code></pre>
+    <p><code>weightit</code> fits the propensity model (with natural splines from the <code>splines</code> package) and builds ATE weights. <code>bal.tab</code> and <code>love.plot</code> show balance against the 0.1 line. <code>glm_weightit</code> fits the weighted outcome model with standard errors that account for estimating the weights, and <code>avg_comparisons</code> turns it into a risk difference. <code>trim(W, at = .99)</code> truncates.</p>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Using a significance test to check balance. A p-value for the difference in means depends on sample size: in a big EHR cohort a trivial imbalance is “significant”, and in a small one a large imbalance is not. Balance is a property of the sample, measured by the SMD.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="gformula">
+    <h2>4. The g-formula: simulate each world</h2>
+    <p class="point">The g-formula models the outcome, predicts every person’s outcome under “everyone treated” and again under “no one treated”, and compares the two averages.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Also called standardisation or g-computation. Fit an outcome model given treatment and confounders; set treatment to 1 for everyone and predict; set it to 0 and predict; average each set of predictions over the sample. This is the standardisation formula from Lecture 4.1, with a model filling in strata too small to estimate directly.</dd>
+      <dt>Why it matters</dt>
+      <dd>It gives a marginal effect on any scale (risk difference, risk ratio, survival at 90 days) from any outcome model, including one with interactions. It is usually more precise than IPW, because it borrows strength from the outcome model.</dd>
+      <dt>How to read it</dt>
+      <dd>The estimate is only as good as the outcome model, including where data are sparse: with poor overlap the model extrapolates silently, where IPW would at least show large weights. Use a bootstrap or a delta method for intervals.</dd>
+      <dt>What a change means</dt>
+      <dd>If IPW and the g-formula disagree, one of the two models is wrong, or overlap is poor. That disagreement is useful: it is the motivation for doubly robust estimators (Lecture 4.4).</dd>
+    </dl>
+
+    <pre><code>om &lt;- glm(death ~ anticoag * (ns(age, 3) + ns(sofa, 3) + bleed_risk + creat + sex),
+          family = binomial, data = d)
+avg_predictions(om, variables = "anticoag")    # standardised risk under 0 and under 1
+avg_comparisons(om, variables = "anticoag")    # their difference: the ATE
+avg_comparisons(om, variables = "anticoag", newdata = subset(anticoag == 1))  # ATT</code></pre>
+    <p>The outcome model lets the effect differ by every confounder. <code>avg_predictions</code> predicts everyone’s risk with treatment set to each value and averages; <code>avg_comparisons</code> returns the difference. Restricting the averaging to the treated gives the ATT.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th></th><th>IPW</th><th>g-formula</th></tr></thead>
+        <tbody>
+          <tr><td>What you model</td><td>Treatment given confounders</td><td>Outcome given treatment and confounders</td></tr>
+          <tr><td>Fails when</td><td>The propensity model is wrong, or weights are extreme</td><td>The outcome model is wrong, especially where data are sparse</td></tr>
+          <tr><td>Shows positivity problems?</td><td>Yes, as large weights</td><td>No, it extrapolates quietly</td></tr>
+          <tr><td>Precision</td><td>Lower</td><td>Higher</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>The g-formula with one model is the S-learner: a single model with treatment as a feature, queried twice. Fitting separate models for treated and untreated is the T-learner. Lecture 4.4 shows why flexible learners plugged into this formula need a correction to give valid confidence intervals.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="timevarying">
+    <h2>5. Time-varying treatment: why regression fails</h2>
+    <p class="point">When a confounder is affected by earlier treatment, regression cannot both adjust for it and leave the earlier treatment’s effect intact; IPW and the g-formula can.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Treatment is decided again at each time (A0, A1, …). A covariate measured in between, L1, is caused by A0, and it influences both A1 and the outcome. The question is the effect of a <strong>strategy</strong>, such as “anticoagulate every day” versus “never”, not of a single dose.</dd>
+      <dt>Why it matters</dt>
+      <dd>Including L1 in a regression adjusts away the part of A0’s effect that runs through L1, and, if an unmeasured factor affects both L1 and the outcome, opens a collider path. Leaving L1 out leaves A1 confounded. There is no right set of regression covariates.</dd>
+      <dt>How to read it</dt>
+      <dd>Look for covariates that are updated over follow-up, drive treatment decisions and respond to treatment: CD4 count under antiretroviral therapy, blood pressure under antihypertensives, platelet count under heparin. If one exists, the analysis needs g-methods.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · Treatment–confounder feedback with two decision points</div>
+      <svg class="viz-svg" viewBox="0 0 640 300" role="img" aria-label="DAG with A0 at the left, L1 in the middle top, A1 in the middle bottom, Y at the right, and unmeasured U at top right. A0 causes L1, A1 and Y. L1 causes A1 and Y. U causes L1 and Y. A1 causes Y. Conditioning on L1 is needed to block A1 ← L1 → Y, but blocks A0 → L1 → Y and opens A0 → L1 ← U → Y.">
+        <defs>
+          <marker id="l43-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead"/></marker>
+          <marker id="l43-arrow-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead accent"/></marker>
+        </defs>
+        <g class="s1">
+          <rect x="30" y="170" width="120" height="44" rx="10" class="node-fill"/>
+          <rect x="300" y="170" width="120" height="44" rx="10" class="node-fill"/>
+        </g>
+        <g class="s3"><rect x="165" y="60" width="120" height="44" rx="10" class="node-fill"/></g>
+        <g class="s5"><rect x="490" y="170" width="120" height="44" rx="10" class="node"/><rect x="420" y="20" width="120" height="44" rx="10" class="node" stroke-dasharray="5 4"/></g>
+        <g text-anchor="middle">
+          <text x="90" y="190" class="viz-bold">A0</text><text x="90" y="205" class="viz-small viz-muted">heparin, day 0</text>
+          <text x="225" y="80" class="viz-bold">L1</text><text x="225" y="95" class="viz-small viz-muted">platelets, day 1</text>
+          <text x="360" y="190" class="viz-bold">A1</text><text x="360" y="205" class="viz-small viz-muted">heparin, day 1</text>
+          <text x="550" y="197" class="viz-bold">Y</text>
+          <text x="480" y="40" class="viz-bold">U</text><text x="480" y="55" class="viz-small viz-muted">unmeasured</text>
+        </g>
+        <path d="M110,170 L182,108" class="edge" marker-end="url(#l43-arrow)"/>
+        <path d="M265,104 L332,166" class="edge" marker-end="url(#l43-arrow)"/>
+        <path d="M285,90 L518,168" class="edge" marker-end="url(#l43-arrow)"/>
+        <path d="M420,46 L289,74" class="edge" marker-end="url(#l43-arrow)"/>
+        <path d="M500,64 L536,166" class="edge" marker-end="url(#l43-arrow)"/>
+        <path d="M150,192 L296,192" class="edge accent" marker-end="url(#l43-arrow-a)"/>
+        <path d="M420,192 L486,192" class="edge accent" marker-end="url(#l43-arrow-a)"/>
+        <path d="M90,214 Q320,290 548,218" class="edge accent" marker-end="url(#l43-arrow-a)"/>
+        <g class="viz-small">
+          <text x="20" y="24" class="colour s1">needed: L1 confounds A1 → Y</text>
+          <text x="20" y="40" class="colour s3">harmful: blocks A0 → L1 → Y,</text>
+          <text x="20" y="56" class="colour s3">opens A0 → L1 ← U → Y</text>
+        </g>
+        <text x="320" y="292" text-anchor="middle" class="viz-small viz-muted">teal arrows: treatment effects; the curved arrow is A0’s direct effect on Y</text>
+      </svg>
+      <figcaption>Regression must choose between conditioning on L1 (bias in A0’s effect) and not conditioning (confounding of A1). IPW handles L1 in the treatment model for A1 only; the g-formula models L1 as an outcome of A0 and integrates over it. Both remove the confounding of A1 without cutting the path from A0 through L1.</figcaption>
+    </figure>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Zidovudine and CD4 count</div>
+      <p>The classic case is HIV treatment: CD4 count predicts both starting zidovudine and death, and zidovudine raises CD4. Hernán, Brumback and Robins (2000) used it to introduce marginal structural models in epidemiology, fitted with inverse probability weights to the Multicenter AIDS Cohort Study. The same structure sits in Project 5A: platelet count and bleeding signs drive each day’s anticoagulation decision, and heparin can lower platelets.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">Gulf example</div>
+      <p>Diabetes care in Saudi primary care and hospital registries has the same shape. Whether treatment is intensified at each visit depends on the latest HbA1c; earlier treatment lowered that HbA1c; and HbA1c predicts complications. A Cox model of “insulin use” adjusted for time-updated HbA1c answers no well-defined causal question. To ask “what if patients were intensified whenever HbA1c exceeded a threshold?”, use IPW for a marginal structural model or the g-formula.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="msm">
+    <h2>6. Marginal structural models and the parametric g-formula</h2>
+    <p class="point">For time-varying treatment, IPW multiplies the weights over time to fit a marginal structural model, while the parametric g-formula simulates the whole history forward under each strategy; they rest on different models and fail differently.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A <strong>marginal structural model</strong> (MSM) is a model for the counterfactual outcome as a function of the treatment history, such as the risk of death by day 90 by number of days anticoagulated. It is fitted to data weighted by the <em>product</em> over time of each day’s stabilised weight, with that day’s confounders in the denominator. The <strong>parametric g-formula</strong> fits a model for every time-varying confounder and for the outcome, then simulates a cohort day by day with treatment set by the strategy, letting the confounders evolve as the models say.</dd>
+      <dt>Why it matters</dt>
+      <dd>Both answer strategy questions that regression cannot. The g-formula can also compare dynamic strategies (“anticoagulate while platelets stay above a threshold”) and gives absolute risk curves directly. IPW for MSMs needs only the treatment models, which are usually better understood than the biology of every covariate.</dd>
+      <dt>How to read it</dt>
+      <dd>For IPW, the cumulative weights are the diagnostic: their product grows over time, so check mean, spread and percentiles at each time, not just overall. For the g-formula, the check is whether the simulated “natural course” (no intervention) reproduces the observed risks and covariate trends.</dd>
+      <dt>What a change means</dt>
+      <dd>If the natural-course simulation misses the observed risk curve, the covariate or outcome models are wrong. If cumulative weights blow up after day 5, positivity is failing late in follow-up; restrict the horizon or consider grace periods (Lecture 4.5).</dd>
+    </dl>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th></th><th>IPW for an MSM</th><th>Parametric g-formula</th></tr></thead>
+        <tbody>
+          <tr><td>Models needed</td><td>Treatment (and censoring) at each time</td><td>Every time-varying confounder, and the outcome, at each time</td></tr>
+          <tr><td>Main failure</td><td>Misspecified treatment model; extreme cumulative weights</td><td>Any misspecified covariate model, compounded over time</td></tr>
+          <tr><td>A known quirk</td><td>Less efficient</td><td>The “g-null paradox”: misspecified models can show an effect when there is none</td></tr>
+          <tr><td>R</td><td><code>WeightIt::weightitMSM</code>, <code>ipw::ipwtm</code></td><td><code>gfoRmula::gformula</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <pre><code>Wm &lt;- weightitMSM(list(A0 ~ age + sofa0 + plt0,
+                       A1 ~ age + sofa0 + plt0 + A0 + sofa1 + plt1),
+                  data = wide, method = "glm", stabilize = TRUE)
+summary(Wm)                                     # cumulative weights per time
+fit &lt;- glm_weightit(death ~ A0 + A1, data = wide, weightit = Wm,
+                    family = binomial)
+avg_predictions(fit, variables = list(A0 = 0:1, A1 = 0:1))  # risk under each history</code></pre>
+    <p>With data in wide format (one row per patient, a column per day), <code>weightitMSM</code> fits one treatment model per decision point, each including the history up to then, and multiplies the stabilised weights. The outcome model is the MSM: risk of death as a function of treatment on day 0 and day 1. Comparing the predictions for (1, 1) and (0, 0) gives “always” versus “never”. For the parametric g-formula, <code>gfoRmula::gformula</code> takes long-format data, a model for each covariate, and a list of strategies.</p>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Thinking that because IPW and the g-formula target the same estimand they share assumptions. They share the <em>identifying</em> assumptions (sequential exchangeability, positivity and consistency at every time), but their <em>modelling</em> assumptions are different: IPW bets on the treatment models, the g-formula bets on the covariate and outcome models. Running both and comparing is a cheap robustness check; doubly robust methods (Lecture 4.4) formalise it.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>Your propensity model for anticoagulation has an AUC of 0.91. A colleague says this is excellent. What do you check before agreeing?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>A high AUC means treatment is very predictable, which signals poor overlap. Check the score distributions by arm, the largest weights and the effective sample size. Check whether the model includes instruments (site, prescriber) or post-treatment variables that inflate the AUC. Then check balance with SMDs. The model is good if balance is good and weights are tame, whatever the AUC.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>After weighting, all SMDs are below 0.05, the largest stabilised weight is 140 and the effective sample size of the untreated arm is 9% of its real size. Is the analysis ready?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>No. Balance is achieved by leaning on a few untreated patients who look like the treated; the estimate will be unstable and driven by them. Investigate who they are, consider restricting the population to where both treatments were plausible, changing the estimand (ATT or overlap weights), or truncating, and report how the estimate changes.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>IPW gives a risk difference of −4 points and the g-formula gives −1 point, with the same covariates. What could explain this, and what do you do next?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>One of the models is misspecified, or overlap is poor so that IPW leans on extreme weights while the outcome model extrapolates. Check weights and balance, check the outcome model’s fit in each arm, and try flexible versions of both. A doubly robust estimator (Lecture 4.4) is the natural next step; report the disagreement rather than choosing the number you prefer.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A cohort study fits a time-dependent Cox model for statin use, adjusted for time-updated LDL cholesterol, and reports a hazard ratio for death. Why is that hard to interpret, and what would you suggest?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>LDL drives statin starts and is lowered by earlier statin use: treatment–confounder feedback. Adjusting for time-updated LDL removes the part of the effect that works through LDL and can open collider paths, so the HR answers no strategy question. Suggest an MSM fitted with IPW, or the parametric g-formula, comparing strategies such as “start and continue” versus “never start”, or a target trial with treatment fixed at baseline (Lecture 4.5).</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Your g-formula’s natural-course simulation predicts a 90-day mortality of 18%, but the observed mortality is 26%. What does that tell you?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The covariate or outcome models do not reproduce the data even without any intervention, so their predictions under intervention are not trustworthy. Revisit the models (functional forms, interactions, missing time-varying covariates, how death and censoring are handled) before reporting strategy comparisons.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Hernán &amp; Robins, <em>Causal Inference: What If</em>, chapters 12 (IP weighting and marginal structural models), 13 (standardisation and the parametric g-formula), 15 (propensity scores) and 19–21 (time-varying treatments and g-methods).</li>
+      <li>Robins, Hernán &amp; Brumback, “Marginal structural models and causal inference in epidemiology”, <em>Epidemiology</em> (2000). Hernán, Brumback &amp; Robins, “Marginal structural models to estimate the causal effect of zidovudine on the survival of HIV-positive men”, <em>Epidemiology</em> (2000).</li>
+      <li>Cole &amp; Hernán, “Constructing inverse probability weights for marginal structural models”, <em>American Journal of Epidemiology</em> (2008).</li>
+      <li>Austin, “Balance diagnostics for comparing the distribution of baseline covariates between treatment groups in propensity-score matched samples”, <em>Statistics in Medicine</em> (2009). Austin &amp; Stuart, “Moving towards best practice when using inverse probability of treatment weighting (IPTW) using the propensity score”, <em>Statistics in Medicine</em> (2015).</li>
+      <li>Brookhart et al., “Variable selection for propensity score models”, <em>American Journal of Epidemiology</em> (2006). Lee, Lessler &amp; Stuart, “Improving propensity score weighting using machine learning”, <em>Statistics in Medicine</em> (2010). Westreich et al., “The role of the c-statistic in variable selection for propensity score models”, <em>Pharmacoepidemiology and Drug Safety</em> (2011).</li>
+      <li>Naimi, Cole &amp; Kennedy, “An introduction to g methods”, <em>International Journal of Epidemiology</em> (2017). Keil et al., “The parametric g-formula for time-to-event data: intuition and a worked example”, <em>Epidemiology</em> (2014). Robins &amp; Wasserman, “Estimation of effects of sequential treatments by reparameterizing directed acyclic graphs”, <em>Proceedings of UAI</em> (1997): the g-null paradox.</li>
+      <li>Shimodaira, “Improving predictive inference under covariate shift by weighting the log-likelihood function”, <em>Journal of Statistical Planning and Inference</em> (2000).</li>
+      <li>Package documentation: <code>WeightIt</code> and <code>cobalt</code> (Greifer), including the vignette “Estimating effects after weighting”; <code>marginaleffects</code>; McGrath et al., “gfoRmula: an R package for estimating the effects of sustained treatment strategies via the parametric g-formula”, <em>Patterns</em> (2020).</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="4-02-dags-adjustment-sets.html"><small>Previous</small>4.2 DAGs and adjustment sets</a>
+    <a class="next" href="4-04-doubly-robust-tmle-ml.html"><small>Next</small>4.4 Doubly robust estimation, TMLE and ML</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

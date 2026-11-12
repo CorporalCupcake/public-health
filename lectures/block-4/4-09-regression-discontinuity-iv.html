@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>4.9 Regression discontinuity and IV · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/4-09.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-4">Block 4</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 4.9</p>
+  <h1>Regression discontinuity and instrumental variables</h1>
+  <div class="lecture-meta">
+    <span>Block 4 · Causal inference and policy evaluation</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>Both designs get their causal leverage from <strong>how treatment was assigned</strong>, not from adjusting for confounders. Regression discontinuity (RD) uses a rule with a cut-off: people just either side are alike, so the jump in outcomes at the cut-off is the effect. Instrumental variables (IV) use something that nudges treatment but cannot touch the outcome any other way. The price for both is the same: you learn the effect for a <em>particular</em> group (people near the cut-off, or people the nudge moved), and the whole case rests on assumptions you argue for rather than test. Lecture 4.11 places both in the wider menu of natural-experiment designs.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#rd">A cut-off makes a local experiment</a></li>
+      <li><a href="#estimate">Estimating the jump: local, linear, not polynomial</a></li>
+      <li><a href="#checks">Checking an RD: sorting, balance, placebos</a></li>
+      <li><a href="#iv">Instrumental variables with a health-services instrument</a></li>
+      <li><a href="#late">Whose effect? Compliers and the LATE</a></li>
+      <li><a href="#weak">Weak instruments and instruments that fail</a></li>
+      <li><a href="#review">How reviewers judge RD and IV</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="rd">
+    <h2>1. A cut-off makes a local experiment</h2>
+    <p class="point">When a rule gives treatment to everyone above a threshold on a continuous score, people just below and just above are alike in everything except treatment, so a jump in outcomes at the threshold is the treatment’s effect there.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The score is the <strong>running variable</strong> (age, a lab value, a risk score, birth weight). The key assumption is <strong>continuity</strong>: without the treatment, average outcomes would change smoothly through the cut-off. Then anything that jumps there must be caused by the thing that jumps there, the treatment.</dd>
+      <dt>Why it matters</dt>
+      <dd>The assignment rule is known and written down, so there is no hidden selection to model. Of all observational designs, RD comes closest to a trial, and reviewers know it.</dd>
+      <dt>How to read it</dt>
+      <dd>The estimate is the effect <em>at the cut-off</em> for people whose score sits near it. Moving it to people far from the cut-off is extrapolation, and needs its own argument.</dd>
+      <dt>What a change means</dt>
+      <dd>Card, Dobkin and Maestas found 7-day mortality about 1 percentage point lower just after age 65 (when US Medicare starts) among severely ill emergency admissions. That is about a 20% relative fall, for patients aged about 65, through better insurance cover.</dd>
+    </dl>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Running variable and cut-off</th><th>Treatment that switches on</th><th>Finding</th></tr></thead>
+        <tbody>
+          <tr><td>Age 65 (US)</td><td>Medicare coverage</td><td>Lower mortality for emergency admissions (Card et al., 2009)</td></tr>
+          <tr><td>First CD4 count below 200 cells/µL (South Africa, 2007–11)</td><td>Eligibility for antiretroviral therapy</td><td>Hazard of death 35% lower just below the cut-off, HR 0.65 (Bor et al., 2014)</td></tr>
+          <tr><td>10-year CVD risk of 20% (UK guidance until 2014)</td><td>Statin prescribing</td><td>A fuzzy design: prescribing and LDL change at the threshold (O’Keeffe et al., 2014)</td></tr>
+          <tr><td>Birth weight 1,500 g (US)</td><td>“Very low birth weight” label and extra care</td><td>Contested: section 3</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · Sharp and fuzzy designs</div>
+      <svg class="viz-svg" viewBox="0 0 640 222" role="img" aria-label="Two panels plotting the probability of treatment against the running variable. Sharp: probability jumps from 0 to 1 at the cut-off. Fuzzy: probability rises from about 25% to about 65% at the cut-off; that jump is the first stage.">
+        <g text-anchor="middle">
+          <text x="175" y="20" class="viz-bold">Sharp: the rule is always obeyed</text>
+          <text x="495" y="20" class="viz-bold">Fuzzy: the rule shifts the odds</text>
+        </g>
+        <!-- axes -->
+        <path d="M50,40 L50,170 L300,170" class="viz-axis" fill="none"/>
+        <path d="M370,40 L370,170 L620,170" class="viz-axis" fill="none"/>
+        <g class="viz-tick" text-anchor="end">
+          <text x="44" y="174">0</text><text x="44" y="54">1</text>
+          <text x="364" y="174">0</text><text x="364" y="54">1</text>
+        </g>
+        <line x1="175" y1="40" x2="175" y2="170" class="viz-grid" stroke-dasharray="4 4"/>
+        <line x1="495" y1="40" x2="495" y2="170" class="viz-grid" stroke-dasharray="4 4"/>
+        <g class="s1">
+          <path d="M50,170 L175,170" class="stroke"/>
+          <path d="M175,50 L300,50" class="stroke"/>
+          <path d="M370,160 L495,140" class="stroke"/>
+          <path d="M495,92 L620,68" class="stroke"/>
+        </g>
+        <g class="s3">
+          <path d="M507,138 L507,96" class="stroke" style="stroke-width:2"/>
+          <path d="M502,138 L512,138 M502,96 L512,96" class="stroke" style="stroke-width:2"/>
+        </g>
+        <text x="518" y="112" class="viz-small viz-bold colour s3">jump =</text>
+        <text x="518" y="127" class="viz-small viz-bold colour s3">first stage</text>
+        <g text-anchor="middle" class="viz-small viz-muted">
+          <text x="175" y="188">cut-off</text>
+          <text x="495" y="188">cut-off</text>
+          <text x="320" y="212">running variable (age, CD4 count, risk score) → ; vertical axis: share treated</text>
+        </g>
+      </svg>
+      <figcaption>A sharp design reads the effect straight off the outcome jump. A fuzzy design divides the outcome jump by the treatment jump: it is IV with the cut-off as the instrument (section 5).</figcaption>
+    </figure>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Quoting an RD estimate as “the effect of Medicare” or “the effect of early ART”. It is the effect for people at 65, or with a CD4 count near 200. Patients with CD4 counts of 50 might gain far more; people at 30 years old might gain nothing. Say who the estimate is about.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Project 5A and your ECG background</div>
+      <p>AF guidelines recommend anticoagulation above a stroke-risk score threshold (CHA₂DS₂-VASc and its successors). In MIMIC-IV, that rule could give a fuzzy RD as a check on the target trial emulation. Two catches. The score takes only whole-number values, so there is no “just above and just below”, only neighbouring integers, and the design leans on modelling across them. And many other clinical judgements change at the same score points.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">GCC angle</div>
+      <p>Any Gulf rule with a cut-off is an RD waiting to be used: an age at which screening invitations start, a BMI or HbA1c value for referral to a programme, a birth-date cut-off for school entry. The work is in documenting the rule and getting the exact running variable (date of birth, the lab value itself), not age bands or rounded values, which make the design impossible.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="estimate">
+    <h2>2. Estimating the jump: local, linear, not polynomial</h2>
+    <p class="point">Fit a straight line on each side of the cut-off, using only data inside a window, and read off the gap where the lines meet the cut-off; the window width (bandwidth) trades bias against noise.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>Local linear regression</strong>: within a bandwidth \(h\) either side, fit a line, weighting points nearer the cut-off more (a triangular kernel). Modern software picks \(h\) to minimise mean squared error and reports <strong>robust bias-corrected</strong> confidence intervals (Calonico, Cattaneo and Titiunik), which allow for the leftover curvature bias.</dd>
+      <dt>Why it matters</dt>
+      <dd>A wide window uses more data but lets curvature far from the cut-off bend the lines (bias). A narrow window is faithful but noisy. No choice is free, so report the estimate across a range of bandwidths.</dd>
+      <dt>How to read it</dt>
+      <dd>A good RD paper shows a binned scatter plot with the fit, the main estimate at the data-driven bandwidth, and the same estimate at half and double that bandwidth. If the jump is invisible in the plot, be wary of a significant estimate.</dd>
+      <dt>What a change means</dt>
+      <dd>An estimate that moves from −1.0 to −0.4 as the window widens means curvature is leaking in. One that swings sign as the window narrows means there is too little data near the cut-off.</dd>
+    </dl>
+
+    <div class="widget" data-widget="rd-explorer">
+      <div class="widget-title">RD explorer</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Statins switch on at 20% risk and lower LDL. Widen the window with a curved truth and watch the bias grow. Then switch to a global 5th-order polynomial, raise the noise, and press “New sample” a few times: the estimate jumps around much more than the local fit.</p>
+    </div>
+
+    <p>Gelman and Imbens (2019) explain why high-order global polynomials, once standard in economics, should not be used. They give large weight to points far from the cut-off, the estimate depends heavily on the chosen degree, and their confidence intervals are too narrow. Use local linear (or at most local quadratic) fits instead.</p>
+
+    <pre><code>library(rdrobust)
+rdplot(ldl, risk, c = 20)              # binned scatter with fitted curves
+fit &lt;- rdrobust(ldl, risk, c = 20)     # local linear, triangular kernel, MSE-optimal h
+summary(fit)                           # report the "Robust" row's CI
+h &lt;- fit$bws[1, 1]
+rdrobust(ldl, risk, c = 20, h = h / 2) # sensitivity: half and double the bandwidth
+rdrobust(ldl, risk, c = 20, h = 2 * h)</code></pre>
+    <p><code>rdplot</code> draws the picture readers will judge you by. <code>rdrobust</code> picks the bandwidth, fits a line on each side and gives a conventional estimate plus a robust bias-corrected interval; quote the robust one. The last two lines refit with the window halved and doubled.</p>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>This is the bias–variance trade-off with a kernel smoother, evaluated at the worst possible place: the boundary of the data, where every smoother is weakest. High-order polynomials misbehave at edges for the same reason as Runge’s phenomenon. A flexible ML learner fitted globally and read off at the cut-off has the same problem. Python users have the same tools in the <code>rdrobust</code> and <code>rddensity</code> packages.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Trying several bandwidths, kernels and polynomial degrees and reporting the one that “works”. Pre-specify the data-driven bandwidth with a local linear fit, and show the rest as sensitivity analyses, in a figure if possible.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="checks">
+    <h2>3. Checking an RD: sorting, balance, placebos</h2>
+    <p class="point">Continuity can’t be tested directly, but it has visible consequences: no pile-up of people just past the cut-off, no jump in characteristics fixed before treatment, and no jumps where nothing happens.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>Manipulation</strong> (sorting): if people or clinicians can push the score over the line, those just above differ from those just below. A <strong>density test</strong> (McCrary, 2008; the newer <code>rddensity</code> of Cattaneo, Jansson and Ma) looks for a jump in how many people sit at each score. <strong>Covariate balance</strong>: things fixed before treatment (age, sex, past diagnoses) should not jump. <strong>Placebo cut-offs</strong>: fake thresholds should show no effect.</dd>
+      <dt>Why it matters</dt>
+      <dd>Clinical scores are often recorded by people who know the threshold. Blood pressure readings show digit preference, and a borderline lab value can be repeated until it qualifies. Each of these breaks the “as-if random near the cut-off” logic.</dd>
+      <dt>How to read it</dt>
+      <dd>Card and colleagues showed that admission rates and comorbidities change smoothly at 65, so the patients just over 65 were not sicker or a different mix. That is what a passed balance check looks like.</dd>
+    </dl>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Check</th><th>Passes when</th><th>If it fails</th></tr></thead>
+        <tbody>
+          <tr><td>Density of the running variable</td><td>No bunching just past the cut-off</td><td>“Donut” RD (drop points closest to the cut-off), or abandon</td></tr>
+          <tr><td>Pre-treatment covariates</td><td>No jump in any of them</td><td>Sorting or a compound treatment; adjusting rarely rescues it</td></tr>
+          <tr><td>Placebo cut-offs and outcomes</td><td>No jumps away from the real cut-off, or in outcomes the treatment can’t affect</td><td>The curve is too wiggly for the method; the effect may be artefact</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <pre><code>library(rddensity)
+summary(rddensity(X = risk, c = 20))          # bunching test
+rdrobust(age, risk, c = 20)                   # balance: should be about 0
+rdrobust(ldl, risk, c = 17)                   # placebo cut-off: should be about 0</code></pre>
+    <p>The same <code>rdrobust</code> call, with a pre-treatment covariate as the outcome, is the balance test. A fake cut-off of 17% should give no jump if the method is sound.</p>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Very low birth weight</div>
+      <p>Almond and colleagues (2010) found 1-year mortality about 1 percentage point lower for babies just under 1,500 g, who are labelled very low birth weight and get extra care. Barreca and colleagues then showed that birth weights <strong>heap</strong> at round numbers, and that babies at the heaps were more likely to come from disadvantaged families. One heap sits right next to the cut-off. Dropping the babies closest to 1,500 g shrank the estimate a lot, and the original authors replied that it stayed large in some hospitals. It is the classic lesson that how the running variable is measured can matter as much as the method.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>“The density test was not significant, so there was no manipulation.” The test has little power in small samples, and manipulation that doesn’t change the count (swapping who sits where) won’t show at all. Ask how the score is produced and who could change it.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="iv">
+    <h2>4. Instrumental variables with a health-services instrument</h2>
+    <p class="point">An instrument is something that changes the chance of treatment, shares no causes with the outcome, and affects the outcome only through treatment; it lets you compare people sorted by the instrument rather than by the confounded treatment choice.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Lecture 2.19 introduced the three core assumptions with genes as the instrument (Mendelian randomisation). Here the instrument is a feature of the health system. McClellan, McNeil and Newhouse (1994) used <strong>differential distance</strong>: how much farther a heart-attack patient lived from a hospital that did cardiac catheterisation than from the nearest hospital of any kind. Nearer patients were more likely to be catheterised, for reasons that had nothing to do with how sick they were.</dd>
+      <dt>Why it matters</dt>
+      <dd>Clinicians catheterise the patients who look most likely to benefit, so treated patients look far better than untreated ones (confounding by indication, Lecture 2.6). The IV analysis compared near and far patients instead, and found that more catheterisation brought little survival gain for the patients whose treatment depended on distance.</dd>
+      <dt>How to read it</dt>
+      <dd>Relevance is checked in the data. Independence is made plausible by showing that measured confounders are balanced across the instrument. Exclusion and monotonicity are argued from how the system works; no test can confirm them.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · An IV analysis of catheterisation after heart attack</div>
+      <svg class="viz-svg" viewBox="0 0 640 322" role="img" aria-label="DAG. Distance to a catheterisation hospital (Z) affects catheterisation (D), which affects death within a year (Y). Unmeasured severity and frailty (U) affect D and Y. Assumptions: 1 relevance on the Z to D arrow; 2 independence, a crossed-out path between Z and U; 3 exclusion, a crossed-out direct path from Z to Y; 4 monotonicity on the Z to D arrow.">
+        <defs>
+          <marker id="l49-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead"/></marker>
+          <marker id="l49-arrow-acc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead accent"/></marker>
+        </defs>
+        <g class="s1"><rect x="16" y="126" width="160" height="56" rx="10" class="node-fill"/></g>
+        <g class="s2"><rect x="250" y="126" width="140" height="56" rx="10" class="node-fill"/></g>
+        <g class="s3"><rect x="476" y="126" width="148" height="56" rx="10" class="node-fill"/></g>
+        <g class="s5"><rect x="360" y="16" width="170" height="50" rx="10" class="node"/></g>
+        <g text-anchor="middle">
+          <text x="96" y="150" class="viz-bold">Distance to a</text>
+          <text x="96" y="168" class="viz-bold">cath hospital (Z)</text>
+          <text x="320" y="150" class="viz-bold">Catheterisation</text>
+          <text x="320" y="168" class="viz-small viz-muted">treatment D</text>
+          <text x="550" y="150" class="viz-bold">Death in 1 year</text>
+          <text x="550" y="168" class="viz-small viz-muted">outcome Y</text>
+          <text x="445" y="37" class="viz-bold">Severity, frailty</text>
+          <text x="445" y="55" class="viz-small viz-muted">unmeasured U</text>
+        </g>
+        <!-- allowed paths -->
+        <path d="M176,154 L246,154" class="edge accent" marker-end="url(#l49-arrow-acc)"/>
+        <text x="211" y="118" text-anchor="middle" class="viz-small viz-bold colour s1">1 · relevance</text>
+        <path d="M390,154 L472,154" class="edge strong" marker-end="url(#l49-arrow)"/>
+        <text x="431" y="204" text-anchor="middle" class="viz-small">effect we want</text>
+        <path d="M415,66 L350,122" class="edge" marker-end="url(#l49-arrow)"/>
+        <path d="M475,66 L535,122" class="edge" marker-end="url(#l49-arrow)"/>
+        <!-- independence -->
+        <path d="M96,124 C96,60 200,41 356,41" class="edge" stroke-dasharray="5 5" marker-end="url(#l49-arrow)"/>
+        <g class="s3"><path d="M189,44 L205,60 M205,44 L189,60" class="stroke"/></g>
+        <text x="16" y="30" class="viz-small viz-bold colour s3">2 · independence:</text>
+        <text x="16" y="46" class="viz-small">Z shares no cause with U</text>
+        <!-- monotonicity -->
+        <text x="270" y="204" text-anchor="middle" class="viz-small viz-bold colour s2">4 · monotonicity:</text>
+        <text x="270" y="220" text-anchor="middle" class="viz-small">living nearer never lowers anyone’s chance</text>
+        <!-- exclusion -->
+        <path d="M96,184 C96,300 550,300 550,186" class="edge" stroke-dasharray="5 5" marker-end="url(#l49-arrow)"/>
+        <g class="s3"><path d="M315,263 L331,279 M331,263 L315,279" class="stroke"/></g>
+        <text x="320" y="312" text-anchor="middle" class="viz-small"><tspan class="viz-bold colour s3">3 · exclusion:</tspan> Z affects Y only through D (nearness brings no other care)</text>
+      </svg>
+      <figcaption>Solid arrows are allowed; crossed dashed paths must not exist. Distance fails independence if remote patients are poorer or more rural in ways that affect survival, and fails exclusion if being near a big hospital speeds up all of a patient’s care, not just catheterisation.</figcaption>
+    </figure>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>“Measured confounders are balanced across the instrument, so the IV is valid.” Balance supports independence for what you measured. It says nothing about exclusion, which is usually the weakest assumption for health-services instruments.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>You want to know if umbrellas keep people dry, but careful people carry umbrellas and also avoid puddles. Instead, compare days when a shop near the station hands out free umbrellas with days it doesn’t. The giveaway changes who carries one; it can’t change the rain, unless the shop also hands out raincoats.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="late">
+    <h2>5. Whose effect? Compliers and the LATE</h2>
+    <p class="point">When effects vary between people, IV estimates the average effect only among <strong>compliers</strong>, the people whose treatment the instrument actually changed.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Sort people by how they would respond to the instrument. <strong>Always-takers</strong> get treated either way; <strong>never-takers</strong> never do; <strong>compliers</strong> get treated only if encouraged (live near); <strong>defiers</strong> do the opposite. <strong>Monotonicity</strong> assumes there are no defiers. Then the IV estimate is the effect among compliers: the <strong>local average treatment effect</strong> (LATE; Imbens and Angrist, 1994).</dd>
+      <dt>Why it matters</dt>
+      <dd>Always-takers and never-takers have the same treatment whatever the instrument, so the instrument tells you nothing about them. Compliers are the “marginal” patients, the ones a policy change at the margin would affect. That is useful for policy, but it is not the average effect across everyone.</dd>
+      <dt>How to read it</dt>
+      <dd>The basic estimate is the <strong>Wald ratio</strong>: the instrument’s effect on the outcome (the intention-to-treat, ITT, effect) divided by its effect on treatment (the <strong>first stage</strong>, which is also the share of compliers).</dd>
+    </dl>
+
+    \[ \text{LATE} = \frac{\text{ITT: difference in outcome between instrument groups}}{\text{first stage: difference in treatment rate between instrument groups}} \]
+
+    <dl class="facets">
+      <dt>What a change means</dt>
+      <dd>If near patients die 1.8 percentage points less and are catheterised 30 points more, the effect among compliers is 1.8 / 0.30 = 6 points fewer deaths per 100 treated. A first stage of 3 points with the same ITT would imply 60 points, a sign that something other than catheterisation is at work.</dd>
+    </dl>
+
+    <div class="widget" data-widget="iv-late">
+      <div class="widget-title">Compliers, defiers and the Wald estimate</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Compare the two panels: only the teal compliers change. Set different effects for compliers and always-takers and see which one Wald recovers. Then drag compliers down to 3% (a weak instrument), or add defiers.</p>
+    </div>
+
+    <p><strong>Fuzzy RD is IV.</strong> The cut-off is the instrument: crossing it raises the chance of treatment, and only the jump can be attributed to it. The fuzzy RD estimate is the outcome jump divided by the treatment jump. It is the effect for compliers at the cut-off, for example patients whose GP prescribed statins because the risk score crossed 20%. In <code>rdrobust</code>, add <code>fuzzy = statin</code>.</p>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Treating disagreement between two valid IV studies as a contradiction. Distance moves one group of patients; physician preference moves another. Each recovers its own compliers’ effect, and both can be right. Describe the compliers (their average age, severity and so on can be estimated) before comparing.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>Two-stage least squares looks like “predict treatment from the instrument, then regress the outcome on the prediction”. Doing that by hand with a nonlinear or ML first stage (the “forbidden regression”) gives biased estimates and wrong standard errors. Use an IV estimator, or double/debiased ML for IV (<code>DoubleML</code> in R and Python) if you want flexible models for covariates.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="weak">
+    <h2>6. Weak instruments and instruments that fail</h2>
+    <p class="point">A weak first stage turns small biases into large ones and makes the estimate unstable, so a good instrument must be both strong and clean.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The strength of an instrument is summarised by the <strong>first-stage F-statistic</strong>. The old rule “F above 10” (Staiger and Stock, 1997) controls bias, not the error rate of tests. Lee, McCrary, Moreira and Porter (2022) showed that a true 5% test with the usual ±1.96 needs F above about 105, or a larger critical value (their tF method) or Anderson–Rubin intervals.</dd>
+      <dt>Why it matters</dt>
+      <dd>Any direct path from instrument to outcome is divided by the first stage. A tiny exclusion violation over a small first stage becomes a large bias. Weak-instrument estimates also lean towards the confounded ordinary regression answer (Bound, Jaeger and Baker, 1995).</dd>
+      <dt>How to read it</dt>
+      <dd>Look for the first-stage F, the first-stage effect in natural units (“near patients were catheterised 25 points more often”), and a reduced-form (ITT) estimate. If the reduced form is null, the IV estimate is null too, however it is dressed up.</dd>
+    </dl>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Instrument</th><th>The story</th><th>How it fails</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Distance to a facility</strong></td><td>Nearer patients get the specialist treatment more often</td><td>Distance tracks rurality, income and the general quality of nearby care</td></tr>
+          <tr><td><strong>Physician preference</strong></td><td>Patients get whatever their doctor tends to prescribe</td><td>Preferring doctors differ in other habits; patients choose their doctors</td></tr>
+          <tr><td><strong>Calendar time</strong></td><td>Use jumps after a guideline or drug launch</td><td>Everything else changes over time too: case mix, coding, other treatments</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example</div>
+      <p>Brookhart and colleagues (2006) used each physician’s preference for COX-2 inhibitors over older NSAIDs. Conventional adjusted regression found no protective effect on gastrointestinal complications. The IV estimate was 1.31 fewer per 100 patients, in the same direction as the trials (0.65 fewer), though larger and much less precise. Garabedian and colleagues (2014) reviewed 65 comparative effectiveness IV studies with mortality outcomes: only 4 discussed confounders of the instrument and the outcome from outside their own data.</p>
+    </div>
+
+    <pre><code>library(ivreg)
+fit &lt;- ivreg(died ~ cath + age + sex + diabetes |
+                    near_cath + age + sex + diabetes, data = ami)
+summary(fit, diagnostics = TRUE)   # weak-instrument F, Wu-Hausman test
+lm(cath ~ near_cath + age + sex + diabetes, data = ami)   # first stage, natural units
+lm(died ~ near_cath + age + sex + diabetes, data = ami)   # reduced form (ITT)</code></pre>
+    <p>The formula reads “outcome on treatment plus covariates, instrumented by the instrument plus the same covariates”. Always show the first stage and the reduced form next to the IV estimate: the IV coefficient is just their ratio.</p>
+
+    <div class="callout gulf">
+      <div class="callout-title">GCC angle</div>
+      <p>Saudi Arabia’s size makes distance to tertiary cardiac or stroke centres vary a lot, which gives a strong first stage. It also makes distance track rural residence, income, nationality mix and the speed of every kind of emergency care. Strength is not validity. A Gulf distance-IV paper would need to show balance on these and argue why distance changes nothing else.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>“F = 12, so the instrument is strong.” F above 10 limits bias relative to ordinary regression; it does not make the standard 95% interval honest. With F in the tens, use weak-instrument-robust intervals.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="review">
+    <h2>7. How reviewers judge RD and IV</h2>
+    <p class="point">Reviewers ask one question of both designs: is the source of variation as good as random for the people it moves, and have you shown the checks that could have proved otherwise?</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Reviewers ask</th><th>Convincing RD answer</th><th>Convincing IV answer</th></tr></thead>
+        <tbody>
+          <tr><td>Where does the variation come from?</td><td>A documented rule with a precise running variable</td><td>A mechanism that moves treatment for reasons unrelated to prognosis</td></tr>
+          <tr><td>What could break it?</td><td>Density, balance and placebo cut-off checks</td><td>Balance across the instrument; negative-control outcomes; argued exclusion</td></tr>
+          <tr><td>Is it robust?</td><td>Bandwidth sensitivity; local linear, not polynomial</td><td>Strong first stage; weak-IV-robust intervals; reduced form shown</td></tr>
+          <tr><td>Whose effect?</td><td>People near the cut-off</td><td>Compliers, described</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <dl class="facets">
+      <dt>Why it matters</dt>
+      <dd>Both designs can look like magic: no confounders to list. That makes reviewers more sceptical, not less. Hernán and Robins called instruments “an epidemiologist’s dream?”, with the question mark doing the work.</dd>
+      <dt>How to read it</dt>
+      <dd>Triangulate. An RD, an IV and a target trial emulation (Lecture 4.5) of the same question rest on different assumptions. If they agree, no single bias is likely to explain all three (Lecture 4.11).</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Comparing an IV or RD estimate directly with a trial’s average effect and calling any gap bias. The trial estimates an average over its participants, the RD the effect at a cut-off, the IV the effect in compliers. Check that the populations match before reading the gap as bias.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>An RD study finds that starting a diabetes programme at HbA1c 6.5% lowers 5-year complications. A health minister asks whether extending the programme to people at 5.7% would have the same effect. What do you say?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The estimate applies to people near 6.5%. People at 5.7% are at lower risk and may gain less, so applying it to them is extrapolation. You could look at whether the effect seems to change with distance from the cut-off within the window, or use evidence from trials in pre-diabetes. You cannot read it off the RD.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A paper fits a 6th-order polynomial on each side of a cut-off and reports a significant jump. The local linear estimate, in the appendix, is half the size and not significant. Which do you believe, and why?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The local linear estimate. High-order global polynomials lean on points far from the cut-off, are sensitive to the degree, and give confidence intervals that are too narrow (Gelman and Imbens). The polynomial result is probably fitting curvature away from the cut-off rather than a real jump.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>In an RD using systolic blood pressure of 140 mmHg as a treatment threshold, there are far more readings of exactly 140 than of 139 or 141. What does this mean for the design?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Digit preference or manipulation: whoever recorded the reading knew the threshold or rounded it. Patients recorded at exactly 140 may differ from those at 139. Run the density test, check balance, try a donut RD that drops readings at 140, and ideally use an automated measurement that clinicians can’t round.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>An IV study of a new anticoagulant uses physician preference and finds a smaller benefit than the trial. The authors conclude the trial overstated the benefit. What else could explain the gap?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Different populations: the IV estimates the effect in compliers, the patients whose prescription depended on the doctor, probably the borderline cases. Their benefit could truly be smaller. Exclusion could also fail if preferring doctors manage patients differently in other ways. And a weak instrument would make the estimate imprecise and pull it towards the confounded answer.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A distance instrument has a first-stage F of 400 and is balanced on age, sex and comorbidities. Is the IV estimate now credible?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Not yet. Strength and balance on measured variables support relevance and (partly) independence. Exclusion is still argued, not shown: nearness to a big hospital could speed up all care. Look for a negative-control outcome (one the treatment can’t affect but nearness to care could), and think about unmeasured factors linked to where people live.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Cunningham, <em>Causal Inference: The Mixtape</em> (2021), chapters on regression discontinuity and instrumental variables. Huntington-Klein, <em>The Effect</em> (2021), chapters 19–20. Hernán &amp; Robins, <em>Causal Inference: What If</em>, chapter 16 (instrumental variable estimation).</li>
+      <li>Cattaneo, Idrobo &amp; Titiunik, <em>A Practical Introduction to Regression Discontinuity Designs: Foundations</em> (Cambridge Elements, 2020); Calonico, Cattaneo &amp; Titiunik, “Robust nonparametric confidence intervals for regression-discontinuity designs”, <em>Econometrica</em> (2014); <code>rdrobust</code> and <code>rddensity</code> documentation.</li>
+      <li>Gelman &amp; Imbens, “Why high-order polynomials should not be used in regression discontinuity designs”, <em>Journal of Business &amp; Economic Statistics</em> (2019). McCrary, “Manipulation of the running variable in the regression discontinuity design: a density test”, <em>Journal of Econometrics</em> (2008).</li>
+      <li>Card, Dobkin &amp; Maestas, “Does Medicare save lives?”, <em>Quarterly Journal of Economics</em> (2009). Bor et al., “Regression discontinuity designs in epidemiology: causal inference without randomized trials”, <em>Epidemiology</em> (2014). O’Keeffe et al., “Regression discontinuity designs: an approach to the evaluation of treatment efficacy in primary care using observational data”, <em>BMJ</em> (2014). Almond, Doyle, Kowalski &amp; Williams, <em>QJE</em> (2010), and the heaping critique by Barreca, Guldi, Lindo &amp; Waddell, <em>QJE</em> (2011).</li>
+      <li>Imbens &amp; Angrist, “Identification and estimation of local average treatment effects”, <em>Econometrica</em> (1994); Angrist, Imbens &amp; Rubin, <em>JASA</em> (1996). Hernán &amp; Robins, “Instruments for causal inference: an epidemiologist’s dream?”, <em>Epidemiology</em> (2006).</li>
+      <li>McClellan, McNeil &amp; Newhouse, “Does more intensive treatment of acute myocardial infarction in the elderly reduce mortality?”, <em>JAMA</em> (1994). Brookhart et al., “Evaluating short-term drug effects using a physician-specific prescribing preference as an instrumental variable”, <em>Epidemiology</em> (2006). Garabedian et al., “Potential bias of instrumental variable analyses for observational comparative effectiveness research”, <em>Annals of Internal Medicine</em> (2014).</li>
+      <li>Bound, Jaeger &amp; Baker, <em>JASA</em> (1995); Staiger &amp; Stock, <em>Econometrica</em> (1997); Lee, McCrary, Moreira &amp; Porter, “Valid t-ratio inference for IV”, <em>American Economic Review</em> (2022). <code>ivreg</code> package documentation.</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="4-08-synthetic-control.html"><small>Previous</small>4.8 Synthetic control</a>
+    <a class="next" href="4-10-mediation-analysis.html"><small>Next</small>4.10 Mediation analysis</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

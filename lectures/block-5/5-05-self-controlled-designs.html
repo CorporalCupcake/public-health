@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>5.5 Self-controlled designs · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/5-05.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-5">Block 5</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 5.5</p>
+  <h1>Self-controlled designs: case-crossover, self-controlled case series</h1>
+  <div class="lecture-meta">
+    <span>Block 5 · Pharmacoepidemiology, real-world evidence, regulatory science and AI evaluation</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>Self-controlled designs compare each person with themselves at other times, so everything fixed about that person (genes, frailty, deprivation, nationality, health-seeking) cancels without being measured. The price is a new set of assumptions about <em>time</em>. The <strong>case-crossover</strong> design asks "was this person more often exposed just before their event than at other times?". The <strong>self-controlled case series</strong> (SCCS) asks "did this person's events cluster in the period after exposure?". Both use only cases. They are the workhorses of vaccine safety, and the first designs to reach for when confounding by indication looks hopeless.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#within">Comparing a person with themselves</a></li>
+      <li><a href="#cco">Case-crossover in depth</a></li>
+      <li><a href="#sccs">The self-controlled case series</a></li>
+      <li><a href="#assumptions">SCCS assumptions and their fixes</a></li>
+      <li><a href="#examples">Classic examples: MMR and ITP, rotavirus and intussusception</a></li>
+      <li><a href="#choose">Choosing a design</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="within">
+    <h2>1. Comparing a person with themselves</h2>
+    <p class="point">Within-person comparison removes every confounder that does not change over the study window; it does nothing for those that do.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Each case acts as their own control. The analysis conditions on the person, so the estimate comes only from variation <em>within</em> people over time. Between-person differences drop out of the likelihood, much as fixed effects do in a panel regression.</dd>
+      <dt>Why it matters</dt>
+      <dd>Drug and vaccine safety studies are dominated by confounders that are hard to measure but stable over months: frailty, chronic disease, socioeconomic position, attitudes to health care. A self-controlled design handles all of them at once.</dd>
+      <dt>How to read it</dt>
+      <dd>For each study, list what changes within a person over the window: age, season, acute illness, other drugs, calendar trends. Those are the confounders that remain and must be adjusted for or designed out.</dd>
+      <dt>What a change means</dt>
+      <dd>Lengthening the observation window lets more time-varying confounding in (ageing, disease progression); shortening it loses information. Typical windows are months to a year or two.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · SCCS and case-crossover windows</div>
+      <svg class="viz-svg" viewBox="0 0 640 360" role="img" aria-label="Top: a self-controlled case series for one person. The observation period runs from start to end. A vaccine dose is given partway through; a short pre-exposure window comes just before it and a risk window just after it; the rest is control time. Events can fall anywhere. Bottom: a case-crossover for one case. The event is fixed at the right. The hazard window lies just before it; three referent windows of the same length lie earlier. Exposure is checked in each window.">
+        <defs><marker id="l55-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead"/></marker></defs>
+        <text x="20" y="20" class="viz-bold">Self-controlled case series</text>
+        <text x="20" y="38" class="viz-small viz-muted">exposure times are fixed; compare event rates in risk vs control time</text>
+
+        <g class="s5"><rect x="40" y="76" width="560" height="20" rx="4" class="fill-soft"/></g>
+        <g class="s2"><rect x="214" y="76" width="46" height="20" class="fill" style="fill-opacity:0.6"/></g>
+        <g class="s1"><rect x="260" y="76" width="110" height="20" class="fill" style="fill-opacity:0.75"/></g>
+        <path d="M260,70 L254,58 L266,58 Z" class="s1 dot"/>
+        <text x="272" y="66" class="viz-small viz-bold colour s1">vaccine</text>
+        <text x="40" y="68" class="viz-small viz-muted">start of observation</text>
+        <text x="600" y="68" text-anchor="end" class="viz-small viz-muted">end</text>
+        <g class="s3">
+          <circle cx="130" cy="86" r="6" class="dot"/>
+          <circle cx="305" cy="86" r="6" class="dot"/>
+          <circle cx="480" cy="86" r="6" class="dot"/>
+        </g>
+        <g text-anchor="middle">
+          <text x="127" y="116" class="viz-small">control time</text>
+          <text x="226" y="116" class="viz-small colour s2">pre-exposure</text>
+          <text x="315" y="116" class="viz-small colour s1 viz-bold">risk window</text>
+          <text x="485" y="116" class="viz-small">control time</text>
+          <text x="226" y="132" class="viz-small viz-muted">(optional)</text>
+        </g>
+        <text x="320" y="156" text-anchor="middle" class="viz-small viz-muted">IRR = event rate in risk window ÷ event rate in control time, within each person</text>
+
+        <line x1="20" y1="174" x2="620" y2="174" class="viz-grid"/>
+
+        <text x="20" y="200" class="viz-bold">Case-crossover</text>
+        <text x="20" y="218" class="viz-small viz-muted">the event time is fixed; compare exposure in the hazard window vs referent windows</text>
+
+        <line x1="40" y1="270" x2="600" y2="270" class="edge" marker-end="url(#l55-arrow)"/>
+        <g class="s5">
+          <rect x="140" y="254" width="62" height="32" rx="4" class="fill-soft"/>
+          <rect x="260" y="254" width="62" height="32" rx="4" class="fill-soft"/>
+          <rect x="380" y="254" width="62" height="32" rx="4" class="fill-soft"/>
+        </g>
+        <g class="s3"><rect x="496" y="254" width="62" height="32" rx="4" class="fill-soft" style="fill-opacity:0.4"/></g>
+        <circle cx="566" cy="270" r="7" class="dot s3"/>
+        <text x="566" y="246" text-anchor="middle" class="viz-small viz-bold colour s3">event</text>
+        <g text-anchor="middle">
+          <text x="171" y="304" class="viz-small">referent</text>
+          <text x="291" y="304" class="viz-small">referent</text>
+          <text x="411" y="304" class="viz-small">referent</text>
+          <text x="527" y="304" class="viz-small viz-bold colour s3">hazard</text>
+          <text x="80" y="330" class="viz-small viz-muted" text-anchor="start">exposed?</text>
+          <text x="171" y="330" class="viz-small">no</text>
+          <text x="291" y="330" class="viz-small colour s1 viz-bold">yes</text>
+          <text x="411" y="330" class="viz-small">no</text>
+          <text x="527" y="330" class="viz-small colour s1 viz-bold">yes</text>
+        </g>
+        <text x="600" y="352" text-anchor="end" class="viz-small viz-muted">time</text>
+      </svg>
+      <figcaption>The two designs condition on opposite things. SCCS takes exposure history as given and asks where the events fell. Case-crossover takes the event as given and asks when the person was exposed. That is why their assumptions differ.</figcaption>
+    </figure>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>"Self-controlled, so no confounding." Time-varying confounders survive. The classic one is acute illness: a child with a fever is not vaccinated that week, and a patient with a flare starts a new drug. Both create spurious associations within the same person.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>SCCS is a conditional Poisson regression with a person fixed effect, and the person effect is conditioned out exactly rather than estimated. It is the epidemiological version of within-unit (fixed-effects) estimation in panel data, and it shares that method's blind spot: anything that varies within the unit and correlates with treatment timing.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="cco">
+    <h2>2. Case-crossover in depth</h2>
+    <p class="point">The case-crossover design is a matched case-control study in which each case is matched to themselves, so it inherits case-control logic and adds its own time problems.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Lecture 2.4 introduced it: for a transient exposure and an abrupt outcome, compare exposure in a <em>hazard window</em> just before the event with exposure in earlier <em>referent windows</em> of the same length. Analyse with conditional logistic regression, each case a stratum. In drug studies, the exposure is usually "dispensing covers this window".</dd>
+      <dt>Why it matters</dt>
+      <dd>It fits triggers: a new prescription before a fall, a fluoroquinolone before a tendon rupture, an NSAID before an acute kidney injury. Only cases are needed, which makes it cheap in claims and registries.</dd>
+      <dt>How to read it</dt>
+      <dd>The odds ratio compares how often the person was exposed in the hazard window with how often they were exposed at other times. Discordant cases (exposed in one window, not the other) carry all the information.</dd>
+      <dt>What a change means</dt>
+      <dd>If use of a drug is rising over time in everyone (a new drug gaining market share, or a chronic drug as disease progresses), hazard windows are later than referent windows and so are more often exposed. That inflates the odds ratio even with no effect: <strong>exposure-trend bias</strong>.</dd>
+    </dl>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Fix</th><th>How it works</th><th>Its own assumption</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Case-time-control</strong> (Suissa)</td><td>Run the same case-crossover in matched non-cases; divide the cases' OR by the controls' OR, which measures the trend alone</td><td>Controls share the cases' exposure trend; reintroduces between-person differences in trend</td></tr>
+          <tr><td><strong>Case-case-time-control</strong></td><td>Use <em>future cases</em> (people who have the event later) as the trend controls</td><td>Future cases have the same trend as current cases; needs enough events over time</td></tr>
+          <tr><td><strong>Bidirectional or time-stratified referents</strong></td><td>Take referents on both sides of the event, within the same stratum (Lecture 2.4)</td><td>Valid only if the event cannot change later exposure, which rarely holds for drugs</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <pre><code>library(survival)
+# one row per person-window: hazard window (case_win = 1), referents (0)
+fit &lt;- clogit(case_win ~ exposed + strata(id), data = cco)
+exp(cbind(OR = coef(fit), confint(fit)))
+# case-time-control: stack matched non-cases, is_case = 0 for them
+fit_ctc &lt;- clogit(case_win ~ exposed * is_case + strata(id), data = cco_ctc)</code></pre>
+    <p>Each person is a stratum, so the model compares windows within people. In the case-time-control fit, the non-cases' "hazard" windows are pseudo-windows at the same dates; <code>exposed</code> then measures the trend alone and the <code>exposed:is_case</code> interaction is the cases' odds ratio divided by that trend.</p>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Why case-time-control was invented</div>
+      <p>Suissa introduced the case-time-control design in 1995 using inhaled beta-agonists and asthma death. Inhaler use rises as asthma worsens, so in the weeks before a fatal attack, use is naturally higher than months earlier. A case-crossover reads that rise as harm. Adjusting for the same rise in comparable asthma patients who did not die separates the drug from the disease's trajectory.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Using bidirectional referents in a drug study. If the event leads to stopping or starting the drug (a bleed stops the anticoagulant), referents after the event are systematically different. For drugs, use referents before the event only, and deal with trend directly.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="sccs">
+    <h2>3. The self-controlled case series</h2>
+    <p class="point">SCCS asks whether a person's events happen more often in a defined risk window after exposure than in the rest of their observation period, after allowing for age.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Developed by Farrington for vaccine safety. Take only cases. For each, define an observation period, the exposure date(s), and one or more <strong>risk windows</strong> after exposure. All other observed time is <strong>control time</strong>. A conditional Poisson model estimates the <strong>relative incidence</strong> (incidence rate ratio, IRR) in risk vs control time, with age (and often season) as time-varying covariates.</dd>
+      <dt>Why it matters</dt>
+      <dd>It needs only cases with exposure dates, which immunisation registers and hospital admission records supply. Fixed confounders cancel. Unlike case-crossover, it handles exposures at fixed ages (vaccines) and is not biased by exposure trends in the population, because it conditions on each person's exposure history.</dd>
+      <dt>How to read it</dt>
+      <dd>An IRR of 3 in a 42-day window means events were three times as frequent in the six weeks after the dose as in the same person's other time. Translate it into absolute terms with the background rate: that is how "1 case per N doses" statements are made.</dd>
+      <dt>What a change means</dt>
+      <dd>A risk window that is too long dilutes the IRR towards 1, because it mixes risky and non-risky days. One that is too short misses late cases. Pre-specify the window from biology, and show sensitivity to it, often by splitting into sub-windows (days 0–14, 15–28, 29–42).</dd>
+    </dl>
+
+    <div class="widget" data-widget="sccs-builder">
+      <div class="widget-title">SCCS builder</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Set a true IRR and an age effect, then compare the estimates with and without age adjustment. Shorten and lengthen the risk window. Then switch on event-dependent exposure, where the event rules out the vaccine (as intussusception does for rotavirus vaccine), and see what happens to the estimate and how the fix recovers it.</p>
+    </div>
+
+    <pre><code>library(SCCS)
+data(itpdat)   # MMR and ITP; ages in days, observed 366–730
+m1 &lt;- standardsccs(event ~ mmr + age, indiv = case, astart = sta, aend = end,
+                   aevent = itp, adrug = mmr, aedrug = mmr + 42,
+                   agegrp = c(427, 488, 549, 610, 671), data = itpdat)
+m1             # exp(coef) for mmr = relative incidence in days 0–42</code></pre>
+    <p><code>astart</code> and <code>aend</code> are each child's observation period; <code>adrug</code> and <code>aedrug</code> open and close the 42-day risk window; <code>agegrp</code> splits the second year of life into two-month age bands. The package ships these data from the MMR–ITP studies, and the model takes seconds.</p>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Skipping age adjustment. Vaccines are given at fixed ages and many outcomes change rapidly with age in infancy. If incidence rises with age and the risk window falls early in the observation period, the unadjusted IRR is biased towards 1, as the widget shows. The person is constant; their age is not.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Checking whether your headaches come after coffee by looking at your own diary, not by comparing yourself with a tea drinker. But if you only drink coffee on Mondays and Mondays are stressful, the diary still misleads you.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="assumptions">
+    <h2>4. SCCS assumptions and their fixes</h2>
+    <p class="point">SCCS trades confounding assumptions for three timing assumptions; each has a known failure and a known fix.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Assumption</th><th>When it fails</th><th>Fix</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Events do not change later exposure</strong></td><td>The event is a contraindication (intussusception and rotavirus vaccine), or delays exposure (a sick child's vaccine is postponed)</td><td>For short delays, a <em>pre-exposure window</em> that is analysed separately; for permanent contraindication, the event-dependent exposure model (<code>eventdepenexp()</code>)</td></tr>
+          <tr><td><strong>Events are recurrent and independent, or rare</strong></td><td>A first event raises the risk of a second (a first seizure, a first MI)</td><td>Analyse first events only; this is fine when the event is rare in the observation period</td></tr>
+          <tr><td><strong>The event does not end observation</strong></td><td>The event is death, or raises the risk of death or of leaving the data</td><td>Event-dependent observation period model (<code>eventdepenobs()</code>); or another design</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Farrington, Whitaker and colleagues developed extensions for each failure. A <strong>pre-exposure window</strong> (for example the 14 days before a dose) catches the dip in vaccination just after an illness, so that dip does not contaminate control time. The event-dependent models rebuild the likelihood for the cases whose exposure or follow-up the event altered.</dd>
+      <dt>Why it matters</dt>
+      <dd>These are not edge cases. In drug safety the event often changes treatment: a GI bleed stops the NSAID; a fall stops the sedative. Ignoring this makes the drug look more harmful, because post-event time is drug-free and event-free.</dd>
+      <dt>How to read it</dt>
+      <dd>A good SCCS paper names each assumption, says why it holds or how it was relaxed, and reports the pre-exposure window's IRR. An IRR well below 1 in that window signals the healthy-vaccinee or delayed-exposure effect.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Applying SCCS to mortality. Death ends observation, so the third assumption fails by definition. This rules out a standard SCCS for Project 5A's main outcome (death after new-onset AF). An SCCS of anticoagulation and <em>major bleeding</em> is possible in principle, but bleeding stops anticoagulation, so the first assumption fails too.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Event-dependent exposure in the widget</div>
+      <p>With "Event rules out vaccination", children who have their event before the scheduled dose are never vaccinated. Their events are recorded in unexposed time, and every vaccinated case's event must come after the dose. The naive SCCS inflates the IRR. Restricting to vaccinated cases and starting observation at the dose removes the bias in this simple set-up, at the cost of precision.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="examples">
+    <h2>5. Classic examples: MMR and ITP, rotavirus and intussusception</h2>
+    <p class="point">The textbook SCCS results are vaccine safety findings that changed practice, and each shows a design choice you will reuse.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>MMR and immune thrombocytopenic purpura (ITP).</strong> Using linked immunisation and hospital admission records in England, Miller and colleagues (2001) confirmed a causal association in the six weeks after MMR, with an absolute risk of about 1 in 22,300 doses. About two of every three ITP cases in that window were attributable to the vaccine.<br><strong>Rotavirus vaccine and intussusception.</strong> Patel and colleagues (2011) used SCCS alongside a case-control analysis in Mexico and Brazil. In Mexico the relative incidence was about 5.3 in days 1–7 after the first dose of the monovalent vaccine; in Brazil there was no significant increase after the first dose.</dd>
+      <dt>Why it matters</dt>
+      <dd>Both turned a signal into a quantified, small absolute risk that could be weighed against benefit: measles and rotavirus kill far more children than these adverse events. Vaccination programmes continued with the risk disclosed.</dd>
+      <dt>How to read it</dt>
+      <dd>Look for a short, biologically plausible risk window; a clear age adjustment; and a translation into excess cases per doses. The Mexico–Brazil difference also shows that the IRR can vary between settings, so a Gulf-specific estimate is not redundant.</dd>
+    </dl>
+
+    <div class="callout gulf">
+      <div class="callout-title">In the Gulf</div>
+      <p>SCCS suits Gulf vaccine safety questions because it needs only cases: link hospital admissions for the event to the child's immunisation dates. It is robust to the stable differences between nationals and expatriate families (access, language, insurance) that would confound a cohort comparison. The main design work is the observation period: families who leave the country end observation for reasons unrelated to the event, which is fine, but residence spells must be known.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reading the relative incidence as the risk. An IRR of 5 for a rare outcome (tens of cases per 100,000 infants a year) is still a very small absolute risk per dose. Always report both, as Miller and Patel did.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="choose">
+    <h2>6. Choosing a design</h2>
+    <p class="point">Choose by the shape of the exposure and the outcome: transient or fixed-date exposure, abrupt or slow outcome, and whether the outcome changes what happens next.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Situation</th><th>Best first choice</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td>Exposure at known dates (vaccine, procedure); acute outcome; event does not end follow-up</td><td><strong>SCCS</strong></td><td>Conditions on exposure history; immune to population exposure trends</td></tr>
+          <tr><td>Transient, intermittent exposure; abrupt outcome; exposure dates only known for cases</td><td><strong>Case-crossover</strong></td><td>Only needs exposure around the event time</td></tr>
+          <tr><td>Exposure trend over time (rising use, worsening disease)</td><td>SCCS, or case-time-control</td><td>Case-crossover alone is biased by the trend</td></tr>
+          <tr><td>Outcome is death, or long-term effect of chronic treatment</td><td><strong>Cohort / target trial</strong> (Lecture 4.5)</td><td>Self-controlled designs need recurrent time and transient effects</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A practical decision, not a ranking. Many safety studies run a cohort design and an SCCS side by side: if the two agree, despite different assumptions, confidence rises. US vaccine safety monitoring often uses a simpler cousin, the <em>self-controlled risk interval</em> design, which compares a risk window with a short nearby control window.</dd>
+      <dt>Why it matters</dt>
+      <dd>Reviewers and regulators ask "why this design?". The answer should name the confounding you feared and the timing assumptions you accepted instead.</dd>
+      <dt>What a change means</dt>
+      <dd>When a cohort study and an SCCS disagree, look first at time-varying confounding (which hurts SCCS) and indication or frailty (which hurts the cohort). The disagreement usually tells you which.</dd>
+    </dl>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Project 5A, a secondary question</div>
+      <p>Does starting amiodarone in the ICU trigger hypotension within hours? The exposure is abrupt and dated in the administration records, the outcome is abrupt and repeatable in the vital signs, and frailty differences between patients are severe. A self-controlled design within ICU stays is a sensible secondary analysis. The main question, anticoagulation and death, is not: it stays a target trial emulation.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>A case-crossover study of a new antidepressant and hip fracture in older adults finds OR 1.9, using referent windows 3 and 6 months before the fracture. Prescribing of the drug rose sharply over the study period. What do you suspect, and what would you do?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Exposure-trend bias: with use rising over calendar time, the hazard window is more often exposed than the earlier referents even without an effect. Run a case-time-control (or case-case-time-control) analysis to subtract the trend, or use an SCCS, which conditions on each person's exposure history.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>An SCCS of a vaccine finds an IRR of 0.6 in the 14 days <em>before</em> vaccination. What does that mean, and does it threaten the main estimate?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Children who were recently ill (and so more likely to have the event) had their vaccination postponed, so pre-vaccination time is "too healthy". If that time were left in the control period, it would distort the baseline. Analysing it as a separate pre-exposure window protects the main risk-window estimate. The low IRR is a healthy-vaccinee effect, not a protective effect of a vaccine not yet given.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A colleague proposes SCCS to study whether anticoagulation reduces in-hospital death after new-onset AF in MIMIC-IV. Your view?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>It fails. Death ends observation, a non-recurrent event that censors follow-up. Anticoagulation is also continuous rather than transient, and the outcome would change exposure. A target trial emulation with a cohort design is the right tool; self-controlled designs could serve a secondary question with a transient exposure and a recurrent, non-fatal outcome.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>An SCCS of MMR and febrile seizures uses a 42-day risk window and finds IRR 1.4. Splitting the window gives IRR 4 for days 6–11 and about 1 for the rest. Which do you report?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Both, with the split as the main finding if it was pre-specified or biologically motivated (the measles component replicates over about a week to 12 days). A long window dilutes a short, sharp risk towards 1. The single 42-day IRR understates the peak and overstates the duration of risk.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Why does SCCS not need controls, when a case-control study does?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Because SCCS compares rates within each case over time, using the case's own unexposed time as the reference. The comparison is between periods, not people. That is valid as long as the timing assumptions hold. A case-control study compares people, so it needs a sample of non-cases to estimate exposure in the source population.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Strom, Kimmel &amp; Hennessy (eds), <em>Pharmacoepidemiology</em> (Wiley): chapter on self-controlled designs.</li>
+      <li>Farrington, Whitaker &amp; Ghebremichael Weldeselassie, <em>Self-Controlled Case Series Studies: A Modelling Guide with R</em> (Chapman &amp; Hall/CRC, 2018); the R package SCCS (CRAN).</li>
+      <li>Farrington, “Relative incidence estimation from case series for vaccine safety evaluation”, <em>Biometrics</em> (1995).</li>
+      <li>Whitaker, Farrington, Spiessens &amp; Musonda, “Tutorial in biostatistics: the self-controlled case series method”, <em>Statistics in Medicine</em> (2006).</li>
+      <li>Petersen, Douglas &amp; Whitaker, “Self controlled case series methods: an alternative to standard epidemiological study designs”, <em>BMJ</em> (2016).</li>
+      <li>Farrington, Whitaker &amp; Hocine, “Case series analysis for censored, perturbed, or curtailed post-event exposures”, <em>Biostatistics</em> (2009); Farrington et al., “Self-controlled case series analysis with event-dependent observation periods”, <em>JASA</em> (2011).</li>
+      <li>Maclure, “The case-crossover design: a method for studying transient effects on the risk of acute events”, <em>American Journal of Epidemiology</em> (1991).</li>
+      <li>Suissa, “The case-time-control design”, <em>Epidemiology</em> (1995); Wang et al., “Future cases as present controls to adjust for exposure trend bias in case-only studies”, <em>Epidemiology</em> (2011).</li>
+      <li>Miller et al., “Idiopathic thrombocytopenic purpura and MMR vaccine”, <em>Archives of Disease in Childhood</em> (2001).</li>
+      <li>Patel et al., “Intussusception risk and health benefits of rotavirus vaccination in Mexico and Brazil”, <em>New England Journal of Medicine</em> (2011).</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="5-04-confounding-by-indication-ps.html"><small>Previous</small>5.4 Confounding by indication and propensity scores</a>
+    <a class="next" href="5-06-real-world-data-sources.html"><small>Next</small>5.6 Real-world data sources and OMOP</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

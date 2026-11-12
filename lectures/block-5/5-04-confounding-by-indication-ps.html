@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>5.4 Confounding by indication and propensity scores · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/5-04.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-5">Block 5</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 5.4</p>
+  <h1>Confounding by indication; propensity scores, including high-dimensional propensity scores</h1>
+  <div class="lecture-meta">
+    <span>Block 5 · Pharmacoepidemiology, real-world evidence, regulatory science and AI evaluation</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>Doctors treat for reasons, and in drug studies those reasons are the main confounders. A <strong>propensity score</strong> (PS) squeezes every measured reason into one number, so you can compare treated and untreated patients who looked alike at the moment of decision. The method you choose to use the PS (matching, weighting, overlap weights) quietly decides <em>which patients</em> your answer is about. Balance diagnostics tell you whether the PS worked. <strong>Negative controls</strong> warn you about the reasons you never measured. Lecture 4.3 gave you the theory of weighting; this lecture is about using it well in Project 5A.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#indication">Indication, severity and channelling</a></li>
+      <li><a href="#ps-methods">Four ways to use a propensity score</a></li>
+      <li><a href="#balance">Balance diagnostics and the love plot</a></li>
+      <li><a href="#extreme">Extreme weights, trimming and overlap weights</a></li>
+      <li><a href="#hdps">High-dimensional propensity scores</a></li>
+      <li><a href="#mlps">LASSO and machine-learning propensity scores</a></li>
+      <li><a href="#negctrl">Negative controls</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="indication">
+    <h2>1. Indication, severity and channelling</h2>
+    <p class="point">The diagnosis is usually measured; the severity, frailty and prognosis that actually drive the prescription usually are not, and that gap is where drug studies fail.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Lecture 2.16 introduced <em>confounding by indication</em>. In practice it comes in three forms. <strong>Severity</strong>: sicker patients with the same diagnosis get more (or different) treatment. <strong>Contraindication and frailty</strong>: patients judged too fragile, too close to death or at high bleeding risk are not treated. <strong>Channelling</strong>: a new drug is steered towards a particular kind of patient, often those who did badly on older drugs.</dd>
+      <dt>Why it matters</dt>
+      <dd>No statistical method adjusts for a reason that is not in the data. A propensity score balances only what you put into it. Design does more work than analysis: an active comparator (Lecture 5.2) removes most of the indication before any model runs.</dd>
+      <dt>How to read it</dt>
+      <dd>For each study, write down why a clinician would choose treatment A over B in this patient, then check that each reason has a measured proxy before time zero. If the most important reason has no proxy, expect bias in a predictable direction.</dd>
+      <dt>What a change means</dt>
+      <dd>If adding a crude severity proxy (say, vasopressor use) moves the hazard ratio from 0.70 to 0.85, the finer severity you could not measure would probably move it further. The direction of each adjustment step is informative.</dd>
+    </dl>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Channelling of COX-2 inhibitors</div>
+      <p>When selective COX-2 inhibitors were launched, they were marketed as gentler on the stomach, so doctors preferentially gave them to patients at high risk of gastrointestinal bleeding. A naive comparison with older NSAIDs made the new drugs look worse for bleeding than they were, because their users started out at higher risk. Petri and Urquhart named this <em>channelling bias</em>; it recurs with almost every new drug class.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Project 5A</div>
+      <p>In ICU patients with new-onset AF, the reasons not to anticoagulate are recorded only partly: recent surgery, low platelets, active bleeding, vasopressor dependence, a goals-of-care decision. MIMIC-IV has proxies for most (procedures, labs, infusions, code-status records), measured before time zero. A "comfort care" decision is the strongest confounder and the hardest to time correctly; Lecture 5.3's grace period and Lecture 4.5's protocol table are where you pin it down.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Assuming the bias always favours the drug. Confounding by severity makes treatments for the sickest look harmful; confounding by frailty makes treatments withheld from the dying look protective. In the same study both can act, and they can cancel or add. Reason about each one separately.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="ps-methods">
+    <h2>2. Four ways to use a propensity score</h2>
+    <p class="point">Matching, stratification, inverse probability weighting and overlap weighting use the same score but answer different questions, so choose the estimand first and the method second.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The propensity score is each patient's probability of receiving treatment given measured covariates. Patients with the same score have, on average, the same covariate distribution in both groups (Rosenbaum and Rubin). You then compare like with like by matching, stratifying or weighting on it. Lecture 4.1 defined the estimands; Lecture 4.3 showed why weighting works.</dd>
+      <dt>Why it matters</dt>
+      <dd>Each method reweights the cohort to resemble a different <em>target population</em>. The average treatment effect (ATE) is about everyone. The effect in the treated (ATT) is about patients like those who were treated. The effect in the overlap population (ATO) is about patients for whom treatment was a genuine toss-up.</dd>
+      <dt>How to read it</dt>
+      <dd>A methods section should name the estimand in words ("the effect of anticoagulation among patients like those who received it"). If it names only the method, work out the estimand from the table below.</dd>
+      <dt>What a change means</dt>
+      <dd>If the ATE and ATT differ a lot, the treatment effect varies with the patient's profile. That is a finding, not a failure.</dd>
+    </dl>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Method</th><th>Estimand</th><th>Strength</th><th>Weakness</th></tr></thead>
+        <tbody>
+          <tr><td><strong>1:1 matching</strong> (nearest neighbour, caliper)</td><td>ATT</td><td>Easy to explain; produces a "Table 1" anyone can read</td><td>Discards unmatched patients; caliper choice changes who is left</td></tr>
+          <tr><td><strong>Stratification</strong> (e.g. PS quintiles)</td><td>ATE or ATT, depending on how strata are pooled</td><td>Simple; quintiles remove about 90% of the bias from each measured covariate</td><td>Residual confounding within wide strata</td></tr>
+          <tr><td><strong>IPTW</strong> (1/PS treated, 1/(1−PS) untreated)</td><td>ATE</td><td>Uses everyone; links directly to marginal structural models</td><td>Explodes when some patients have scores near 0 or 1</td></tr>
+          <tr><td><strong>Overlap weights</strong> (1−PS treated, PS untreated)</td><td>ATO</td><td>Bounded weights; exact mean balance on covariates in a logistic PS model</td><td>Target population is defined by the data, so describe it</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <pre><code>library(WeightIt); library(MatchIt); library(cobalt)
+f &lt;- anticoag ~ age + sofa + vaso + plt_low + surgery + prior_bleed +
+                ckd + hf + prior_stroke
+w_ate &lt;- weightit(f, data = d, method = "glm", estimand = "ATE")  # IPTW
+w_ato &lt;- weightit(f, data = d, method = "glm", estimand = "ATO")  # overlap
+m_att &lt;- matchit(f, data = d, method = "nearest",
+                 link = "linear.logit", caliper = 0.2)          # ATT
+summary(w_ate); summary(w_ato)      # weight ranges and effective sample sizes
+bal.tab(m_att, thresholds = c(m = 0.1))</code></pre>
+    <p><code>weightit</code> fits a logistic PS and returns the weights for the estimand you name. <code>matchit</code> pairs each treated patient with the nearest untreated one on the logit of the PS, refusing pairs more than 0.2 standard deviations apart. <code>summary</code> shows the weight range and effective sample size; <code>bal.tab</code> reports standardised differences. For the outcome model, <code>glm_weightit()</code> gives standard errors that account for estimating the weights.</p>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Putting the PS in the outcome regression as a covariate and calling it done. It works only if the PS–outcome relationship is modelled correctly, it estimates a conditional effect that is hard to interpret, and it hides whether the groups overlap. Matching or weighting forces you to look at the overlap.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Three exit polls of the same election. One asks only people who voted for the winner, one asks every adult, one asks only the swing voters. All three are correct and all three give different numbers, because they asked different people.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="balance">
+    <h2>3. Balance diagnostics and the love plot</h2>
+    <p class="point">Judge a propensity score by whether it balanced the covariates, not by how well it predicted treatment.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The <strong>standardised mean difference</strong> (SMD) is the difference in a covariate's mean between groups, divided by the pooled standard deviation. It does not depend on sample size, unlike a p-value. A <strong>love plot</strong> shows every covariate's SMD before and after adjustment on one chart.</dd>
+      <dt>Why it matters</dt>
+      <dd>Balance is the checkable implication of the PS working. If a covariate is still imbalanced after weighting, the PS model is wrong (a missing interaction, a non-linear term) or the groups barely overlap.</dd>
+      <dt>How to read it</dt>
+      <dd>An absolute SMD below 0.1 is the usual rule of thumb for adequate balance (Austin). Also check variance ratios (near 1) for continuous covariates; means can balance while spreads do not.</dd>
+      <dt>What a change means</dt>
+      <dd>An SMD of 0.5 for SOFA before weighting means the treated and untreated groups differ by half a standard deviation of illness severity. Dropping to 0.03 after weighting means the weighted groups are as similar on SOFA as a randomised trial would usually be.</dd>
+    </dl>
+
+    <div class="widget" data-widget="love-plot">
+      <div class="widget-title">Love plot: balance before and after adjustment</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Switch between IPTW, matching and overlap weights and compare balance, effective sample size and who each estimate is about. Then strengthen the confounding. Finally, drop SOFA from the PS model and watch which covariate stays imbalanced.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reporting the PS model's c-statistic as evidence of quality. A PS with an AUC of 0.95 means the groups barely overlap, which is bad news, not good. A high AUC can also come from including variables that predict treatment but not the outcome (instruments), which add variance and can amplify bias from unmeasured confounding.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>The PS is a nuisance model, so its loss function is not log-loss on treatment. Its job is to make the weighted covariate distributions match. Methods such as entropy balancing and covariate-balancing propensity scores (<code>method = "ebal"</code> or <code>"cbps"</code> in WeightIt) optimise balance directly. It is the same lesson as calibration versus discrimination in Lecture 2.15: the right metric depends on what the model is for.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="extreme">
+    <h2>4. Extreme weights, trimming and overlap weights</h2>
+    <p class="point">A patient with a propensity score of 0.01 who was treated anyway gets an IPTW weight of 100; a handful of such patients can decide your result.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Extreme weights arise when some patients were almost certain to get, or not get, treatment. Three fixes: <strong>trimming</strong> (drop patients outside, say, 0.1–0.9, as Crump and colleagues proposed), <strong>truncation</strong> (cap weights at a percentile), and <strong>overlap weights</strong>, which give each patient the probability of the treatment they did <em>not</em> receive.</dd>
+      <dt>Why it matters</dt>
+      <dd>Extreme weights signal a near-violation of <em>positivity</em> (Lecture 4.1): some patients effectively had no chance of the other treatment. Their effect is not identified by the data, only by extrapolation.</dd>
+      <dt>How to read it</dt>
+      <dd>Report the weight range and the <strong>effective sample size</strong> (ESS): how many equally weighted patients the weighted sample is worth. An ESS of 300 from 1,000 untreated patients means you lost 70% of your information to weighting.</dd>
+      <dt>What a change means</dt>
+      <dd>Every fix changes the estimand. After trimming, you estimate the effect in patients with scores between 0.1 and 0.9, not in everyone. That is often the more honest question, but you must say so.</dd>
+    </dl>
+
+    <div class="widget" data-widget="weights-extreme">
+      <div class="widget-title">IPTW vs overlap weights when scores are extreme</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Increase the separation until the two histograms barely overlap. Watch the IPTW weights climb into the hundreds and the effective sample size collapse. Then switch to trimming and to overlap weights, and see where each puts the weight (dashed outlines).</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Trimming, then reporting the result as the ATE. After trimming, the target is the people left. The same is true of overlap weights: the "overlap population" may be younger, less sick and more often in medical ICUs than the full cohort. Publish its Table 1 so readers know who your answer is about.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Which estimand for Project 5A?</div>
+      <p>Patients who are actively bleeding will never be anticoagulated, and nobody needs a study to tell them so. The clinically live question is the grey zone: patients for whom intensivists genuinely disagree. That is the ATO, and it is also the population a pragmatic trial would enrol. State it in the protocol table (Lecture 4.5) before you run anything.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>A focus group where one participant's vote counts a hundred times. Trimming sends that person home. Overlap weighting gives the loudest say to the people who could have gone either way.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="hdps">
+    <h2>5. High-dimensional propensity scores</h2>
+    <p class="point">The hdPS algorithm mines thousands of claims codes for proxies of confounders you did not think of, then ranks them by how much bias each could cause.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Schneeweiss and colleagues (2009) proposed an automated way to add empirical covariates to a PS. Each code in the baseline period (a diagnosis, a procedure, a drug) may act as a proxy for frailty, severity or health-seeking behaviour. A code for "home oxygen" or "wheelchair" says a lot about a patient's health that no investigator would list in advance.</dd>
+      <dt>Why it matters</dt>
+      <dd>In claims data the investigator-specified covariates often miss important confounding. Adding hundreds of proxies can recover some of it, without the analyst hand-picking which.</dd>
+      <dt>How to read it</dt>
+      <dd>Prioritisation uses Bross's formula: a code can cause a lot of bias if it is much more common in one treatment group <em>and</em> strongly linked to the outcome. Codes that fail either test fall down the list.</dd>
+    </dl>
+
+    \[ \text{Bias}_M = \frac{P_{C1}\,(RR_{CD}-1)+1}{P_{C0}\,(RR_{CD}-1)+1} \]
+    <p>Here \(P_{C1}\) and \(P_{C0}\) are the code's prevalence in the treated and comparator groups, and \(RR_{CD}\) is the code's association with the outcome. A code present in 20% of treated and 5% of comparator patients that triples the outcome risk has a bias multiplier of 1.4/1.1 ≈ 1.27, enough to matter. Codes are ranked by the size of the log of this multiplier.</p>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · The hdPS pipeline</div>
+      <svg class="viz-svg" viewBox="0 0 640 330" role="img" aria-label="Seven steps in two rows. Top row left to right: 1 specify data dimensions; 2 take the most prevalent codes in each; 3 code recurrence as once, sporadic or frequent; 4 rank by Bross bias. Bottom row right to left: 5 keep the top k, often 500; 6 fit the propensity score with investigator and empirical covariates; 7 match or weight and check balance. A box below step 1 feeds investigator-specified covariates into step 6.">
+        <defs><marker id="l54-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead"/></marker>
+        <marker id="l54-arrow-acc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead accent"/></marker></defs>
+        <g class="s4">
+          <rect x="16" y="20" width="136" height="96" rx="10" class="node-fill"/>
+          <rect x="174" y="20" width="136" height="96" rx="10" class="node-fill"/>
+          <rect x="332" y="20" width="136" height="96" rx="10" class="node-fill"/>
+        </g>
+        <g class="s2"><rect x="490" y="20" width="136" height="96" rx="10" class="node-fill"/></g>
+        <g text-anchor="middle">
+          <text x="84" y="44" class="viz-bold">1 · Dimensions</text>
+          <text x="84" y="66" class="viz-small">inpatient dx, outpatient</text>
+          <text x="84" y="82" class="viz-small">dx, procedures,</text>
+          <text x="84" y="98" class="viz-small">dispensed drugs</text>
+          <text x="242" y="44" class="viz-bold">2 · Candidates</text>
+          <text x="242" y="66" class="viz-small">most prevalent codes</text>
+          <text x="242" y="82" class="viz-small">in each dimension</text>
+          <text x="242" y="98" class="viz-small">(e.g. top 200)</text>
+          <text x="400" y="44" class="viz-bold">3 · Recurrence</text>
+          <text x="400" y="66" class="viz-small">each code → 3 flags:</text>
+          <text x="400" y="82" class="viz-small">once, sporadic (≥ median),</text>
+          <text x="400" y="98" class="viz-small">frequent (≥ 75th centile)</text>
+          <text x="558" y="44" class="viz-bold">4 · Prioritise</text>
+          <text x="558" y="66" class="viz-small">rank flags by</text>
+          <text x="558" y="82" class="viz-small">|log Bross bias|</text>
+          <text x="558" y="98" class="viz-small">(or by exposure only)</text>
+        </g>
+        <line x1="152" y1="68" x2="172" y2="68" class="edge" marker-end="url(#l54-arrow)"/>
+        <line x1="310" y1="68" x2="330" y2="68" class="edge" marker-end="url(#l54-arrow)"/>
+        <line x1="468" y1="68" x2="488" y2="68" class="edge" marker-end="url(#l54-arrow)"/>
+        <line x1="558" y1="116" x2="558" y2="166" class="edge" marker-end="url(#l54-arrow)"/>
+
+        <g class="s2"><rect x="490" y="168" width="136" height="80" rx="10" class="node-fill"/></g>
+        <g class="s1">
+          <rect x="332" y="168" width="136" height="80" rx="10" class="node-fill"/>
+          <rect x="174" y="168" width="136" height="80" rx="10" class="node-fill"/>
+        </g>
+        <g text-anchor="middle">
+          <text x="558" y="192" class="viz-bold">5 · Select</text>
+          <text x="558" y="214" class="viz-small">keep the top k</text>
+          <text x="558" y="230" class="viz-small">(default 500)</text>
+          <text x="400" y="192" class="viz-bold">6 · Fit the PS</text>
+          <text x="400" y="214" class="viz-small">empirical +</text>
+          <text x="400" y="230" class="viz-small">investigator covariates</text>
+          <text x="242" y="192" class="viz-bold">7 · Use it</text>
+          <text x="242" y="214" class="viz-small">match or weight,</text>
+          <text x="242" y="230" class="viz-small">then check balance</text>
+        </g>
+        <line x1="490" y1="208" x2="470" y2="208" class="edge" marker-end="url(#l54-arrow)"/>
+        <line x1="332" y1="208" x2="312" y2="208" class="edge" marker-end="url(#l54-arrow)"/>
+
+        <g class="s5"><rect x="16" y="268" width="296" height="48" rx="10" class="node"/></g>
+        <text x="164" y="288" text-anchor="middle" class="viz-small viz-bold">Investigator-specified covariates</text>
+        <text x="164" y="305" text-anchor="middle" class="viz-small viz-muted">age, sex, known confounders, from the DAG</text>
+        <path d="M312,292 L400,292 L400,250" class="edge accent" marker-end="url(#l54-arrow-acc)"/>
+      </svg>
+      <figcaption>The algorithm adds data-driven proxies to, not instead of, the covariates you chose from your DAG (Lecture 4.2). All codes come from the baseline window before time zero.</figcaption>
+    </figure>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap · what automation cannot know</div>
+      <p>The algorithm cannot tell a confounder from an <strong>instrument</strong> (a code that predicts treatment but not outcome), a <strong>mediator</strong>, or a <strong>collider</strong>. Adjusting for strong instruments inflates variance and amplifies any remaining unmeasured confounding ("Z-bias"). Codes recorded on or after time zero can be consequences of treatment. Use a clean baseline window, prefer outcome-based ranking when there are enough events, and still draw the DAG.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">In the Gulf</div>
+      <p>hdPS was designed for claims with years of history per patient. Saudi insurance claims flowing through NPHIES (Lecture 5.6) are coded in ICD-10-AM, the Australian modification, and many expatriate workers have short enrolment spells tied to employment. Short lookback windows mean few codes per patient and a weak proxy signal, so expect less gain from hdPS there than in US Medicare data.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="mlps">
+    <h2>6. LASSO and machine-learning propensity scores</h2>
+    <p class="point">Regularised regression can fit a PS on tens of thousands of covariates at once; it is now the default in large network studies, but its target is still balance, not prediction.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Instead of ranking codes one at a time as hdPS does, fit a LASSO logistic model on every baseline covariate and let the penalty pick. Franklin and colleagues found this performed similarly to hdPS in claims data. The OHDSI <code>CohortMethod</code> package fits such "large-scale propensity scores" by default (Tian, Schuemie and Suchard).</dd>
+      <dt>Why it matters</dt>
+      <dd>It scales to data models with thousands of concepts (Lecture 5.6) and removes analyst discretion over covariate choice, which makes studies more reproducible across databases.</dd>
+      <dt>How to read it</dt>
+      <dd>Check balance on all covariates, not only the ones the model kept. A good large-scale PS leaves every covariate below an SMD of 0.1, and the paper reports how many exceeded it.</dd>
+      <dt>What a change means</dt>
+      <dd>Flexible learners (random forests, boosting, Super Learner) capture non-linear treatment assignment but tend to push scores towards 0 and 1. Paired with IPTW, that inflates weights; paired with doubly robust estimators and cross-fitting (Lecture 4.4), it is far safer.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Tuning the PS model by cross-validated AUC. The model that best predicts treatment is the one that best separates the groups, which minimises overlap. Tune for balance, or use a doubly robust estimator so that the outcome model can rescue a mediocre PS.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>Think of the PS as a domain-adaptation weight: you are reweighting the "untreated" domain to look like the "treated" one. Importance weights in covariate-shift correction are the same object, with the same failure: when the domains barely overlap, a few samples get huge weights and the estimate becomes noise.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="negctrl">
+    <h2>7. Negative controls: detecting what you could not adjust for</h2>
+    <p class="point">Run your exact analysis on an outcome the drug cannot affect; if you still find an "effect", your design has residual confounding.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A <strong>negative control outcome</strong> shares the confounders of your real outcome but cannot be caused by the treatment. A <strong>negative control exposure</strong> shares the confounders of your real exposure but cannot cause the outcome (Lipsitch, Tchetgen Tchetgen and Cohen).</dd>
+      <dt>Why it matters</dt>
+      <dd>Balance diagnostics only check measured covariates. Negative controls are one of the few empirical checks on <em>unmeasured</em> ones. Large network studies now run dozens of them and use the spread of their estimates to recalibrate confidence intervals (<em>empirical calibration</em>, Schuemie and colleagues).</dd>
+      <dt>How to read it</dt>
+      <dd>A negative control estimate near 1 is reassuring but not proof: the control may not share all the confounders. An estimate far from 1 is strong evidence of bias, and its direction tells you which way your main result is likely pushed.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · A negative control outcome</div>
+      <svg class="viz-svg" viewBox="0 0 640 230" role="img" aria-label="DAG. Unmeasured frailty points to vaccination, to death during flu season, and to death before flu season. Vaccination points to death during flu season but has no arrow to death before flu season, the negative control outcome.">
+        <defs><marker id="l54-arrow2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead"/></marker>
+        <marker id="l54-arrow2-acc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead accent"/></marker></defs>
+        <g class="s3"><rect x="240" y="14" width="160" height="50" rx="25" class="node" style="stroke-dasharray:6 4"/></g>
+        <text x="320" y="36" text-anchor="middle" class="viz-bold">U: frailty</text>
+        <text x="320" y="53" text-anchor="middle" class="viz-small viz-muted">unmeasured</text>
+        <g class="s1"><rect x="30" y="150" width="160" height="50" rx="10" class="node"/></g>
+        <text x="110" y="172" text-anchor="middle" class="viz-bold">A: flu vaccine</text>
+        <text x="110" y="189" text-anchor="middle" class="viz-small viz-muted">exposure</text>
+        <g class="s5"><rect x="240" y="150" width="160" height="50" rx="10" class="node"/></g>
+        <text x="320" y="172" text-anchor="middle" class="viz-bold">Y: death in season</text>
+        <text x="320" y="189" text-anchor="middle" class="viz-small viz-muted">outcome</text>
+        <g class="s2"><rect x="450" y="150" width="170" height="50" rx="10" class="node"/></g>
+        <text x="535" y="172" text-anchor="middle" class="viz-bold">N: death pre-season</text>
+        <text x="535" y="189" text-anchor="middle" class="viz-small viz-muted">negative control</text>
+        <line x1="275" y1="64" x2="150" y2="146" class="edge" marker-end="url(#l54-arrow2)"/>
+        <line x1="320" y1="64" x2="320" y2="146" class="edge" marker-end="url(#l54-arrow2)"/>
+        <line x1="365" y1="64" x2="495" y2="146" class="edge" marker-end="url(#l54-arrow2)"/>
+        <line x1="190" y1="175" x2="236" y2="175" class="edge accent" marker-end="url(#l54-arrow2-acc)"/>
+        <text x="213" y="165" text-anchor="middle" class="viz-small viz-bold colour s1">?</text>
+        <text x="425" y="222" text-anchor="middle" class="viz-small viz-muted">no arrow from A to N: any A–N association must come through U</text>
+      </svg>
+      <figcaption>The vaccine cannot prevent deaths that happen before influenza circulates. If vaccinated people still die less often then, something like frailty is confounding the comparison.</figcaption>
+    </figure>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Influenza vaccine in older adults</div>
+      <p>Jackson and colleagues (2006) followed about 74,000 older members of a US health plan. Vaccinated people had a much lower risk of death <em>before</em> the influenza season (relative risk 0.39) than during it (0.56). A vaccine cannot work before the virus arrives, so the pre-season association measured healthy-vaccinee bias, and it was large enough to explain the in-season benefit. Adjusting for more diagnosis codes did not remove it.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Choosing a negative control that does not share the confounding. For Project 5A, "hospital-acquired urinary infection" might seem unrelated to anticoagulation, but it is driven by length of stay and catheters, not by the frailty that decides anticoagulation. Pick controls that the same unmeasured reasons would drive. Pressure ulcers are a better candidate: immobility and frailty drive them, as they drive the decision not to anticoagulate, and an anticoagulant cannot plausibly prevent them.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Testing a smoke alarm by holding it over a cup of coffee. If it goes off at steam, its alarms during cooking tell you less than you thought.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>A PS-matched study of a new antidiabetic drug reports a c-statistic of 0.91 for the PS model and calls it "excellent discrimination". After matching, 38% of treated patients were retained. What do you make of it?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The high c-statistic means the groups were very different, so most treated patients had no comparable untreated patient. The matched result is the ATT for the 38% who could be matched, likely the less typical users of the new drug. It says little about the majority. Check the Table 1 of matched vs unmatched treated patients and consider an active comparator, which would overlap better.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>In Project 5A, IPTW gives a hazard ratio for death of 0.62 with an effective sample size of 140 untreated patients (from 1,900). Overlap weights give 0.81 with an ESS of 820. Which do you lead with, and why do they differ?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Lead with the overlap-weighted estimate as the primary analysis if the protocol named the ATO; it is far more stable and targets the clinically uncertain group. The IPTW estimate is driven by a few untreated patients who looked very likely to be treated, probably those with an unrecorded reason not to be (for example a comfort-care decision). That is exactly where unmeasured confounding concentrates. The gap is a warning sign, not two equally good answers.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A colleague runs hdPS with codes from the 180 days before <em>and the 30 days after</em> the first prescription, "to capture more information". What is wrong?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Codes after time zero can be consequences of treatment (side effects, monitoring, early outcomes). Adjusting for them blocks part of the effect or opens collider paths. All PS covariates must come from before time zero.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>After overlap weighting, every SMD is exactly 0.00. Your supervisor is suspicious. Should you be?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>No. Overlap weights from a logistic PS give exact mean balance on every covariate in the model, by construction. That also means mean balance is no longer a useful diagnostic for them: check variance ratios, balance on covariates or interactions not in the model, and the characteristics of the overlap population.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A statin study finds users have 30% fewer deaths from accidents than non-users after hdPS adjustment. How should this change your reading of their main result, a 25% reduction in dementia?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Accidental death is a negative control outcome: statins should not prevent it. A 30% "benefit" means healthy-user confounding survives the adjustment, and it is about as large as the dementia effect. The dementia result could be mostly bias. Redesign with an active comparator and new users, and use empirical calibration with a set of negative controls.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Strom, Kimmel &amp; Hennessy (eds), <em>Pharmacoepidemiology</em> (Wiley): chapters on confounding and propensity scores.</li>
+      <li>Hernán &amp; Robins, <em>Causal Inference: What If</em>, chapters 12 and 15 (IP weighting, propensity scores).</li>
+      <li>Rosenbaum &amp; Rubin, “The central role of the propensity score in observational studies for causal effects”, <em>Biometrika</em> (1983); and “Reducing bias in observational studies using subclassification on the propensity score”, <em>JASA</em> (1984).</li>
+      <li>Petri &amp; Urquhart, “Channeling bias in the interpretation of drug effects”, <em>Statistics in Medicine</em> (1991).</li>
+      <li>Austin, “Balance diagnostics for comparing the distribution of baseline covariates between treatment groups in propensity-score matched samples”, <em>Statistics in Medicine</em> (2009); Austin &amp; Stuart, “Moving towards best practice when using inverse probability of treatment weighting (IPTW) using the propensity score”, <em>Statistics in Medicine</em> (2015).</li>
+      <li>Li, Morgan &amp; Zaslavsky, “Balancing covariates via propensity score weighting”, <em>JASA</em> (2018); Thomas, Li &amp; Pencina, “Overlap weighting: a propensity score method that mimics attributes of a randomized clinical trial”, <em>JAMA</em> (2020).</li>
+      <li>Crump, Hotz, Imbens &amp; Mitnik, “Dealing with limited overlap in estimation of average treatment effects”, <em>Biometrika</em> (2009); Stürmer et al., “Treatment effects in the presence of unmeasured confounding: dealing with observations in the tails of the propensity score distribution”, <em>American Journal of Epidemiology</em> (2010).</li>
+      <li>Schneeweiss et al., “High-dimensional propensity score adjustment in studies of treatment effects using health care claims data”, <em>Epidemiology</em> (2009); Bross, “Spurious effects from an extraneous variable”, <em>Journal of Chronic Diseases</em> (1966).</li>
+      <li>Myers et al., “Effects of adjusting for instrumental variables on bias and precision of effect estimates”, <em>American Journal of Epidemiology</em> (2011).</li>
+      <li>Franklin et al., “Regularized regression versus the high-dimensional propensity score for confounding adjustment in secondary database analyses”, <em>American Journal of Epidemiology</em> (2015); Tian, Schuemie &amp; Suchard, “Evaluating large-scale propensity score performance through real-world and synthetic data experiments”, <em>International Journal of Epidemiology</em> (2018).</li>
+      <li>Lipsitch, Tchetgen Tchetgen &amp; Cohen, “Negative controls: a tool for detecting confounding and bias in observational studies”, <em>Epidemiology</em> (2010); Schuemie et al., “Interpreting observational studies: why empirical calibration is needed to correct p-values”, <em>Statistics in Medicine</em> (2014).</li>
+      <li>Jackson et al., “Evidence of bias in estimates of influenza vaccine effectiveness in seniors”, <em>International Journal of Epidemiology</em> (2006).</li>
+      <li>Greifer, documentation for the R packages WeightIt, MatchIt and cobalt (CRAN).</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="5-03-time-related-biases.html"><small>Previous</small>5.3 Time-related biases</a>
+    <a class="next" href="5-05-self-controlled-designs.html"><small>Next</small>5.5 Self-controlled designs</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

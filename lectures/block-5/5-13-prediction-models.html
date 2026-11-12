@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>5.13 Prediction models in health · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/5-13.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-5">Block 5</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 5.13</p>
+  <h1>Prediction models in health: development, validation, calibration, TRIPOD+AI</h1>
+  <div class="lecture-meta">
+    <span>Block 5 · Pharmacoepidemiology, real-world evidence, regulatory science and AI evaluation</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>Lecture 2.15 gave you the vocabulary: development, validation, discrimination versus calibration, PROGRESS and TRIPOD+AI. This lecture is the working method. Size the data before you fit. Keep continuous predictors continuous. Correct for optimism. Validate across sites, not just across a random split. Judge calibration properly, and judge <strong>clinical usefulness</strong> with decision curves. Most published models fail on one of these, which is why most are never used. The same checklist is how you will grade the evidence behind FDA-cleared cardiovascular AI in Project 5B.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#samplesize">How much data you need before fitting</a></li>
+      <li><a href="#continuous">Continuous predictors: never cut them</a></li>
+      <li><a href="#optimism">Overfitting, shrinkage and optimism correction</a></li>
+      <li><a href="#validation">Validation that means something</a></li>
+      <li><a href="#calibration">Calibration in detail</a></li>
+      <li><a href="#utility">Clinical utility: net benefit and decision curves</a></li>
+      <li><a href="#updating">Subgroups, fairness and model updating</a></li>
+      <li><a href="#appraise">Appraising a model: PROBAST+AI, and ML versus regression</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="samplesize">
+    <h2>1. How much data you need before fitting</h2>
+    <p class="point">The sample size for a prediction model is set by how many parameters you want to estimate and how much signal there is, not by a rule of ten events per variable.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Riley and colleagues (2019–2020) replaced “10 events per variable” with a calculation. For a binary outcome it finds the smallest sample that meets three criteria: <strong>(1)</strong> little overfitting, defined as an expected shrinkage factor of at least 0.9 (predictor effects would need shrinking by 10% or less); <strong>(2)</strong> a gap of at most 0.05 between apparent and optimism-adjusted Nagelkerke R²; and <strong>(3)</strong> the overall outcome risk estimated within ±0.05. The answer is the largest of the three.</dd>
+      <dt>Why it matters</dt>
+      <dd>Too small a sample gives a model whose predictions are too extreme in new patients. That error is invisible in the development data, and no later trick fully repairs it.</dd>
+      <dt>How to read it</dt>
+      <dd>Count <em>parameters</em>, not variables: a spline with four knots costs three, a five-level category costs four, and every candidate you screened counts, even those you dropped. Input the expected C-statistic or R² from earlier work, and be pessimistic.</dd>
+      <dt>What a change means</dt>
+      <dd>The required events per parameter rise as the expected signal falls and the outcome gets rarer. A weak model of a rare outcome may need far more than 10 events per parameter; a strong model of a common outcome may need fewer.</dd>
+    </dl>
+
+    <pre><code>library(pmsampsize)
+# Model for 1-year incident AF: AI-ECG score + clinical predictors
+# 20 candidate parameters, expected C-statistic 0.75, 5% get AF in a year
+pmsampsize(type = "b", cstatistic = 0.75, parameters = 20, prevalence = 0.05)</code></pre>
+    <p>The function converts the C-statistic and prevalence into an expected Cox–Snell R², then reports the sample size each criterion needs, the final minimum, the events it implies and the events per parameter. <code>type = "s"</code> does the same for time-to-event models, using the event rate and follow-up time.</p>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Counting only the predictors in the final model. If you screened 40 candidates to keep 8, the model was shaped by all 40, and the overfitting reflects all 40. Size the study for the candidates, or pre-specify fewer using clinical knowledge.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Project 5A data, a prediction question</div>
+      <p>Suppose you wanted a model in MIMIC-IV predicting stroke or systemic embolism during the ICU stay after new-onset AF. Events would be few, perhaps tens, while the candidate list (age, sex, heart failure, prior stroke, vasopressors, sepsis, ECG features) easily reaches 20 parameters. The calculation would tell you before you start that the data support only a handful of pre-specified predictors, or none.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="continuous">
+    <h2>2. Continuous predictors: never cut them</h2>
+    <p class="point">Splitting a continuous predictor into “high” and “low” throws away information and invents a step in risk that does not exist; model the shape instead.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Keep age, NT-proBNP, QRS duration or an AI-ECG score as continuous. Allow a curve with <strong>restricted cubic splines</strong> (smooth curves joined at a few “knots”, linear at the ends) or fractional polynomials. Three to five knots is usual.</dd>
+      <dt>Why it matters</dt>
+      <dd>Dichotomising a predictor costs about as much power as discarding a third of the data, and it says a patient just below the cut-off has the same risk as one far below it. Royston, Altman and Sauerbrei called it “a bad idea”, and Collins and colleagues showed it worsens both discrimination and calibration.</dd>
+      <dt>How to read it</dt>
+      <dd>Look at the plotted shape of each spline. A J-shape (blood pressure and mortality) or a plateau (troponin beyond a ceiling) is information a straight line or a cut-off would lose.</dd>
+    </dl>
+
+    <pre><code>library(rms)
+dd &lt;- datadist(d); options(datadist = "dd")
+fit &lt;- lrm(af_1y ~ rcs(age, 4) + rcs(log(ntprobnp), 4) + sex + hf + rcs(pr_ms, 3),
+           data = d, x = TRUE, y = TRUE)
+anova(fit)                      # includes a test of non-linearity for each spline
+plot(Predict(fit, pr_ms))       # the fitted shape of the PR-interval effect</code></pre>
+    <p><code>rcs(x, 4)</code> fits a spline with four knots at default quantiles. <code>x = TRUE, y = TRUE</code> keeps the data inside the fit so that the bootstrap in Section 3 can reuse it.</p>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>“Clinicians need a cut-off, so the model must use one.” The cut-off belongs at the <em>decision</em> stage, applied to the predicted risk, not inside the model. A model with continuous predictors can still be turned into a points score or an app.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Reporting every temperature as “hot” or “cold” at 25°C. You can still plan a picnic, but 24°C and 5°C are now the same day.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="optimism">
+    <h2>3. Overfitting, shrinkage and optimism correction</h2>
+    <p class="point">A model always looks better on the data that built it; the bootstrap estimates by how much, and shrinkage pulls the predictions back towards reality.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>Optimism</strong> is the gap between apparent performance and performance in new patients from the same population. Harrell’s bootstrap estimates it: refit the whole modelling process in each bootstrap sample, test each refit on the original data, and average the drop. <strong>Shrinkage</strong> (a uniform shrinkage factor, ridge, lasso or elastic net) makes coefficients smaller so predictions are less extreme.</dd>
+      <dt>Why it matters</dt>
+      <dd>The bootstrap-corrected calibration slope is your best guess of how far predictions are too extreme. A value of 0.8 says “shrink the coefficients by 20%”.</dd>
+      <dt>How to read it</dt>
+      <dd>Optimism in the C-statistic of 0.01–0.02 is modest. Corrected slopes of 0.9 or above are reassuring. Below 0.8 means the sample was too small for the model you tried to fit.</dd>
+      <dt>What a change means</dt>
+      <dd>Halving the events per parameter roughly doubles the optimism. Every step of the modelling (variable selection, spline choice, tuning) must be repeated inside each bootstrap sample, or the correction is itself optimistic.</dd>
+    </dl>
+
+    <pre><code>v &lt;- validate(fit, B = 500)      # Harrell's bootstrap, 500 resamples
+v                                 # apparent, optimism and corrected value per index
+# C-statistic = Dxy / 2 + 0.5; "Slope" row, index.corrected = the shrinkage factor
+plot(calibrate(fit, B = 500))     # optimism-corrected calibration curve</code></pre>
+
+    <div class="widget" data-widget="optimism">
+      <div class="widget-title">Watch optimism shrink as events per parameter grow</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">At 2 events per parameter, compare the apparent C-statistic with what new patients get. Then switch to the calibration slope: the bootstrap’s shrinkage factor warns you before external data do. Draw new samples at low and high values to see how unstable small models are.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>“I used the lasso, so overfitting is handled.” Riley and colleagues (2021) showed that penalisation is least reliable exactly when it is most needed: in small samples the tuning parameter is itself estimated with large error, so the amount of shrinkage can be badly wrong. Penalisation complements an adequate sample size; it does not replace one.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>The bootstrap correction is the clinical cousin of nested cross-validation: whatever was tuned must be tuned again inside each resample. Flexible learners are hungrier than regression. In van der Ploeg and colleagues’ 2014 simulations, logistic regression stabilised at roughly 20–50 events per variable, while random forests, support vector machines and neural networks still showed high optimism beyond 200. For tabular clinical data of typical size, that hunger usually outweighs their flexibility (Section 8).</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="validation">
+    <h2>4. Validation that means something</h2>
+    <p class="point">A random train–test split asks whether the model works on more patients like these; clinical validation asks whether it works in a different place, time or population.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>Internal–external cross-validation</strong> leaves out one hospital, region or calendar period at a time, develops on the rest and validates on the one left out. It shows how performance varies across settings, and the final model is still fitted on all the data. <strong>External validation</strong> tests the frozen model in data the developers never touched.</dd>
+      <dt>Why it matters</dt>
+      <dd>Performance is not a property of a model. It is a property of a model <em>in a population</em>. Heterogeneity across sites, not the average, tells you whether the model will transport.</dd>
+      <dt>How to read it</dt>
+      <dd>A pooled C-statistic of 0.80 with site values from 0.70 to 0.88 and calibration slopes from 0.6 to 1.2 means the model needs local checking everywhere. Random-effects meta-analysis of site-level performance summarises this.</dd>
+      <dt>What a change means</dt>
+      <dd>Old rules of thumb asked for at least 100, preferably 200, events in a validation set. Riley and colleagues (2024) now calculate it from the precision you want for calibration, discrimination and net benefit (R package <code>pmvalsampsize</code>). Calibration usually needs the most.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · The evidence ladder for a prediction model</div>
+      <svg class="viz-svg" viewBox="0 0 640 430" role="img" aria-label="Five stages stacked top to bottom with arrows: development, internal validation, external validation, impact study, implementation and monitoring. Beside each, the question it answers and the AI-ECG low ejection fraction example. Most published models stop after the first two stages.">
+        <defs><marker id="l513-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead"/></marker></defs>
+        <text x="100" y="18" text-anchor="middle" class="viz-small viz-bold">Stage</text>
+        <text x="215" y="18" class="viz-small viz-bold">Question it answers</text>
+        <text x="455" y="18" class="viz-small viz-bold">AI-ECG for low ejection fraction</text>
+
+        <g class="s5"><rect x="20" y="30" width="160" height="58" rx="8" class="node-fill"/></g>
+        <text x="100" y="64" text-anchor="middle" class="viz-bold">Development</text>
+        <text x="215" y="54" class="viz-small">Can these data predict</text>
+        <text x="215" y="70" class="viz-small">the outcome at all?</text>
+        <text x="455" y="54" class="viz-small">Mayo Clinic ECG–echo pairs:</text>
+        <text x="455" y="70" class="viz-small">test-set AUC 0.93</text>
+
+        <g class="s5"><rect x="20" y="110" width="160" height="58" rx="8" class="node-fill"/></g>
+        <text x="100" y="144" text-anchor="middle" class="viz-bold">Internal validation</text>
+        <text x="215" y="134" class="viz-small">How optimistic is that,</text>
+        <text x="215" y="150" class="viz-small">in the same population?</text>
+        <text x="455" y="134" class="viz-small">Held-out patients from</text>
+        <text x="455" y="150" class="viz-small">the same health system</text>
+
+        <g class="s1"><rect x="20" y="190" width="160" height="58" rx="8" class="node-fill"/></g>
+        <text x="100" y="224" text-anchor="middle" class="viz-bold">External validation</text>
+        <text x="215" y="214" class="viz-small">Does it transport to other</text>
+        <text x="215" y="230" class="viz-small">sites, times, populations?</text>
+        <text x="455" y="214" class="viz-small">Russian community cohort:</text>
+        <text x="455" y="230" class="viz-small">AUC 0.82, sensitivity fell</text>
+
+        <g class="s2"><rect x="20" y="270" width="160" height="58" rx="8" class="node-fill"/></g>
+        <text x="100" y="304" text-anchor="middle" class="viz-bold">Impact study</text>
+        <text x="215" y="294" class="viz-small">Does using it change decisions</text>
+        <text x="215" y="310" class="viz-small">and outcomes? (Lecture 5.15)</text>
+        <text x="455" y="294" class="viz-small">EAGLE cluster RCT: more</text>
+        <text x="455" y="310" class="viz-small">new low-EF diagnoses</text>
+
+        <g class="s4"><rect x="20" y="350" width="160" height="58" rx="8" class="node-fill"/></g>
+        <text x="100" y="377" text-anchor="middle" class="viz-bold">Implementation</text>
+        <text x="100" y="394" text-anchor="middle" class="viz-small">and monitoring</text>
+        <text x="215" y="374" class="viz-small">Does it keep working, and is</text>
+        <text x="215" y="390" class="viz-small">it regulated? (5.14, 5.16)</text>
+        <text x="455" y="374" class="viz-small">FDA 510(k) clearance, 2023,</text>
+        <text x="455" y="390" class="viz-small">on retrospective data</text>
+
+        <line x1="100" y1="88" x2="100" y2="108" class="edge" marker-end="url(#l513-arrow)"/>
+        <line x1="100" y1="168" x2="100" y2="188" class="edge" marker-end="url(#l513-arrow)"/>
+        <line x1="100" y1="248" x2="100" y2="268" class="edge" marker-end="url(#l513-arrow)"/>
+        <line x1="100" y1="328" x2="100" y2="348" class="edge" marker-end="url(#l513-arrow)"/>
+        <line x1="440" y1="34" x2="440" y2="404" class="edge" stroke-dasharray="3 4"/>
+        <text x="630" y="424" text-anchor="end" class="viz-small viz-muted">Most published models stop after the second box.</text>
+      </svg>
+      <figcaption>Each rung answers a different question, and clearing one says little about the next. The AI-ECG climbed all five, which is rare; even so, its FDA clearance rested on a retrospective multi-site accuracy study, not on the trial.</figcaption>
+    </figure>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Calling a temporal split from the same hospital “external validation”. It is better than a random split, but the same clinicians, devices, coding and referral patterns are in both halves. Say what changed between development and validation, and what did not.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">In the Gulf</div>
+      <p>Saudi Arabia’s health system is organised into regional health clusters, and many Gulf hospitals serve large expatriate populations with different age structures and ancestries. A model developed across several clusters can be checked with internal–external validation, leaving out one cluster at a time. That is a cheap way to find out whether a model trained in Riyadh will hold in the Eastern Province before anyone deploys it there.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="calibration">
+    <h2>5. Calibration in detail</h2>
+    <p class="point">Calibration has levels, from “the average is right” to “every risk is right”; aim for the level that makes decisions safe, and check it with a flexible curve, not a table of deciles.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>Calibration-in-the-large</strong>: is the mean predicted risk equal to the observed event rate? <strong>Calibration slope</strong>: are predictions too extreme (below 1) or too timid (above 1)? A <strong>flexible calibration curve</strong> (loess or splines of the outcome on the predicted risk) shows where along the risk range the model is off.</dd>
+      <dt>Why it matters</dt>
+      <dd>Van Calster and colleagues (2016) showed that “moderate” calibration, a correct curve, guarantees that decisions made with the model do no harm compared with not using it. Intercept and slope alone (“weak” calibration) do not.</dd>
+      <dt>How to read it</dt>
+      <dd>Intercept near 0 and slope near 1 are necessary, not sufficient. Read the curve where your decisions are made: a model can be fine at 2–10% and badly off at 30%. Show the spread of predictions under the curve, since a curve over empty regions means nothing.</dd>
+      <dt>What a change means</dt>
+      <dd>A slope of 0.7 at external validation means risks above the average are overstated and those below understated. A positive intercept with a slope near 1 means a uniformly higher baseline risk, which intercept-only recalibration can fix (Section 7).</dd>
+    </dl>
+
+    <p>Both summary numbers come from one logistic regression of the observed outcome on the model’s linear predictor (LP, the predicted log-odds):</p>
+    \[ \text{logit}\,P(Y=1) = a + b \times \text{LP} \]
+    <p>The slope is \(b\). Calibration-in-the-large is \(a\) when \(b\) is fixed at 1.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Level</th><th>What is correct</th><th>How to check</th><th>Realistic?</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Mean</strong></td><td>Average risk</td><td>Observed ÷ expected events</td><td>Yes, but says little</td></tr>
+          <tr><td><strong>Weak</strong></td><td>No overall over- or under-fitting</td><td>Intercept 0, slope 1</td><td>Yes</td></tr>
+          <tr><td><strong>Moderate</strong></td><td>Risk is right at each level of predicted risk</td><td>Flexible calibration curve on the diagonal</td><td>The target</td></tr>
+          <tr><td><strong>Strong</strong></td><td>Risk is right for every covariate pattern</td><td>Not checkable in practice</td><td>“Utopia”</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <pre><code>library(CalibrationCurves)
+val.prob.ci.2(p = ext$pred, y = ext$low_ef)   # flexible curve + intercept, slope, C
+lp &lt;- qlogis(ext$pred)
+glm(low_ef ~ offset(lp), family = binomial, data = ext)   # calibration-in-the-large
+glm(low_ef ~ lp, family = binomial, data = ext)           # calibration slope</code></pre>
+    <p><code>val.prob.ci.2</code> draws the loess calibration curve with a confidence band and reports the intercept, slope and C-statistic. The two <code>glm</code> lines compute the same intercept and slope by hand, using the predicted log-odds as an offset or as a covariate.</p>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Relying on the Hosmer–Lemeshow test. With a small validation set it rarely rejects anything; with a large one it rejects trivial miscalibration. It also hides <em>where</em> the problem is. Report the curve with its confidence band, the intercept and the slope.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Project 5B</div>
+      <p>When you read an FDA decision summary for a cardiovascular AI device, note whether any calibration measure is reported at all. Many devices output a binary flag rather than a risk, which hides calibration inside the choice of threshold. For devices that output a risk or score, the absence of a calibration plot is itself a finding worth coding.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="utility">
+    <h2>6. Clinical utility: net benefit and decision curves</h2>
+    <p class="point">Discrimination and calibration describe the predictions; net benefit asks whether acting on them does more good than the simple alternatives of treating everyone or no one.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Pick a <strong>threshold probability</strong> \(p_t\) at which you would act, say refer for echocardiography. The threshold encodes how you weigh harms: referring at 10% means one missed case is as bad as nine unnecessary referrals. <strong>Net benefit</strong> counts true positives and subtracts false positives weighted by those odds. A <strong>decision curve</strong> (Vickers and Elkin, 2006) plots it over a range of reasonable thresholds.</dd>
+      <dt>Why it matters</dt>
+      <dd>It is the only common measure that puts the model on the same scale as “refer everyone” and “refer no one”. A model with a fine AUC can still lose to a default strategy at the thresholds clinicians actually use, especially if miscalibrated.</dd>
+      <dt>How to read it</dt>
+      <dd>Read the curves only over thresholds that clinicians would plausibly choose. A net benefit of 0.05 means five net true positives per 100 patients: the same as finding five extra cases with no false positives.</dd>
+      <dt>What a change means</dt>
+      <dd>Where the model’s curve sits below “treat all” or zero, using it is worse than ignoring it. Overestimated risks hurt at high thresholds, underestimated risks at low ones.</dd>
+    </dl>
+
+    \[ \text{NB} = \frac{TP}{n} - \frac{FP}{n} \times \frac{p_t}{1-p_t} \]
+
+    <div class="widget" data-widget="dca">
+      <div class="widget-title">Decision curve analysis: what calibration costs at the bedside</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">An AI-ECG model predicts low ejection fraction; you refer for echo above a threshold. Lower the discrimination and watch the curve sink towards the defaults. Then set the calibration slope to 0.5, or shift predictions up or down, and move the threshold: the C-statistic does not move, but net benefit does.</p>
+    </div>
+
+    <pre><code>library(dcurves)
+dca(low_ef ~ ai_ecg_risk + clinical_risk, data = ext,
+    thresholds = seq(0.01, 0.30, by = 0.01)) |&gt;
+  plot(smooth = TRUE)</code></pre>
+    <p>This plots decision curves for two models against refer-all and refer-none on the external data. The predictors on the right-hand side must already be predicted probabilities.</p>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reading the decision curve over the whole 0–100% range, or choosing the threshold that flatters the model. Fix the plausible range before looking, from clinical reasoning: nobody refers for echocardiography only when risk exceeds 60%.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>A metal detector at an airport is judged not by how cleverly it ranks bags but by whether searching the bags it flags beats searching every bag or none, given how much a missed weapon costs relative to a delayed passenger.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="updating">
+    <h2>7. Subgroups, fairness and model updating</h2>
+    <p class="point">Check performance in the groups the model will be used on, and when a model drifts or moves, repair it with the smallest change that works.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>Subgroup performance</strong>: discrimination, and above all calibration, by sex, age band, ethnicity, site and device type. <strong>Updating</strong> uses local data to fix a model rather than replace it, in increasing order of data hunger: recalibration-in-the-large (new intercept), logistic recalibration (intercept and slope), revision (re-estimate some coefficients), extension (add a predictor), full refit.</dd>
+      <dt>Why it matters</dt>
+      <dd>A model that is well calibrated overall can overpredict in women and underpredict in men, which means unequal treatment at one threshold. Small local datasets rarely support a refit, but they easily support recalibration.</dd>
+      <dt>How to read it</dt>
+      <dd>Within-group calibration is the fairness check that matters most when one threshold is applied to everyone. Equal C-statistics across groups do not imply equal calibration.</dd>
+      <dt>What a change means</dt>
+      <dd>If ranking transfers but the baseline differs, update the intercept. If the slope is also off, recalibrate both. Revise or extend only with plenty of events, and validate the updated model again.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Assuming that a fair <em>model</em> fixes an unfair <em>label</em>. Obermeyer and colleagues (2019) found that a widely used US algorithm predicted health-care costs as a proxy for health need. Because less was spent on Black patients at the same level of illness, they had to be sicker to get the same score. The model was accurate for the target it was given. The target was wrong.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>You know the impossibility results: when base rates differ between groups, a classifier cannot be calibrated within groups and also have equal false-positive and false-negative rates. In clinical prediction the usual choice is within-group calibration, because the threshold is a clinical decision about individual risk. Say which fairness criterion you chose and why. Recalibration is the clinical name for what you would call fine-tuning only the output layer.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="appraise">
+    <h2>8. Appraising a model: PROBAST+AI, and ML versus regression</h2>
+    <p class="point">Judge a published model by how it was built and tested, using PROBAST+AI, and do not assume the more complex algorithm is the better one.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>PROBAST+AI</strong> (Moons and colleagues, <em>BMJ</em>, March 2025) updates and replaces the 2019 PROBAST. It covers models built with regression or AI methods. It has two parts: model <em>development</em>, judged for quality and applicability (16 signalling questions), and model <em>evaluation</em>, judged for risk of bias and applicability (18). Each part has four domains: participants and data sources, predictors, outcome, and analysis. TRIPOD+AI (2024) is the matching reporting checklist; PROBAST+AI is the appraisal tool.</dd>
+      <dt>Why it matters</dt>
+      <dd>Systematic reviews of prediction models, and Project 5B, rate each study’s risk of bias. The analysis domain sinks most studies: too few events, dichotomised predictors, no calibration, no optimism correction, data leakage.</dd>
+      <dt>How to read it</dt>
+      <dd>A single “high” domain makes the overall rating high risk of bias. Applicability is separate: a well-conducted study in emergency patients may not apply to your screening population.</dd>
+    </dl>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Machine learning versus logistic regression</div>
+      <p>Christodoulou and colleagues (2019) reviewed 71 studies with 282 comparisons of ML and logistic regression for clinical prediction. In the 145 comparisons at low risk of bias, the difference in logit(AUC) was 0.00 (95% CI −0.18 to 0.18). Only in comparisons at high risk of bias did ML look better. Calibration was not addressed in 79% of the studies.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Generalising that result to all data. For tabular predictors such as age, blood pressure and laboratory values, gains from ML are usually small. For raw signals and images, such as a 12-lead ECG waveform, deep learning extracts features no regression could, which is why the AI-ECG exists at all. The fair comparison is with a well-specified regression on the same information, using splines and the same validation.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>PROBAST+AI added questions on problems you know well, such as data leakage and dataset shift. In clinical work, leakage often comes from timing: a feature recorded after the prediction moment, or a test ordered because the clinician already suspected the outcome. Write down the prediction time point first, then check every feature against it.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>A team has 120 events and wants to fit a gradient-boosted model with 60 candidate features, “because ML handles many features”. What do you advise?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Two events per candidate is far too few for regression, and flexible learners need more, not fewer. Run a sample size calculation, cut the candidates on clinical grounds, and fit a penalised regression with splines as the benchmark. Expect heavy optimism whatever you fit, and correct for it with the full pipeline repeated in each bootstrap sample.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A paper reports a bootstrap-corrected C-statistic of 0.81 but does not mention calibration. The authors used the lasso. Is calibration safe to assume?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>No. The C-statistic is unaffected by how extreme the predictions are. The lasso shrinks, but in small samples the amount of shrinkage is unreliable. Ask for the corrected calibration slope and a calibration curve, and ask for the events per parameter.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>At external validation in a Saudi hospital, an imported AF model has a C-statistic of 0.78, calibration intercept +0.6 and slope 0.95. What update would you try first, and why not refit?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Recalibration-in-the-large: a new intercept. Ranking transfers and the slope is near 1, so the problem is a higher baseline risk. Refitting would spend local data re-estimating effects that already transfer, and would overfit a typical local sample.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A decision curve shows a model above “refer all” between 5% and 15%, but below it at 2–4%. Clinicians say they would refer at about 3%. What do you conclude?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>At the threshold that matters, referring everyone does more good than using the model, so the model should not be used for this decision as it stands. The pattern suggests the model underestimates risk at the low end; check the calibration curve there before deciding whether recalibration rescues it.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A model has similar C-statistics in men and women, but the calibration curve for women lies well above the diagonal. Is the model fair if one threshold is applied to everyone?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>No. A curve above the diagonal means the model underestimates risk in women, so at a single threshold women at a given true risk are less likely to be flagged than men. Equal discrimination does not mean equal treatment. Fix the calibration by sex, for example by adding sex or its interactions, and report within-group calibration.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Steyerberg, <em>Clinical Prediction Models: A Practical Approach to Development, Validation, and Updating</em>, 2nd edition (Springer, 2019); Harrell, <em>Regression Modeling Strategies</em>, 2nd edition (Springer, 2015).</li>
+      <li>Riley et al., “Calculating the sample size required for developing a clinical prediction model”, <em>BMJ</em> (2020); R package <code>pmsampsize</code>.</li>
+      <li>Riley et al., “Evaluation of clinical prediction models (part 3): calculating the sample size required for an external validation study”, <em>BMJ</em> (2024); R package <code>pmvalsampsize</code>.</li>
+      <li>Royston, Altman &amp; Sauerbrei, “Dichotomizing continuous predictors in multiple regression: a bad idea”, <em>Statistics in Medicine</em> (2006).</li>
+      <li>Altman &amp; Royston, “The cost of dichotomising continuous variables”, <em>BMJ</em> (2006); Collins et al., “Quantifying the impact of different approaches for handling continuous predictors on the performance of a prognostic model”, <em>Statistics in Medicine</em> (2016).</li>
+      <li>Riley et al., “Penalization and shrinkage methods produced unreliable clinical prediction models especially when sample size was small”, <em>Journal of Clinical Epidemiology</em> (2021).</li>
+      <li>van der Ploeg, Austin &amp; Steyerberg, “Modern modelling techniques are data hungry”, <em>BMC Medical Research Methodology</em> (2014).</li>
+      <li>Steyerberg &amp; Harrell, “Prediction models need appropriate internal, internal-external, and external validation”, <em>Journal of Clinical Epidemiology</em> (2016).</li>
+      <li>Van Calster et al., “A calibration hierarchy for risk models was defined: from utopia to empirical data”, <em>Journal of Clinical Epidemiology</em> (2016).</li>
+      <li>Vickers &amp; Elkin, “Decision curve analysis: a novel method for evaluating prediction models”, <em>Medical Decision Making</em> (2006); Vickers, Van Calster &amp; Steyerberg, “Net benefit approaches to the evaluation of prediction models, molecular markers, and diagnostic tests”, <em>BMJ</em> (2016).</li>
+      <li>Obermeyer et al., “Dissecting racial bias in an algorithm used to manage the health of populations”, <em>Science</em> (2019).</li>
+      <li>Moons et al., “PROBAST+AI: an updated quality, risk of bias, and applicability assessment tool for prediction models using regression or artificial intelligence methods”, <em>BMJ</em> (2025); Collins et al., “TRIPOD+AI statement”, <em>BMJ</em> (2024).</li>
+      <li>Christodoulou et al., “A systematic review shows no performance benefit of machine learning over logistic regression for clinical prediction models”, <em>Journal of Clinical Epidemiology</em> (2019).</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="5-12-pharmacovigilance.html"><small>Previous</small>5.12 Pharmacovigilance</a>
+    <a class="next" href="5-14-ai-medical-device-regulation.html"><small>Next</small>5.14 AI as a medical device</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

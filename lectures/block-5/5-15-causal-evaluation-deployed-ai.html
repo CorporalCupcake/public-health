@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>5.15 Causal evaluation of deployed AI · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/5-15.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-5">Block 5</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 5.15</p>
+  <h1>Causal evaluation of deployed AI: accuracy vs impact; cluster and stepped-wedge trials; difference-in-differences on rollouts</h1>
+  <div class="lecture-meta">
+    <span>Block 5 · Pharmacoepidemiology, real-world evidence, regulatory science and AI evaluation</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>An AI tool is an intervention, not a test result. Its value is the causal effect of <strong>care with the tool versus care without it</strong>, and that effect passes through people: someone must see the output, change a decision, and the changed decision must change the outcome. Accuracy is only the first link. This lecture shows why strong accuracy often buys little impact, how to rank the evidence, and which designs measure impact honestly: cluster trials, stepped-wedge trials, and difference-in-differences on staggered rollouts. Project 5B asks how many FDA-cleared cardiovascular AI devices ever climbed past the first rung.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#chain">Accuracy is not impact</a></li>
+      <li><a href="#fails">Why a good model can change nothing</a></li>
+      <li><a href="#ladder">The evidence ladder for AI</a></li>
+      <li><a href="#cluster">Randomising AI: clusters and contamination</a></li>
+      <li><a href="#stepped">Stepped-wedge trials</a></li>
+      <li><a href="#rollouts">Rollouts that were not randomised</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="chain">
+    <h2>1. Accuracy is not impact</h2>
+    <p class="point">Patients benefit only if every link holds: the model is accurate, a clinician takes up the output, a decision changes, and the new decision improves the outcome.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>Accuracy</strong> (discrimination and calibration, Lectures 2.15 and 5.13) compares the model’s output with the truth. <strong>Impact</strong> is a causal contrast (Lecture 4.1): outcomes when clinicians have the tool versus when they do not. Different estimand, different study.</dd>
+      <dt>Why it matters</dt>
+      <dd>The links multiply. A model with an AUC of 0.90 that clinicians act on 20% of the time can prevent fewer events than a model with an AUC of 0.75 that slots into a pathway clinicians trust.</dd>
+      <dt>How to read it</dt>
+      <dd>For any AI paper, ask which link its primary outcome measures: AUC (link 1), alerts opened (uptake), tests ordered or drugs started (decision change), or deaths and admissions (outcome). Most papers stop at link 1.</dd>
+      <dt>What a change means</dt>
+      <dd>Because the links multiply, doubling adherence from 30% to 60% doubles events prevented. Raising sensitivity from 85% to 90% adds about 6%.</dd>
+    </dl>
+
+    \[ \text{events prevented} \approx \text{cases} \times \text{sensitivity} \times \text{share new to clinicians} \times \text{adherence} \times \text{baseline risk} \times \text{RRR} \]
+    <p>Read it as a funnel: each term is the share that survives to the next link. RRR is the relative risk reduction from acting on a true alert.</p>
+
+    <div class="widget" data-widget="ai-impact-chain">
+      <div class="widget-title">The accuracy-to-impact chain</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Start with the default, then load “Excellent model, weak pathway”. Watch the specificity readout stay high while events prevented collapse. Then turn on alert fatigue and lower the PPV.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · EAGLE, the AI-ECG for low ejection fraction</div>
+      <p>EAGLE (Lecture 2.15) gave primary care teams AI-ECG results flagging likely low ejection fraction. New diagnoses rose from 1.6% to 2.1%. The cap was uptake: even with a positive AI result in hand, clinicians ordered an echocardiogram for only about half of those patients (49.6%, against 38.1% in usual care). The model was accurate; the gain was limited by what happened next.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>“It has an AUC of 0.92, so it will help.” AUC says the model ranks patients well. It says nothing about whether the output reaches anyone, whether they act, or whether acting helps. Judge an AI tool on the weakest link, not the strongest.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>This is offline metrics versus an online A/B test. Recommender teams learned long ago that a better offline score often loses online. There is a second lesson from uplift modelling: the patients at highest risk are not always the patients who gain most from being flagged. A tool that targets <em>treatable, unrecognised</em> risk can beat one that targets risk alone.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="fails">
+    <h2>2. Why a good model can change nothing</h2>
+    <p class="point">Most failures happen after the prediction, in the human and organisational links, so they are invisible in a validation study.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Failure</th><th>What happens</th><th>Where it shows in the data</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Alert fatigue</strong></td><td>Too many false alerts; clinicians learn to dismiss them all, true ones included</td><td>Falling acknowledgement rate over time; low PPV</td></tr>
+          <tr><td><strong>Workflow misfit</strong></td><td>Output arrives at the wrong time, screen or person</td><td>Alerts opened after the decision was already made</td></tr>
+          <tr><td><strong>Automation bias</strong></td><td>Clinicians defer to the tool even when it is wrong</td><td>Errors that track the model’s false negatives</td></tr>
+          <tr><td><strong>No available action</strong></td><td>The prediction is right but nothing effective can be done, or it was already being done</td><td>Flagged patients already treated; no change in orders</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · The Epic Sepsis Model</div>
+      <p>A proprietary sepsis model was in use at hundreds of US hospitals. An external validation at Michigan Medicine (27,697 patients, 38,455 hospitalisations) found an AUC of 0.63, against the 0.76–0.83 its developer had reported. At the usual alert threshold it missed two-thirds of sepsis cases, yet alerted on 18% of all hospitalised patients. It flagged only 7% of the sepsis patients whom clinicians had not already treated with timely antibiotics. Weak accuracy, heavy alert burden and little new information: three links broken at once.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Assuming the worst case is “no effect”. Automation bias means an AI tool can cause harm: a confident false negative can talk a clinician out of a correct suspicion. Impact studies need safety outcomes and an analysis of errors, not just the main effect.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>A smoke alarm that goes off every time you make toast. It detects smoke perfectly well. Within a month the battery is out, and it detects nothing.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="ladder">
+    <h2>3. The evidence ladder for AI</h2>
+    <p class="point">Each rung answers a different question; only the upper rungs say whether patients are better off, and most AI tools never leave the bottom two.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A ranking of designs by how directly they estimate the effect of deployment. <strong>Silent (shadow) deployment</strong> runs the model live on real patients but shows nobody the output: it tests accuracy in real time and real data pipes, not impact.</dd>
+      <dt>Why it matters</dt>
+      <dd>Regulators clear many devices on accuracy alone (Lecture 5.14). Health systems buying a tool, and HTA bodies paying for it (Lecture 5.11), need the upper rungs.</dd>
+      <dt>How to read it</dt>
+      <dd>Bottom two rungs: is the output right? Middle rungs: did things change when it went live, and was it the tool? Top rungs: randomisation makes the comparison fair.</dd>
+      <dt>What a change means</dt>
+      <dd>Moving from retrospective to silent deployment catches data-pipeline and timing problems. Moving from before–after to a randomised design removes secular trends and co-interventions as explanations.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · The AI evidence ladder</div>
+      <svg class="viz-svg" viewBox="0 0 640 360" role="img" aria-label="A ladder of six rungs. From the bottom: retrospective accuracy; silent or shadow deployment; before–after comparison; interrupted time series or difference-in-differences on a staggered rollout; stepped-wedge cluster trial; cluster or individual randomised trial. The bottom two rungs are accuracy evidence and the top four are impact evidence. An arrow on the left points up towards stronger evidence of benefit.">
+        <defs><marker id="l515-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead accent"/></marker></defs>
+        <line x1="22" y1="334" x2="22" y2="20" class="edge accent" marker-end="url(#l515-arrow)"/>
+        <text x="12" y="180" class="viz-small viz-muted" text-anchor="middle" transform="rotate(-90 12 180)">stronger evidence of benefit</text>
+
+        <line x1="96" y1="16" x2="96" y2="224" class="edge strong"/>
+        <line x1="96" y1="16" x2="104" y2="16" class="edge strong"/>
+        <line x1="96" y1="224" x2="104" y2="224" class="edge strong"/>
+        <text x="60" y="116" text-anchor="middle" class="viz-bold colour s1">Impact</text>
+        <text x="60" y="134" text-anchor="middle" class="viz-small viz-muted">evidence</text>
+        <line x1="96" y1="232" x2="96" y2="332" class="edge"/>
+        <line x1="96" y1="232" x2="104" y2="232" class="edge"/>
+        <line x1="96" y1="332" x2="104" y2="332" class="edge"/>
+        <text x="60" y="278" text-anchor="middle" class="viz-bold">Accuracy</text>
+        <text x="60" y="296" text-anchor="middle" class="viz-small viz-muted">evidence</text>
+        <line x1="110" y1="228" x2="630" y2="228" class="edge" stroke-dasharray="5 4"/>
+
+        <g class="s1"><rect x="110" y="16" width="246" height="46" rx="8" class="node-fill"/></g>
+        <g class="s1"><rect x="110" y="70" width="246" height="46" rx="8" class="node-fill"/></g>
+        <g class="s4"><rect x="110" y="124" width="246" height="46" rx="8" class="node-fill"/></g>
+        <g class="s2"><rect x="110" y="178" width="246" height="46" rx="8" class="node-fill"/></g>
+        <g class="s5"><rect x="110" y="232" width="246" height="46" rx="8" class="node-fill"/></g>
+        <g class="s5"><rect x="110" y="286" width="246" height="46" rx="8" class="node-fill"/></g>
+
+        <text x="122" y="44" class="viz-bold">Cluster or individual RCT</text>
+        <text x="122" y="98" class="viz-bold">Stepped-wedge cluster trial</text>
+        <text x="122" y="152" class="viz-bold">ITS or DiD on a staggered rollout</text>
+        <text x="122" y="206" class="viz-bold">Before–after comparison</text>
+        <text x="122" y="260" class="viz-bold">Silent (shadow) deployment</text>
+        <text x="122" y="314" class="viz-bold">Retrospective accuracy</text>
+
+        <text x="368" y="35" class="viz-small">Does using it improve patient outcomes?</text>
+        <text x="368" y="52" class="viz-small viz-muted">Randomised, usually by clinic or team</text>
+        <text x="368" y="89" class="viz-small">Same question, randomised rollout order</text>
+        <text x="368" y="106" class="viz-small viz-muted">Every site gets it; time must be modelled</text>
+        <text x="368" y="143" class="viz-small">Did outcomes break trend at go-live?</text>
+        <text x="368" y="160" class="viz-small viz-muted">Needs comparison sites or a long baseline</text>
+        <text x="368" y="197" class="viz-small">Did outcomes change after go-live?</text>
+        <text x="368" y="214" class="viz-small viz-muted">Trends and co-interventions mixed in</text>
+        <text x="368" y="251" class="viz-small">Does it work on live data, in real time?</text>
+        <text x="368" y="268" class="viz-small viz-muted">Prospective, but nobody acts on output</text>
+        <text x="368" y="305" class="viz-small">Does it rank and calibrate on stored data?</text>
+        <text x="368" y="322" class="viz-small viz-muted">Internal and external test sets (5.13)</text>
+      </svg>
+      <figcaption>Cluster and individual RCTs share the top rung: for AI, randomising clinics or teams is often the better trial, not a weaker one (Section 4). The dashed line is where most AI evidence stops.</figcaption>
+    </figure>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Project 5B</div>
+      <p>Wu and colleagues reviewed 130 AI devices cleared by the FDA from 2015 to 2020: 126 reported only retrospective studies, and none of the 54 high-risk devices had a prospective study. Han and colleagues found 86 randomised trials of AI in clinical practice published from 2018 to 2023; 81% reported a positive primary endpoint, mostly diagnostic yield rather than patient outcomes, and 63% were single-centre. Project 5B codes each cardiovascular device into one rung, separates process outcomes (diagnoses made, echoes ordered) from patient outcomes, and asks whether recent clearances climb higher.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · An AI-ECG trial with a mortality outcome</div>
+      <p>Lin and colleagues ran a pragmatic randomised trial in two Taiwanese hospitals (39 physicians, 15,965 patients): physicians in the intervention arm received real-time alerts when an AI-ECG predicted high mortality risk. Ninety-day mortality was 3.6% against 4.3% (hazard ratio 0.83, 95% CI 0.70–0.99), with the benefit concentrated in high-risk ECGs (HR 0.69). Alerted high-risk patients received more intensive care, but the exact mechanism was not established. Contrast Mayo’s AI-guided AF screening study: AF yield of 10.6% against 3.6% in usual care, but non-randomised, with propensity-matched real-world controls, and a process outcome; whether screen-detected AF patients then avoid strokes was not tested.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reading “prospective” as “impact”. A silent deployment and a prospective accuracy study are both prospective, and both measure accuracy. Impact needs a comparison of care with and without the tool.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="cluster">
+    <h2>4. Randomising AI: clusters and contamination</h2>
+    <p class="point">AI tools act on clinicians, and clinicians learn, so randomising individual patients leaks the intervention into the control arm; randomise the clinic, team or ward instead.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A <strong>cluster randomised trial</strong> assigns whole groups (care teams, wards, hospitals) to have the tool or not. Every patient in a cluster gets the same condition.</dd>
+      <dt>Why it matters</dt>
+      <dd><em>Contamination</em>: a clinician who sees AI alerts for half their patients starts ordering echoes for the other half too, which pulls the two arms together and biases the effect towards zero. Clusters also match how tools are switched on, site by site.</dd>
+      <dt>How to read it</dt>
+      <dd>The price is the design effect you met in Lecture 3.8: patients in one cluster are alike, so they carry less information. Check that the paper reports the ICC, the number of clusters, and an analysis that accounts for clustering.</dd>
+      <dt>What a change means</dt>
+      <dd>With an ICC of 0.02, going from 50 to 200 patients per cluster raises the design effect from about 2 to about 5. Adding clusters buys far more power than adding patients per cluster.</dd>
+    </dl>
+
+    <div class="callout example">
+      <div class="callout-title">Example · EAGLE’s design</div>
+      <p>EAGLE randomised 120 primary care teams from 45 clinics and hospitals, with 358 clinicians and 22,641 patients. The team, not the patient, was the unit, because a clinician cannot unsee an AI result. The effect (odds ratio 1.32 for a new low-EF diagnosis) was estimated with clustering taken into account.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">In the Gulf</div>
+      <p>Saudi Arabia’s Ministry of Health now organises public care into regional <em>health clusters</em> under the Health Sector Transformation Program. A tool that is switched on cluster by cluster, or hospital by hospital within a cluster, is a ready-made unit of randomisation. If the rollout order is decided anyway, randomising it costs almost nothing and turns a rollout into a trial (next section).</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Too few clusters. Eight hospitals randomised four-and-four can leave the arms unbalanced on case mix, however many patients they hold. Use restricted or stratified randomisation, and small-sample corrections in the analysis (Lecture 3.8).</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="stepped">
+    <h2>5. Stepped-wedge trials</h2>
+    <p class="point">In a stepped-wedge trial every cluster starts without the tool and switches to it at a randomly chosen step, so the effect comes from comparing exposed and unexposed clusters in the same period.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A cluster trial in which the <em>order</em> of rollout is randomised. At each step one or more clusters cross over; by the end, all have the tool. The standard analysis (Hussey and Hughes) is a mixed model with a fixed effect for each period and a random effect for each cluster.</dd>
+      <dt>Why it matters</dt>
+      <dd>It fits the way health systems actually deploy AI: the decision to roll out is made, and resources only allow a few sites at a time. Nobody is permanently denied the tool, which makes it easier to approve.</dd>
+      <dt>How to read it</dt>
+      <dd>Exposure is tied to calendar time: later periods have more exposed clusters. Any secular trend therefore looks like a treatment effect unless period is in the model. Check for period effects, a clustering term, and a CONSORT stepped-wedge flow diagram.</dd>
+      <dt>What a change means</dt>
+      <dd>If outcomes are improving by 1 point per period anyway, a naive comparison of exposed and unexposed periods credits the tool with roughly the trend times the average time gap between them.</dd>
+    </dl>
+
+    <div class="widget" data-widget="stepped-wedge">
+      <div class="widget-title">Stepped-wedge simulator: naive before–after vs the proper model</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Eight hospitals switch on an AI tool one per period, in random order. Set the true effect to zero and add a downward secular trend: the naive comparison finds a “benefit” that is not there; the model with period effects does not.</p>
+    </div>
+
+    <pre><code>library(lme4)
+# sw: one row per patient; hospital, period (0-8), ai (0/1 in that hospital-period), death (0/1)
+fit &lt;- glmer(death ~ ai + factor(period) + (1 | hospital),
+             family = binomial, data = sw)
+exp(fixef(fit)["ai"])     # odds ratio for the AI tool, net of calendar time
+exp(confint(fit, parm = "ai", method = "Wald"))</code></pre>
+    <p><code>factor(period)</code> gives each period its own baseline, which absorbs the secular trend; <code>(1 | hospital)</code> lets hospitals differ and handles clustering. The effect of <code>ai</code> is then a within-period comparison of exposed and not-yet-exposed hospitals.</p>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Assuming the effect is immediate and constant. Clinicians learn a new tool, and alert fatigue builds. If the effect changes with time since switch-on, the standard model can be badly biased. Model exposure time (time since crossover) or report the effect by months since go-live, and allow a transition period after each switch.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>To judge new textbooks, compare classes that got them this term with classes still waiting this term, not this year’s exam results with last year’s. Exams may have got easier.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="rollouts">
+    <h2>6. Rollouts that were not randomised</h2>
+    <p class="point">Most AI tools go live without randomisation; a staggered rollout can still be analysed as a natural experiment, if you compare sites at the same calendar time and check pre-trends.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A staggered rollout across sites is the setting for difference-in-differences with staggered adoption (Lecture 4.6): compare the change in outcomes at sites that switched on with the change at sites not yet switched on. With one site and a long series, use interrupted time series (Lecture 4.7).</dd>
+      <dt>Why it matters</dt>
+      <dd>It is often the only impact evidence a health system can produce after the fact, and the design most real-world AI evaluations should use instead of before–after.</dd>
+      <dt>How to read it</dt>
+      <dd>Look for an event-study plot: flat effects before go-live, a change after. Check that the estimator is built for staggered timing (for example Callaway and Sant’Anna), since two-way fixed effects can mislead when effects vary by site or time (Lecture 4.6).</dd>
+      <dt>What a change means</dt>
+      <dd>If early adopters were the keenest sites, their improvement may be enthusiasm, not the tool. A pre-trend that slopes the right way before go-live is the warning sign.</dd>
+    </dl>
+
+    <pre><code>library(did)
+# sites: one row per site-month; site (integer id), month, go_live (first month on, 0 = never), sepsis_mort
+att &lt;- att_gt(yname = "sepsis_mort", tname = "month", idname = "site",
+              gname = "go_live", control_group = "notyettreated", data = sites)
+es &lt;- aggte(att, type = "dynamic")   # effect by months since go-live
+ggdid(es)                             # event-study plot: check the pre-period</code></pre>
+    <p><code>att_gt</code> estimates an effect for each group of sites that went live in the same month, using sites not yet live as controls. <code>aggte(type = "dynamic")</code> lines them up by time since go-live, which gives the event-study plot.</p>
+
+    <div class="callout example">
+      <div class="callout-title">Example · TREWS sepsis alerts</div>
+      <p>A prospective study at five hospitals monitored 590,736 patients with the TREWS sepsis alert. Among 6,877 septic patients flagged before antibiotics, those whose alert a clinician confirmed within 3 hours had an adjusted mortality 3.3 percentage points lower (an 18.7% relative reduction) than those whose alert was not confirmed in time. That is an informative and large study. But confirming the alert was a clinician’s choice, and prompt attention tracks staffing, workload and how obvious the patient looked. It estimates an association with prompt response, not the effect of switching the system on.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Comparing patients whose alerts were acted on with patients whose alerts were ignored. Acting is a decision made after seeing the patient, so the comparison is confounded by everything that drove the decision. The clean contrasts are site against site, or period against period.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>A vendor shows an AI-ECG with an AUC of 0.92 on data from three hospitals and asks your health system to buy it. What do you ask for before deciding?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Evidence further up the ladder: external validation in a population like yours, then ideally impact data. Ask what action follows a positive result, whether that action is available locally (echo capacity), and what share of flagged patients clinicians would have found anyway. Offer a silent deployment to check accuracy on your own data, then a randomised or stepped-wedge rollout to measure impact.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A hospital switched on a sepsis alert in January. Sepsis mortality was 12% lower that year than the year before. The press release credits the alert. What else could explain it?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>A secular trend (sepsis mortality has been falling for years), co-interventions launched at the same time (a sepsis bundle campaign), and coding changes: an alert makes clinicians label more patients as septic, adding milder cases that dilute mortality. An interrupted time series with a long baseline, or a comparison with hospitals that had not yet switched on, would separate these.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Why did EAGLE randomise care teams rather than patients, and what did that cost?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Clinicians who see AI results for some patients change how they treat all patients, which would contaminate the control arm and shrink the apparent effect. The cost is a design effect: outcomes within a team are correlated, so more patients are needed for the same precision, and the analysis must account for clustering.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A stepped-wedge trial compares all AI-exposed hospital-months with all unexposed hospital-months and finds a large benefit. Outcomes were improving across the region throughout. Which way is the estimate biased, and what fixes it?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>It exaggerates the benefit. Exposed months are mostly later months, so they inherit the improvement. Including period effects compares exposed and unexposed hospitals within the same period, which removes the trend.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Model A has an AUC of 0.88 but alerts mostly on patients clinicians have already recognised. Model B has an AUC of 0.78 and flags patients clinicians usually miss, with a clear treatment available. Which would you take to an impact trial first?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Probably B. Impact depends on new information that leads to an effective action, not on ranking performance. Model A’s true positives were going to be treated anyway, so its marginal benefit is small. AUC alone cannot choose between them.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Wong et al., “External validation of a widely implemented proprietary sepsis prediction model in hospitalized patients”, <em>JAMA Internal Medicine</em> (2021).</li>
+      <li>Yao et al., “Artificial intelligence–enabled electrocardiograms for identification of patients with low ejection fraction: a pragmatic, randomized clinical trial” (EAGLE), <em>Nature Medicine</em> (2021).</li>
+      <li>Lin et al., “AI-enabled electrocardiography alert intervention and all-cause mortality: a pragmatic randomized clinical trial”, <em>Nature Medicine</em> (2024).</li>
+      <li>Noseworthy et al., “Artificial intelligence-guided screening for atrial fibrillation using electrocardiogram during sinus rhythm: a prospective non-randomised interventional trial”, <em>The Lancet</em> (2022).</li>
+      <li>Adams et al., “Prospective, multi-site study of patient outcomes after implementation of the TREWS machine learning-based early warning system for sepsis”, <em>Nature Medicine</em> (2022).</li>
+      <li>Wu et al., “How medical AI devices are evaluated: limitations and recommendations from an analysis of FDA approvals”, <em>Nature Medicine</em> (2021).</li>
+      <li>Han et al., “Randomised controlled trials evaluating artificial intelligence in clinical practice: a scoping review”, <em>The Lancet Digital Health</em> (2024).</li>
+      <li>Hussey &amp; Hughes, “Design and analysis of stepped wedge cluster randomized trials”, <em>Contemporary Clinical Trials</em> (2007); Hemming et al., “The stepped wedge cluster randomised trial: rationale, design, analysis, and reporting”, <em>BMJ</em> (2015).</li>
+      <li>Hemming et al., “Reporting of stepped wedge cluster randomised trials: extension of the CONSORT 2010 statement”, <em>BMJ</em> (2018); Campbell et al., CONSORT extension to cluster randomised trials, <em>BMJ</em> (2012).</li>
+      <li>Callaway &amp; Sant’Anna, “Difference-in-differences with multiple time periods”, <em>Journal of Econometrics</em> (2021).</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="5-14-ai-medical-device-regulation.html"><small>Previous</small>5.14 AI as a medical device</a>
+    <a class="next" href="5-16-post-deployment-monitoring.html"><small>Next</small>5.16 Post-deployment monitoring</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

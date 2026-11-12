@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>4.7 Interrupted time series · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/4-07.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-4">Block 4</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 4.7</p>
+  <h1>Interrupted time series</h1>
+  <div class="lecture-meta">
+    <span>Block 4 · Causal inference and policy evaluation</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>Interrupted time series (ITS) uses one population’s own past as its control: fit the trend before a policy, carry it forward, and read the effect as the gap between what happened and that projection. It is the standard design for national policies with no untreated comparison. Lecture 3.9 gave you the machinery (segmented regression, season, autocorrelation); this lecture is about the judgement around it: which impact shape to expect before you look, how honest your intervals are, what else could have bent the line, and why Project 4’s seven annual pre-tax points make ITS a supporting strand rather than the main analysis.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#counterfactual">The counterfactual is a projected trend</a></li>
+      <li><a href="#impact">Choose the impact model before you look</a></li>
+      <li><a href="#honest">Honest intervals: season and autocorrelation in ITS</a></li>
+      <li><a href="#controls">Adding a control: comparison series and controlled ITS</a></li>
+      <li><a href="#threats">Threats that bend the line</a></li>
+      <li><a href="#annual">Annual data and few points: Project 4</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="counterfactual">
+    <h2>1. The counterfactual is a projected trend</h2>
+    <p class="point">ITS assumes that, without the policy, the pre-intervention trend (and season) would have continued; the effect is the distance between the observed series and that projection.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Segmented regression (Lecture 3.9) fits a pre-period line, then lets the level and the slope change at the intervention. The <strong>level change</strong> is the immediate step; the <strong>slope change</strong> is how much faster or slower the series moves afterwards. The extended pre-period line is the <strong>counterfactual</strong>.</dd>
+      <dt>Why it matters</dt>
+      <dd>Every causal claim from ITS rests on that projection. Its assumption is the time-series cousin of parallel trends (Lecture 4.6): nothing except the policy changed the series’ path at that moment.</dd>
+      <dt>How to read it</dt>
+      <dd>Report the effect at a stated horizon, combining both terms, with its interval, in absolute and relative form (“3.1 kg per person lower, 7% below the projection, five years after”). Do not report the level and slope coefficients as two separate effects.</dd>
+      <dt>What a change means</dt>
+      <dd>A level change of −2 with a slope change of +0.5 per year means an initial drop that erodes: by year 4 the series is back on its old path. The two coefficients only make sense together.</dd>
+    </dl>
+
+    \[ \text{effect } k \text{ periods after} = \beta_2 + \beta_3\, k \]
+    <p>Here \(\beta_2\) is the level change and \(\beta_3\) the slope change, as in Lecture 3.9. The interval for this sum needs the covariance of the two estimates; in R, <code>marginaleffects</code> or a linear combination with <code>multcomp::glht</code> gives it.</p>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Projecting the pre-trend far into the future. A linear trend fitted over seven years and carried forward ten says more about the straight-line assumption than about the policy: no trend in sugar supply goes on forever. Keep the post-period short relative to the pre-period, or report effects only at horizons the data can support.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Dead reckoning on a ship: from speed and heading you can say where the ship should be in an hour. If it turns up somewhere else, something pushed it, but the further ahead you project, the less you can tell a push from a small error in the heading.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="impact">
+    <h2>2. Choose the impact model before you look</h2>
+    <p class="point">Decide what shape the effect should take, and when it should start, from how the policy works, then fit that model; picking the shape that fits best is a hidden multiple-testing problem.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The <strong>impact model</strong> is the hypothesised shape of the effect: a step, a change in slope, both, a temporary dip, a delayed start, or a gradual <strong>phase-in</strong> to a new level. Lopez Bernal, Cummins and Gasparrini (2017) make choosing it a priori, from theory and earlier evidence, an explicit step of their tutorial, and discourage selecting it from the outcome data.</dd>
+      <dt>Why it matters</dt>
+      <dd>Each shape answers a different question and has different power. With six candidate shapes and two or three possible start dates, one of them will fit a noisy series “significantly” by chance.</dd>
+      <dt>How to read it</dt>
+      <dd>A good protocol states the shape, the start date, any <strong>transition period</strong> (excluded or modelled as a ramp), and the mechanism behind them. Other shapes become sensitivity analyses, labelled as such.</dd>
+      <dt>What a change means</dt>
+      <dd>Moving the start by one period, or switching from a step to a ramp, should change the estimate little if the effect is real and well timed. Large swings mean the data cannot tell the shapes apart.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · Six impact models</div>
+      <svg class="viz-svg" viewBox="0 0 640 326" role="img" aria-label="Six small panels, each with a rising pre-intervention line, a dotted vertical intervention line and a dashed counterfactual continuing the pre-trend. (a) level change: an immediate parallel drop. (b) slope change: the line bends downward from the intervention. (c) level and slope: a drop followed by a steeper decline. (d) temporary level change: a drop that fades back to the counterfactual. (e) slope change after a lag: no change at first, then a downward bend. (f) phase-in: a gradual decline to a new, lower parallel level.">
+        <text x="19" y="18" class="viz-small viz-bold">(a) Level change</text>
+        <line x1="19" y1="124" x2="201" y2="124" class="viz-axis"/>
+        <line x1="101.3" y1="32" x2="101.3" y2="124" class="viz-grid" stroke-dasharray="4 3"/>
+        <path d="M23.0,78.0 L24.7,77.8 L26.5,77.7 L28.2,77.5 L30.0,77.4 L31.7,77.2 L33.4,77.0 L35.2,76.9 L36.9,76.7 L38.7,76.6 L40.4,76.4 L42.1,76.2 L43.9,76.1 L45.6,75.9 L47.4,75.8 L49.1,75.6 L50.8,75.4 L52.6,75.3 L54.3,75.1 L56.1,75.0 L57.8,74.8 L59.5,74.6 L61.3,74.5 L63.0,74.3 L64.8,74.2 L66.5,74.0 L68.2,73.8 L70.0,73.7 L71.7,73.5 L73.5,73.4 L75.2,73.2 L76.9,73.0 L78.7,72.9 L80.4,72.7 L82.2,72.6 L83.9,72.4 L85.6,72.2 L87.4,72.1 L89.1,71.9 L90.9,71.8 L92.6,71.6 L94.3,71.4 L96.1,71.3 L97.8,71.1 L99.6,71.0 L101.3,70.8" class="stroke s1"/>
+        <path d="M101.3,70.8 L110.0,70.0 L118.7,69.2 L127.4,68.4 L136.1,67.6 L144.8,66.8 L153.5,66.0 L162.2,65.2 L170.9,64.4 L179.6,63.6 L188.3,62.8 L197.0,62.0 L197.0,62.0" class="stroke dashed s5" stroke-width="2"/>
+        <path d="M101.3,94.8 L103.0,94.6 L104.8,94.5 L106.5,94.3 L108.3,94.2 L110.0,94.0 L111.7,93.8 L113.5,93.7 L115.2,93.5 L117.0,93.4 L118.7,93.2 L120.4,93.0 L122.2,92.9 L123.9,92.7 L125.7,92.6 L127.4,92.4 L129.1,92.2 L130.9,92.1 L132.6,91.9 L134.4,91.8 L136.1,91.6 L137.8,91.4 L139.6,91.3 L141.3,91.1 L143.1,91.0 L144.8,90.8 L146.5,90.6 L148.3,90.5 L150.0,90.3 L151.8,90.2 L153.5,90.0 L155.2,89.8 L157.0,89.7 L158.7,89.5 L160.5,89.4 L162.2,89.2 L163.9,89.0 L165.7,88.9 L167.4,88.7 L169.2,88.6 L170.9,88.4 L172.6,88.2 L174.4,88.1 L176.1,87.9 L177.9,87.8 L179.6,87.6 L181.3,87.4 L183.1,87.3 L184.8,87.1 L186.6,87.0 L188.3,86.8 L190.0,86.6 L191.8,86.5 L193.5,86.3 L195.3,86.2 L197.0,86.0" class="stroke s1"/>
+        <text x="19" y="141" class="viz-small viz-muted">price passed on at once</text>
+        <text x="229" y="18" class="viz-small viz-bold">(b) Slope change</text>
+        <line x1="229" y1="124" x2="411" y2="124" class="viz-axis"/>
+        <line x1="311.3" y1="32" x2="311.3" y2="124" class="viz-grid" stroke-dasharray="4 3"/>
+        <path d="M233.0,78.0 L234.7,77.8 L236.5,77.7 L238.2,77.5 L240.0,77.4 L241.7,77.2 L243.4,77.0 L245.2,76.9 L246.9,76.7 L248.7,76.6 L250.4,76.4 L252.1,76.2 L253.9,76.1 L255.6,75.9 L257.4,75.8 L259.1,75.6 L260.8,75.4 L262.6,75.3 L264.3,75.1 L266.1,75.0 L267.8,74.8 L269.5,74.6 L271.3,74.5 L273.0,74.3 L274.8,74.2 L276.5,74.0 L278.2,73.8 L280.0,73.7 L281.7,73.5 L283.5,73.4 L285.2,73.2 L286.9,73.0 L288.7,72.9 L290.4,72.7 L292.2,72.6 L293.9,72.4 L295.6,72.2 L297.4,72.1 L299.1,71.9 L300.9,71.8 L302.6,71.6 L304.3,71.4 L306.1,71.3 L307.8,71.1 L309.6,71.0 L311.3,70.8" class="stroke s1"/>
+        <path d="M311.3,70.8 L320.0,70.0 L328.7,69.2 L337.4,68.4 L346.1,67.6 L354.8,66.8 L363.5,66.0 L372.2,65.2 L380.9,64.4 L389.6,63.6 L398.3,62.8 L407.0,62.0 L407.0,62.0" class="stroke dashed s5" stroke-width="2"/>
+        <path d="M311.3,70.8 L313.0,71.4 L314.8,71.9 L316.5,72.5 L318.3,73.0 L320.0,73.6 L321.7,74.2 L323.5,74.7 L325.2,75.3 L327.0,75.8 L328.7,76.4 L330.4,77.0 L332.2,77.5 L333.9,78.1 L335.7,78.6 L337.4,79.2 L339.1,79.8 L340.9,80.3 L342.6,80.9 L344.4,81.4 L346.1,82.0 L347.8,82.6 L349.6,83.1 L351.3,83.7 L353.1,84.2 L354.8,84.8 L356.5,85.4 L358.3,85.9 L360.0,86.5 L361.8,87.0 L363.5,87.6 L365.2,88.2 L367.0,88.7 L368.7,89.3 L370.5,89.8 L372.2,90.4 L373.9,91.0 L375.7,91.5 L377.4,92.1 L379.2,92.6 L380.9,93.2 L382.6,93.8 L384.4,94.3 L386.1,94.9 L387.9,95.4 L389.6,96.0 L391.3,96.6 L393.1,97.1 L394.8,97.7 L396.6,98.2 L398.3,98.8 L400.0,99.4 L401.8,99.9 L403.5,100.5 L405.3,101.0 L407.0,101.6" class="stroke s1"/>
+        <text x="229" y="141" class="viz-small viz-muted">habits shift year by year</text>
+        <text x="439" y="18" class="viz-small viz-bold">(c) Level and slope</text>
+        <line x1="439" y1="124" x2="621" y2="124" class="viz-axis"/>
+        <line x1="521.3" y1="32" x2="521.3" y2="124" class="viz-grid" stroke-dasharray="4 3"/>
+        <path d="M443.0,78.0 L444.7,77.8 L446.5,77.7 L448.2,77.5 L450.0,77.4 L451.7,77.2 L453.4,77.0 L455.2,76.9 L456.9,76.7 L458.7,76.6 L460.4,76.4 L462.1,76.2 L463.9,76.1 L465.6,75.9 L467.4,75.8 L469.1,75.6 L470.8,75.4 L472.6,75.3 L474.3,75.1 L476.1,75.0 L477.8,74.8 L479.5,74.6 L481.3,74.5 L483.0,74.3 L484.8,74.2 L486.5,74.0 L488.2,73.8 L490.0,73.7 L491.7,73.5 L493.5,73.4 L495.2,73.2 L496.9,73.0 L498.7,72.9 L500.4,72.7 L502.2,72.6 L503.9,72.4 L505.6,72.2 L507.4,72.1 L509.1,71.9 L510.9,71.8 L512.6,71.6 L514.3,71.4 L516.1,71.3 L517.8,71.1 L519.6,71.0 L521.3,70.8" class="stroke s1"/>
+        <path d="M521.3,70.8 L530.0,70.0 L538.7,69.2 L547.4,68.4 L556.1,67.6 L564.8,66.8 L573.5,66.0 L582.2,65.2 L590.9,64.4 L599.6,63.6 L608.3,62.8 L617.0,62.0 L617.0,62.0" class="stroke dashed s5" stroke-width="2"/>
+        <path d="M521.3,85.2 L523.0,85.5 L524.8,85.8 L526.5,86.0 L528.3,86.3 L530.0,86.6 L531.7,86.9 L533.5,87.2 L535.2,87.4 L537.0,87.7 L538.7,88.0 L540.4,88.3 L542.2,88.6 L543.9,88.8 L545.7,89.1 L547.4,89.4 L549.1,89.7 L550.9,90.0 L552.6,90.2 L554.4,90.5 L556.1,90.8 L557.8,91.1 L559.6,91.4 L561.3,91.6 L563.1,91.9 L564.8,92.2 L566.5,92.5 L568.3,92.8 L570.0,93.0 L571.8,93.3 L573.5,93.6 L575.2,93.9 L577.0,94.2 L578.7,94.4 L580.5,94.7 L582.2,95.0 L583.9,95.3 L585.7,95.6 L587.4,95.8 L589.2,96.1 L590.9,96.4 L592.6,96.7 L594.4,97.0 L596.1,97.2 L597.9,97.5 L599.6,97.8 L601.3,98.1 L603.1,98.4 L604.8,98.6 L606.6,98.9 L608.3,99.2 L610.0,99.5 L611.8,99.8 L613.5,100.0 L615.3,100.3 L617.0,100.6" class="stroke s1"/>
+        <text x="439" y="141" class="viz-small viz-muted">both at once</text>
+        <text x="19" y="170" class="viz-small viz-bold">(d) Temporary level change</text>
+        <line x1="19" y1="276" x2="201" y2="276" class="viz-axis"/>
+        <line x1="101.3" y1="184" x2="101.3" y2="276" class="viz-grid" stroke-dasharray="4 3"/>
+        <path d="M23.0,230.0 L24.7,229.8 L26.5,229.7 L28.2,229.5 L30.0,229.4 L31.7,229.2 L33.4,229.0 L35.2,228.9 L36.9,228.7 L38.7,228.6 L40.4,228.4 L42.1,228.2 L43.9,228.1 L45.6,227.9 L47.4,227.8 L49.1,227.6 L50.8,227.4 L52.6,227.3 L54.3,227.1 L56.1,227.0 L57.8,226.8 L59.5,226.6 L61.3,226.5 L63.0,226.3 L64.8,226.2 L66.5,226.0 L68.2,225.8 L70.0,225.7 L71.7,225.5 L73.5,225.4 L75.2,225.2 L76.9,225.0 L78.7,224.9 L80.4,224.7 L82.2,224.6 L83.9,224.4 L85.6,224.2 L87.4,224.1 L89.1,223.9 L90.9,223.8 L92.6,223.6 L94.3,223.4 L96.1,223.3 L97.8,223.1 L99.6,223.0 L101.3,222.8" class="stroke s1"/>
+        <path d="M101.3,222.8 L110.0,222.0 L118.7,221.2 L127.4,220.4 L136.1,219.6 L144.8,218.8 L153.5,218.0 L162.2,217.2 L170.9,216.4 L179.6,215.6 L188.3,214.8 L197.0,214.0 L197.0,214.0" class="stroke dashed s5" stroke-width="2"/>
+        <path d="M101.3,250.8 L103.0,249.8 L104.8,248.7 L106.5,247.7 L108.3,246.7 L110.0,245.6 L111.7,244.6 L113.5,243.6 L115.2,242.5 L117.0,241.5 L118.7,240.4 L120.4,239.4 L122.2,238.4 L123.9,237.3 L125.7,236.3 L127.4,235.3 L129.1,234.2 L130.9,233.2 L132.6,232.2 L134.4,231.1 L136.1,230.1 L137.8,229.1 L139.6,228.0 L141.3,227.0 L143.1,226.0 L144.8,224.9 L146.5,223.9 L148.3,222.9 L150.0,221.8 L151.8,220.8 L153.5,219.8 L155.2,218.7 L157.0,217.7 L158.7,217.5 L160.5,217.4 L162.2,217.2 L163.9,217.0 L165.7,216.9 L167.4,216.7 L169.2,216.6 L170.9,216.4 L172.6,216.2 L174.4,216.1 L176.1,215.9 L177.9,215.8 L179.6,215.6 L181.3,215.4 L183.1,215.3 L184.8,215.1 L186.6,215.0 L188.3,214.8 L190.0,214.6 L191.8,214.5 L193.5,214.3 L195.3,214.2 L197.0,214.0" class="stroke s1"/>
+        <text x="19" y="293" class="viz-small viz-muted">drop, then habits return</text>
+        <text x="229" y="170" class="viz-small viz-bold">(e) Slope change after a lag</text>
+        <line x1="229" y1="276" x2="411" y2="276" class="viz-axis"/>
+        <line x1="311.3" y1="184" x2="311.3" y2="276" class="viz-grid" stroke-dasharray="4 3"/>
+        <path d="M233.0,230.0 L234.7,229.8 L236.5,229.7 L238.2,229.5 L240.0,229.4 L241.7,229.2 L243.4,229.0 L245.2,228.9 L246.9,228.7 L248.7,228.6 L250.4,228.4 L252.1,228.2 L253.9,228.1 L255.6,227.9 L257.4,227.8 L259.1,227.6 L260.8,227.4 L262.6,227.3 L264.3,227.1 L266.1,227.0 L267.8,226.8 L269.5,226.6 L271.3,226.5 L273.0,226.3 L274.8,226.2 L276.5,226.0 L278.2,225.8 L280.0,225.7 L281.7,225.5 L283.5,225.4 L285.2,225.2 L286.9,225.0 L288.7,224.9 L290.4,224.7 L292.2,224.6 L293.9,224.4 L295.6,224.2 L297.4,224.1 L299.1,223.9 L300.9,223.8 L302.6,223.6 L304.3,223.4 L306.1,223.3 L307.8,223.1 L309.6,223.0 L311.3,222.8" class="stroke s1"/>
+        <path d="M311.3,222.8 L320.0,222.0 L328.7,221.2 L337.4,220.4 L346.1,219.6 L354.8,218.8 L363.5,218.0 L372.2,217.2 L380.9,216.4 L389.6,215.6 L398.3,214.8 L407.0,214.0 L407.0,214.0" class="stroke dashed s5" stroke-width="2"/>
+        <path d="M311.3,222.8 L313.0,222.6 L314.8,222.5 L316.5,222.3 L318.3,222.2 L320.0,222.0 L321.7,221.8 L323.5,221.7 L325.2,221.5 L327.0,221.4 L328.7,221.2 L330.4,221.0 L332.2,220.9 L333.9,220.7 L335.7,220.6 L337.4,220.4 L339.1,220.2 L340.9,220.1 L342.6,220.7 L344.4,221.3 L346.1,221.9 L347.8,222.5 L349.6,223.1 L351.3,223.7 L353.1,224.3 L354.8,224.9 L356.5,225.5 L358.3,226.1 L360.0,226.7 L361.8,227.3 L363.5,227.9 L365.2,228.5 L367.0,229.1 L368.7,229.7 L370.5,230.3 L372.2,230.9 L373.9,231.5 L375.7,232.1 L377.4,232.7 L379.2,233.3 L380.9,233.9 L382.6,234.5 L384.4,235.1 L386.1,235.7 L387.9,236.3 L389.6,236.9 L391.3,237.5 L393.1,238.1 L394.8,238.7 L396.6,239.3 L398.3,239.9 L400.0,240.5 L401.8,241.1 L403.5,241.7 L405.3,242.3 L407.0,242.9" class="stroke s1"/>
+        <text x="229" y="293" class="viz-small viz-muted">nothing until old stock clears</text>
+        <text x="439" y="170" class="viz-small viz-bold">(f) Phase-in to a new level</text>
+        <line x1="439" y1="276" x2="621" y2="276" class="viz-axis"/>
+        <line x1="521.3" y1="184" x2="521.3" y2="276" class="viz-grid" stroke-dasharray="4 3"/>
+        <path d="M443.0,230.0 L444.7,229.8 L446.5,229.7 L448.2,229.5 L450.0,229.4 L451.7,229.2 L453.4,229.0 L455.2,228.9 L456.9,228.7 L458.7,228.6 L460.4,228.4 L462.1,228.2 L463.9,228.1 L465.6,227.9 L467.4,227.8 L469.1,227.6 L470.8,227.4 L472.6,227.3 L474.3,227.1 L476.1,227.0 L477.8,226.8 L479.5,226.6 L481.3,226.5 L483.0,226.3 L484.8,226.2 L486.5,226.0 L488.2,225.8 L490.0,225.7 L491.7,225.5 L493.5,225.4 L495.2,225.2 L496.9,225.0 L498.7,224.9 L500.4,224.7 L502.2,224.6 L503.9,224.4 L505.6,224.2 L507.4,224.1 L509.1,223.9 L510.9,223.8 L512.6,223.6 L514.3,223.4 L516.1,223.3 L517.8,223.1 L519.6,223.0 L521.3,222.8" class="stroke s1"/>
+        <path d="M521.3,222.8 L530.0,222.0 L538.7,221.2 L547.4,220.4 L556.1,219.6 L564.8,218.8 L573.5,218.0 L582.2,217.2 L590.9,216.4 L599.6,215.6 L608.3,214.8 L617.0,214.0 L617.0,214.0" class="stroke dashed s5" stroke-width="2"/>
+        <path d="M521.3,222.8 L523.0,223.7 L524.8,224.5 L526.5,225.4 L528.3,226.3 L530.0,227.1 L531.7,228.0 L533.5,228.8 L535.2,229.7 L537.0,230.6 L538.7,231.4 L540.4,232.3 L542.2,233.2 L543.9,234.0 L545.7,234.9 L547.4,235.8 L549.1,236.6 L550.9,237.5 L552.6,238.4 L554.4,239.2 L556.1,240.1 L557.8,240.9 L559.6,241.8 L561.3,242.7 L563.1,243.5 L564.8,244.4 L566.5,244.2 L568.3,244.1 L570.0,243.9 L571.8,243.8 L573.5,243.6 L575.2,243.4 L577.0,243.3 L578.7,243.1 L580.5,243.0 L582.2,242.8 L583.9,242.6 L585.7,242.5 L587.4,242.3 L589.2,242.2 L590.9,242.0 L592.6,241.8 L594.4,241.7 L596.1,241.5 L597.9,241.4 L599.6,241.2 L601.3,241.0 L603.1,240.9 L604.8,240.7 L606.6,240.6 L608.3,240.4 L610.0,240.2 L611.8,240.1 L613.5,239.9 L615.3,239.8 L617.0,239.6" class="stroke s1"/>
+        <text x="439" y="293" class="viz-small viz-muted">price rises passed on gradually</text>
+        <g class="viz-small">
+          <line x1="19" y1="316" x2="43" y2="316" class="stroke s1"/><text x="50" y="320">expected path with the policy</text>
+          <line x1="250" y1="316" x2="274" y2="316" class="stroke dashed s5" stroke-width="2"/><text x="281" y="320">counterfactual</text>
+          <line x1="400" y1="309" x2="400" y2="323" class="viz-grid" stroke-dasharray="4 3"/><text x="408" y="320">intervention</text>
+        </g>
+      </svg>
+      <figcaption>Shapes follow Lopez Bernal and colleagues’ tutorial; the captions are possible mechanisms for a sugary-drink tax. Shapes (d) to (f) need extra terms: a decaying or ramp variable, or a later start date.</figcaption>
+    </figure>
+
+    <div class="callout gulf">
+      <div class="callout-title">Gulf example · Writing the impact model for Project 4</div>
+      <p>An excise tax raises shelf prices quickly, so the core hypothesis is a level change, with a possible slope change as habits and recipes adjust. Annual data cannot see a ramp within a year, so the practical choice is about the first year: Saudi Arabia’s tax began in June 2017, so 2017 is a transition year. Pre-specify either excluding it or coding it as part-exposed (about 0.55 of a year), and pre-specify how the December 2019 widening enters (a second level change from 2020, or a sensitivity analysis).</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Looking at the plot, seeing the drop start a year early, and moving the intervention date to match. That turns an anticipation effect (or noise) into the policy effect and invalidates the p-value. If anticipation is plausible (an announced tax), say so in advance and model an announcement date as well.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="honest">
+    <h2>3. Honest intervals: season and autocorrelation in ITS</h2>
+    <p class="point">In ITS, autocorrelation makes the level and slope changes look more certain than they are, and the usual fixes need more points than most policy series have.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The tools are those of Lecture 3.9: Fourier or month terms for season, and for autocorrelation either Newey–West standard errors, generalised least squares with AR(1) errors (Prais–Winsten), or regression with ARIMA errors. What is ITS-specific is where they bite.</dd>
+      <dt>Why it matters</dt>
+      <dd>Positive autocorrelation lets a series wander, and a wander that happens to start near the intervention looks like a level or slope change. The slope change is hit hardest because it is estimated from the trend of a short segment. With an uneven split of seasons (say the post-period starts every year in a low month), season alone creates a level change.</dd>
+      <dt>How to read it</dt>
+      <dd>Check residual ACF and PACF plots after fitting season. With many points, report autocorrelation-aware intervals and say how. With few points, say plainly that autocorrelation cannot be estimated well, so even the corrected intervals are optimistic.</dd>
+      <dt>What a change means</dt>
+      <dd>If the interval for the level change roughly doubles when you switch from OLS to Newey–West or GLS, the naive result was overstated; a result that is only significant with naive errors is not a finding.</dd>
+    </dl>
+
+    <div class="widget" data-widget="its-builder">
+      <div class="widget-title">ITS builder</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Start with the monthly preset and compare the naive and Newey–West intervals. Then try “No effect, strong memory” and draw new series: watch fake steps appear. Finally choose the annual preset: with 12 points, both intervals are unstable and the real coverage of the naive one drops.</p>
+    </div>
+
+    <pre><code>library(nlme)
+d$post &lt;- as.numeric(d$time &gt;= t0)          # 0 before, 1 after
+d$time_after &lt;- d$post * (d$time - t0)      # periods since the policy
+m &lt;- gls(sugar ~ time + post + time_after,
+         correlation = corAR1(form = ~ time), data = d)
+summary(m)          # post = level change, time_after = slope change
+intervals(m)        # CIs, plus the estimated AR(1) coefficient</code></pre>
+    <p>This fits segmented regression with AR(1) errors by generalised least squares, so the autocorrelation is modelled rather than ignored. With monthly data, add season terms as in Lecture 3.9. The estimated AR coefficient from a short series is itself very uncertain: look at its interval.</p>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>“The Durbin–Watson test found no autocorrelation.” With 12 annual points the test has almost no power, so a non-significant result is no reassurance. Absence of evidence again (Lecture 2.5). Assume some autocorrelation, and show how results change across plausible values.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>The naive interval assumes each point is a fresh draw. With φ = 0.5, ten consecutive points carry the information of roughly three independent ones: it is the same reason you cannot shuffle a time series into random cross-validation folds. Newey–West is a kernel estimate of the long-run variance, and like any kernel estimate it needs data well beyond the bandwidth to work.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="controls">
+    <h2>4. Adding a control: comparison series and controlled ITS</h2>
+    <p class="point">A comparison series that the policy should not affect, but that shares the same shocks, removes much of what a single series cannot rule out.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Two kinds of control. A <strong>control population</strong>: the same outcome in an untaxed place (Kuwait). A <strong>control outcome</strong>: an outcome in the same place that the policy should not touch but that shares the same shocks (a food group outside the tax). <strong>Controlled ITS</strong> fits both series together and estimates how much more the treated series’ level and slope changed than the control’s.</dd>
+      <dt>Why it matters</dt>
+      <dd>A single series cannot separate the policy from anything else that happened at the same time. A control that moves in the same way at the policy date flags a shared shock; one that does not makes the policy explanation stronger.</dd>
+      <dt>How to read it</dt>
+      <dd>Unlike DiD, controlled ITS lets the two series have different pre-trends and compares the <em>changes</em> in level and slope. That is more flexible, but it needs enough pre-points to estimate two trends, and it still assumes the gap between the series would have continued on its own path.</dd>
+      <dt>What a change means</dt>
+      <dd>If Saudi supply drops by 3 kg in 2018 and Kuwait’s drops by 2 kg, the controlled estimate is about −1 kg, not −3: two-thirds of the apparent effect was shared.</dd>
+    </dl>
+
+    <pre><code>d2 &lt;- rbind(transform(saudi, taxed = 1), transform(kuwait, taxed = 0))
+m2 &lt;- lm(sugar ~ (time + post + time_after) * taxed, data = d2)
+coef(m2)[c("post:taxed", "time_after:taxed")]   # extra level / slope change</code></pre>
+    <p>Each term is allowed to differ between the series; the two interactions are the controlled level and slope changes. For Kuwait, <code>post</code> and <code>time_after</code> use Saudi Arabia’s dates. The standard errors still need the autocorrelation treatment from section 3.</p>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Why controls matter</div>
+      <p>Lopez Bernal, Cummins and Gasparrini (2018) set out the main control options for ITS (control populations, control outcomes, and multiple-baseline designs where the policy starts at different times in different places) and the bias each one protects against. Their key point: a control is only useful if it shares the threats you are worried about, such as the same economic shock or the same data-system change.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Choosing a control outcome that the policy can reach indirectly. If people switch from taxed drinks to sweets, a “sugar from other foods” control rises because of the tax, and the controlled estimate overstates the effect on total sugar. Name the substitution routes before choosing.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="threats">
+    <h2>5. Threats that bend the line</h2>
+    <p class="point">The main threat to ITS is anything else that changed the series at about the same time; list the candidates for your policy date before you look at the result.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Threat</th><th>What it does</th><th>Project 4 candidate</th></tr></thead>
+        <tbody>
+          <tr><td><strong>History and co-interventions</strong></td><td>Another event or policy starts near the same date and moves the outcome</td><td>VAT of 5% introduced in Saudi Arabia and the UAE in January 2018; Saudi VAT raised to 15% in July 2020; COVID-19 in 2020</td></tr>
+          <tr><td><strong>Change in measurement</strong></td><td>The way the outcome is counted changes, creating a step</td><td>FAOSTAT food balance sheets: new method from 2010; population denominators revised between releases</td></tr>
+          <tr><td><strong>Regression to the mean</strong></td><td>Policies follow unusually bad years; the next year looks better anyway</td><td>A tax adopted after a spike in imports would show a fall regardless</td></tr>
+          <tr><td><strong>Change in the population</strong></td><td>Who is counted changes, so per-person values shift</td><td>Large swings in expatriate populations change both consumption patterns and denominators</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>These are the classic threats to quasi-experiments (Shadish, Cook and Campbell). ITS rules out slow, steady confounders, because they are part of the pre-trend. It does not rule out anything that changes abruptly near the policy date.</dd>
+      <dt>Why it matters</dt>
+      <dd>Reviewers will ask, “what else happened in 2017–2018?” A methods section that names the co-interventions and shows how each was handled answers before they ask.</dd>
+      <dt>How to read it</dt>
+      <dd>For each threat, ask whether its timing matches the policy and whether it would also move the control series. If it matches and the control does not share it, it is a live alternative explanation.</dd>
+      <dt>What a change means</dt>
+      <dd>A co-intervention one year after the policy is separable with monthly data and nearly inseparable with annual data. Coarser time means more threats coincide.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Treating 2018 as clean post-tax evidence for Saudi Arabia. VAT arrived in January 2018, on top of the excise tax, and raised drink prices again. A level change from 2018 measures excise plus VAT plus anything else that year. Kuwait, without VAT, cannot separate them either; a non-sugar food group under the same VAT can help.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>You start a new diet the same week you start a new job with a long commute. Your weight drops. The scale cannot tell you which change did it; only something that changed with one but not the other can.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="annual">
+    <h2>6. Annual data and few points: Project 4</h2>
+    <p class="point">With seven annual points before the tax and a handful after, ITS can detect only large effects, cannot estimate autocorrelation, and is exposed to every co-intervention in the same year; use it as a transparent descriptive strand.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>FAOSTAT’s food balance sheets are annual, and the series compiled with the current method starts in 2010. For Saudi Arabia that gives 2010–2016 as clean pre-tax years (seven points), a part-exposed 2017, and post years that also contain VAT, the 2019 widening and COVID-19.</dd>
+      <dt>Why it matters</dt>
+      <dd>Power depends on the number of points, their split before and after, noise, effect size and autocorrelation. Cochrane EPOC’s minimum of three points each side is an inclusion floor for reviews, not a guarantee of power. Lopez Bernal and colleagues give no fixed minimum and recommend simulation-based power calculations in advance (Zhang and colleagues 2011).</dd>
+      <dt>How to read it</dt>
+      <dd>Before fitting, simulate: with your expected noise and plausible autocorrelation, how large a level change would you detect 80% of the time? If the answer is larger than any plausible tax effect, say so and present ITS as description.</dd>
+      <dt>What a change means</dt>
+      <dd>Going from 7 to 14 pre-points (by splicing the old FAOSTAT series) seems to double the information, but it imports a measurement break into the pre-period, which can bias the trend more than the extra points help.</dd>
+    </dl>
+
+    <pre><code>sim_p &lt;- function(n_pre = 7, n_post = 5, level = -2, sd = 1.5, phi = 0.3) {
+  t &lt;- seq(-n_pre, n_post - 1); post &lt;- as.numeric(t &gt;= 0)
+  e &lt;- arima.sim(list(ar = phi), n = length(t), sd = sd * sqrt(1 - phi^2))
+  y &lt;- 50 + 0.2 * t + level * post + e
+  summary(lm(y ~ t + post + I(post * t)))$coef["post", 4]
+}
+mean(replicate(2000, sim_p()) &lt; 0.05)   # share of runs that detect the drop</code></pre>
+    <p>The function simulates one annual series with a pre-trend, a level drop and AR(1) noise, fits segmented regression, and returns the p-value for the level change. The last line estimates power. Plug in noise estimated from the pre-period of your real series, and try a few values of <code>phi</code>.</p>
+
+    <div class="callout gulf">
+      <div class="callout-title">Gulf example · More points from other sources</div>
+      <p>UN Comtrade can report trade monthly for some countries; check whether monthly HS 2202 imports exist for each GCC country. Monthly data would allow seasonality, Ramadan terms (Lecture 3.9) and a better-timed start, at the cost of trade-data noise and re-exports. Keep supply as the primary outcome, since imports miss Saudi Arabia’s large domestic bottling.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reporting “no significant effect” from a seven-point ITS as evidence the tax did not work. The design may simply have had no power. Report the estimate with its interval, the minimum detectable effect from your simulation, and let the DiD (Lecture 4.6) and synthetic control (Lecture 4.8) strands carry the inference.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>An ITS of monthly admissions reports a significant level change of −8% and a slope change of +0.6% per month. A press release says “admissions fell 8%”. What is the right summary?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The drop erodes: +0.6% a month cancels −8% in about 13 months. The effect should be reported at stated horizons (for example −8% at month 0, about −1% at month 12, nothing after), with intervals for each combined estimate. “Fell 8%” describes only the first month.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>After seeing the data, an analyst moves the intervention date six months earlier because “the change clearly started then”. What is wrong, and what would be acceptable?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Choosing the break from the outcome data finds the biggest apparent change, so the p-value and estimate are biased. If anticipation (an announcement) was plausible, that should have been pre-specified with its own date. Acceptable: keep the pre-specified date and report the alternative as a labelled post hoc sensitivity analysis.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A 7-point pre-period ITS for Saudi Arabia shows a level change of −2.5 kg (95% CI −4.0 to −1.0) with ordinary least squares. How confident are you?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Not very. With so few points, any autocorrelation makes the naive interval too narrow, and it cannot be estimated reliably. The 2018 post-period also includes the new VAT. I would want a simulation-based sense of power and coverage, a control series (Kuwait, and a non-taxed food group), and agreement with the DiD and synthetic control strands before treating −2.5 as the tax’s effect.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Controlled ITS with Kuwait gives a smaller effect than the single-series ITS for Saudi Arabia. Which do you believe, and why might they differ?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The controlled version, if Kuwait shares the region’s shocks and was not affected by the tax. The difference is the part of Saudi Arabia’s change that Kuwait also showed: a common shock such as prices, migration or COVID-19. Check for spillovers (cross-border buying would raise Kuwait’s supply and inflate, not shrink, the controlled effect) and for Kuwait-specific events.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Lopez Bernal, Cummins &amp; Gasparrini, “Interrupted time series regression for the evaluation of public health interventions: a tutorial”, <em>International Journal of Epidemiology</em> 46(1) (2017). Steps, impact models, power, threats.</li>
+      <li>Lopez Bernal, Cummins &amp; Gasparrini, “The use of controls in interrupted time series studies of public health interventions”, <em>International Journal of Epidemiology</em> (2018).</li>
+      <li>Wagner, Soumerai, Zhang &amp; Ross-Degnan, “Segmented regression analysis of interrupted time series studies in medication use research”, <em>Journal of Clinical Pharmacy and Therapeutics</em> (2002).</li>
+      <li>Zhang, Wagner &amp; Ross-Degnan, “Simulation-based power calculation for designing interrupted time series analyses of health policy interventions”, <em>Journal of Clinical Epidemiology</em> (2011).</li>
+      <li>Shadish, Cook &amp; Campbell, <em>Experimental and Quasi-Experimental Designs for Generalized Causal Inference</em> (Houghton Mifflin, 2002): threats to validity (history, instrumentation, regression).</li>
+      <li>Cochrane Effective Practice and Organisation of Care (EPOC), resources on interrupted time series: inclusion criteria (a clearly defined intervention point and at least three points before and after).</li>
+      <li>Huntington-Klein, <em>The Effect</em> (CRC Press, 2021; free online), chapter 17, “Event Studies”. Hyndman &amp; Athanasopoulos, <em>Forecasting: Principles and Practice</em> (3rd ed., free online), regression with ARIMA errors.</li>
+      <li>FAO, notes on the new food balance sheet methodology (series from 2010) and its differences from the old series, FAOSTAT documentation.</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="4-06-difference-in-differences.html"><small>Previous</small>4.6 Difference-in-differences</a>
+    <a class="next" href="4-08-synthetic-control.html"><small>Next</small>4.8 Synthetic control</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

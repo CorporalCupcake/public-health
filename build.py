@@ -29,12 +29,14 @@ def inline_md(text: str) -> str:
     text = html.escape(text, quote=False)
     text = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", text)
     text = re.sub(r"\*(.+?)\*", r"<em>\1</em>", text)
+    text = re.sub(r"(https?://[^\s<]+[^\s<.,;)])", r'<a href="\1">\1</a>', text)
     return text
 
 
 def parse_curriculum() -> list[dict]:
     blocks: list[dict] = []
     current = None
+    in_papers = False
     for line in CURRICULUM.read_text(encoding="utf-8").splitlines():
         m = BLOCK_RE.match(line)
         if m:
@@ -44,7 +46,9 @@ def parse_curriculum() -> list[dict]:
                 "weeks": (int(m[3]), int(m[4])),
                 "lectures": [],
                 "projects": [],
+                "papers": [],
             }
+            in_papers = False
             blocks.append(current)
             continue
         if line.startswith("## ") and current is not None and not BLOCK_RE.match(line):
@@ -52,6 +56,14 @@ def parse_curriculum() -> list[dict]:
             continue
         if current is None:
             continue
+        if line.strip() == "**Papers to read:**":
+            in_papers = True
+            continue
+        if in_papers:
+            if line.startswith("- "):
+                current["papers"].append(line[2:].strip())
+                continue
+            in_papers = False
         m = LECTURE_RE.match(line)
         if m:
             current["lectures"].append(
@@ -118,6 +130,10 @@ def render(blocks: list[dict], files: dict) -> str:
             f'{inline_md(p["desc"])}</p></div>'
             for p in b["projects"]
         )
+        papers = ""
+        if b["papers"]:
+            lis = "".join(f"<li>{inline_md(p)}</li>" for p in b["papers"])
+            papers = f'<div class="papers"><p class="papers-title">Papers to read this block</p><ul>{lis}</ul></div>'
         is_open = " open" if b["n"] == open_block else ""
         parts.append(
             f"""<details class="block" id="block-{b['n']}"{is_open}>
@@ -132,6 +148,7 @@ def render(blocks: list[dict], files: dict) -> str:
       {''.join(items)}
     </ol>
     {projects}
+    {papers}
   </div>
 </details>"""
         )

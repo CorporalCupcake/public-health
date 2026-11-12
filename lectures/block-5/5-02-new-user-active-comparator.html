@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>5.2 New-user and active-comparator designs · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/5-02.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-5">Block 5</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 5.2</p>
+  <h1>New-user and active-comparator designs</h1>
+  <div class="lecture-meta">
+    <span>Block 5 · Pharmacoepidemiology, real-world evidence, regulatory science and AI evaluation</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>Lecture 2.16 gave you the idea: follow people from the day they start a drug, and compare them with people starting an alternative for the same condition. This lecture is the practice. What “new” means and how far back you must look; what question the design answers and how switching changes it; how to choose a comparator; and why “non-users” and “adherent users” are the most persuasive and most misleading groups in pharmacoepidemiology. It ends with the hardest case, Project 5A, where there is no natural active comparator.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#prevalent">Why prevalent users bias the answer</a></li>
+      <li><a href="#washout">Lookback, washout and who counts as new</a></li>
+      <li><a href="#estimand">The ACNU design and its estimand</a></li>
+      <li><a href="#comparator">Choosing the comparator</a></li>
+      <li><a href="#nonusers">Non-users and the healthy adherer</a></li>
+      <li><a href="#p5a">The comparator problem in Project 5A</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="prevalent">
+    <h2>1. Why prevalent users bias the answer</h2>
+    <p class="point">A prevalent user has already survived, tolerated and kept taking the drug, and their measured characteristics have already been changed by it; each of those breaks the comparison in a different way.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Mechanism</th><th>What happens</th><th>Usual direction</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Depletion of susceptibles</strong></td><td>People harmed early (bleeds, angioedema, GI bleeds) have already stopped or died, so the users left are the resistant ones (the widget in Lecture 2.16)</td><td>Drug looks safer</td></tr>
+          <tr><td><strong>Selection on adherence</strong></td><td>Long-term users are, by definition, persistent; persistence goes with health-seeking behaviour and better prognosis</td><td>Drug looks better</td></tr>
+          <tr><td><strong>Covariates on the causal path</strong></td><td>Baseline LDL, blood pressure or HbA1c in a statin, antihypertensive or insulin user is the value <em>after</em> treatment; adjusting for it removes part of the drug’s effect</td><td>Towards no effect, or unpredictable</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <dl class="facets">
+      <dt>Why it matters</dt>
+      <dd>None of the three can be fixed by adjusting for time on treatment. The people who are missing are missing because of the drug and the outcome, which is selection bias (Lecture 2.7), not confounding.</dd>
+      <dt>How to read it</dt>
+      <dd>In a methods section, look for the words “new users”, “initiators” or “incident users”, a stated washout, and covariates measured before the first dispensing. “Current users” compared with “non-users” at a calendar date is a prevalent-user design.</dd>
+      <dt>What a change means</dt>
+      <dd>If a prevalent-user study and a new-user study of the same drug disagree, and the new-user hazard ratio is higher early in follow-up, early harm plus depletion is the first explanation to test.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Adjusting for a biomarker measured at cohort entry in prevalent users, such as “adjusted for baseline LDL” in a statin study. The statin lowered that LDL. You are adjusting for a mediator (Lecture 4.2), and the drug’s benefit through LDL disappears from the estimate.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>Prevalent users are a training set filtered by survival. A model trained only on customers still subscribed after two years learns nothing about why people churn in month one. Starting at initiation is the epidemiological version of sampling from the start of the funnel.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="washout">
+    <h2>2. Lookback, washout and who counts as new</h2>
+    <p class="point">A “new user” is only new relative to what your data can see; the lookback window defines that, and it must be long enough to catch prior use and short enough to keep a usable cohort.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The <strong>lookback</strong> is the period before the index date in which you check eligibility and measure covariates. The <strong>washout</strong> is the requirement of no use of the study drugs during it. People must also be observable for the whole window (continuous enrolment in claims, a prior visit in EHRs), otherwise “no use” just means “no data”.</dd>
+      <dt>Why it matters</dt>
+      <dd>Too short a washout lets prevalent users with a refill gap back in as “new”. Too long a washout excludes people with short enrolment, often younger, poorer or more mobile patients, which narrows who the result applies to.</dd>
+      <dt>How to read it</dt>
+      <dd>Six to twelve months is typical in claims data for chronic drugs. Check that the washout covers both arms (new to A <em>and</em> to B), and whether “new” means new to the drug, the class or all treatment for the condition.</dd>
+      <dt>What a change means</dt>
+      <dd>If lengthening the washout from 6 to 24 months moves the estimate, some “new users” in the short version were returning users, whose risk differs.</dd>
+    </dl>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Who starts the drug</th><th>Example</th><th>What to watch</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Treatment-naive initiators</strong></td><td>First antidiabetic drug ever</td><td>Cleanest, but often a minority for second-line drugs</td></tr>
+          <tr><td><strong>Switchers</strong></td><td>Sulfonylurea stopped, GLP-1 receptor agonist started</td><td>People switch because the first drug failed or harmed them; compare with switchers to the alternative</td></tr>
+          <tr><td><strong>Add-on users</strong></td><td>GLP-1 receptor agonist added to metformin</td><td>Comparator should also be an add-on at the same stage</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <pre><code>WITH first_use AS (            -- first ever era of EITHER study drug
+  SELECT de.person_id, MIN(de.drug_era_start_date) AS index_date
+  FROM drug_era de
+  JOIN study_ingredients s ON s.concept_id = de.drug_concept_id   -- A and B
+  GROUP BY de.person_id
+)
+SELECT f.person_id, f.index_date
+FROM first_use f
+JOIN observation_period op ON op.person_id = f.person_id
+WHERE f.index_date &gt;= op.observation_period_start_date + INTERVAL '365 days'
+  AND f.index_date &lt;= op.observation_period_end_date;</code></pre>
+    <p>Against an OMOP database (Lecture 5.6), this finds each person’s first recorded use of either study drug and keeps them only if they were observed for at least 365 days before it. Taking the first use of <em>either</em> drug makes people new to both arms at once. The arm is then whichever drug that first era belongs to.</p>
+
+    <div class="callout example">
+      <div class="callout-title">Example · The prevalent new-user design</div>
+      <p>When a new drug is mostly used by switchers, restricting to treatment-naive patients throws most of them away. Suissa, Moodie and Dell’Aniello (2017) proposed matching each switcher to a patient still on the old drug at the same point in their treatment history, using time-conditional propensity scores. In their UK example, about 75% of GLP-1 receptor agonist users had previously used a sulfonylurea.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Assuming an ICU database has a lookback. MIMIC-IV has no community dispensing data, so a patient on apixaban at home can look like a new user on ICU day 1. Check earlier admissions, admission orders in the first hours, and an INR or anti-Xa already raised on arrival before calling anyone an initiator.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="estimand">
+    <h2>3. The ACNU design and its estimand</h2>
+    <p class="point">An active-comparator, new-user (ACNU) study emulates a pragmatic head-to-head trial: among people who need treatment, what happens if they start A instead of B; how you handle switching decides the exact question.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Index date at the first dispensing of A or B; eligibility and covariates from the lookback; follow-up from the index date. In target trial language (Lecture 4.5), assignment, eligibility and time zero coincide, and the treatment strategies are “start A” versus “start B”.</dd>
+      <dt>Why it matters</dt>
+      <dd>The estimand is the effect of initiating A versus B in people for whom both were plausible choices. It is not the effect of A versus nothing, and not the effect in people who would never be offered either drug.</dd>
+      <dt>How to read it</dt>
+      <dd>A hazard ratio of 0.85 for A versus B means starting A rather than B is associated with 15% lower hazard. If B itself is beneficial, A can still be worse than no treatment would be for some outcome; the design cannot tell you.</dd>
+    </dl>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · One patient, three ways to count follow-up</div>
+      <svg class="viz-svg" viewBox="0 0 640 430" role="img" aria-label="A lookback window before the index date checks that there was no use of drug A or B and measures covariates. At the index date the patient starts drug A, switches to drug B at about day 120 and has the outcome event later. Below, three analyses of the same patient. Initial treatment, ITT-like: all time and the event are counted for A. As-treated: time on A, then time on B, with the event counted for B. Censor at switch: follow-up ends at the switch, the event is never seen, and weights are needed because switchers differ from those who stay.">
+        <defs><marker id="l52-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead"/></marker></defs>
+        <g class="s5"><rect x="20" y="14" width="196" height="92" rx="10" class="node-fill"/></g>
+        <g text-anchor="middle">
+          <text x="118" y="38" class="viz-bold">Lookback / washout</text>
+          <text x="118" y="58" class="viz-small">no use of A or B</text>
+          <text x="118" y="74" class="viz-small">covariates measured</text>
+          <text x="118" y="90" class="viz-small">eligibility checked</text>
+        </g>
+        <line x1="230" y1="10" x2="230" y2="388" class="edge strong" stroke-dasharray="5 4"/>
+        <text x="238" y="24" class="viz-small viz-bold">Index date: first fill of A or B</text>
+        <text x="238" y="40" class="viz-small viz-muted">time zero for both arms</text>
+
+        <text x="238" y="66" class="viz-small viz-bold">What actually happened</text>
+        <g class="s1"><rect x="230" y="76" width="170" height="18" class="fill"/></g>
+        <g class="s2"><rect x="400" y="76" width="130" height="18" class="fill"/></g>
+        <g class="s3"><circle cx="530" cy="85" r="7" class="dot"/></g>
+        <text x="315" y="114" text-anchor="middle" class="viz-small colour s1">on drug A</text>
+        <text x="400" y="114" text-anchor="middle" class="viz-small">switch</text>
+        <text x="465" y="114" text-anchor="middle" class="viz-small colour s2">on drug B</text>
+        <text x="540" y="114" class="viz-small colour s3">event</text>
+
+        <!-- Row 1 ITT-like -->
+        <text x="20" y="166" class="viz-small viz-bold">1. Initial treatment</text>
+        <text x="20" y="182" class="viz-small viz-muted">(ITT-like)</text>
+        <g class="s1"><rect x="230" y="160" width="300" height="18" class="fill"/></g>
+        <g class="s3"><circle cx="530" cy="169" r="7" class="dot"/></g>
+        <text x="240" y="198" class="viz-small">all time and the event count for A: the effect of starting A</text>
+
+        <!-- Row 2 As-treated -->
+        <text x="20" y="246" class="viz-small viz-bold">2. As-treated</text>
+        <g class="s1"><rect x="230" y="240" width="170" height="18" class="fill"/></g>
+        <g class="s2"><rect x="400" y="240" width="130" height="18" class="fill"/></g>
+        <g class="s3"><circle cx="530" cy="249" r="7" class="dot"/></g>
+        <text x="240" y="278" class="viz-small">time split at the switch; the event counts for B</text>
+        <text x="240" y="294" class="viz-small viz-muted">biased if people switch because of early signs of the outcome</text>
+
+        <!-- Row 3 Censor at switch -->
+        <text x="20" y="342" class="viz-small viz-bold">3. Censor at switch</text>
+        <text x="20" y="358" class="viz-small viz-muted">(per-protocol, + weights)</text>
+        <g class="s1"><rect x="230" y="336" width="170" height="18" class="fill"/></g>
+        <circle cx="400" cy="345" r="7" class="node s5"/>
+        <line x1="408" y1="345" x2="530" y2="345" class="edge" stroke-dasharray="3 4"/>
+        <text x="240" y="374" class="viz-small">follow-up stops at the switch; the event is never seen</text>
+        <text x="240" y="390" class="viz-small viz-muted">switchers differ, so weight those who stay (IPCW, Lecture 4.3)</text>
+
+        <line x1="20" y1="410" x2="628" y2="410" class="edge" marker-end="url(#l52-arrow)"/>
+        <text x="628" y="426" text-anchor="end" class="viz-small viz-muted">time</text>
+      </svg>
+      <figcaption>The design (lookback, time zero) is the same in all three rows. What changes is the question: the effect of starting A (row 1), of being on A at the moment (row 2), or of staying on A (row 3).</figcaption>
+    </figure>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Follow-up approach</th><th>Question answered</th><th>ICH E9(R1) strategy it resembles</th><th>Main threat</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Initial treatment</strong></td><td>Effect of starting A vs B, whatever happens next</td><td>Treatment policy</td><td>Dilution as people switch and stop</td></tr>
+          <tr><td><strong>Censor at switch or stop</strong></td><td>Effect if everyone stayed on their first drug</td><td>Hypothetical</td><td>Informative censoring; needs weights for the reasons people switch</td></tr>
+          <tr><td><strong>As-treated</strong></td><td>Current A vs current B</td><td>No clean match</td><td>Reverse causation: drugs are changed because of early symptoms</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Censoring at discontinuation without weights and calling it “per-protocol”. People stop an anticoagulant after a minor bleed, before a procedure, or when they become frail. Censoring them removes exactly the people at highest risk, so the remaining “adherent” users look safe. Censoring is only valid if you model why people stop (inverse probability of censoring weights) using measured predictors.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Comparing two airlines by booking (row 1), by the plane you are on at the moment (row 2), or only for passengers who never rebooked (row 3). The rebooked passengers are not random: they were the ones whose first flight went wrong.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="comparator">
+    <h2>4. Choosing the comparator</h2>
+    <p class="point">A good comparator is a drug that a reasonable clinician could have chosen instead, for the same patient, at the same moment; the closer it is to a coin toss, the less confounding is left to adjust for.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Ask</th><th>Why</th><th>Warning sign</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Same indication and stage?</strong></td><td>Removes confounding by indication and disease duration</td><td>First-line drug vs a drug used when disease is advanced (time-lag bias, Lecture 5.3)</td></tr>
+          <tr><td><strong>Clinical equipoise?</strong></td><td>Guidelines treat both as reasonable options, so choice depends on habit and formulary more than prognosis</td><td>One drug reserved for frail, renal or high-bleeding-risk patients (channelling)</td></tr>
+          <tr><td><strong>No effect of its own on the outcome?</strong></td><td>Otherwise you measure the comparator’s harm as the new drug’s benefit</td><td>Comparator with a known effect on the outcome (e.g. hypoglycaemia with sulfonylureas)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <dl class="facets">
+      <dt>Why it matters</dt>
+      <dd>Propensity scores (Lecture 5.4) can only balance what is measured. A well-chosen comparator balances the unmeasured parts of “needs this kind of treatment”: severity, health-seeking, contact with care.</dd>
+      <dt>How to read it</dt>
+      <dd>After choosing the comparator, look at the unadjusted baseline table. If the arms already look similar before any weighting, the comparator is doing its job. Large differences in frailty markers mean channelling, and the propensity model is being asked to do too much.</dd>
+    </dl>
+
+    <div class="callout example">
+      <div class="callout-title">Example · SGLT2 inhibitors vs DPP-4 inhibitors</div>
+      <p>A common pair in cardiovascular safety studies of diabetes drugs. Both are oral, second-line add-ons to metformin, prescribed at a similar stage of disease. Large cardiovascular outcome trials found DPP-4 inhibitors neutral on major cardiovascular events, so they stand in well for “treatment without a cardiovascular effect”. That makes them a better reference than sulfonylureas, which carry their own hypoglycaemia risk.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Assuming an active comparator removes all confounding. Within an indication, doctors still channel: newer drugs often go first to patients with fewer complications or better insurance, older ones to the frail. The comparator reduces confounding; it does not remove the need for adjustment, negative control outcomes and bias analysis (Lecture 2.13).</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="nonusers">
+    <h2>5. Non-users and the healthy adherer</h2>
+    <p class="point">Non-users have no index date, often no indication and less contact with care; adherent users are healthier in ways the data do not record; both comparisons can make a useless drug look strongly protective.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A <strong>non-user comparator</strong> is anyone not taking the drug. Three problems come with it: non-users may not have the indication, those with the indication may be untreated because they are too frail (confounding by contraindication), and there is no first dispensing to set their time zero. The <strong>healthy adherer effect</strong> is that people who take any medicine faithfully, even a placebo, have better outcomes.</dd>
+      <dt>Why it matters</dt>
+      <dd>In the Coronary Drug Project, men in the placebo arm who took at least 80% of their capsules had a five-year mortality of 15.1%, against 28.3% for poor adherers. A meta-analysis by Simpson and colleagues (2006) found good adherence to placebo associated with lower mortality (OR 0.56). Adherence marks prognosis; it is not a treatment.</dd>
+      <dt>How to read it</dt>
+      <dd>Implausible benefits are the giveaway: a drug that reduces deaths from accidents or infections, or a benefit that appears within weeks for a drug that acts over years. These are natural negative control outcomes.</dd>
+    </dl>
+
+    <div class="widget" data-widget="comparator-choice">
+      <div class="widget-title">Four comparisons of a drug that does nothing</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">The drug has no effect on death. Frailty, which the data do not record, raises the risk of death and makes doctors less willing to prescribe. Increase how strongly frailty affects prescribing, then the channelling between drug A and drug B, and see which comparison stays near 1.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Restricting to “adherent users” to estimate the effect “in people who actually take the drug”. Adherence is chosen by patients after treatment starts and tracks health. The comparison of adherent with non-adherent users is exactly the placebo-arm comparison above. To estimate the effect of sustained use, use a per-protocol analysis with weights for the reasons people stop (Lecture 4.3).</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">In the Gulf</div>
+      <p>Many patients in the GCC use both public and private care. In a single health system’s records, a “non-user” may be filling the same drug at a private pharmacy, and many expatriate residents leave the region, so their follow-up ends for reasons unrelated to health. Non-user groups built from one system’s records therefore mix true non-users, users seen elsewhere and people no longer observed. An active comparator taken from the same system avoids most of this, because both arms are defined by records in that system.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Judging a gym by comparing members who come three times a week with people who never joined. The regulars would be healthier with or without the gym.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="p5a">
+    <h2>6. The comparator problem in Project 5A</h2>
+    <p class="point">For anticoagulation in new-onset AF during critical illness there is no drug a clinician would give “instead”, so the comparator is a strategy, not a drug, and the design has to make up for that.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The clinical choice is between starting therapeutic anticoagulation and not starting it, while almost everyone receives prophylactic-dose heparin (Lecture 5.1). The natural target trial compares “start therapeutic anticoagulation within a set number of hours of ECG-defined AF onset” with “do not start it during that window”.</dd>
+      <dt>Why it matters</dt>
+      <dd>“Not started” is the non-user problem in its sharpest form. Patients who are bleeding, have low platelets, are about to have surgery or are close to death are not anticoagulated. They will die more often for reasons that have nothing to do with the drug.</dd>
+      <dt>How to read it</dt>
+      <dd>Walkey and colleagues (<em>JAMA Cardiology</em>, 2016) studied about 27,000 propensity-matched patients with AF during sepsis in a US hospital database. In-hospital ischaemic stroke was similar with and without parenteral anticoagulation (1.3% vs 1.4%), and clinically significant bleeding was more common with it (8.6% vs 7.2%). Your study must improve on this, not repeat it: better onset timing from the ECG and a cleaner time zero.</dd>
+    </dl>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Design choice</th><th>What it buys</th><th>What it costs</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Therapeutic vs prophylactic dose</strong> as the contrast</td><td>Both arms are anticoagulated patients judged fit for some heparin; closer to an active comparator</td><td>A narrower question; must exclude people with no anticoagulation at all, or analyse them separately</td></tr>
+          <tr><td><strong>Exclude clear contraindications at time zero</strong> (active bleeding, platelets below a threshold, surgery planned)</td><td>Removes patients who could never be treated (positivity, Lecture 4.1)</td><td>Fewer patients; the thresholds must be pre-specified</td></tr>
+          <tr><td><strong>Grace period with clone-censor-weight</strong> (Lecture 4.5)</td><td>Handles treatment starting hours after onset without immortal time</td><td>Relies on weights; needs well-measured reasons for starting</td></tr>
+          <tr><td><strong>Negative control outcome</strong> (an outcome anticoagulation cannot affect)</td><td>Detects leftover confounding by frailty</td><td>Hard to find a clean one in the ICU</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reading lower mortality in the anticoagulated group as benefit. Being judged fit to anticoagulate is itself a good-prognosis signal, the ICU version of the healthy adherer. Expect the crude comparison to favour treatment, and treat any mortality benefit larger than the stroke reduction could explain as a sign of confounding.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>A cohort of “current users” of an anticoagulant on 1 January, compared with non-users, finds fewer major bleeds in users than a trial did. Name two reasons that do not involve the drug being safer in practice.</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Depletion of susceptibles: people who bled early stopped the drug before 1 January and are not among current users. Selection on persistence: long-term users are the ones who tolerated the drug and keep taking it, a healthier group. A new-user design with follow-up from the first dispensing would capture the early high-risk period.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A study compares new users of drug A with new users of drug B and uses a 3-month washout. Lengthening it to 12 months raises the hazard ratio from 0.80 to 0.95. What does this suggest?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>With 3 months, some “new users” were returning or prevalent users with a refill gap, and they were not distributed equally between arms (perhaps more experienced users restarting drug A). Those survivors made A look better. The 12-month result is closer to a true new-user comparison; report both.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>An as-treated analysis finds that patients currently on drug A have half the risk of a fall compared with patients on drug B. Many patients switched from A to B after dizziness. What is the problem?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Reverse causation in the as-treated analysis. Dizziness is an early sign of the fall risk, so patients about to fall were moved to B and their falls counted against B. An initial-treatment analysis, or attributing events to A for a period after switching, would avoid it.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Statin users in a cohort have a 40% lower rate of hip fracture than non-users. A trial-based meta-analysis shows no effect. Which design change would you make first, and why?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Replace non-users with new users of an active comparator used for a similar purpose by similar patients (for example another lipid-lowering drug or another preventive cardiovascular drug). Non-users differ in frailty and health-seeking; frail people at high fracture risk are less often started on preventive drugs. Add a negative control outcome as a check.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Your Project 5A supervisor suggests comparing anticoagulated patients with all other patients with new AF, adjusted for SOFA score. What would you push back on?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>“All others” includes patients with contraindications who could never be treated, and patients who started later (immortal time if they are classed by eventual treatment). SOFA captures organ failure but not bleeding risk, planned procedures or goals of care. Propose a target trial with exclusions for contraindications at time zero, a defined initiation window with clone-censor-weight, and therapeutic vs prophylactic dosing as the contrast.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Strom, Kimmel &amp; Hennessy (eds), <em>Pharmacoepidemiology</em> (Wiley): chapters on study designs and on confounding in observational drug studies.</li>
+      <li>Ray, “Evaluating medication effects outside of clinical trials: new-user designs”, <em>American Journal of Epidemiology</em> (2003).</li>
+      <li>Lund, Richardson &amp; Stürmer, “The active comparator, new user study design in pharmacoepidemiology: historical foundations and contemporary application”, <em>Current Epidemiology Reports</em> (2015).</li>
+      <li>Yoshida, Solomon &amp; Kim, “Active-comparator design and new-user design in observational studies”, <em>Nature Reviews Rheumatology</em> (2015).</li>
+      <li>Suissa, Moodie &amp; Dell’Aniello, “Prevalent new-user cohort designs for comparative drug effect studies by time-conditional propensity scores”, <em>Pharmacoepidemiology and Drug Safety</em> (2017).</li>
+      <li>Coronary Drug Project Research Group, “Influence of adherence to treatment and response of cholesterol on mortality in the Coronary Drug Project”, <em>New England Journal of Medicine</em> (1980).</li>
+      <li>Simpson et al., “A meta-analysis of the association between adherence to drug therapy and mortality”, <em>BMJ</em> (2006).</li>
+      <li>Walkey et al., “Practice patterns and outcomes associated with use of anticoagulation among patients with atrial fibrillation during sepsis”, <em>JAMA Cardiology</em> (2016).</li>
+      <li>ICH E9(R1), <em>Addendum on estimands and sensitivity analysis in clinical trials</em> (2019).</li>
+      <li>Hernán &amp; Robins, <em>Causal Inference: What If</em>, chapters on target trial emulation and per-protocol effects.</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="5-01-drug-utilisation-exposure.html"><small>Previous</small>5.1 Pharmacoepidemiology foundations</a>
+    <a class="next" href="5-03-time-related-biases.html"><small>Next</small>5.3 Time-related biases</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

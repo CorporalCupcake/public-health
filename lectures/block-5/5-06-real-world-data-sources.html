@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>5.6 Real-world data sources and OMOP · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/5-06.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-5">Block 5</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 5.6</p>
+  <h1>Real-world data sources: EHRs, claims, registries, linked data; common data models (OMOP)</h1>
+  <div class="lecture-meta">
+    <span>Block 5 · Pharmacoepidemiology, real-world evidence, regulatory science and AI evaluation</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>Every real-world database is a by-product of something else: paying bills, running a hospital, keeping a national register. What it records, and what it misses, follows from that original purpose. Before designing a study, ask who generated each row and why. Linkage fills some gaps and adds its own errors. A <strong>common data model</strong> such as OMOP puts many databases into the same tables and the same vocabularies, so one analysis can run unchanged at many sites. It standardises the format. It does not standardise the meaning.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#datasources">What each source sees and misses</a></li>
+      <li><a href="#linkage">Linking records across sources</a></li>
+      <li><a href="#systems">The major systems</a></li>
+      <li><a href="#omop">The OMOP common data model</a></li>
+      <li><a href="#vocab">Vocabularies: from source codes to standard concepts</a></li>
+      <li><a href="#ohdsi">OHDSI and network studies</a></li>
+      <li><a href="#mimic">MIMIC-IV in OMOP: Project 5A</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="datasources">
+    <h2>1. What each source sees and misses</h2>
+    <p class="point">Claims record what was paid for, EHRs record what one organisation did, registries record what the law requires, and none of them records the patient's whole life.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>Claims</strong> are bills sent to an insurer: diagnoses, procedures and pharmacy dispensings, with dates, but almost no clinical values. <strong>EHRs</strong> hold what clinicians saw and did inside one health system: vital signs, labs, orders, notes. <strong>Registries</strong> record a defined set of events for a whole population (births, deaths, cancers, prescriptions dispensed). <strong>ICU databases</strong> such as MIMIC-IV are EHR extracts of extreme depth for a short stretch of time.</dd>
+      <dt>Why it matters</dt>
+      <dd>The gaps are not random. Claims see a drug only when it is dispensed and paid for, and lose people when they change insurer. EHRs see a prescription but not whether it was collected or taken, and miss care given elsewhere. Gaps that line up with exposure or outcome become bias.</dd>
+      <dt>How to read it</dt>
+      <dd>For each study variable, ask three things. Would this source record it at all? Would it record it the same way for exposed and unexposed? Would I know if it were missing, or would absence look like "no event"?</dd>
+      <dt>What a change means</dt>
+      <dd>Changing source changes the estimand. "Dispensed" in claims and "prescribed" in an EHR are different exposures. "Death" in an ICU database may mean in-hospital death only, unless death records are linked.</dd>
+    </dl>
+
+    <div class="widget" data-widget="source-journey">
+      <div class="widget-title">One patient, four data sources</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">Follow one made-up patient through a year that includes new-onset AF in the ICU. Switch the data source and see which events it records, which it half-records, and which it never sees. Notice where each source's view stops.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Reading "no record" as "did not happen". In claims, a missing diagnosis code may mean the condition was absent, was present but not billed, or was treated after the person changed insurer. Studies define an <strong>observation period</strong>, the time during which the database would have seen an event, and only count absence inside it.</p>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>This is dataset shift at the level of the data-generating process. A model trained on EHR features learns the hospital's recording habits as much as the patient's biology: a lab is ordered <em>because</em> a clinician was worried. Missingness is informative, and differs between sources. A feature that means one thing in an EHR may not exist in claims at all.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="linkage">
+    <h2>2. Linking records across sources</h2>
+    <p class="point">Linkage turns several partial views into one, but every missed or false link is a measurement error that can bias results.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>Deterministic</strong> linkage joins records that agree exactly on an identifier, such as a national ID number, or on a fixed set of fields. <strong>Probabilistic</strong> linkage weighs agreement on several imperfect fields (name, birth date, sex, postcode) and links pairs whose total weight passes a threshold. Fellegi and Sunter (1969) gave the theory: each field gets a weight from how often it agrees among true matches versus non-matches.</dd>
+      <dt>Why it matters</dt>
+      <dd>There are two kinds of error. A <strong>missed match</strong> loses an event: a death that is not linked looks like survival. A <strong>false match</strong> attaches someone else's event. Harron and colleagues (2014) showed that when linkage quality differs between groups, for example between hospitals, the bias in event rates can be large.</dd>
+      <dt>How to read it</dt>
+      <dd>A linked study should report the match rate, how links were made, and whether linked and unlinked records differ in age, sex, ethnicity or site. If unlinked records are concentrated in one group, so is the outcome misclassification.</dd>
+      <dt>What a change means</dt>
+      <dd>Raising the probabilistic threshold trades false matches for missed matches. Neither setting is neutral. A sensitivity analysis at two thresholds shows how much the answer depends on the choice.</dd>
+    </dl>
+
+    <div class="callout gulf">
+      <div class="callout-title">In the Gulf</div>
+      <p>Two features make linkage harder here, and both follow from how identifiers are made rather than from any published audit. First, Arabic names are transliterated into Latin script in many ways (Mohammed, Muhammad, Mohamad), and name order and the use of the father's and grandfather's names vary between systems. Name-based probabilistic linkage needs Arabic-aware comparison. Second, citizens and residents carry different national identifiers, and expatriates leave and return. A person can disappear from follow-up by leaving the country, which looks the same as surviving event-free. Identifier-based linkage is strong within a stay. Follow-up across stays, and after departure, is where the bias lives.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Probabilistic linkage is a spam filter for identity. Each agreeing field adds evidence; rare agreements (an unusual surname) count more than common ones (sex). And just as with a spam filter, the threshold decides which mistakes you would rather make.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="systems">
+    <h2>3. The major systems</h2>
+    <p class="point">The best-known databases each pair a strength with a structural gap; knowing both is most of the critique of any paper that uses them.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>System</th><th>What it is</th><th>Strength</th><th>Structural gap</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Nordic registries</strong></td><td>National registers linked by personal ID number: patient register, cause of death, and prescription registers (Denmark from 1995; Sweden from July 2005)</td><td>Whole population, decades of follow-up, very little loss to follow-up</td><td>Little clinical detail; hospital drugs and over-the-counter sales largely absent</td></tr>
+          <tr><td><strong>US claims</strong></td><td>Medicare, and commercial databases such as Optum and MarketScan</td><td>Large, complete capture of billed care and dispensings while enrolled</td><td>Enrolment ends with a job change; few lab values; codes follow billing rules</td></tr>
+          <tr><td><strong>FDA Sentinel</strong></td><td>Distributed network of data partners, mostly claims, in the Sentinel Common Data Model</td><td>Data stay with partners; standard queries run at all sites</td><td>Its own data model; designed for safety surveillance questions</td></tr>
+          <tr><td><strong>PCORnet</strong></td><td>US network of health systems in the PCORnet Common Data Model</td><td>EHR depth across many systems</td><td>EHR leakage: care outside the network is missed</td></tr>
+          <tr><td><strong>UK CPRD</strong></td><td>Primary care records (CPRD GOLD and CPRD Aurum), with linkage to Hospital Episode Statistics and ONS deaths for English practices</td><td>Rich prescribing, diagnoses and measurements from GPs</td><td>Prescribed, not dispensed; hospital detail only through linkage</td></tr>
+          <tr><td><strong>Saudi Arabia</strong></td><td>Insurer claims coded in ICD-10-AM, exchanged through NPHIES; hospital-group EHRs; the Saudi Cancer Registry</td><td>Fast-growing digital infrastructure; a population-based cancer registry since 1994</td><td>Insured and government sectors in different systems; expatriate follow-up ends at departure</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>A map of where most published pharmacoepidemiology comes from. Nordic studies lean on the personal ID number; US studies on insurance claims; UK studies on GP records.</dd>
+      <dt>Why it matters</dt>
+      <dd>The same question answered in two systems can differ because the systems see different things, not because the drug works differently. Knowing each system's gap tells you which result to trust for which question.</dd>
+      <dt>How to read it</dt>
+      <dd>Match the question to the strength. Long-term cancer risk after a drug needs the decades of follow-up that registries give. An effect that depends on kidney function needs lab values, so EHRs or CPRD. An in-hospital ICU exposure needs an ICU database.</dd>
+    </dl>
+
+    <div class="callout gulf">
+      <div class="callout-title">In the Gulf</div>
+      <p><strong>NPHIES</strong>, the national health information exchange launched in October 2023, is led by the Council of Health Insurance with the National Health Information Center. It carries eligibility checks, prior authorisations, claims and payment reconciliation between providers and insurers using the FHIR standard. Claims are coded in ICD-10-AM, mandated by the Council since 2011, with the 10th edition required from January 2020, and procedures follow the Saudi Billing System, which is based on ACHI. For research, this is a claims-like source with claims-like gaps. In 2026 the SFDA finalised a framework on using real-world data and evidence for marketing authorisation of medicines. It asks for fit-for-purpose data and clearly stated estimands, and it recommends target trial emulation, which is the approach of Block 4.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Assuming ICD-10 means the same thing everywhere. The US uses ICD-10-CM, Saudi Arabia and Australia use ICD-10-AM, and the WHO base version differs from both at the more detailed levels. Codes for the same condition can differ, and a phenotype written for one may silently miss cases in another. Vocabulary mapping (Section 5) exists to handle this.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="omop">
+    <h2>4. The OMOP common data model</h2>
+    <p class="point">OMOP rewrites every database into the same person-centred tables, so that one cohort definition or analysis can run anywhere without change.</p>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · The core OMOP CDM tables</div>
+      <svg class="viz-svg" viewBox="0 0 640 380" role="img" aria-label="The person table sits at the top centre, linked by person_id to observation_period on the right and death on the left. Below it, four clinical event tables, visit_occurrence, condition_occurrence, drug_exposure and measurement, each link up to person by person_id. Every clinical table links down by a concept_id to the standardised vocabularies at the bottom: concept, concept_relationship and concept_ancestor.">
+        <defs><marker id="l56-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead"/></marker></defs>
+        <!-- row 1 -->
+        <rect x="235" y="20" width="170" height="54" rx="6" class="node-fill s1"/>
+        <text x="320" y="42" text-anchor="middle" class="viz-bold" style="font-size:13px">person</text>
+        <text x="320" y="61" text-anchor="middle" class="viz-small viz-muted">sex, year of birth, race</text>
+        <rect x="20" y="20" width="160" height="54" rx="6" class="node s5"/>
+        <text x="100" y="42" text-anchor="middle" class="viz-bold" style="font-size:13px">death</text>
+        <text x="100" y="61" text-anchor="middle" class="viz-small viz-muted">date, cause</text>
+        <rect x="460" y="20" width="160" height="54" rx="6" class="node s3"/>
+        <text x="540" y="42" text-anchor="middle" class="viz-bold" style="font-size:13px">observation_period</text>
+        <text x="540" y="61" text-anchor="middle" class="viz-small viz-muted">when events would be seen</text>
+        <line x1="235" y1="47" x2="182" y2="47" class="edge" marker-end="url(#l56-arrow)"/>
+        <line x1="405" y1="47" x2="458" y2="47" class="edge" marker-end="url(#l56-arrow)"/>
+        <!-- row 2 -->
+        <rect x="15" y="150" width="145" height="58" rx="6" class="node s4"/>
+        <text x="87" y="172" text-anchor="middle" class="viz-bold" style="font-size:12.5px">visit_occurrence</text>
+        <text x="87" y="192" text-anchor="middle" class="viz-small viz-muted">ER, inpatient, ICU</text>
+        <rect x="170" y="150" width="145" height="58" rx="6" class="node s4"/>
+        <text x="242" y="172" text-anchor="middle" class="viz-bold" style="font-size:12.5px">condition_occurrence</text>
+        <text x="242" y="192" text-anchor="middle" class="viz-small viz-muted">diagnoses</text>
+        <rect x="325" y="150" width="145" height="58" rx="6" class="node s4"/>
+        <text x="397" y="172" text-anchor="middle" class="viz-bold" style="font-size:12.5px">drug_exposure</text>
+        <text x="397" y="192" text-anchor="middle" class="viz-small viz-muted">orders, dispensings</text>
+        <rect x="480" y="150" width="145" height="58" rx="6" class="node s4"/>
+        <text x="552" y="172" text-anchor="middle" class="viz-bold" style="font-size:12.5px">measurement</text>
+        <text x="552" y="192" text-anchor="middle" class="viz-small viz-muted">labs, vital signs</text>
+        <line x1="300" y1="74" x2="92" y2="148" class="edge" marker-end="url(#l56-arrow)"/>
+        <line x1="312" y1="74" x2="245" y2="148" class="edge" marker-end="url(#l56-arrow)"/>
+        <line x1="328" y1="74" x2="395" y2="148" class="edge" marker-end="url(#l56-arrow)"/>
+        <line x1="340" y1="74" x2="548" y2="148" class="edge" marker-end="url(#l56-arrow)"/>
+        <text x="462" y="98" class="viz-small viz-muted">person_id</text>
+        <text x="20" y="100" class="viz-small viz-muted">event tables: one row per event</text>
+        <!-- vocab band -->
+        <rect x="15" y="262" width="610" height="100" rx="8" class="node-fill s2"/>
+        <text x="30" y="282" class="viz-bold" style="font-size:13px">Standardised vocabularies</text>
+        <rect x="30" y="294" width="180" height="54" rx="6" style="fill:var(--surface)" class="node s2"/>
+        <text x="120" y="316" text-anchor="middle" class="viz-bold" style="font-size:12.5px">concept</text>
+        <text x="120" y="335" text-anchor="middle" class="viz-small viz-muted">every code, one ID each</text>
+        <rect x="230" y="294" width="180" height="54" rx="6" style="fill:var(--surface)" class="node s2"/>
+        <text x="320" y="316" text-anchor="middle" class="viz-bold" style="font-size:12.5px">concept_relationship</text>
+        <text x="320" y="335" text-anchor="middle" class="viz-small viz-muted">source "Maps to" standard</text>
+        <rect x="430" y="294" width="180" height="54" rx="6" style="fill:var(--surface)" class="node s2"/>
+        <text x="520" y="316" text-anchor="middle" class="viz-bold" style="font-size:12.5px">concept_ancestor</text>
+        <text x="520" y="335" text-anchor="middle" class="viz-small viz-muted">all descendants of a concept</text>
+        <line x1="87" y1="208" x2="87" y2="260" class="edge dashed" marker-end="url(#l56-arrow)"/>
+        <line x1="242" y1="208" x2="242" y2="260" class="edge dashed" marker-end="url(#l56-arrow)"/>
+        <line x1="397" y1="208" x2="397" y2="260" class="edge dashed" marker-end="url(#l56-arrow)"/>
+        <line x1="552" y1="208" x2="552" y2="260" class="edge dashed" marker-end="url(#l56-arrow)"/>
+        <text x="405" y="240" class="viz-small viz-muted">*_concept_id</text>
+      </svg>
+      <figcaption>Simplified. The full CDM (version 5.4) has more tables, including procedure_occurrence, device_exposure, observation and note, plus derived tables such as drug_era. Each clinical row carries a person_id, dates, a standard concept_id, the original source value, and usually a visit_occurrence_id.</figcaption>
+    </figure>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The Observational Medical Outcomes Partnership (OMOP) Common Data Model is an open table design maintained by the OHDSI community. Each site writes an <strong>ETL</strong> (extract, transform, load) that copies its local data into these tables. The analyses then run against the shared structure.</dd>
+      <dt>Why it matters</dt>
+      <dd>Without a common model, a 10-database study needs 10 sets of code, each a chance to diverge. With one, the same cohort definition and the same analysis package run at every site, and only aggregate results leave each site. Data never have to be pooled.</dd>
+      <dt>How to read it</dt>
+      <dd>Each row keeps two codes: the standard <code>concept_id</code> used for analysis, and the <code>source_value</code> exactly as the hospital recorded it. When results look odd, go back to the source values. The ETL is where meaning is lost.</dd>
+      <dt>What a change means</dt>
+      <dd>An ETL change, such as a new mapping or a different rule for dating diagnoses, can shift results with no change in the patients. Record the ETL and vocabulary versions with every study.</dd>
+    </dl>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Treating "it's in OMOP" as a quality stamp. Two OMOP databases can give different answers because one site dates diagnoses at admission and the other at discharge, or because one maps local lab codes carefully and the other leaves half of them as concept 0. Lecture 5.7 covers how to check.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="vocab">
+    <h2>5. Vocabularies: from source codes to standard concepts</h2>
+    <p class="point">Every source code is mapped to one standard concept, and the concept hierarchy lets a single ID stand for a disease and all its subtypes.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>Source codes such as ICD-10-CM <code>I48.91</code> are <em>non-standard</em> concepts. A "Maps to" relationship links each one to a <em>standard</em> concept in a reference vocabulary: SNOMED CT for conditions, RxNorm for drugs, LOINC for measurements. <code>concept_ancestor</code> stores the hierarchy, so the standard concept for atrial fibrillation (concept_id 313217, SNOMED 49436004) has paroxysmal and persistent AF among its descendants. The Athena website is where you browse and download the vocabularies.</dd>
+      <dt>Why it matters</dt>
+      <dd>A cohort written as "313217 and its descendants" finds AF whether the site recorded ICD-9, ICD-10-CM, ICD-10-AM or SNOMED codes. That is what makes a definition portable.</dd>
+      <dt>How to read it</dt>
+      <dd>Read a concept set as a list of standard IDs, each with "include descendants" on or off. Then check what the hierarchy actually pulls in. Some descendants may not belong in your definition.</dd>
+      <dt>What a change means</dt>
+      <dd>Mapping is not lossless. One ICD-10 code for "atrial fibrillation and flutter" maps to a combined concept, not to AF alone. A coarse source code cannot be made finer by mapping it.</dd>
+    </dl>
+
+    <pre><code>WITH af AS (                    -- first recorded AF per person
+  SELECT co.person_id, MIN(co.condition_start_date) AS index_date
+  FROM condition_occurrence co
+  JOIN concept_ancestor ca ON ca.descendant_concept_id = co.condition_concept_id
+  WHERE ca.ancestor_concept_id = 313217          -- atrial fibrillation + descendants
+  GROUP BY co.person_id)
+SELECT af.person_id, af.index_date, COUNT(de.drug_exposure_id) &gt; 0 AS anticoag_48h
+FROM af
+JOIN observation_period op ON op.person_id = af.person_id
+ AND af.index_date BETWEEN op.observation_period_start_date AND op.observation_period_end_date
+LEFT JOIN drug_exposure de ON de.person_id = af.person_id
+ AND de.drug_concept_id IN (SELECT concept_id FROM anticoag_codeset)
+ AND de.drug_exposure_start_date BETWEEN af.index_date AND af.index_date + 2
+GROUP BY af.person_id, af.index_date;</code></pre>
+    <p>This finds each person's first recorded AF diagnosis, using the hierarchy so that every AF subtype counts. It keeps the person only if that date falls inside an observation period. It then flags whether any anticoagulant started within 2 days. <code>anticoag_codeset</code> is a table of drug concept IDs, built in ATLAS from the anticoagulant ingredients and all their descendants. Look the IDs up in Athena rather than typing them from memory. The SQL is PostgreSQL; OHDSI's SqlRender translates it for other database engines.</p>
+
+    <div class="widget" data-widget="omop-explorer">
+      <div class="widget-title">Inside an OMOP database</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">One made-up ICU patient with new-onset AF, as their rows would look in OMOP. Click a bold concept to see the code the hospital recorded and the standard concept it maps to. Then step through the cohort definition from the SQL above and watch which rows each step uses.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Concept 0</div>
+      <p>When the ETL cannot map a source code, the row gets concept_id 0. It is still in the table, but no standard cohort definition will ever find it. In the explorer, the ECG statement is unmapped. If Project 5A dates AF onset from the ECG, that information has to be added deliberately, because the standard pipeline would drop it.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Mapping to standard concepts is like converting every price to one currency before adding them up. It makes totals possible. But a price recorded only as "under 100" stays vague after conversion, and a bad exchange rate quietly distorts every sum.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="ohdsi">
+    <h2>6. OHDSI and network studies</h2>
+    <p class="point">OHDSI's tools let one study protocol run across dozens of OMOP databases while each site keeps its data.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>OHDSI (Observational Health Data Sciences and Informatics) is an open community that maintains the CDM and its tools. <strong>ATLAS</strong> is a web tool for building concept sets and cohort definitions. <strong>HADES</strong> is a set of R packages, including CohortMethod (propensity score cohort studies, Lecture 5.4), SelfControlledCaseSeries (Lecture 5.5) and PatientLevelPrediction. Achilles and the Data Quality Dashboard profile and check a database (Lecture 5.7).</dd>
+      <dt>Why it matters</dt>
+      <dd>In a network study, a coordinating team writes the protocol and a study package; each site runs it locally and returns only aggregate results. Running across many databases at once shows whether an effect replicates, and makes selective reporting harder.</dd>
+      <dt>How to read it</dt>
+      <dd>Look for the pre-registered protocol, negative control outcomes (Lecture 5.4) and a per-database forest plot. Agreement across claims and EHR databases is stronger evidence than a large pooled sample size.</dd>
+    </dl>
+
+    <div class="callout example">
+      <div class="callout-title">Example · LEGEND-HTN</div>
+      <p>Suchard and colleagues (<em>Lancet</em>, 2019) compared first-line antihypertensive drug classes in about 4.9 million patients across 9 OMOP databases (6 claims, 3 EHR). Most classes performed similarly. Thiazide or thiazide-like diuretics did better than ACE inhibitors: hazard ratios about 0.84 for acute myocardial infarction, 0.83 for hospitalisation for heart failure and 0.83 for stroke. The study ran large-scale propensity scores and negative controls at every site.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · DARWIN EU</div>
+      <p>The European Medicines Agency runs DARWIN EU, a network whose data partners convert their data to OMOP so the agency can commission studies quickly. As of 2026 the EMA reports about 40 data partners covering about 250 million patients, and about 110 studies since 2022. The coordination centre is at Erasmus MC. A related EU-funded project, EHDEN, helped many European databases convert to OMOP.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Counting sites as replications. If all 9 databases share the same misclassification (say, an outcome code that is only billed when severe), they will agree and all be wrong. Consistency across sources with <em>different</em> gaps is the evidence that counts.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="mimic">
+    <h2>7. MIMIC-IV in OMOP: Project 5A</h2>
+    <p class="point">MIMIC-IV can be converted to OMOP, but the gaps that matter most for Project 5A sit exactly where the conversion is thinnest.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>MIMIC-IV is EHR data from Beth Israel Deaconess Medical Center in Boston, with dates shifted into the future to protect privacy. PhysioNet hosts an OMOP version of the 100-patient MIMIC-IV demo (version 0.9, Kallfelz and colleagues). Its ETL covers the core, hosp and icu modules and is designed to run on the full data too.</dd>
+      <dt>Why it matters</dt>
+      <dd>The demo notes list what is missing. ICU <code>inputevents</code> and <code>outputevents</code> are not yet included, and IV heparin infusions are recorded in inputevents. Notes are not populated, and some local codes remain unmapped. A Project 5A cohort written in ATLAS against this conversion would undercount anticoagulant exposure in the ICU.</dd>
+      <dt>How to read it</dt>
+      <dd>MIMIC-IV diagnoses are billing codes attached to the admission, with no time of day. Once in OMOP they become condition rows dated to the admission. "New-onset AF in the ICU" cannot be told apart from AF present on arrival. That is why Project 5A dates onset from ECGs and charted rhythm rather than from codes.</dd>
+      <dt>What a change means</dt>
+      <dd>Working in OMOP buys portability: the same definition could run in an OMOP version of another ICU database, or in a Saudi hospital's data once converted. It costs some detail. A sensible plan is to write the main analysis on native MIMIC-IV tables and an OMOP version for replication.</dd>
+    </dl>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Project 5A, two pipelines</div>
+      <p>Native pipeline: AF onset from the first ECG or charted rhythm showing AF after ICU admission; anticoagulation from inputevents (heparin infusions) and the medication administration record; 90-day death from the patients table, which includes state death records up to a year after discharge. OMOP pipeline: the same logic as a cohort in ATLAS, after adding the ECG-defined onset as a custom row and checking that heparin infusions were converted. If the two pipelines disagree, the difference shows what the conversion loses.</p>
+    </div>
+
+    <div class="callout gulf">
+      <div class="callout-title">In the Gulf</div>
+      <p>For a Saudi replication, the question is not only "is there an ICU database?" but "can it be converted to OMOP, and does it link to death records after discharge?". Large hospital groups run comprehensive EHRs with ICU flowsheets, but out-of-hospital deaths and expatriates who leave are where follow-up breaks. Check those two before writing any code.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>A US claims study finds that a new anticoagulant is associated with lower 1-year mortality than warfarin. Death is identified from inpatient claims. What could go wrong?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Claims only see deaths that happen in hospital while the person is enrolled. Deaths at home, and deaths after disenrolment, are missed. If the groups differ in where they die, or in how quickly they disenrol (for example, if one drug is used more by people on plans with high turnover), mortality is misclassified differently between arms. Linking to a death index, or restricting to continuously enrolled people with complete death capture, addresses this.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A linked study of hospital admissions and deaths reports a 92% match rate. Unmatched records are mostly young expatriate men. How might this bias a mortality comparison between nationals and expatriates?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Missed matches lose deaths, so mortality among expatriates is underestimated, making them look healthier than they are. Some will have left the country rather than died, which is a different problem (loss to follow-up) that also looks like survival. Report linked and unlinked records separately, and run a sensitivity analysis with a looser match threshold.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Why does an OMOP cohort definition use concept 313217 with "include descendants" rather than a list of ICD-10-CM codes?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Because each site's source codes (ICD-9, ICD-10-CM, ICD-10-AM, SNOMED) are mapped to standard SNOMED concepts. One standard concept and its descendants catch all AF subtypes at every site, so the definition runs unchanged across the network. A list of ICD-10-CM codes would miss sites that use other vocabularies.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A network study finds the same hazard ratio in 8 OMOP databases, all US commercial claims. A colleague calls this "replicated 8 times". Your view?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The databases share the same structure and the same gaps: billing-driven coding, no lab values, disenrolment. A bias that comes from those features would show up in all 8. Agreement with EHR or registry databases, which have different gaps, would be more convincing. Negative control outcomes help detect shared bias.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>In the OMOP version of MIMIC-IV, you find that many ICU patients with AF have no anticoagulant drug_exposure rows. Before concluding that ICU patients are rarely anticoagulated, what do you check?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Whether the ETL converted the source tables that hold the drug. In the demo conversion, ICU inputevents, where heparin infusions are recorded, were not yet included. Check the ETL documentation, count anticoagulant rows by source table, and compare with a direct query of the native MIMIC tables. Missing data that look like "not treated" is the most common OMOP failure.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>OHDSI, <em>The Book of OHDSI</em> (open access): chapters on the Common Data Model, standardised vocabularies, ATLAS and network studies; OMOP CDM v5.4 documentation (ohdsi.github.io/CommonDataModel).</li>
+      <li>Strom, Kimmel &amp; Hennessy (eds), <em>Pharmacoepidemiology</em> (Wiley): chapters on administrative claims, EHR and registry data.</li>
+      <li>Fellegi &amp; Sunter, “A theory for record linkage”, <em>Journal of the American Statistical Association</em> (1969).</li>
+      <li>Harron et al., “Evaluating bias due to data linkage error in electronic healthcare records”, <em>BMC Medical Research Methodology</em> (2014).</li>
+      <li>Schmidt et al., “The Danish National Patient Registry: a review of content, data quality, and research potential”, <em>Clinical Epidemiology</em> (2015); Wettermark et al., “The new Swedish Prescribed Drug Register”, <em>Pharmacoepidemiology and Drug Safety</em> (2007).</li>
+      <li>Herrett et al., “Data resource profile: Clinical Practice Research Datalink (CPRD)”, <em>International Journal of Epidemiology</em> (2015).</li>
+      <li>Suchard et al., “Comprehensive comparative effectiveness and safety of first-line antihypertensive drug classes: a systematic, multinational, large-scale analysis”, <em>Lancet</em> (2019).</li>
+      <li>European Medicines Agency, DARWIN EU pages (accessed 2026).</li>
+      <li>Johnson et al., “MIMIC-IV, a freely accessible electronic health record dataset”, <em>Scientific Data</em> (2023); MIMIC-IV documentation, patients table.</li>
+      <li>Kallfelz et al., “MIMIC-IV demo data in the OMOP Common Data Model” (v0.9), PhysioNet (2021), doi:10.13026/p1f5-7x35.</li>
+      <li>Council of Health Insurance (Saudi Arabia), NPHIES and coding standards pages; Saudi Food and Drug Authority, <em>Framework on the Use of Real-World Data and Real-World Evidence to Support Effectiveness and Safety for Marketing Authorization of Medicinal Products</em>, version 1.0 (2026).</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="5-05-self-controlled-designs.html"><small>Previous</small>5.5 Self-controlled designs</a>
+    <a class="next" href="5-07-data-quality-phenotyping.html"><small>Next</small>5.7 Data quality and phenotyping</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>

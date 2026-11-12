@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>5.3 Time-related biases · Public Health &amp; Epidemiology</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/js/math.js"></script>
+  <script defer src="../../assets/js/progress.js"></script>
+  <script defer src="../../assets/js/viz.js"></script>
+  <script defer src="../../assets/js/widgets/5-03.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <nav class="breadcrumb">
+      <a href="../../index.html">Curriculum</a><span aria-hidden="true">›</span>
+      <a href="../../index.html#block-5">Block 5</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="lecture-number">Lecture 5.3</p>
+  <h1>Time-related biases: immortal time, time-window, protopathic bias, reverse causation</h1>
+  <div class="lecture-meta">
+    <span>Block 5 · Pharmacoepidemiology, real-world evidence, regulatory science and AI evaluation</span>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-title">The point</div>
+    <p>Drug exposure changes over time, and so does the risk of the outcome. Most of the dramatic “benefits” that observational drug studies have reported and later lost came from getting time wrong, not from unmeasured confounding. They come in a small family: <strong>immortal time</strong>, <strong>time-window bias</strong>, <strong>time-lag bias</strong>, <strong>protopathic bias</strong> and <strong>reverse causation</strong>. Each has a recognisable signature and a standard fix. Target trial emulation (Lecture 4.5) prevents the first three by design; the last two need extra work. Project 5A starts after this lecture, so every fix here belongs in its protocol.</p>
+  </div>
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#family">One family: getting time wrong</a></li>
+      <li><a href="#immortal">Immortal time: misclassified and excluded</a></li>
+      <li><a href="#window">Time-window and time-lag bias</a></li>
+      <li><a href="#protopathic">Protopathic bias and lag windows</a></li>
+      <li><a href="#reverse">Reverse causation in drug studies</a></li>
+      <li><a href="#tte">What target trial emulation fixes, and what it does not</a></li>
+      <li><a href="#check">Check yourself</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="family">
+    <h2>1. One family: getting time wrong</h2>
+    <p class="point">Every time-related bias is a mismatch between when exposure is measured, when follow-up starts and when the outcome process begins; draw one patient’s timeline and most of them become visible.</p>
+
+    <figure class="diagram">
+      <div class="diagram-title">Diagram · The family of time-related biases on one timeline</div>
+      <svg class="viz-svg" viewBox="0 0 640 476" role="img" aria-label="Five rows on a shared time axis. 1, immortal time: between cohort entry and the first prescription the patient must survive, yet that time is counted as exposed. 2, time-window bias: a case's exposure window ends at diagnosis while a control's runs to the end of follow-up, so controls have more time to become exposed. 3, time-lag bias: a first-line drug used early in the disease is compared with a second-line drug used years later in more advanced disease. 4, protopathic bias: the disease is present but undiagnosed, its symptoms prompt a prescription, then it is diagnosed; a lag window ignores exposure just before diagnosis. 5, reverse causation: early signs of the outcome lead to the drug being stopped, and the event is then recorded as if off the drug.">
+        <defs><marker id="l53-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10Z" class="arrowhead"/></marker></defs>
+
+        <!-- Row 1: immortal time -->
+        <text x="10" y="20" class="viz-bold">1. Immortal time <tspan class="viz-small viz-muted" font-weight="400">· cohorts</tspan></text>
+        <line x1="60" y1="50" x2="620" y2="50" class="edge"/>
+        <g class="s2"><rect x="60" y="34" width="200" height="16" class="fill"/></g>
+        <g class="s1"><rect x="260" y="34" width="360" height="16" class="fill-soft" style="fill-opacity:0.5"/><circle cx="260" cy="42" r="6" class="dot"/></g>
+        <line x1="60" y1="28" x2="60" y2="56" class="edge strong"/>
+        <text x="60" y="70" text-anchor="middle" class="viz-small">time zero</text>
+        <text x="160" y="70" text-anchor="middle" class="viz-small colour s2">immortal time</text>
+        <text x="262" y="70" text-anchor="middle" class="viz-small">first prescription</text>
+        <text x="460" y="70" text-anchor="middle" class="viz-small viz-muted">but all of it counted as “treated”</text>
+
+        <!-- Row 2: time-window -->
+        <text x="10" y="106" class="viz-bold">2. Time-window bias <tspan class="viz-small viz-muted" font-weight="400">· case-control studies</tspan></text>
+        <g class="s5">
+          <rect x="60" y="118" width="270" height="20" rx="4" class="fill-soft"/>
+          <rect x="60" y="144" width="560" height="20" rx="4" class="fill-soft"/>
+        </g>
+        <text x="70" y="132" class="viz-small">case: exposure window ends at diagnosis</text>
+        <g class="s3"><circle cx="330" cy="128" r="6" class="dot"/></g>
+        <text x="342" y="132" class="viz-small colour s3">diagnosis</text>
+        <text x="70" y="158" class="viz-small">control: window runs to the end of follow-up, so more time to be exposed</text>
+
+        <!-- Row 3: time-lag -->
+        <text x="10" y="196" class="viz-bold">3. Time-lag bias <tspan class="viz-small viz-muted" font-weight="400">· drugs used at different stages</tspan></text>
+        <line x1="60" y1="228" x2="620" y2="228" class="edge"/>
+        <g class="s1"><rect x="60" y="208" width="200" height="20" rx="4" class="fill-soft" style="fill-opacity:0.5"/></g>
+        <g class="s4"><rect x="400" y="208" width="220" height="20" rx="4" class="fill-soft" style="fill-opacity:0.5"/></g>
+        <text x="70" y="222" class="viz-small">first-line drug, early disease</text>
+        <text x="410" y="222" class="viz-small">second-line drug, advanced disease</text>
+        <text x="330" y="248" text-anchor="middle" class="viz-small viz-muted">years of progression between them, ignored when the two are compared</text>
+
+        <!-- Row 4: protopathic -->
+        <text x="10" y="286" class="viz-bold">4. Protopathic bias <tspan class="viz-small viz-muted" font-weight="400">· drug started for early symptoms</tspan></text>
+        <line x1="60" y1="318" x2="620" y2="318" class="edge"/>
+        <g class="s3"><rect x="180" y="298" width="340" height="20" rx="4" class="fill-soft"/><circle cx="520" cy="308" r="6" class="dot"/></g>
+        <text x="190" y="312" class="viz-small">disease present, undiagnosed</text>
+        <g class="s2"><circle cx="420" cy="308" r="6" class="dot"/></g>
+        <text x="532" y="312" class="viz-small colour s3">diagnosis</text>
+        <text x="405" y="338" text-anchor="end" class="viz-small colour s2">drug started for the symptoms</text>
+        <g class="s1">
+          <line x1="410" y1="332" x2="520" y2="332" class="edge accent"/>
+          <line x1="410" y1="326" x2="410" y2="338" class="edge accent"/>
+          <line x1="520" y1="326" x2="520" y2="338" class="edge accent"/>
+        </g>
+        <text x="465" y="354" text-anchor="middle" class="viz-small colour s1">lag window: exposure here ignored</text>
+
+        <!-- Row 5: reverse causation -->
+        <text x="10" y="390" class="viz-bold">5. Reverse causation <tspan class="viz-small viz-muted" font-weight="400">· the outcome changes the drug</tspan></text>
+        <line x1="60" y1="422" x2="620" y2="422" class="edge"/>
+        <g class="s1"><rect x="60" y="402" width="370" height="20" rx="4" class="fill-soft" style="fill-opacity:0.5"/></g>
+        <text x="70" y="416" class="viz-small">on the drug</text>
+        <g class="s2"><circle cx="370" cy="412" r="6" class="dot"/></g>
+        <line x1="430" y1="398" x2="430" y2="426" class="edge strong"/>
+        <g class="s3"><circle cx="530" cy="412" r="6" class="dot"/></g>
+        <text x="365" y="442" text-anchor="end" class="viz-small colour s2">first signs (falling haemoglobin)</text>
+        <text x="430" y="458" text-anchor="middle" class="viz-small">drug stopped</text>
+        <text x="530" y="442" text-anchor="middle" class="viz-small colour s3">bleed recorded off drug</text>
+
+        <line x1="60" y1="470" x2="628" y2="470" class="edge" marker-end="url(#l53-arrow)"/>
+      </svg>
+      <figcaption>Rows 1–3 are self-inflicted: the analyst’s choice of windows creates them. Rows 4 and 5 are real clinical behaviour: doctors respond to symptoms before a diagnosis is recorded. Arrow: time.</figcaption>
+    </figure>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Bias</th><th>Where it lives</th><th>Usual direction</th><th>Standard fix</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Immortal time</strong></td><td>Cohorts with exposure defined after time zero</td><td>Drug looks protective</td><td>Time-varying exposure, landmark, or a target trial with one time zero</td></tr>
+          <tr><td><strong>Time-window</strong></td><td>Case-control studies with unequal exposure windows</td><td>Usually protective</td><td>Risk-set sampling; same window length for cases and controls</td></tr>
+          <tr><td><strong>Time-lag</strong></td><td>Comparing drugs used at different disease stages</td><td>Earlier drug looks better</td><td>Compare drugs at the same line of therapy; adjust for disease duration</td></tr>
+          <tr><td><strong>Protopathic</strong></td><td>Drug prescribed for symptoms of undiagnosed outcome</td><td>Drug looks harmful</td><td>Lag window; exclude early follow-up; check time since starting</td></tr>
+          <tr><td><strong>Reverse causation</strong></td><td>As-treated analyses; drugs stopped or changed as the outcome develops</td><td>Either way</td><td>Initial-treatment analysis; attribute events for a period after stopping</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout ml">
+      <div class="callout-title">From your ML background</div>
+      <p>The first three are look-ahead leakage and mismatched sampling windows, the bugs that make a backtest look brilliant. The last two are label-dependent features: the drug record is partly a response to the outcome that is about to happen, like a fraud model trained on a “card blocked” flag.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="immortal">
+    <h2>2. Immortal time: misclassified and excluded</h2>
+    <p class="point">If treated patients must survive until treatment starts, that waiting time is immortal; crediting it to the treated (misclassified) or simply deleting it (excluded) both bias the result, and only correct allocation of person-time removes it.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>You met immortal time in Lectures 2.2 and 2.16. Suissa distinguished two forms. <strong>Misclassified</strong> immortal time: the waiting time before the first dose is counted as treated. <strong>Excluded</strong> immortal time: the waiting time is dropped from the treated group, but untreated patients keep all their time, including those who died early before they could have been treated.</dd>
+      <dt>Why it matters</dt>
+      <dd>Both make treatment look protective, the misclassified form more strongly. The bias grows with the length and variability of the wait, so ICU and post-discharge studies, where treatment starts hours to weeks after time zero, are especially exposed.</dd>
+      <dt>How to read it</dt>
+      <dd>A useful test: does the estimate get stronger as the window for “becoming exposed” gets longer? In Suissa’s 2003 study of inhaled corticosteroids after a COPD admission, the time-fixed rate ratio fell from 0.98 to 0.51 as that window grew from 15 to 365 days; the time-dependent estimate stayed near 1.</dd>
+      <dt>What a change means</dt>
+      <dd>In the same study, the time-fixed rate ratio for corticosteroid use within 90 days was 0.69; analysed with time-dependent exposure, it was 1.00. A 31% “benefit” was entirely produced by the analysis.</dd>
+    </dl>
+
+    <div class="widget" data-widget="immortal-icu">
+      <div class="widget-title">Four ways to count the wait before anticoagulation</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">An ICU cohort followed for 28 days from new AF. Anticoagulation has no effect on death. Switch between the four analyses to see where each patient’s waiting time goes, then lengthen the typical wait and move the landmark.</p>
+    </div>
+
+    <pre><code>library(survival)
+# base: one row per patient; time zero = AF onset; t_ac = hours to first
+# therapeutic dose (NA if never); t_end, died = end of follow-up and status
+d &lt;- tmerge(base, base, id = id, death = event(t_end, died))
+d &lt;- tmerge(d, base, id = id, ac = tdc(t_ac))      # 0 before first dose, 1 after
+coxph(Surv(tstart, tstop, death) ~ ac + age + sofa0, data = d)
+
+lm &lt;- subset(base, t_end > 48)                       # landmark at 48 hours
+lm$ac48 &lt;- !is.na(lm$t_ac) &amp; lm$t_ac &lt;= 48
+coxph(Surv(t_end - 48, died) ~ ac48 + age + sofa0, data = lm)</code></pre>
+    <p>The first model splits each patient’s follow-up at the first dose, so the wait counts as untreated. The second keeps only patients alive at 48 hours, classifies them by treatment before then, and starts the clock at 48 hours. Neither handles confounding that changes over time (a falling platelet count, a new bleed); that needs the methods of Lecture 4.3 or clone-censor-weight (Lecture 4.5).</p>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Statins and progression of diabetes</div>
+      <p>Lévesque, Hanley, Kezouh and Suissa (<em>BMJ</em>, 2010) re-created a published analysis in which statin users were defined by at least a year of use, counted from the start of follow-up. The time-fixed hazard ratio for progression to insulin was 0.74. With statin exposure treated as time-dependent, it was 1.97. The apparent protection came entirely from the year every “user” had to survive to qualify.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Thinking the landmark analysis is bias-free. It removes immortal time, but it drops everyone who died before the landmark, classifies people who start just after the landmark as untreated, and its answer depends on where you put the landmark. Use it as a sensitivity analysis, or pick the landmark from the clinical question (for example, “treatment decided within 48 hours”) and state it in the protocol.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="window">
+    <h2>3. Time-window and time-lag bias</h2>
+    <p class="point">Cases and controls must have the same amount of time in which to become exposed, and drugs must be compared at the same stage of disease; otherwise the comparison measures time, not the drug.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>Time-window bias</strong> (Suissa and colleagues, 2011) arises in case-control studies when exposure is measured over windows of different length: a case’s window runs from cohort entry to diagnosis, while a control’s runs to the end of follow-up. Controls have more time to start the drug. <strong>Time-lag bias</strong> arises when a drug used early in a disease is compared with one used later, when the disease is more advanced and outcomes worse.</dd>
+      <dt>Why it matters</dt>
+      <dd>Both can produce large spurious benefits. Suissa and Azoulay (2012) reviewed observational studies of metformin and cancer: 13 had immortal time bias, 9 had not considered time-window bias, and others compared first-line metformin with second- or third-line drugs. The studies that avoided these biases found no effect of metformin on cancer incidence.</dd>
+      <dt>How to read it</dt>
+      <dd>In a case-control paper, check that controls were sampled from the risk set at the case’s event time (incidence density sampling, Lecture 2.3) and that exposure is measured over the same window before that date. In a comparative cohort, check that both drugs are at the same line of therapy.</dd>
+      <dt>What a change means</dt>
+      <dd>The bias is roughly proportional to how unequal the windows are. Doubling the control window relative to the case window roughly doubles the chance a control looks exposed when exposure accrues steadily over time.</dd>
+    </dl>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Statins and lung cancer</div>
+      <p>A large case-control study of US veterans reported that statin use was associated with much lower lung cancer incidence. Suissa and colleagues (<em>Epidemiology</em>, 2011) reproduced its design in the UK General Practice Research Database and found an apparent reduction of about 45%. Analysed so that cases and controls had the same exposure windows, the rate ratio was 0.99 (95% CI 0.85–1.16).</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Matching cases and controls on calendar date or time in the database and assuming the windows are now equal. Matching on entry date does not guarantee equal time with the disease or equal time to become exposed. Suissa and Azoulay made this point in reply to critics of the metformin review. Define the window from the matched index date backwards, with the same length for everyone.</p>
+    </div>
+
+    <div class="callout analogy">
+      <div class="callout-title">Analogy</div>
+      <p>Asking who has ever visited Riyadh Season, among people who arrived in Riyadh last week and people who have lived there ten years. Long-term residents “visited more” because they had more time, not because they like it more.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="protopathic">
+    <h2>4. Protopathic bias and lag windows</h2>
+    <p class="point">When a drug is prescribed for the first symptoms of a disease that has not yet been diagnosed, exposure piles up just before diagnosis and the drug looks like a cause; a lag window ignores that recent exposure.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd><strong>Protopathic bias</strong> (Horwitz and Feinstein, 1980): exposure starts, stops or changes because of an early manifestation of the outcome before it is diagnosed. It is reverse causation driven by the prodrome, the period when disease causes symptoms but has no label yet. A <strong>lag window</strong> discards exposure in a set period before the event (or, in a cohort, the first months after starting the drug).</dd>
+      <dt>Why it matters</dt>
+      <dd>It creates harms that do not exist, usually for cancers and other diseases with a slow, symptomatic onset. Classic case: proton pump inhibitors (PPIs) and gastric cancer. Early gastric cancer causes dyspepsia, dyspepsia is treated with PPIs, so PPI starts cluster in the months before diagnosis.</dd>
+      <dt>How to read it</dt>
+      <dd>The signature is an association that is strongest in the first months after starting and fades with longer use, the opposite of what a carcinogen would do. Look for results by time since initiation and with lag windows of, say, 6, 12 and 24 months.</dd>
+      <dt>What a change means</dt>
+      <dd>An odds ratio that falls from 2.4 with no lag to near 1 with a 12-month lag says the association lived in the recent exposure: protopathic bias, not a cause. If it stays raised with long lags and grows with duration, a real effect becomes more plausible.</dd>
+    </dl>
+
+    <div class="widget" data-widget="protopathic-lag">
+      <div class="widget-title">A lag window removes a spurious association</div>
+      <p class="widget-note" style="margin:0 0 0.8rem">The drug does not cause the disease. Some cases are prescribed it for early symptoms in the months before diagnosis. Increase the lag window and watch the odds ratio return to 1; then lengthen the prodrome and see how long a lag you need.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Choosing a very long lag “to be safe”. A lag discards real exposure too, which costs power and, if the drug has a genuine effect after a short induction time, hides it. Choose the lag from what is known about the prodrome and the biology, and show two or three values.</p>
+    </div>
+
+    <div class="callout example">
+      <div class="callout-title">Example · An ECG version</div>
+      <p>Suppose you studied whether a rate-control drug “causes” a new diagnosis of heart failure. Breathlessness and a fast ventricular rate in undiagnosed heart failure often prompt rate control before the echo is done. Exposure clusters just before diagnosis. A lag of a few weeks, and excluding people with heart-failure symptoms at baseline, are the defences.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="reverse">
+    <h2>5. Reverse causation in drug studies</h2>
+    <p class="point">Clinicians stop, start and change drugs as patients deteriorate, so in as-treated analyses the outcome partly decides the exposure; the fix is to tie events to the exposure decision that came before the deterioration.</p>
+
+    <dl class="facets">
+      <dt>What it is</dt>
+      <dd>The outcome, or its early phase, changes exposure. Drugs are stopped when a bleed begins, when a patient becomes too unwell to swallow, or when care moves to comfort measures. In an as-treated analysis the event is then recorded as “off drug”.</dd>
+      <dt>Why it matters</dt>
+      <dd>It can make a drug look protective (deaths happen after it is stopped) or harmful (drugs started as the patient worsens). It also inflates the apparent harm of stopping a drug: a raised death rate after people stop a statin partly reflects people stopping statins because they were already dying.</dd>
+      <dt>How to read it</dt>
+      <dd>Be suspicious of large differences between current and recent-past users, with recent-past users at the highest risk. Ask why people stopped.</dd>
+      <dt>What a change means</dt>
+      <dd>Extending exposure for a period after stopping (attributing events within, say, 7 days to the drug) should barely change a real effect. If it changes the estimate a lot, events just after stopping were driving it.</dd>
+    </dl>
+
+    <div class="callout example">
+      <div class="callout-title">Example · Project 5A</div>
+      <p>In the ICU, therapeutic heparin is stopped when haemoglobin falls, before a bleed is formally diagnosed, and all anticoagulation stops when goals of care change. An as-treated analysis will count those bleeds and deaths as happening off anticoagulation. That makes anticoagulation look safer and more protective than it is. An initial-treatment analysis, or a per-protocol analysis that keeps attributing events to treatment for a set number of hours after stopping, protects against this.</p>
+    </div>
+
+    <div class="callout trap">
+      <div class="callout-title">Trap</div>
+      <p>Treating “drug stopped” as random censoring. Stopping is often the first visible sign of the outcome. Censoring at that point removes the patients whose events were imminent, and inverse probability weights only help if the reasons for stopping (falling haemoglobin, a new procedure, a change in goals of care) are measured in the data.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="tte">
+    <h2>6. What target trial emulation fixes, and what it does not</h2>
+    <p class="point">Aligning eligibility, treatment assignment and time zero, as in a trial, prevents the self-inflicted biases; it does not stop doctors responding to symptoms, and it does not remove confounding.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Bias</th><th>Prevented by a well-specified target trial?</th><th>Why, or what else is needed</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Immortal time</strong></td><td>Yes</td><td>Everyone starts follow-up at assignment; a grace period is handled by clone-censor-weight</td></tr>
+          <tr><td><strong>Time-window</strong></td><td>Yes</td><td>A cohort with one time zero has no unequal exposure windows</td></tr>
+          <tr><td><strong>Time-lag</strong></td><td>Largely</td><td>Eligibility defines the disease stage; both strategies are offered at the same point</td></tr>
+          <tr><td><strong>Protopathic</strong></td><td>No</td><td>Exclude people with prodromal symptoms at baseline; add a lag or exclude early events</td></tr>
+          <tr><td><strong>Reverse causation</strong></td><td>Partly</td><td>The initial-treatment effect is protected; per-protocol effects need measured reasons for stopping</td></tr>
+          <tr><td><strong>Confounding by indication</strong></td><td>No</td><td>Needs measured confounders, a good comparator (Lecture 5.2) and bias analysis</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <dl class="facets">
+      <dt>Why it matters</dt>
+      <dd>Hernán and colleagues (2016) showed that many famous discrepancies between observational studies and trials came from misaligned time zero, not unmeasured confounding. That is good news: design fixes it. But a target trial emulation that has been specified carefully can still be confounded, and reviewers will ask how you dealt with what design cannot reach.</dd>
+      <dt>How to read it</dt>
+      <dd>A good emulation paper has a protocol table with eligibility, strategies, assignment, time zero, follow-up and the causal contrast, and states explicitly how protopathic bias and reverse causation were handled. Lecture 4.5 built the Project 5A version.</dd>
+    </dl>
+
+    <div class="callout example">
+      <div class="callout-title">Example · The Project 5A checklist from this lecture</div>
+      <p>Time zero is the first ECG showing new AF, which is also when eligibility is assessed. Treatment strategies have a grace period of a set number of hours, handled by clone-censor-weight, so there is no immortal time. Patients with active bleeding or a falling haemoglobin at time zero are excluded, because those are prodromes of the bleeding outcome. Bleeds within a set number of hours after stopping heparin are attributed to treatment in the per-protocol analysis. A quantitative bias analysis (Lecture 2.13) then covers the confounding that is left.</p>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section class="concept" id="check">
+    <h2>Check yourself</h2>
+    <ol class="exercises">
+      <li>
+        <p>A study of beta-blockers after ICU discharge defines users as patients who filled a prescription within 60 days and follows everyone from discharge. Authors respond to criticism by removing the first 60 days of follow-up for users only. Is the problem fixed?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>No. That converts misclassified immortal time into excluded immortal time. Non-users still contribute their early days, including early deaths of people who might have filled a prescription had they lived. Count each user as unexposed until their fill (time-varying exposure), or use a landmark at 60 days for everyone.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A nested case-control study finds that ever-use of a drug in the whole period before the index date is associated with lower risk. Cases have on average 3 years of history in the database, controls 6. What do you suspect?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Time-window bias. Controls had twice as long to become exposed, so “ever-use” is more common in them regardless of any drug effect. Measure exposure over the same fixed window before each index date (say the previous 2 years), with controls drawn from the risk set at the case’s event time.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>Users of an antidepressant have a hazard ratio of 3.0 for a dementia diagnosis in the first year after starting, 1.4 in years 1–3 and 1.0 after that. How do you interpret this pattern?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>The pattern fits protopathic bias: low mood, apathy and sleep problems in early, undiagnosed dementia prompt antidepressant prescriptions. A causal effect of a drug on a slow neurodegenerative disease would not be strongest in the first months. Report results with lag windows and by time since initiation, and say the early excess is probably not causal.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A colleague says your Project 5A target trial emulation “cannot have time-related biases, because it emulates a trial”. What do you say?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>It prevents immortal time and time-window bias by aligning time zero, eligibility and assignment. It does not prevent protopathic bias (anticoagulation withheld or stopped because a bleed is starting) or reverse causation in per-protocol analyses, and it does nothing about confounding by indication. Those need baseline exclusions, lag or attribution windows, measured reasons for stopping and bias analysis.</p></div>
+        </details>
+      </li>
+      <li>
+        <p>A cohort compares patients on first-line metformin with patients on insulin and finds lower cancer incidence with metformin. The authors adjusted for age, sex and BMI. What time-related bias remains, and how would you fix it?</p>
+        <details class="answer">
+          <summary>Show answer</summary>
+          <div><p>Time-lag bias: insulin is usually started years later in more advanced diabetes, so insulin users are at a different stage with different risks. Compare drugs used at the same line of therapy (for example two second-line options), or adjust for diabetes duration and line of therapy, with follow-up starting at each drug’s initiation.</p></div>
+        </details>
+      </li>
+    </ol>
+  </section>
+
+  <section id="sources" class="sources">
+    <h2>Sources</h2>
+    <ul>
+      <li>Suissa, “Immortal time bias in pharmaco-epidemiology”, <em>American Journal of Epidemiology</em> (2008): misclassified and excluded immortal time.</li>
+      <li>Suissa, “Effectiveness of inhaled corticosteroids in chronic obstructive pulmonary disease: immortal time bias in observational studies”, <em>American Journal of Respiratory and Critical Care Medicine</em> (2003).</li>
+      <li>Lévesque, Hanley, Kezouh &amp; Suissa, “Problem of immortal time bias in cohort studies: example using statins for preventing progression of diabetes”, <em>BMJ</em> (2010).</li>
+      <li>Suissa, Dell’Aniello, Vahey &amp; Renoux, “Time-window bias in case-control studies: statins and lung cancer”, <em>Epidemiology</em> (2011).</li>
+      <li>Suissa &amp; Azoulay, “Metformin and the risk of cancer: time-related biases in observational studies”, <em>Diabetes Care</em> (2012).</li>
+      <li>Horwitz &amp; Feinstein, “The problem of ‘protopathic bias’ in case-control studies”, <em>American Journal of Medicine</em> (1980).</li>
+      <li>Hernán, Sauer, Hernández-Díaz, Platt &amp; Shrier, “Specifying a target trial prevents immortal time bias and other self-inflicted injuries in observational analyses”, <em>Journal of Clinical Epidemiology</em> (2016).</li>
+      <li>Anderson, Cain &amp; Gelber, “Analysis of survival by tumor response”, <em>Journal of Clinical Oncology</em> (1983): the landmark method.</li>
+      <li>Therneau, Crowson &amp; Atkinson, “Using time dependent covariates and time dependent coefficients in the Cox model”, <code>survival</code> package vignette.</li>
+      <li>Strom, Kimmel &amp; Hennessy (eds), <em>Pharmacoepidemiology</em> (Wiley): chapters on bias in pharmacoepidemiological studies.</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="5-02-new-user-active-comparator.html"><small>Previous</small>5.2 New-user and active-comparator designs</a>
+    <a class="next" href="5-04-confounding-by-indication-ps.html"><small>Next</small>5.4 Confounding by indication and propensity scores</a>
+  </nav>
+</main>
+
+<footer class="site-footer"><div class="inner">Public Health &amp; Epidemiology Curriculum</div></footer>
+</body>
+</html>
