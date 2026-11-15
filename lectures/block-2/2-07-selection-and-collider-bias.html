@@ -55,14 +55,11 @@
     <h2>1. Unrepresentative is not the same as biased</h2>
     <p class="point">A sample can differ from the population and still give an unbiased exposure–outcome estimate; selection bias needs selection that depends on both exposure and outcome.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>Two different problems share the word “selection”. <strong>Generalisability</strong> (external validity) asks whether the result applies to other people. <strong>Selection bias</strong> (an internal-validity problem) means the association among those studied differs from the association in the population they came from.</dd>
-      <dt>Why it matters</dt>
-      <dd>Prevalence and averages need a representative sample. Exposure–outcome associations often don’t, as long as who takes part doesn’t depend jointly on exposure and outcome. Mixing the two leads to dismissing good cohorts and trusting bad ones.</dd>
-      <dt>How to read it</dt>
-      <dd>For a prevalence estimate (as in Project 2’s salt intake), ask “who was sampled, and who responded?” For an association, ask “could entry or retention depend on the exposure <em>and</em> on the outcome or its causes?”</dd>
-    </dl>
+    <div class="facets">
+      <p>Two different problems share the word “selection”. <strong>Generalisability</strong> (external validity) asks whether the result applies to other people. <strong>Selection bias</strong> (an internal-validity problem) means the association among those studied differs from the association in the population they came from.</p>
+      <p><strong class="lead">Why it matters.</strong> Prevalence and averages need a representative sample. Exposure–outcome associations often don’t, as long as who takes part doesn’t depend jointly on exposure and outcome. Mixing the two leads to dismissing good cohorts and trusting bad ones.</p>
+      <p><strong class="lead">How to read it.</strong> For a prevalence estimate (as in Project 2’s salt intake), ask “who was sampled, and who responded?” For an association, ask “could entry or retention depend on the exposure <em>and</em> on the outcome or its causes?”</p>
+    </div>
 
     <div class="callout example">
       <div class="callout-title">Example · UK Biobank</div>
@@ -80,16 +77,12 @@
     <h2>2. Colliders: conditioning on a common effect</h2>
     <p class="point">When two arrows point into the same variable, that variable is a collider; leave it alone and the path through it is closed, condition on it and the path opens.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>A <strong>collider</strong> is a common effect of two variables. <em>Conditioning</em> means restricting to one level of it, stratifying on it or adjusting for it in a model. Selection into a study is conditioning: the analysis contains only people with “selected = yes”. In a DAG this is drawn as a box around the selection node.</dd>
-      <dt>Why it matters</dt>
-      <dd>It is the opposite of confounding. Confounding paths are open until you adjust; collider paths are closed until you adjust. Adjusting for the wrong variable creates bias where there was none.</dd>
-      <dt>How to read it</dt>
-      <dd>Trace every path between exposure and outcome. A path with a collider on it carries no association, unless you have conditioned on the collider or on something it causes.</dd>
-      <dt>What a change means</dt>
-      <dd>The stronger both causes drive selection, and the stricter the selection, the larger the spurious association.</dd>
-    </dl>
+    <div class="facets">
+      <p>A <strong>collider</strong> is a common effect of two variables. <em>Conditioning</em> means restricting to one level of it, stratifying on it or adjusting for it in a model. Selection into a study is conditioning: the analysis contains only people with “selected = yes”. In a DAG this is drawn as a box around the selection node.</p>
+      <p><strong class="lead">Why it matters.</strong> It is the opposite of confounding. Confounding paths are open until you adjust; collider paths are closed until you adjust. Adjusting for the wrong variable creates bias where there was none.</p>
+      <p><strong class="lead">How to read it.</strong> Trace every path between exposure and outcome. A path with a collider on it carries no association, unless you have conditioned on the collider or on something it causes.</p>
+      <p><strong class="lead">When it changes.</strong> The stronger both causes drive selection, and the stricter the selection, the larger the spurious association.</p>
+    </div>
 
     <figure class="diagram">
       <div class="diagram-title">Diagram · Selection on a collider</div>
@@ -150,14 +143,11 @@
     <h2>3. Berkson’s bias: hospital samples</h2>
     <p class="point">Studying only hospital patients can create associations between diseases, or between exposures and diseases, that don’t exist outside the hospital.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>Berkson (1946) showed that if two conditions each raise the chance of admission, they become associated among inpatients even when independent in the community. The same holds for any filter that both variables pass through: referral to a specialist centre, being tested, joining a registry.</dd>
-      <dt>Why it matters</dt>
-      <dd>Hospital-based case-control studies, clinic cohorts and most EHR data are selected this way. Lecture 2.3’s rule, controls must come from the population that produced the cases, is the defence.</dd>
-      <dt>How to read it</dt>
-      <dd>Ask what determined entry into the data. If entry depends on the exposure and on the outcome (or its causes), expect bias; its direction depends on how they combine.</dd>
-    </dl>
+    <div class="facets">
+      <p>Berkson (1946) showed that if two conditions each raise the chance of admission, they become associated among inpatients even when independent in the community. The same holds for any filter that both variables pass through: referral to a specialist centre, being tested, joining a registry.</p>
+      <p><strong class="lead">Why it matters.</strong> Hospital-based case-control studies, clinic cohorts and most EHR data are selected this way. Lecture 2.3’s rule, controls must come from the population that produced the cases, is the defence.</p>
+      <p><strong class="lead">How to read it.</strong> Ask what determined entry into the data. If entry depends on the exposure and on the outcome (or its causes), expect bias; its direction depends on how they combine.</p>
+    </div>
 
     <div class="widget" data-widget="berkson-collider">
       <div class="widget-title">Admission creates a correlation</div>
@@ -180,14 +170,11 @@
     <h2>4. Paradoxes from selecting on disease</h2>
     <p class="point">Studying only people who already have a disease conditions on a collider, and can make a known risk factor look harmless or even protective.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd><strong>Index event bias</strong>: in studies of recurrence or prognosis, everyone has had a first event (the index event). If the exposure and some other cause both lead to that first event, then among patients, those without the exposure tend to have more of the other cause. If that other cause also affects the outcome, the exposure’s effect is distorted, usually toward the null and sometimes past it.</dd>
-      <dt>Why it matters</dt>
-      <dd>Many famous “paradoxes” follow this pattern: the obesity paradox in heart failure, the birth-weight paradox, and paradoxes in recurrent stroke and venous thrombosis.</dd>
-      <dt>How to read it</dt>
-      <dd>When a well-established risk factor looks protective among patients with the disease it causes, suspect selection before biology.</dd>
-    </dl>
+    <div class="facets">
+      <p><strong>Index event bias</strong>: in studies of recurrence or prognosis, everyone has had a first event (the index event). If the exposure and some other cause both lead to that first event, then among patients, those without the exposure tend to have more of the other cause. If that other cause also affects the outcome, the exposure’s effect is distorted, usually toward the null and sometimes past it.</p>
+      <p><strong class="lead">Why it matters.</strong> Many famous “paradoxes” follow this pattern: the obesity paradox in heart failure, the birth-weight paradox, and paradoxes in recurrent stroke and venous thrombosis.</p>
+      <p><strong class="lead">How to read it.</strong> When a well-established risk factor looks protective among patients with the disease it causes, suspect selection before biology.</p>
+    </div>
 
     <figure class="diagram">
       <div class="diagram-title">Diagram · The obesity paradox as collider bias</div>
@@ -235,14 +222,11 @@
     <h2>5. Loss to follow-up and healthy people</h2>
     <p class="point">Selection doesn’t stop at entry: who drops out, who stays employed and who stays in the country are selection too.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd><strong>Loss to follow-up</strong> biases a cohort when leaving depends on exposure and on outcome risk, for example sicker exposed people dropping out. The <strong>healthy worker effect</strong>: employed people are healthier than the general population, because illness pushes people out of work. The <strong>healthy volunteer effect</strong>: people who join studies are healthier and more health-conscious.</dd>
-      <dt>Why it matters</dt>
-      <dd>A cohort that loses 20% of people can still be unbiased if losses are unrelated to exposure and outcome; one that loses 5% can be badly biased if all of them were the sickest exposed people.</dd>
-      <dt>How to read it</dt>
-      <dd>Compare those lost with those kept on baseline exposure and risk factors. Similar profiles are reassuring, not proof. Comparing workers with the general population is unfair; compare workers with other workers.</dd>
-    </dl>
+    <div class="facets">
+      <p><strong>Loss to follow-up</strong> biases a cohort when leaving depends on exposure and on outcome risk, for example sicker exposed people dropping out. The <strong>healthy worker effect</strong>: employed people are healthier than the general population, because illness pushes people out of work. The <strong>healthy volunteer effect</strong>: people who join studies are healthier and more health-conscious.</p>
+      <p><strong class="lead">Why it matters.</strong> A cohort that loses 20% of people can still be unbiased if losses are unrelated to exposure and outcome; one that loses 5% can be badly biased if all of them were the sickest exposed people.</p>
+      <p><strong class="lead">How to read it.</strong> Compare those lost with those kept on baseline exposure and risk factors. Similar profiles are reassuring, not proof. Comparing workers with the general population is unfair; compare workers with other workers.</p>
+    </div>
 
     <div class="callout gulf">
       <div class="callout-title">Example · GCC migrant workers</div>
@@ -271,12 +255,10 @@
       </table>
     </div>
 
-    <dl class="facets">
-      <dt>Why it matters</dt>
-      <dd>Weighting works only if you measured the variables that drive selection. If selection depends on something unrecorded, no analysis recovers the population.</dd>
-      <dt>How to read it</dt>
-      <dd>In Project 2’s risk-of-bias assessment, ask for each study: how were participants sampled, what was the response rate, how many 24-hour urine collections were incomplete and excluded, and could exclusion relate to salt intake?</dd>
-    </dl>
+    <div class="facets">
+      <p><strong class="lead">Why it matters.</strong> Weighting works only if you measured the variables that drive selection. If selection depends on something unrecorded, no analysis recovers the population.</p>
+      <p><strong class="lead">How to read it.</strong> In Project 2’s risk-of-bias assessment, ask for each study: how were participants sampled, what was the response rate, how many 24-hour urine collections were incomplete and excluded, and could exclusion relate to salt intake?</p>
+    </div>
 
     <div class="callout ml">
       <div class="callout-title">From your ML background</div>

@@ -55,16 +55,12 @@
     <h2>1. Comparing a person with themselves</h2>
     <p class="point">Within-person comparison removes every confounder that does not change over the study window; it does nothing for those that do.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>Each case acts as their own control. The analysis conditions on the person, so the estimate comes only from variation <em>within</em> people over time. Between-person differences drop out of the likelihood, much as fixed effects do in a panel regression.</dd>
-      <dt>Why it matters</dt>
-      <dd>Drug and vaccine safety studies are dominated by confounders that are hard to measure but stable over months: frailty, chronic disease, socioeconomic position, attitudes to health care. A self-controlled design handles all of them at once.</dd>
-      <dt>How to read it</dt>
-      <dd>For each study, list what changes within a person over the window: age, season, acute illness, other drugs, calendar trends. Those are the confounders that remain and must be adjusted for or designed out.</dd>
-      <dt>What a change means</dt>
-      <dd>Lengthening the observation window lets more time-varying confounding in (ageing, disease progression); shortening it loses information. Typical windows are months to a year or two.</dd>
-    </dl>
+    <div class="facets">
+      <p>Each case acts as their own control. The analysis conditions on the person, so the estimate comes only from variation <em>within</em> people over time. Between-person differences drop out of the likelihood, much as fixed effects do in a panel regression.</p>
+      <p><strong class="lead">Why it matters.</strong> Drug and vaccine safety studies are dominated by confounders that are hard to measure but stable over months: frailty, chronic disease, socioeconomic position, attitudes to health care. A self-controlled design handles all of them at once.</p>
+      <p><strong class="lead">How to read it.</strong> For each study, list what changes within a person over the window: age, season, acute illness, other drugs, calendar trends. Those are the confounders that remain and must be adjusted for or designed out.</p>
+      <p><strong class="lead">When it changes.</strong> Lengthening the observation window lets more time-varying confounding in (ageing, disease progression); shortening it loses information. Typical windows are months to a year or two.</p>
+    </div>
 
     <figure class="diagram">
       <div class="diagram-title">Diagram · SCCS and case-crossover windows</div>
@@ -140,16 +136,12 @@
     <h2>2. Case-crossover in depth</h2>
     <p class="point">The case-crossover design is a matched case-control study in which each case is matched to themselves, so it inherits case-control logic and adds its own time problems.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>Lecture 2.4 introduced it: for a transient exposure and an abrupt outcome, compare exposure in a <em>hazard window</em> just before the event with exposure in earlier <em>referent windows</em> of the same length. Analyse with conditional logistic regression, each case a stratum. In drug studies, the exposure is usually "dispensing covers this window".</dd>
-      <dt>Why it matters</dt>
-      <dd>It fits triggers: a new prescription before a fall, a fluoroquinolone before a tendon rupture, an NSAID before an acute kidney injury. Only cases are needed, which makes it cheap in claims and registries.</dd>
-      <dt>How to read it</dt>
-      <dd>The odds ratio compares how often the person was exposed in the hazard window with how often they were exposed at other times. Discordant cases (exposed in one window, not the other) carry all the information.</dd>
-      <dt>What a change means</dt>
-      <dd>If use of a drug is rising over time in everyone (a new drug gaining market share, or a chronic drug as disease progresses), hazard windows are later than referent windows and so are more often exposed. That inflates the odds ratio even with no effect: <strong>exposure-trend bias</strong>.</dd>
-    </dl>
+    <div class="facets">
+      <p>Lecture 2.4 introduced it: for a transient exposure and an abrupt outcome, compare exposure in a <em>hazard window</em> just before the event with exposure in earlier <em>referent windows</em> of the same length. Analyse with conditional logistic regression, each case a stratum. In drug studies, the exposure is usually "dispensing covers this window".</p>
+      <p><strong class="lead">Why it matters.</strong> It fits triggers: a new prescription before a fall, a fluoroquinolone before a tendon rupture, an NSAID before an acute kidney injury. Only cases are needed, which makes it cheap in claims and registries.</p>
+      <p><strong class="lead">How to read it.</strong> The odds ratio compares how often the person was exposed in the hazard window with how often they were exposed at other times. Discordant cases (exposed in one window, not the other) carry all the information.</p>
+      <p><strong class="lead">When it changes.</strong> If use of a drug is rising over time in everyone (a new drug gaining market share, or a chronic drug as disease progresses), hazard windows are later than referent windows and so are more often exposed. That inflates the odds ratio even with no effect: <strong>exposure-trend bias</strong>.</p>
+    </div>
 
     <div class="table-wrap">
       <table>
@@ -186,16 +178,12 @@ fit_ctc &lt;- clogit(case_win ~ exposed * is_case + strata(id), data = cco_ctc)<
     <h2>3. The self-controlled case series</h2>
     <p class="point">SCCS asks whether a person's events happen more often in a defined risk window after exposure than in the rest of their observation period, after allowing for age.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>Developed by Farrington for vaccine safety. Take only cases. For each, define an observation period, the exposure date(s), and one or more <strong>risk windows</strong> after exposure. All other observed time is <strong>control time</strong>. A conditional Poisson model estimates the <strong>relative incidence</strong> (incidence rate ratio, IRR) in risk vs control time, with age (and often season) as time-varying covariates.</dd>
-      <dt>Why it matters</dt>
-      <dd>It needs only cases with exposure dates, which immunisation registers and hospital admission records supply. Fixed confounders cancel. Unlike case-crossover, it handles exposures at fixed ages (vaccines) and is not biased by exposure trends in the population, because it conditions on each person's exposure history.</dd>
-      <dt>How to read it</dt>
-      <dd>An IRR of 3 in a 42-day window means events were three times as frequent in the six weeks after the dose as in the same person's other time. Translate it into absolute terms with the background rate: that is how "1 case per N doses" statements are made.</dd>
-      <dt>What a change means</dt>
-      <dd>A risk window that is too long dilutes the IRR towards 1, because it mixes risky and non-risky days. One that is too short misses late cases. Pre-specify the window from biology, and show sensitivity to it, often by splitting into sub-windows (days 0–14, 15–28, 29–42).</dd>
-    </dl>
+    <div class="facets">
+      <p>Developed by Farrington for vaccine safety. Take only cases. For each, define an observation period, the exposure date(s), and one or more <strong>risk windows</strong> after exposure. All other observed time is <strong>control time</strong>. A conditional Poisson model estimates the <strong>relative incidence</strong> (incidence rate ratio, IRR) in risk vs control time, with age (and often season) as time-varying covariates.</p>
+      <p><strong class="lead">Why it matters.</strong> It needs only cases with exposure dates, which immunisation registers and hospital admission records supply. Fixed confounders cancel. Unlike case-crossover, it handles exposures at fixed ages (vaccines) and is not biased by exposure trends in the population, because it conditions on each person's exposure history.</p>
+      <p><strong class="lead">How to read it.</strong> An IRR of 3 in a 42-day window means events were three times as frequent in the six weeks after the dose as in the same person's other time. Translate it into absolute terms with the background rate: that is how "1 case per N doses" statements are made.</p>
+      <p><strong class="lead">When it changes.</strong> A risk window that is too long dilutes the IRR towards 1, because it mixes risky and non-risky days. One that is too short misses late cases. Pre-specify the window from biology, and show sensitivity to it, often by splitting into sub-windows (days 0–14, 15–28, 29–42).</p>
+    </div>
 
     <div class="widget" data-widget="sccs-builder">
       <div class="widget-title">SCCS builder</div>
@@ -237,14 +225,11 @@ m1             # exp(coef) for mmr = relative incidence in days 0–42</code></p
       </table>
     </div>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>Farrington, Whitaker and colleagues developed extensions for each failure. A <strong>pre-exposure window</strong> (for example the 14 days before a dose) catches the dip in vaccination just after an illness, so that dip does not contaminate control time. The event-dependent models rebuild the likelihood for the cases whose exposure or follow-up the event altered.</dd>
-      <dt>Why it matters</dt>
-      <dd>These are not edge cases. In drug safety the event often changes treatment: a GI bleed stops the NSAID; a fall stops the sedative. Ignoring this makes the drug look more harmful, because post-event time is drug-free and event-free.</dd>
-      <dt>How to read it</dt>
-      <dd>A good SCCS paper names each assumption, says why it holds or how it was relaxed, and reports the pre-exposure window's IRR. An IRR well below 1 in that window signals the healthy-vaccinee or delayed-exposure effect.</dd>
-    </dl>
+    <div class="facets">
+      <p>Farrington, Whitaker and colleagues developed extensions for each failure. A <strong>pre-exposure window</strong> (for example the 14 days before a dose) catches the dip in vaccination just after an illness, so that dip does not contaminate control time. The event-dependent models rebuild the likelihood for the cases whose exposure or follow-up the event altered.</p>
+      <p><strong class="lead">Why it matters.</strong> These are not edge cases. In drug safety the event often changes treatment: a GI bleed stops the NSAID; a fall stops the sedative. Ignoring this makes the drug look more harmful, because post-event time is drug-free and event-free.</p>
+      <p><strong class="lead">How to read it.</strong> A good SCCS paper names each assumption, says why it holds or how it was relaxed, and reports the pre-exposure window's IRR. An IRR well below 1 in that window signals the healthy-vaccinee or delayed-exposure effect.</p>
+    </div>
 
     <div class="callout trap">
       <div class="callout-title">Trap</div>
@@ -262,14 +247,11 @@ m1             # exp(coef) for mmr = relative incidence in days 0–42</code></p
     <h2>5. Classic examples: MMR and ITP, rotavirus and intussusception</h2>
     <p class="point">The textbook SCCS results are vaccine safety findings that changed practice, and each shows a design choice you will reuse.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd><strong>MMR and immune thrombocytopenic purpura (ITP).</strong> Using linked immunisation and hospital admission records in England, Miller and colleagues (2001) confirmed a causal association in the six weeks after MMR, with an absolute risk of about 1 in 22,300 doses. About two of every three ITP cases in that window were attributable to the vaccine.<br><strong>Rotavirus vaccine and intussusception.</strong> Patel and colleagues (2011) used SCCS alongside a case-control analysis in Mexico and Brazil. In Mexico the relative incidence was about 5.3 in days 1–7 after the first dose of the monovalent vaccine; in Brazil there was no significant increase after the first dose.</dd>
-      <dt>Why it matters</dt>
-      <dd>Both turned a signal into a quantified, small absolute risk that could be weighed against benefit: measles and rotavirus kill far more children than these adverse events. Vaccination programmes continued with the risk disclosed.</dd>
-      <dt>How to read it</dt>
-      <dd>Look for a short, biologically plausible risk window; a clear age adjustment; and a translation into excess cases per doses. The Mexico–Brazil difference also shows that the IRR can vary between settings, so a Gulf-specific estimate is not redundant.</dd>
-    </dl>
+    <div class="facets">
+      <p><strong>MMR and immune thrombocytopenic purpura (ITP).</strong> Using linked immunisation and hospital admission records in England, Miller and colleagues (2001) confirmed a causal association in the six weeks after MMR, with an absolute risk of about 1 in 22,300 doses. About two of every three ITP cases in that window were attributable to the vaccine.<br><strong>Rotavirus vaccine and intussusception.</strong> Patel and colleagues (2011) used SCCS alongside a case-control analysis in Mexico and Brazil. In Mexico the relative incidence was about 5.3 in days 1–7 after the first dose of the monovalent vaccine; in Brazil there was no significant increase after the first dose.</p>
+      <p><strong class="lead">Why it matters.</strong> Both turned a signal into a quantified, small absolute risk that could be weighed against benefit: measles and rotavirus kill far more children than these adverse events. Vaccination programmes continued with the risk disclosed.</p>
+      <p><strong class="lead">How to read it.</strong> Look for a short, biologically plausible risk window; a clear age adjustment; and a translation into excess cases per doses. The Mexico–Brazil difference also shows that the IRR can vary between settings, so a Gulf-specific estimate is not redundant.</p>
+    </div>
 
     <div class="callout gulf">
       <div class="callout-title">In the Gulf</div>
@@ -299,14 +281,11 @@ m1             # exp(coef) for mmr = relative incidence in days 0–42</code></p
       </table>
     </div>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>A practical decision, not a ranking. Many safety studies run a cohort design and an SCCS side by side: if the two agree, despite different assumptions, confidence rises. US vaccine safety monitoring often uses a simpler cousin, the <em>self-controlled risk interval</em> design, which compares a risk window with a short nearby control window.</dd>
-      <dt>Why it matters</dt>
-      <dd>Reviewers and regulators ask "why this design?". The answer should name the confounding you feared and the timing assumptions you accepted instead.</dd>
-      <dt>What a change means</dt>
-      <dd>When a cohort study and an SCCS disagree, look first at time-varying confounding (which hurts SCCS) and indication or frailty (which hurts the cohort). The disagreement usually tells you which.</dd>
-    </dl>
+    <div class="facets">
+      <p>A practical decision, not a ranking. Many safety studies run a cohort design and an SCCS side by side: if the two agree, despite different assumptions, confidence rises. US vaccine safety monitoring often uses a simpler cousin, the <em>self-controlled risk interval</em> design, which compares a risk window with a short nearby control window.</p>
+      <p><strong class="lead">Why it matters.</strong> Reviewers and regulators ask "why this design?". The answer should name the confounding you feared and the timing assumptions you accepted instead.</p>
+      <p><strong class="lead">When it changes.</strong> When a cohort study and an SCCS disagree, look first at time-varying confounding (which hurts SCCS) and indication or frailty (which hurts the cohort). The disagreement usually tells you which.</p>
+    </div>
 
     <div class="callout example">
       <div class="callout-title">Example · Project 5A, a secondary question</div>

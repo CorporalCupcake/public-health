@@ -58,16 +58,12 @@
 
     \[ \widehat{\text{DiD}} = (\bar Y_{\text{T,post}} - \bar Y_{\text{T,pre}}) - (\bar Y_{\text{C,post}} - \bar Y_{\text{C,pre}}) \]
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>Two groups, two periods. The first difference (before vs after) removes anything fixed about each group, such as one country always having a higher sugar supply than the other. The second difference (treated vs comparison) removes anything that hits both groups in the same year, such as a regional price shock or COVID-19. What is left is the effect, <em>if</em> nothing else changed differently in the treated group at the same time.</dd>
-      <dt>Why it matters</dt>
-      <dd>The identifying assumption is <strong>parallel trends</strong>: the treated group’s untreated potential outcome (Lecture 4.1) would have changed by the same amount as the comparison group’s. Levels can differ; changes cannot. The target is the <strong>ATT</strong>, the average effect on the treated units, not on everyone.</dd>
-      <dt>How to read it</dt>
-      <dd>A DiD of −4 kg per person per year means the taxed country’s supply fell 4 kg more than the comparison’s did over the same years. Ask first: what is the counterfactual line, and why should I believe it? The estimate is only as good as the answer.</dd>
-      <dt>What a change means</dt>
-      <dd>If the treated group was already drifting down 0.5 kg a year faster before the tax, a DiD averaging six post years against seven pre years absorbs about 0.5 × 6.5 ≈ 3 kg of that drift into the “effect”. Small differences in trend become large biases over long follow-up.</dd>
-    </dl>
+    <div class="facets">
+      <p>Two groups, two periods. The first difference (before vs after) removes anything fixed about each group, such as one country always having a higher sugar supply than the other. The second difference (treated vs comparison) removes anything that hits both groups in the same year, such as a regional price shock or COVID-19. What is left is the effect, <em>if</em> nothing else changed differently in the treated group at the same time.</p>
+      <p><strong class="lead">Why it matters.</strong> The identifying assumption is <strong>parallel trends</strong>: the treated group’s untreated potential outcome (Lecture 4.1) would have changed by the same amount as the comparison group’s. Levels can differ; changes cannot. The target is the <strong>ATT</strong>, the average effect on the treated units, not on everyone.</p>
+      <p><strong class="lead">How to read it.</strong> A DiD of −4 kg per person per year means the taxed country’s supply fell 4 kg more than the comparison’s did over the same years. Ask first: what is the counterfactual line, and why should I believe it? The estimate is only as good as the answer.</p>
+      <p><strong class="lead">When it changes.</strong> If the treated group was already drifting down 0.5 kg a year faster before the tax, a DiD averaging six post years against seven pre years absorbs about 0.5 × 6.5 ≈ 3 kg of that drift into the “effect”. Small differences in trend become large biases over long follow-up.</p>
+    </div>
 
     <div class="widget" data-widget="did-2x2">
       <div class="widget-title">The 2×2 DiD explorer</div>
@@ -95,16 +91,12 @@
     <h2>2. Choosing the comparison group</h2>
     <p class="point">The comparison group is the whole design: pick the units whose untreated path is most believable as the treated group’s, and defend it with context, not just a pre-trend plot.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>Three options in a staggered rollout: <strong>never-treated</strong> units (Kuwait), <strong>not-yet-treated</strong> units (Oman and Qatar before 2019, as controls for the 2017 adopters), and <strong>external</strong> units outside the policy region (non-GCC countries). Conditional parallel trends adds covariates (GDP per person, population growth) so that trends need only be parallel among similar units.</dd>
-      <dt>Why it matters</dt>
-      <dd>Each option fails differently. Never-treated units may differ for a reason (why did Kuwait not tax?). Not-yet-treated units may change behaviour in anticipation of their own tax. External units share fewer shocks. And DiD needs <strong>no spillovers</strong>: the policy must not change the comparison group’s outcome.</dd>
-      <dt>How to read it</dt>
-      <dd>A good comparison shares the treated group’s shocks (prices, migration, economic cycle) and none of its policy. Check pre-trends on the outcome and on a few covariates, and say what would break the comparison.</dd>
-      <dt>What a change means</dt>
-      <dd>If the estimate moves from −4 to −1 when you swap Kuwait for not-yet-treated GCC states, one comparison is wrong or effects differ by comparison; report both and explain which you trust.</dd>
-    </dl>
+    <div class="facets">
+      <p>Three options in a staggered rollout: <strong>never-treated</strong> units (Kuwait), <strong>not-yet-treated</strong> units (Oman and Qatar before 2019, as controls for the 2017 adopters), and <strong>external</strong> units outside the policy region (non-GCC countries). Conditional parallel trends adds covariates (GDP per person, population growth) so that trends need only be parallel among similar units.</p>
+      <p><strong class="lead">Why it matters.</strong> Each option fails differently. Never-treated units may differ for a reason (why did Kuwait not tax?). Not-yet-treated units may change behaviour in anticipation of their own tax. External units share fewer shocks. And DiD needs <strong>no spillovers</strong>: the policy must not change the comparison group’s outcome.</p>
+      <p><strong class="lead">How to read it.</strong> A good comparison shares the treated group’s shocks (prices, migration, economic cycle) and none of its policy. Check pre-trends on the outcome and on a few covariates, and say what would break the comparison.</p>
+      <p><strong class="lead">When it changes.</strong> If the estimate moves from −4 to −1 when you swap Kuwait for not-yet-treated GCC states, one comparison is wrong or effects differ by comparison; report both and explain which you trust.</p>
+    </div>
 
     <div class="callout gulf">
       <div class="callout-title">Gulf example · Spillovers in Project 4</div>
@@ -122,16 +114,12 @@
     <h2>3. Two-way fixed effects and staggered adoption</h2>
     <p class="point">With staggered adoption and effects that change over time, the standard regression with unit and year fixed effects uses already-treated units as controls and can badly misstate the average effect.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd><strong>Two-way fixed effects</strong> (TWFE) regresses the outcome on a treated-now indicator plus a dummy for each unit and each year. In a 2×2 it equals DiD exactly. With staggered timing, Goodman-Bacon (2021) showed it is a weighted average of every possible 2×2 in the data, including <strong>forbidden comparisons</strong>: late adopters treated as “treated” and early adopters, already taxed, used as “controls”.</dd>
-      <dt>Why it matters</dt>
-      <dd>If the early adopters’ effect is still growing, their change after the late adoption date contains effect, not just trend, and subtracting it biases the late comparison. The weights also favour units treated in the middle of the panel, and some treated unit-years get <em>negative</em> weight (de Chaisemartin and D’Haultfœuille 2020). With constant effects none of this matters; with dynamic effects it can flip the sign.</dd>
-      <dt>How to read it</dt>
-      <dd>Run the Goodman-Bacon decomposition (<code>bacondecomp::bacon()</code>): it lists each 2×2, its estimate and its weight. Much weight on “later vs earlier treated” with estimates unlike the clean ones is a red flag.</dd>
-      <dt>What a change means</dt>
-      <dd>A TWFE estimate of −2 beside clean estimates of −4 means the forbidden comparisons are pulling towards zero, the typical result when a tax’s effect builds as habits and product recipes change.</dd>
-    </dl>
+    <div class="facets">
+      <p><strong>Two-way fixed effects</strong> (TWFE) regresses the outcome on a treated-now indicator plus a dummy for each unit and each year. In a 2×2 it equals DiD exactly. With staggered timing, Goodman-Bacon (2021) showed it is a weighted average of every possible 2×2 in the data, including <strong>forbidden comparisons</strong>: late adopters treated as “treated” and early adopters, already taxed, used as “controls”.</p>
+      <p><strong class="lead">Why it matters.</strong> If the early adopters’ effect is still growing, their change after the late adoption date contains effect, not just trend, and subtracting it biases the late comparison. The weights also favour units treated in the middle of the panel, and some treated unit-years get <em>negative</em> weight (de Chaisemartin and D’Haultfœuille 2020). With constant effects none of this matters; with dynamic effects it can flip the sign.</p>
+      <p><strong class="lead">How to read it.</strong> Run the Goodman-Bacon decomposition (<code>bacondecomp::bacon()</code>): it lists each 2×2, its estimate and its weight. Much weight on “later vs earlier treated” with estimates unlike the clean ones is a red flag.</p>
+      <p><strong class="lead">When it changes.</strong> A TWFE estimate of −2 beside clean estimates of −4 means the forbidden comparisons are pulling towards zero, the typical result when a tax’s effect builds as habits and product recipes change.</p>
+    </div>
 
     <div class="widget" data-widget="twfe-stagger">
       <div class="widget-title">Staggered adoption: TWFE vs the truth</div>
@@ -166,16 +154,12 @@
       </table>
     </div>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>All four assume parallel trends (and no anticipation) and differ mainly in which controls they use and how they weight. With a never-treated group and balanced data they usually agree closely.</dd>
-      <dt>Why it matters</dt>
-      <dd>Reviewers now expect one of these whenever timing is staggered, plus TWFE for comparison. A large gap between them is itself a finding: effects differ across cohorts or over time.</dd>
-      <dt>How to read it</dt>
-      <dd>Report the aggregation you chose: a simple overall ATT, an event-study path (effect by years since adoption), or effects by cohort. In Project 4 the cohort view matters: the 2017 and 2019 adopters may have responded differently.</dd>
-      <dt>What a change means</dt>
-      <dd>Switching the control group from never-treated to not-yet-treated changes which units carry the counterfactual. Stable results across both are reassuring; diverging ones point to anticipation or a poor never-treated unit.</dd>
-    </dl>
+    <div class="facets">
+      <p>All four assume parallel trends (and no anticipation) and differ mainly in which controls they use and how they weight. With a never-treated group and balanced data they usually agree closely.</p>
+      <p><strong class="lead">Why it matters.</strong> Reviewers now expect one of these whenever timing is staggered, plus TWFE for comparison. A large gap between them is itself a finding: effects differ across cohorts or over time.</p>
+      <p><strong class="lead">How to read it.</strong> Report the aggregation you chose: a simple overall ATT, an event-study path (effect by years since adoption), or effects by cohort. In Project 4 the cohort view matters: the 2017 and 2019 adopters may have responded differently.</p>
+      <p><strong class="lead">When it changes.</strong> Switching the control group from never-treated to not-yet-treated changes which units carry the counterfactual. Stable results across both are reassuring; diverging ones point to anticipation or a poor never-treated unit.</p>
+    </div>
 
     <pre><code>library(did)
 cs &lt;- att_gt(yname = "log_sugar", tname = "year", idname = "id",
@@ -203,16 +187,12 @@ ggdid(es)                                    # event-study plot</code></pre>
     <h2>5. Event studies, pre-trends and anticipation</h2>
     <p class="point">An event-study plot shows the effect for each year relative to adoption; the years before adoption are a falsification check and the years after are the effect’s path.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>Coefficients for each <strong>event time</strong> (years since adoption). <strong>Leads</strong> (negative event times) estimate “effects” before the policy; <strong>lags</strong> (zero and positive) estimate effects after. One period, usually −1, is the <strong>reference</strong> and fixed at zero.</dd>
-      <dt>Why it matters</dt>
-      <dd>It shows whether the effect is immediate, builds, or fades, and whether treated and control units were already diverging. A single DiD number hides both.</dd>
-      <dt>How to read it</dt>
-      <dd>Leads should hover around zero with no drift. Lags trace the effect. Late lags rest on fewer cohorts (only the 2017 adopters reach five years after), so their intervals widen and their composition changes.</dd>
-      <dt>What a change means</dt>
-      <dd>Leads drifting steadily downward towards −1 suggest a pre-existing trend or anticipation, and the lags inherit it. A spike at −1 then a drop at 0 is the classic stockpiling signature.</dd>
-    </dl>
+    <div class="facets">
+      <p>Coefficients for each <strong>event time</strong> (years since adoption). <strong>Leads</strong> (negative event times) estimate “effects” before the policy; <strong>lags</strong> (zero and positive) estimate effects after. One period, usually −1, is the <strong>reference</strong> and fixed at zero.</p>
+      <p><strong class="lead">Why it matters.</strong> It shows whether the effect is immediate, builds, or fades, and whether treated and control units were already diverging. A single DiD number hides both.</p>
+      <p><strong class="lead">How to read it.</strong> Leads should hover around zero with no drift. Lags trace the effect. Late lags rest on fewer cohorts (only the 2017 adopters reach five years after), so their intervals widen and their composition changes.</p>
+      <p><strong class="lead">When it changes.</strong> Leads drifting steadily downward towards −1 suggest a pre-existing trend or anticipation, and the lags inherit it. A spike at −1 then a drop at 0 is the classic stockpiling signature.</p>
+    </div>
 
     <figure class="diagram">
       <div class="diagram-title">Diagram · How to read an event-study plot</div>
@@ -283,16 +263,12 @@ ggdid(es)                                    # event-study plot</code></pre>
     <h2>6. Inference with few clusters</h2>
     <p class="point">Policy varies by country, so errors must be clustered by country; with six countries the usual cluster-robust standard errors are far too small, and even the fixes are fragile.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>Outcomes within a country are correlated over years, so the effective sample is closer to the number of countries than to country-years. <strong>Cluster-robust standard errors</strong> handle this but need many clusters: they are known to under-cover with fewer than roughly 30–50 (Cameron and Miller 2015). The <strong>wild cluster bootstrap</strong> (Cameron, Gelbach and Miller 2008) resamples by flipping the signs of whole clusters’ residuals and does much better with few clusters.</dd>
-      <dt>Why it matters</dt>
-      <dd>Project 4 has six GCC countries, five treated and one never treated. A conventional clustered p-value of 0.01 could easily be 0.2 in truth. With very few treated or very few control clusters, MacKinnon and Webb (2017) showed even the wild bootstrap can over- or under-reject badly.</dd>
-      <dt>How to read it</dt>
-      <dd>With six clusters, sign flips allow only \(2^6 = 64\) distinct bootstrap samples, so the p-value is coarse; Webb’s six-point weights give more. Report the bootstrap p-value and its weight type, and treat it as one strand of evidence.</dd>
-      <dt>What a change means</dt>
-      <dd>Adding non-GCC comparison countries raises the number of clusters (better inference) but weakens parallel trends (worse identification). That trade is the real decision, and it is why Project 4 also uses synthetic control with permutation inference (Lecture 4.8).</dd>
-    </dl>
+    <div class="facets">
+      <p>Outcomes within a country are correlated over years, so the effective sample is closer to the number of countries than to country-years. <strong>Cluster-robust standard errors</strong> handle this but need many clusters: they are known to under-cover with fewer than roughly 30–50 (Cameron and Miller 2015). The <strong>wild cluster bootstrap</strong> (Cameron, Gelbach and Miller 2008) resamples by flipping the signs of whole clusters’ residuals and does much better with few clusters.</p>
+      <p><strong class="lead">Why it matters.</strong> Project 4 has six GCC countries, five treated and one never treated. A conventional clustered p-value of 0.01 could easily be 0.2 in truth. With very few treated or very few control clusters, MacKinnon and Webb (2017) showed even the wild bootstrap can over- or under-reject badly.</p>
+      <p><strong class="lead">How to read it.</strong> With six clusters, sign flips allow only \(2^6 = 64\) distinct bootstrap samples, so the p-value is coarse; Webb’s six-point weights give more. Report the bootstrap p-value and its weight type, and treat it as one strand of evidence.</p>
+      <p><strong class="lead">When it changes.</strong> Adding non-GCC comparison countries raises the number of clusters (better inference) but weakens parallel trends (worse identification). That trade is the real decision, and it is why Project 4 also uses synthetic control with permutation inference (Lecture 4.8).</p>
+    </div>
 
     <pre><code>library(fwildclusterboot)   # archived from CRAN in 2024: install from GitHub
 fit &lt;- lm(log_sugar ~ taxed + factor(country) + factor(year), data = p4)
@@ -316,16 +292,12 @@ boottest(fit, param = "taxed", clustid = "country",
     <h2>7. Project 4 as a staggered DiD</h2>
     <p class="point">Write the design as a grid of countries by years before you write any code: it shows the cohorts, the clean comparisons, the forbidden ones and the awkward cells.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>Units: six GCC countries (plus optional non-GCC countries). Time: years in FAOSTAT’s food balance sheets. Outcome: sugar and sweetener supply per person (log scale if you expect proportional effects). Cohorts from Curriculum.md: Saudi Arabia and the UAE in 2017, Bahrain late in 2017, Oman and Qatar in 2019; Kuwait never.</dd>
-      <dt>Why it matters</dt>
-      <dd>Annual data with mid-year adoption means partly treated years. Saudi Arabia’s tax started in June 2017 and the UAE’s in October 2017, so 2017 is part-treated for both, and Bahrain’s 2017 is almost wholly untaxed. The December 2019 widening to all sweetened drinks in Saudi Arabia and the UAE is a second dose that a simple on/off coding ignores.</dd>
-      <dt>How to read it</dt>
-      <dd>Pre-specify the coding: first full taxed year as adoption (2018 for the 2017 adopters), or drop part-treated years. Show the other as a sensitivity analysis. Treat 2020 as a common shock that year effects absorb only if COVID-19 hit all six similarly.</dd>
-      <dt>What a change means</dt>
-      <dd>If moving adoption from 2017 to 2018 changes the estimate a lot, the first-year effect (or anticipation) is doing the work; report the event-study path rather than a single number.</dd>
-    </dl>
+    <div class="facets">
+      <p>Units: six GCC countries (plus optional non-GCC countries). Time: years in FAOSTAT’s food balance sheets. Outcome: sugar and sweetener supply per person (log scale if you expect proportional effects). Cohorts from Curriculum.md: Saudi Arabia and the UAE in 2017, Bahrain late in 2017, Oman and Qatar in 2019; Kuwait never.</p>
+      <p><strong class="lead">Why it matters.</strong> Annual data with mid-year adoption means partly treated years. Saudi Arabia’s tax started in June 2017 and the UAE’s in October 2017, so 2017 is part-treated for both, and Bahrain’s 2017 is almost wholly untaxed. The December 2019 widening to all sweetened drinks in Saudi Arabia and the UAE is a second dose that a simple on/off coding ignores.</p>
+      <p><strong class="lead">How to read it.</strong> Pre-specify the coding: first full taxed year as adoption (2018 for the 2017 adopters), or drop part-treated years. Show the other as a sensitivity analysis. Treat 2020 as a common shock that year effects absorb only if COVID-19 hit all six similarly.</p>
+      <p><strong class="lead">When it changes.</strong> If moving adoption from 2017 to 2018 changes the estimate a lot, the first-year effect (or anticipation) is doing the work; report the event-study path rather than a single number.</p>
+    </div>
 
     <figure class="diagram">
       <div class="diagram-title">Diagram · Project 4 adoption grid and the comparisons it allows</div>

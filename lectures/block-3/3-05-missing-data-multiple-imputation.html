@@ -57,14 +57,11 @@
     <h2>1. Why data are missing: MCAR, MAR, MNAR</h2>
     <p class="point">The missingness mechanism is a claim about what predicts whether a value is missing; it decides which methods give unbiased answers.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd><strong>MCAR</strong> (missing completely at random): missingness is unrelated to anything, observed or not. <strong>MAR</strong> (missing at random): missingness depends only on things you observed; among people with the same observed values, those missing are like those not missing. <strong>MNAR</strong> (missing not at random): missingness depends on the missing value itself, or on something unobserved related to it.</dd>
-      <dt>Why it matters</dt>
-      <dd>Complete-case analysis is safe under MCAR and in some MAR and MNAR cases (section 2). Standard MI assumes MAR. Under MNAR, no method using the observed data alone is guaranteed to work; you need assumptions and sensitivity analysis.</dd>
-      <dt>How to read it</dt>
-      <dd>MAR is conditional: it is true or false <em>given the variables you use</em>. Adding a variable that predicts missingness can turn MNAR into (approximately) MAR. You can show data are not MCAR (missingness predicted by observed variables), but no test can tell MAR from MNAR.</dd>
-    </dl>
+    <div class="facets">
+      <p><strong>MCAR</strong> (missing completely at random): missingness is unrelated to anything, observed or not. <strong>MAR</strong> (missing at random): missingness depends only on things you observed; among people with the same observed values, those missing are like those not missing. <strong>MNAR</strong> (missing not at random): missingness depends on the missing value itself, or on something unobserved related to it.</p>
+      <p><strong class="lead">Why it matters.</strong> Complete-case analysis is safe under MCAR and in some MAR and MNAR cases (section 2). Standard MI assumes MAR. Under MNAR, no method using the observed data alone is guaranteed to work; you need assumptions and sensitivity analysis.</p>
+      <p><strong class="lead">How to read it.</strong> MAR is conditional: it is true or false <em>given the variables you use</em>. Adding a variable that predicts missingness can turn MNAR into (approximately) MAR. You can show data are not MCAR (missingness predicted by observed variables), but no test can tell MAR from MNAR.</p>
+    </div>
 
     <figure class="diagram">
       <div class="diagram-title">Diagram · Missingness graphs (m-graphs)</div>
@@ -135,14 +132,11 @@
     <h2>2. When complete-case analysis is fine</h2>
     <p class="point">For regression coefficients, complete cases are unbiased whenever missingness does not depend on the outcome once the model’s covariates are accounted for, even if it depends strongly on those covariates.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>Complete-case analysis (CC) uses only rows with every analysis variable observed. A regression estimates the outcome’s distribution <em>given</em> the covariates. If being complete depends only on the covariates, CC changes <em>which</em> covariate values you see, not how the outcome behaves at each value, so the slope is unbiased.</dd>
-      <dt>Why it matters</dt>
-      <dd>This holds even when a covariate is missing because of its own value (formally MNAR), as long as that has nothing to do with the outcome. In that case CC is unbiased and standard MI, which assumes MAR, can be biased. For means and prevalences, by contrast, CC is biased whenever missingness relates to the variable, under MAR included.</dd>
-      <dt>How to read it</dt>
-      <dd>Ask one question: given the covariates in my model, does the chance of being complete depend on the outcome? If no, CC regression is unbiased (MI may still add precision). If yes, CC is biased and MI with good predictors of missingness may fix it. One exception for logistic regression: if missingness depends only on the outcome, odds ratios stay unbiased (the case-control logic); only the intercept is wrong.</dd>
-    </dl>
+    <div class="facets">
+      <p>Complete-case analysis (CC) uses only rows with every analysis variable observed. A regression estimates the outcome’s distribution <em>given</em> the covariates. If being complete depends only on the covariates, CC changes <em>which</em> covariate values you see, not how the outcome behaves at each value, so the slope is unbiased.</p>
+      <p><strong class="lead">Why it matters.</strong> This holds even when a covariate is missing because of its own value (formally MNAR), as long as that has nothing to do with the outcome. In that case CC is unbiased and standard MI, which assumes MAR, can be biased. For means and prevalences, by contrast, CC is biased whenever missingness relates to the variable, under MAR included.</p>
+      <p><strong class="lead">How to read it.</strong> Ask one question: given the covariates in my model, does the chance of being complete depend on the outcome? If no, CC regression is unbiased (MI may still add precision). If yes, CC is biased and MI with good predictors of missingness may fix it. One exception for logistic regression: if missingness depends only on the outcome, odds ratios stay unbiased (the case-control logic); only the intercept is wrong.</p>
+    </div>
 
     <div class="table-wrap">
       <table>
@@ -177,14 +171,11 @@
     <h2>3. Multiple imputation by chained equations</h2>
     <p class="point">MI fills each hole several times with plausible values drawn from a model, analyses each completed dataset, and combines the results so the uncertainty about the missing values shows up in the standard errors.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd><strong>MICE</strong> (also called fully conditional specification) imputes one variable at a time from a regression on all the others, cycles through the variables, and repeats until the draws settle. Run it to get <em>m</em> completed datasets that differ where data were missing. <strong>Predictive mean matching</strong> (PMM), the default for numbers, borrows an observed value from a donor with a similar prediction, so imputations stay realistic.</dd>
-      <dt>Why it matters</dt>
-      <dd>It handles mixed variable types (binary, categorical, skewed) with a separate model for each, which is why it is the workhorse in epidemiology.</dd>
-      <dt>How to read it</dt>
-      <dd>Check the trace plots: the chains should mix with no trend. Compare imputed with observed distributions: under MAR they may legitimately differ (older people’s values are imputed as older people’s values), but implausible values flag a bad model.</dd>
-    </dl>
+    <div class="facets">
+      <p><strong>MICE</strong> (also called fully conditional specification) imputes one variable at a time from a regression on all the others, cycles through the variables, and repeats until the draws settle. Run it to get <em>m</em> completed datasets that differ where data were missing. <strong>Predictive mean matching</strong> (PMM), the default for numbers, borrows an observed value from a donor with a similar prediction, so imputations stay realistic.</p>
+      <p><strong class="lead">Why it matters.</strong> It handles mixed variable types (binary, categorical, skewed) with a separate model for each, which is why it is the workhorse in epidemiology.</p>
+      <p><strong class="lead">How to read it.</strong> Check the trace plots: the chains should mix with no trend. Compare imputed with observed distributions: under MAR they may legitimately differ (older people’s values are imputed as older people’s values), but implausible values flag a bad model.</p>
+    </div>
 
 <pre><code>library(mice)
 pred <- make.predictorMatrix(d)
@@ -212,14 +203,11 @@ summary(pool(fit), conf.int = TRUE)        # Rubin's rules</code></pre>
     <h2>4. What goes in the imputation model</h2>
     <p class="point">Put in everything the analysis uses, including the outcome, plus auxiliary variables that predict the missing values or their missingness.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>Three groups. <strong>Analysis variables</strong>: exposure, outcome, confounders, in the same form the analysis uses them. <strong>Auxiliary variables</strong>: not in the analysis but correlated with the incomplete variable or with being missing. <strong>Design variables</strong>: survey weights, strata and clusters (section 7).</dd>
-      <dt>Why it matters</dt>
-      <dd>Imputed values only reflect relationships the imputation model contains. Leave the outcome out and you impute an exposure that is unrelated to the outcome, which drags the estimate towards no effect.</dd>
-      <dt>How to read it</dt>
-      <dd>A good methods paragraph lists the imputation model’s variables, says the outcome was included, names auxiliaries and states <em>m</em>. An imputation model simpler than the analysis model (missing interactions, missing non-linear terms) biases those terms towards zero.</dd>
-    </dl>
+    <div class="facets">
+      <p>Three groups. <strong>Analysis variables</strong>: exposure, outcome, confounders, in the same form the analysis uses them. <strong>Auxiliary variables</strong>: not in the analysis but correlated with the incomplete variable or with being missing. <strong>Design variables</strong>: survey weights, strata and clusters (section 7).</p>
+      <p><strong class="lead">Why it matters.</strong> Imputed values only reflect relationships the imputation model contains. Leave the outcome out and you impute an exposure that is unrelated to the outcome, which drags the estimate towards no effect.</p>
+      <p><strong class="lead">How to read it.</strong> A good methods paragraph lists the imputation model’s variables, says the outcome was included, names auxiliaries and states <em>m</em>. An imputation model simpler than the analysis model (missing interactions, missing non-linear terms) biases those terms towards zero.</p>
+    </div>
 
     <div class="callout trap">
       <div class="callout-title">Trap</div>
@@ -237,18 +225,14 @@ summary(pool(fit), conf.int = TRUE)        # Rubin's rules</code></pre>
     <h2>5. Rubin’s rules and how many imputations</h2>
     <p class="point">The pooled estimate is the average across imputations; its variance adds the ordinary sampling variance to the disagreement between imputations.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>With \(\bar W\) the average squared standard error within datasets and \(B\) the variance of the estimates between datasets, the total variance is
+    <div class="facets">
+      <p>With \(\bar W\) the average squared standard error within datasets and \(B\) the variance of the estimates between datasets, the total variance is
         \[ T = \bar W + \left(1 + \tfrac{1}{m}\right) B \]
-        The \(1/m\) term pays for using a finite number of imputations.</dd>
-      <dt>Why it matters</dt>
-      <dd>\(B\) is the price of the missing data. If imputations disagree a lot, the data say little about the missing values and the interval widens to show it.</dd>
-      <dt>How to read it</dt>
-      <dd>The <strong>fraction of missing information</strong> is roughly the share of \(T\) due to \(B\). It is often smaller than the share of incomplete cases, because the other variables recover some information. A rule of thumb: <em>m</em> at least the percentage of incomplete cases (White, Royston and Wood), so 30% incomplete means about 30 imputations.</dd>
-      <dt>What a change means</dt>
-      <dd>Going from 5 to 50 imputations barely moves the point estimate but makes the standard error and p-value reproducible: rerun with a new seed and you get the same answer to the decimal you report.</dd>
-    </dl>
+        The \(1/m\) term pays for using a finite number of imputations.</p>
+      <p><strong class="lead">Why it matters.</strong> \(B\) is the price of the missing data. If imputations disagree a lot, the data say little about the missing values and the interval widens to show it.</p>
+      <p><strong class="lead">How to read it.</strong> The <strong>fraction of missing information</strong> is roughly the share of \(T\) due to \(B\). It is often smaller than the share of incomplete cases, because the other variables recover some information. A rule of thumb: <em>m</em> at least the percentage of incomplete cases (White, Royston and Wood), so 30% incomplete means about 30 imputations.</p>
+      <p><strong class="lead">When it changes.</strong> Going from 5 to 50 imputations barely moves the point estimate but makes the standard error and p-value reproducible: rerun with a new seed and you get the same answer to the decimal you report.</p>
+    </div>
 
     <div class="widget" data-widget="rubin-rules">
       <div class="widget-title">Rubin’s rules: within, between and total variance</div>
@@ -266,14 +250,11 @@ summary(pool(fit), conf.int = TRUE)        # Rubin's rules</code></pre>
     <h2>6. Ratios, transformations and interactions</h2>
     <p class="point">When the analysis uses a derived variable such as the Na/K ratio, or an interaction, the imputation must respect it; otherwise the relationship you care about is diluted.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd><strong>Passive imputation</strong>: impute sodium and potassium, then recompute the ratio from them inside every iteration, so ratio and components always agree. <strong>“Just another variable”</strong>: impute the ratio (or log ratio) directly as its own variable, so its relationship with the outcome is modelled directly, at the cost of consistency with the components. <strong>Substantive-model-compatible FCS</strong> (the smcfcs package) imputes in a way that is consistent with the analysis model, including non-linear terms and interactions.</dd>
-      <dt>Why it matters</dt>
-      <dd>Passive imputation models Na and K but not the ratio’s link with the outcome, which can attenuate the ratio’s estimate. Simulation studies find no simple method is best everywhere; smcfcs is the principled option when the analysis has non-linear terms or interactions.</dd>
-      <dt>How to read it</dt>
-      <dd>For interactions (say Na/K × sex), impute separately within each sex or include the product terms in the imputation model. Otherwise the imputed data carry no interaction and the estimate shrinks towards none.</dd>
-    </dl>
+    <div class="facets">
+      <p><strong>Passive imputation</strong>: impute sodium and potassium, then recompute the ratio from them inside every iteration, so ratio and components always agree. <strong>“Just another variable”</strong>: impute the ratio (or log ratio) directly as its own variable, so its relationship with the outcome is modelled directly, at the cost of consistency with the components. <strong>Substantive-model-compatible FCS</strong> (the smcfcs package) imputes in a way that is consistent with the analysis model, including non-linear terms and interactions.</p>
+      <p><strong class="lead">Why it matters.</strong> Passive imputation models Na and K but not the ratio’s link with the outcome, which can attenuate the ratio’s estimate. Simulation studies find no simple method is best everywhere; smcfcs is the principled option when the analysis has non-linear terms or interactions.</p>
+      <p><strong class="lead">How to read it.</strong> For interactions (say Na/K × sex), impute separately within each sex or include the product terms in the imputation model. Otherwise the imputed data carry no interaction and the estimate shrinks towards none.</p>
+    </div>
 
 <pre><code>meth <- make.method(d)
 meth["nak_ratio"] <- "~ I(una / uk)"         # recomputed from imputed Na and K
@@ -293,14 +274,11 @@ imp <- mice(d, method = meth, predictorMatrix = pred, m = 30, seed = 2026)</code
     <h2>7. MI with survey weights and survival outcomes</h2>
     <p class="point">The imputation model must carry the survey design and the survival outcome; for survival, use the event indicator and the cumulative hazard, not raw follow-up time.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd><strong>Surveys</strong>: include the weights (or the variables that build them) and the strata and PSUs as predictors when imputing, then analyse each completed dataset with the full survey design and pool with Rubin’s rules. <strong>Survival</strong>: White and Royston (2009) showed the outcome is best represented by the event indicator plus the Nelson–Aalen estimate of the cumulative hazard at each person’s follow-up time; in their simulations, using raw or log time instead performed worse.</dd>
-      <dt>Why it matters</dt>
-      <dd>Ignoring the design in imputation can bias estimates for oversampled groups. Ignoring the survival outcome, or entering it badly, attenuates hazard ratios, which is exactly the estimate Project 3 reports.</dd>
-      <dt>How to read it</dt>
-      <dd>The Nelson–Aalen approach is an approximation that works best when effects are modest and events are not very common. With competing risks (Lecture 3.7), include an indicator and a cumulative hazard for each cause, or use smcfcs, which supports competing-risks models.</dd>
-    </dl>
+    <div class="facets">
+      <p><strong>Surveys</strong>: include the weights (or the variables that build them) and the strata and PSUs as predictors when imputing, then analyse each completed dataset with the full survey design and pool with Rubin’s rules. <strong>Survival</strong>: White and Royston (2009) showed the outcome is best represented by the event indicator plus the Nelson–Aalen estimate of the cumulative hazard at each person’s follow-up time; in their simulations, using raw or log time instead performed worse.</p>
+      <p><strong class="lead">Why it matters.</strong> Ignoring the design in imputation can bias estimates for oversampled groups. Ignoring the survival outcome, or entering it badly, attenuates hazard ratios, which is exactly the estimate Project 3 reports.</p>
+      <p><strong class="lead">How to read it.</strong> The Nelson–Aalen approach is an approximation that works best when effects are modest and events are not very common. With competing risks (Lecture 3.7), include an indicator and a cumulative hazard for each cause, or use smcfcs, which supports competing-risks models.</p>
+    </div>
 
 <pre><code>d$H0 <- nelsonaalen(d, fu_months, cvd_death)   # Nelson–Aalen cumulative hazard
 pred <- make.predictorMatrix(d)
@@ -330,14 +308,11 @@ summary(MIcombine(fits))                        # Rubin's rules, design-based SE
     <h2>8. Sensitivity analysis for MNAR</h2>
     <p class="point">Because MAR can’t be checked, show how far the answer moves if missing people differ systematically from similar observed people.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd><strong>Delta adjustment</strong>: impute under MAR, then shift the imputed values by a chosen amount δ (“people with missing urine have Na/K about 10% higher than similar people with urine”), re-analyse and pool. Repeat over a range of δ. The <strong>tipping point</strong> is the δ at which the conclusion changes.</dd>
-      <dt>Why it matters</dt>
-      <dd>It turns an untestable assumption into a transparent statement reviewers can judge: “the hazard ratio stays above 1 unless missing participants’ ratios are more than 30% lower than observed participants like them.”</dd>
-      <dt>How to read it</dt>
-      <dd>Choose the δ range from evidence (who skips the exam, what non-responders are known to be like), not from what makes the result look stable. A large tipping point is reassuring; a small one means the result rests on MAR.</dd>
-    </dl>
+    <div class="facets">
+      <p><strong>Delta adjustment</strong>: impute under MAR, then shift the imputed values by a chosen amount δ (“people with missing urine have Na/K about 10% higher than similar people with urine”), re-analyse and pool. Repeat over a range of δ. The <strong>tipping point</strong> is the δ at which the conclusion changes.</p>
+      <p><strong class="lead">Why it matters.</strong> It turns an untestable assumption into a transparent statement reviewers can judge: “the hazard ratio stays above 1 unless missing participants’ ratios are more than 30% lower than observed participants like them.”</p>
+      <p><strong class="lead">How to read it.</strong> Choose the δ range from evidence (who skips the exam, what non-responders are known to be like), not from what makes the result look stable. A large tipping point is reassuring; a small one means the result rests on MAR.</p>
+    </div>
 
 <pre><code>for (delta in c(-0.2, -0.1, 0, 0.1, 0.2)) {      # shifts on the log scale
   post <- make.post(d)

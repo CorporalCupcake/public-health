@@ -55,21 +55,17 @@
     <h2>1. What “cause” means</h2>
     <p class="point">An exposure causes an outcome in a person if their outcome would have been different had their exposure been different, everything else held the same.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>Each person has two <strong>potential outcomes</strong>: \(Y(1)\), what would happen if exposed, and \(Y(0)\), what would happen if not. The individual causal effect is the difference. We only ever see one of the two: the one matching what actually happened. The other is the <em>counterfactual</em>.</dd>
-      <dt>Why it matters</dt>
-      <dd>It turns “causation” from a philosophical word into a quantity with a definition. It also tells you what any study is trying to estimate, and so what could go wrong.</dd>
-      <dt>How to read it</dt>
-      <dd>Because individual effects are unobservable, epidemiology targets the <strong>average causal effect</strong>: the risk if everyone were exposed minus the risk if no one were.</dd>
-    </dl>
+    <div class="facets">
+      <p>Each person has two <strong>potential outcomes</strong>: \(Y(1)\), what would happen if exposed, and \(Y(0)\), what would happen if not. The individual causal effect is the difference. We only ever see one of the two: the one matching what actually happened. The other is the <em>counterfactual</em>.</p>
+      <p><strong class="lead">Why it matters.</strong> It turns “causation” from a philosophical word into a quantity with a definition. It also tells you what any study is trying to estimate, and so what could go wrong.</p>
+      <p><strong class="lead">How to read it.</strong> Because individual effects are unobservable, epidemiology targets the <strong>average causal effect</strong>: the risk if everyone were exposed minus the risk if no one were.</p>
+    </div>
 
     \[ \text{ACE} = \Pr[Y(1)=1] - \Pr[Y(0)=1] \]
 
-    <dl class="facets">
-      <dt>What a change means</dt>
-      <dd>An ACE of −5 percentage points means that treating everyone would leave 5 fewer people per 100 with the outcome than treating no one. It does not tell you which 5, or whether some people were harmed and more were helped.</dd>
-    </dl>
+    <div class="facets">
+      <p><strong class="lead">When it changes.</strong> An ACE of −5 percentage points means that treating everyone would leave 5 fewer people per 100 with the outcome than treating no one. It does not tell you which 5, or whether some people were harmed and more were helped.</p>
+    </div>
 
     <div class="callout trap">
       <div class="callout-title">Trap</div>
@@ -87,16 +83,12 @@
     <h2>2. From people to populations</h2>
     <p class="point">Comparing exposed with unexposed people estimates the causal effect only if the two groups are <em>exchangeable</em>: had they swapped exposures, they would have had each other’s outcomes.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>The unexposed group stands in for the missing counterfactual of the exposed group. That works when the groups are alike in everything that affects the outcome. Randomisation makes this true on average. In observational data you hope adjustment makes it true within strata (<em>conditional exchangeability</em>).</dd>
-      <dt>Why it matters</dt>
-      <dd>Confounding (Lecture 2.6) is simply a lack of exchangeability. Selection bias (Lecture 2.7) is a lack of exchangeability created by who got into the analysis.</dd>
-      <dt>How to read it</dt>
-      <dd>Ask: “if the treated had not been treated, would their risk equal the untreated group’s risk?” If doctors chose who to treat on prognosis, the answer is no.</dd>
-      <dt>What a change means</dt>
-      <dd>Moving from “doctors choose” to “coin flips choose” turns an association into a causal estimate, at the cost of chance error, which shrinks as the sample grows.</dd>
-    </dl>
+    <div class="facets">
+      <p>The unexposed group stands in for the missing counterfactual of the exposed group. That works when the groups are alike in everything that affects the outcome. Randomisation makes this true on average. In observational data you hope adjustment makes it true within strata (<em>conditional exchangeability</em>).</p>
+      <p><strong class="lead">Why it matters.</strong> Confounding (Lecture 2.6) is simply a lack of exchangeability. Selection bias (Lecture 2.7) is a lack of exchangeability created by who got into the analysis.</p>
+      <p><strong class="lead">How to read it.</strong> Ask: “if the treated had not been treated, would their risk equal the untreated group’s risk?” If doctors chose who to treat on prognosis, the answer is no.</p>
+      <p><strong class="lead">When it changes.</strong> Moving from “doctors choose” to “coin flips choose” turns an association into a causal estimate, at the cost of chance error, which shrinks as the sample grows.</p>
+    </div>
 
     <div class="widget" data-widget="potential-outcomes">
       <div class="widget-title">Potential outcomes for 16 patients</div>
@@ -119,16 +111,12 @@
     <h2>3. Causal pies</h2>
     <p class="point">Most diseases need several component causes acting together; any complete set is a <em>sufficient cause</em>, and blocking any one component prevents every case that set would cause.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>Rothman’s <strong>sufficient-component cause model</strong>. Draw each sufficient cause as a pie. Its slices are <em>component causes</em>. Disease occurs when every slice of at least one pie is present. A component found in every pie is a <em>necessary cause</em> (the tubercle bacillus for tuberculosis).</dd>
-      <dt>Why it matters</dt>
-      <dd>It explains three things that puzzle newcomers. Why most smokers never get lung cancer: the other slices are missing. Why the “strength” of a cause varies between populations: it depends on how common its partner components are. And why attributable fractions add up to more than 100%.</dd>
-      <dt>How to read it</dt>
-      <dd>A component in pies that cause many cases is a high-leverage target. Each case can be prevented by removing any one slice of its pie, so the same case is “attributable” to several causes at once.</dd>
-      <dt>What a change means</dt>
-      <dd>If a partner component becomes more common (say, a new co-exposure spreads), the measured RR for a cause rises even though its biology hasn’t changed.</dd>
-    </dl>
+    <div class="facets">
+      <p>Rothman’s <strong>sufficient-component cause model</strong>. Draw each sufficient cause as a pie. Its slices are <em>component causes</em>. Disease occurs when every slice of at least one pie is present. A component found in every pie is a <em>necessary cause</em> (the tubercle bacillus for tuberculosis).</p>
+      <p><strong class="lead">Why it matters.</strong> It explains three things that puzzle newcomers. Why most smokers never get lung cancer: the other slices are missing. Why the “strength” of a cause varies between populations: it depends on how common its partner components are. And why attributable fractions add up to more than 100%.</p>
+      <p><strong class="lead">How to read it.</strong> A component in pies that cause many cases is a high-leverage target. Each case can be prevented by removing any one slice of its pie, so the same case is “attributable” to several causes at once.</p>
+      <p><strong class="lead">When it changes.</strong> If a partner component becomes more common (say, a new co-exposure spreads), the measured RR for a cause rises even though its biology hasn’t changed.</p>
+    </div>
 
     <div class="widget" data-widget="causal-pies">
       <div class="widget-title">Remove a component, prevent a pie</div>
@@ -151,14 +139,11 @@
     <h2>4. Bradford Hill’s viewpoints</h2>
     <p class="point">Hill’s nine viewpoints are prompts for judging whether an association is causal, not a scoring system: only temporality is required.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>In 1965 Austin Bradford Hill listed nine aspects of an association to consider before calling it causal. He wrote that none of them “can bring indisputable evidence for or against the cause-and-effect hypothesis and none can be required as a sine qua non”.</dd>
-      <dt>Why it matters</dt>
-      <dd>Guideline panels, GBD’s risk-outcome selection and expert reviews still structure causal judgements around them. Used well, they make you look for evidence beyond one study. Used badly, they become a tick-box.</dd>
-      <dt>How to read it</dt>
-      <dd>Today, read each viewpoint as a question about bias: could confounding, selection or measurement error explain this feature of the evidence?</dd>
-    </dl>
+    <div class="facets">
+      <p>In 1965 Austin Bradford Hill listed nine aspects of an association to consider before calling it causal. He wrote that none of them “can bring indisputable evidence for or against the cause-and-effect hypothesis and none can be required as a sine qua non”.</p>
+      <p><strong class="lead">Why it matters.</strong> Guideline panels, GBD’s risk-outcome selection and expert reviews still structure causal judgements around them. Used well, they make you look for evidence beyond one study. Used badly, they become a tick-box.</p>
+      <p><strong class="lead">How to read it.</strong> Today, read each viewpoint as a question about bias: could confounding, selection or measurement error explain this feature of the evidence?</p>
+    </div>
 
     <div class="table-wrap">
       <table>
@@ -191,14 +176,11 @@
     <h2>5. DAGs: drawing your assumptions</h2>
     <p class="point">A directed acyclic graph (DAG) is a diagram of what causes what; it tells you which variables to adjust for and, just as important, which not to.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>Nodes are variables; arrows are direct causal effects; no loops. An association between exposure and outcome can flow along any path between them. A causal path follows arrows forward. A <em>backdoor</em> path starts with an arrow into the exposure and carries confounding.</dd>
-      <dt>Why it matters</dt>
-      <dd>It replaces “adjust for everything associated with both” (which can introduce bias) with a rule: block every backdoor path, and don’t adjust for mediators or colliders. You met colliders in Lecture 2.7.</dd>
-      <dt>How to read it</dt>
-      <dd>Missing arrows are the strong claims. Every arrow you leave out asserts that one variable has no direct effect on another. Reviewers should argue with those.</dd>
-    </dl>
+    <div class="facets">
+      <p>Nodes are variables; arrows are direct causal effects; no loops. An association between exposure and outcome can flow along any path between them. A causal path follows arrows forward. A <em>backdoor</em> path starts with an arrow into the exposure and carries confounding.</p>
+      <p><strong class="lead">Why it matters.</strong> It replaces “adjust for everything associated with both” (which can introduce bias) with a rule: block every backdoor path, and don’t adjust for mediators or colliders. You met colliders in Lecture 2.7.</p>
+      <p><strong class="lead">How to read it.</strong> Missing arrows are the strong claims. Every arrow you leave out asserts that one variable has no direct effect on another. Reviewers should argue with those.</p>
+    </div>
 
     <figure class="diagram">
       <div class="diagram-title">Diagram · Three structures, three adjustment decisions</div>
@@ -257,16 +239,12 @@
     <h2>6. Triangulation</h2>
     <p class="point">The most convincing causal evidence comes from several approaches with different, unrelated biases that point the same way.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>Lawlor, Tilling and Davey Smith’s idea: deliberately combine designs whose main sources of bias differ (cohorts, trials, natural experiments, Mendelian randomisation, negative controls), and state for each the direction its bias would push.</dd>
-      <dt>Why it matters</dt>
-      <dd>Ten cohorts that share the same confounding agree for the wrong reason. Two designs with opposite biases that agree are much harder to explain away. It is Hill’s “consistency” made rigorous.</dd>
-      <dt>How to read it</dt>
-      <dd>Agreement across designs with different biases: stronger case. Disagreement: find the design whose bias best explains the split.</dd>
-      <dt>What a change means</dt>
-      <dd>When a new design with a different bias profile disagrees with established cohorts, the question is not “which is right on average” but “which bias is more plausible here”.</dd>
-    </dl>
+    <div class="facets">
+      <p>Lawlor, Tilling and Davey Smith’s idea: deliberately combine designs whose main sources of bias differ (cohorts, trials, natural experiments, Mendelian randomisation, negative controls), and state for each the direction its bias would push.</p>
+      <p><strong class="lead">Why it matters.</strong> Ten cohorts that share the same confounding agree for the wrong reason. Two designs with opposite biases that agree are much harder to explain away. It is Hill’s “consistency” made rigorous.</p>
+      <p><strong class="lead">How to read it.</strong> Agreement across designs with different biases: stronger case. Disagreement: find the design whose bias best explains the split.</p>
+      <p><strong class="lead">When it changes.</strong> When a new design with a different bias profile disagrees with established cohorts, the question is not “which is right on average” but “which bias is more plausible here”.</p>
+    </div>
 
     <div class="callout example">
       <div class="callout-title">Example</div>

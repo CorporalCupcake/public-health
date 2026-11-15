@@ -55,16 +55,12 @@
     <h2>1. Single-arm trials need a comparator from outside</h2>
     <p class="point">A response rate of 40% means nothing until you know what would have happened without the drug; an external control supplies that “without”.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>An <strong>externally controlled trial</strong> compares patients treated in a trial with patients who were not in it: people treated earlier (a <em>historical</em> control) or elsewhere at the same time. Industry often calls this a “synthetic control arm”. The external patients were never randomised, so the comparison carries all the confounding risks of an observational study.</dd>
-      <dt>Why it matters</dt>
-      <dd>It is used where randomisation is hard: rare diseases with a few dozen patients worldwide, cancers with no effective standard treatment, and diseases so lethal that a placebo arm is unacceptable. In these settings it can be the difference between some comparative evidence and none.</dd>
-      <dt>How to read it</dt>
-      <dd>The case is strongest when the untreated course is predictable and well documented, the outcome is objective (death, a lab value), and the effect is large compared with the variation between patients. It is weakest for small effects, subjective outcomes or diseases whose course varies a lot.</dd>
-      <dt>What a change means</dt>
-      <dd>A gap between treated and external patients that shrinks sharply after weighting is a warning: the raw contrast was mostly differences in who was enrolled. A gap that survives weighting, negative-control checks and a bias analysis (Lecture 2.13) is more believable.</dd>
-    </dl>
+    <div class="facets">
+      <p>An <strong>externally controlled trial</strong> compares patients treated in a trial with patients who were not in it: people treated earlier (a <em>historical</em> control) or elsewhere at the same time. Industry often calls this a “synthetic control arm”. The external patients were never randomised, so the comparison carries all the confounding risks of an observational study.</p>
+      <p><strong class="lead">Why it matters.</strong> It is used where randomisation is hard: rare diseases with a few dozen patients worldwide, cancers with no effective standard treatment, and diseases so lethal that a placebo arm is unacceptable. In these settings it can be the difference between some comparative evidence and none.</p>
+      <p><strong class="lead">How to read it.</strong> The case is strongest when the untreated course is predictable and well documented, the outcome is objective (death, a lab value), and the effect is large compared with the variation between patients. It is weakest for small effects, subjective outcomes or diseases whose course varies a lot.</p>
+      <p><strong class="lead">When it changes.</strong> A gap between treated and external patients that shrinks sharply after weighting is a warning: the raw contrast was mostly differences in who was enrolled. A gap that survives weighting, negative-control checks and a bias analysis (Lecture 2.13) is more believable.</p>
+    </div>
 
     <div class="table-wrap">
       <table>
@@ -131,14 +127,11 @@
     <h2>3. What breaks the comparison</h2>
     <p class="point">Four things sink most external control analyses: who gets selected, when the clock starts, how the era has changed, and how outcomes are measured.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>An external control analysis is a target trial emulation (Lecture 4.5) in which one arm is real. The pipeline: define the index date in both groups, apply the trial’s eligibility rules to the external data, weight or match, and compare outcomes defined the same way.</dd>
-      <dt>Why it matters</dt>
-      <dd>Each step has its own failure, and weighting fixes only one of them: measured baseline differences. The others need design.</dd>
-      <dt>How to read it</dt>
-      <dd>For each threat, ask what the authors did about it by design, and what they left to a sensitivity analysis. “Adjusted for age, sex and stage” addresses only step 3.</dd>
-    </dl>
+    <div class="facets">
+      <p>An external control analysis is a target trial emulation (Lecture 4.5) in which one arm is real. The pipeline: define the index date in both groups, apply the trial’s eligibility rules to the external data, weight or match, and compare outcomes defined the same way.</p>
+      <p><strong class="lead">Why it matters.</strong> Each step has its own failure, and weighting fixes only one of them: measured baseline differences. The others need design.</p>
+      <p><strong class="lead">How to read it.</strong> For each threat, ask what the authors did about it by design, and what they left to a sensitivity analysis. “Adjusted for age, sex and stage” addresses only step 3.</p>
+    </div>
 
     <figure class="diagram">
       <div class="diagram-title">Diagram · The external control pipeline and where it breaks</div>
@@ -228,16 +221,12 @@
     <h2>4. Making the external group resemble the trial</h2>
     <p class="point">Weight the external patients so their baseline mix matches the trial patients; the target is the effect in people like those enrolled.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>Fit a propensity score for “being in the trial” rather than “being treated” (Lecture 5.4). Trial patients keep weight 1. External patients get <em>odds weights</em>, \( e/(1-e) \), so those who look like trial patients count more. This targets the <strong>average treatment effect in the treated</strong> (ATT): the effect in the trial’s population.</dd>
-      <dt>Why it matters</dt>
-      <dd>The trial population is what the label will describe, so the ATT is usually the right estimand. It also avoids extrapolating to external patients who would never have been eligible.</dd>
-      <dt>How to read it</dt>
-      <dd>Check balance after weighting (standardised mean differences under 0.1 is the usual target) and the <em>effective sample size</em> of the weighted external group. If 500 external patients shrink to an effective 40, a few heavily weighted people are driving the answer.</dd>
-      <dt>What a change means</dt>
-      <dd>If adding one more prognostic factor moves the hazard ratio from 0.55 to 0.80, the result depends on what was measured. Show that sensitivity rather than reporting the most flattering model.</dd>
-    </dl>
+    <div class="facets">
+      <p>Fit a propensity score for “being in the trial” rather than “being treated” (Lecture 5.4). Trial patients keep weight 1. External patients get <em>odds weights</em>, \( e/(1-e) \), so those who look like trial patients count more. This targets the <strong>average treatment effect in the treated</strong> (ATT): the effect in the trial’s population.</p>
+      <p><strong class="lead">Why it matters.</strong> The trial population is what the label will describe, so the ATT is usually the right estimand. It also avoids extrapolating to external patients who would never have been eligible.</p>
+      <p><strong class="lead">How to read it.</strong> Check balance after weighting (standardised mean differences under 0.1 is the usual target) and the <em>effective sample size</em> of the weighted external group. If 500 external patients shrink to an effective 40, a few heavily weighted people are driving the answer.</p>
+      <p><strong class="lead">When it changes.</strong> If adding one more prognostic factor moves the hazard ratio from 0.55 to 0.80, the result depends on what was measured. Show that sensitivity rather than reporting the most flattering model.</p>
+    </div>
 
     <pre><code>library(WeightIt); library(cobalt); library(survival)
 d$trial &lt;- as.integer(d$source == "trial")    # 1 = treated in the single-arm trial
@@ -265,16 +254,12 @@ fit &lt;- coxph(Surv(months, died) ~ trial, data = d,
     <h2>5. Bayesian dynamic borrowing</h2>
     <p class="point">If the trial has some concurrent controls, borrow external controls to add precision, and let the amount borrowed fall automatically when the two disagree.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>A <em>hybrid</em> design randomises, say, 2:1 or 3:1 and tops up the small control arm with external controls through the prior. A <strong>power prior</strong> raises the external likelihood to a power \( a_0 \) between 0 and 1: 0 ignores it, 1 pools it fully. A <strong>commensurate prior</strong> estimates how similar the two control groups are and borrows more when they agree. A <strong>meta-analytic-predictive (MAP) prior</strong> pools several historical control arms with a random-effects model and predicts the next trial’s control rate. The between-trial spread decides how much it is worth. A <em>robust</em> MAP prior adds a vague component so the trial data can overrule it.</dd>
-      <dt>Why it matters</dt>
-      <dd>It cuts the number of patients randomised to control, which matters most in rare and paediatric diseases. It also makes the external data’s influence explicit and pre-specified.</dd>
-      <dt>How to read it</dt>
-      <dd>Look at the <strong>effective sample size</strong> (ESS) of the prior: how many trial patients it is worth. A prior worth 150 patients next to a 40-patient control arm dominates the result. Look also at how far ESS drops when the data conflict with it.</dd>
-      <dt>What a change means</dt>
-      <dd>Raising \( a_0 \) from 0.2 to 0.8 makes the estimate more precise when the sources agree and more biased when they do not. Dynamic methods aim to get the first without the second, but no method fully escapes the trade-off.</dd>
-    </dl>
+    <div class="facets">
+      <p>A <em>hybrid</em> design randomises, say, 2:1 or 3:1 and tops up the small control arm with external controls through the prior. A <strong>power prior</strong> raises the external likelihood to a power \( a_0 \) between 0 and 1: 0 ignores it, 1 pools it fully. A <strong>commensurate prior</strong> estimates how similar the two control groups are and borrows more when they agree. A <strong>meta-analytic-predictive (MAP) prior</strong> pools several historical control arms with a random-effects model and predicts the next trial’s control rate. The between-trial spread decides how much it is worth. A <em>robust</em> MAP prior adds a vague component so the trial data can overrule it.</p>
+      <p><strong class="lead">Why it matters.</strong> It cuts the number of patients randomised to control, which matters most in rare and paediatric diseases. It also makes the external data’s influence explicit and pre-specified.</p>
+      <p><strong class="lead">How to read it.</strong> Look at the <strong>effective sample size</strong> (ESS) of the prior: how many trial patients it is worth. A prior worth 150 patients next to a 40-patient control arm dominates the result. Look also at how far ESS drops when the data conflict with it.</p>
+      <p><strong class="lead">When it changes.</strong> Raising \( a_0 \) from 0.2 to 0.8 makes the estimate more precise when the sources agree and more biased when they do not. Dynamic methods aim to get the first without the second, but no method fully escapes the trade-off.</p>
+    </div>
 
     \[ \pi(\theta \mid D, D_0) \;\propto\; L(\theta \mid D)\; L(\theta \mid D_0)^{a_0}\; \pi_0(\theta) \]
     <p>The power prior in one line: the trial data \( D \) count fully, the external data \( D_0 \) count with weight \( a_0 \). With a binary endpoint and \( n_0 \) external patients, a fixed \( a_0 \) borrows roughly \( a_0 n_0 \) patients’ worth of information.</p>
@@ -310,14 +295,11 @@ post &lt;- postmix(rmap, n = 30, r = 12)         # update with the concurrent co
     <h2>6. How regulators judge external controls</h2>
     <p class="point">Regulators accept an external control when the effect is large, the outcome objective, the natural history predictable, and the analysis fixed in advance on patient-level data.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>ICH E10 (2000) already said external controls suit only cases where the effect is dramatic and the untreated course predictable. FDA’s draft guidance <em>Considerations for the Design and Conduct of Externally Controlled Trials for Drug and Biological Products</em> (February 2023; still a draft as of late 2026 as far as can be found) adds the practical rules. Write the protocol and analysis plan before comparing outcomes. Justify the choice of source. Align eligibility, index date and outcome definitions. Give the FDA patient-level data. EMA’s reflection paper on single-arm trials as pivotal evidence (final, adopted by its CHMP) states that judging efficacy needs comparative information, and leaves external controls themselves out of its scope.</dd>
-      <dt>Why it matters</dt>
-      <dd>The questions reviewers ask are mostly about design, not statistics. Was the source chosen before outcomes were seen? Do the index dates match? Is the outcome measured comparably?</dd>
-      <dt>How to read it</dt>
-      <dd>Approvals that lean on external controls are mostly in rare diseases or cancers with large effects. They often come through accelerated or conditional routes that require confirmation later (Lecture 5.11).</dd>
-    </dl>
+    <div class="facets">
+      <p>ICH E10 (2000) already said external controls suit only cases where the effect is dramatic and the untreated course predictable. FDA’s draft guidance <em>Considerations for the Design and Conduct of Externally Controlled Trials for Drug and Biological Products</em> (February 2023; still a draft as of late 2026 as far as can be found) adds the practical rules. Write the protocol and analysis plan before comparing outcomes. Justify the choice of source. Align eligibility, index date and outcome definitions. Give the FDA patient-level data. EMA’s reflection paper on single-arm trials as pivotal evidence (final, adopted by its CHMP) states that judging efficacy needs comparative information, and leaves external controls themselves out of its scope.</p>
+      <p><strong class="lead">Why it matters.</strong> The questions reviewers ask are mostly about design, not statistics. Was the source chosen before outcomes were seen? Do the index dates match? Is the outcome measured comparably?</p>
+      <p><strong class="lead">How to read it.</strong> Approvals that lean on external controls are mostly in rare diseases or cancers with large effects. They often come through accelerated or conditional routes that require confirmation later (Lecture 5.11).</p>
+    </div>
 
     <div class="table-wrap">
       <table>

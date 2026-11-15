@@ -56,16 +56,12 @@
     <h2>1. Why clustering matters</h2>
     <p class="point">Twenty measurements from one patient are not twenty patients’ worth of information; ignore that and your standard errors shrink for no reason.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>Data are <em>clustered</em> when observations share a unit that makes them alike: repeated visits of one person (longitudinal data), patients of one clinic, residents of one district. The <em>intraclass correlation</em> (ICC) measures how alike: the share of total variance that lies between clusters. ICC 0 means the cluster tells you nothing; ICC 1 means everyone in a cluster is identical.</dd>
-      <dt>Why it matters</dt>
-      <dd>Standard regression assumes every row is independent. With clustering, each extra row adds less than one row of information. For anything that varies <em>between</em> clusters (a clinic’s treatment arm, a region’s policy), ignoring clustering makes standard errors too small and p-values too optimistic.</dd>
-      <dt>How to read it</dt>
-      <dd>Patients within the same practice: ICCs are usually small. Across 31 primary care studies the median was 0.01 (Adams et al. 2004). Repeated measurements within the same person: usually large, because people differ far more from each other than from themselves next month.</dd>
-      <dt>What a change means</dt>
-      <dd>Small ICCs matter when clusters are big. The penalty grows with cluster size as well as ICC, which is the design effect you met in Lecture 3.4.</dd>
-    </dl>
+    <div class="facets">
+      <p>Data are <em>clustered</em> when observations share a unit that makes them alike: repeated visits of one person (longitudinal data), patients of one clinic, residents of one district. The <em>intraclass correlation</em> (ICC) measures how alike: the share of total variance that lies between clusters. ICC 0 means the cluster tells you nothing; ICC 1 means everyone in a cluster is identical.</p>
+      <p><strong class="lead">Why it matters.</strong> Standard regression assumes every row is independent. With clustering, each extra row adds less than one row of information. For anything that varies <em>between</em> clusters (a clinic’s treatment arm, a region’s policy), ignoring clustering makes standard errors too small and p-values too optimistic.</p>
+      <p><strong class="lead">How to read it.</strong> Patients within the same practice: ICCs are usually small. Across 31 primary care studies the median was 0.01 (Adams et al. 2004). Repeated measurements within the same person: usually large, because people differ far more from each other than from themselves next month.</p>
+      <p><strong class="lead">When it changes.</strong> Small ICCs matter when clusters are big. The penalty grows with cluster size as well as ICC, which is the design effect you met in Lecture 3.4.</p>
+    </div>
 
     \[ \text{DEFF} = 1 + (m-1)\,\rho \]
     <p>Here \(m\) is the average cluster size and \(\rho\) the ICC. Divide your sample size by the design effect to get the effective sample size. With 50 patients per clinic and an ICC of 0.02, the design effect is about 2: your 5,000 patients carry the information of about 2,500 independent ones.</p>
@@ -127,16 +123,12 @@
     <h2>2. Random intercepts and random slopes</h2>
     <p class="point">A mixed model gives every cluster its own starting level (random intercept) and, if needed, its own rate of change (random slope), drawn from a common distribution.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>“Mixed” means fixed effects plus random effects. Fixed effects are the average intercept and slopes you report. Random effects are each patient’s or clinic’s deviation from them, assumed to come from a normal distribution whose variance the model estimates. A random intercept lets levels differ; a random slope lets trajectories differ.</dd>
-      <dt>Why it matters</dt>
-      <dd>The random-effect variance is the clustering. Modelling it gives correct standard errors, uses every observation (patients with one visit still count), and tells you how much clusters differ, which is often a finding in its own right.</dd>
-      <dt>How to read it</dt>
-      <dd>Read the fixed effects like ordinary regression coefficients. Read the random-effect SD on the outcome scale: a between-patient intercept SD of 12 mmHg means about 95% of patients start within ±24 mmHg of the average. Compare it with the residual SD to see where the variation lives.</dd>
-      <dt>What a change means</dt>
-      <dd>If a random slope variance is large, the average slope describes few individuals. Leaving out a random slope that is really there makes the standard error of the average slope too small.</dd>
-    </dl>
+    <div class="facets">
+      <p>“Mixed” means fixed effects plus random effects. Fixed effects are the average intercept and slopes you report. Random effects are each patient’s or clinic’s deviation from them, assumed to come from a normal distribution whose variance the model estimates. A random intercept lets levels differ; a random slope lets trajectories differ.</p>
+      <p><strong class="lead">Why it matters.</strong> The random-effect variance is the clustering. Modelling it gives correct standard errors, uses every observation (patients with one visit still count), and tells you how much clusters differ, which is often a finding in its own right.</p>
+      <p><strong class="lead">How to read it.</strong> Read the fixed effects like ordinary regression coefficients. Read the random-effect SD on the outcome scale: a between-patient intercept SD of 12 mmHg means about 95% of patients start within ±24 mmHg of the average. Compare it with the residual SD to see where the variation lives.</p>
+      <p><strong class="lead">When it changes.</strong> If a random slope variance is large, the average slope describes few individuals. Leaving out a random slope that is really there makes the standard error of the average slope too small.</p>
+    </div>
 
     <figure class="diagram">
       <div class="diagram-title">Diagram · Spaghetti plots: random intercepts vs random slopes</div>
@@ -203,16 +195,12 @@ performance::icc(m1)                 # share of variance between clusters</code>
     <h2>3. Partial pooling: borrowing strength</h2>
     <p class="point">A mixed model’s estimate for each cluster is a weighted average of that cluster’s own data and the overall mean, and small clusters lean hardest on the mean.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>Three ways to estimate each hospital’s mortality. <em>No pooling</em>: each hospital’s raw rate. <em>Complete pooling</em>: one rate for all. <em>Partial pooling</em>: the mixed model’s predicted random effects (BLUPs, “best linear unbiased predictors”), which pull each raw rate toward the mean. The weight on a hospital’s own data rises with its size and with how much hospitals truly differ.</dd>
-      <dt>Why it matters</dt>
-      <dd>Raw rates from small hospitals are mostly noise. Rank hospitals by raw rate and the top and bottom of the table fill with the smallest ones, through luck. Partial pooling gives estimates that are, on average, closer to the truth.</dd>
-      <dt>How to read it</dt>
-      <dd>A hospital estimate that barely moved from its raw rate is well informed by its own data. One pulled almost to the mean carries little information of its own, whatever its raw rate.</dd>
-      <dt>What a change means</dt>
-      <dd>As the between-hospital variance goes to zero, every estimate collapses to the overall mean (complete pooling). As it grows, the estimates return to the raw rates (no pooling). The model estimates this variance from the data, so it chooses its own amount of shrinkage.</dd>
-    </dl>
+    <div class="facets">
+      <p>Three ways to estimate each hospital’s mortality. <em>No pooling</em>: each hospital’s raw rate. <em>Complete pooling</em>: one rate for all. <em>Partial pooling</em>: the mixed model’s predicted random effects (BLUPs, “best linear unbiased predictors”), which pull each raw rate toward the mean. The weight on a hospital’s own data rises with its size and with how much hospitals truly differ.</p>
+      <p><strong class="lead">Why it matters.</strong> Raw rates from small hospitals are mostly noise. Rank hospitals by raw rate and the top and bottom of the table fill with the smallest ones, through luck. Partial pooling gives estimates that are, on average, closer to the truth.</p>
+      <p><strong class="lead">How to read it.</strong> A hospital estimate that barely moved from its raw rate is well informed by its own data. One pulled almost to the mean carries little information of its own, whatever its raw rate.</p>
+      <p><strong class="lead">When it changes.</strong> As the between-hospital variance goes to zero, every estimate collapses to the overall mean (complete pooling). As it grows, the estimates return to the raw rates (no pooling). The model estimates this variance from the data, so it chooses its own amount of shrinkage.</p>
+    </div>
 
     <div class="widget" data-widget="partial-pooling">
       <div class="widget-title">Shrink the hospital league table</div>
@@ -240,16 +228,12 @@ performance::icc(m1)                 # share of variance between clusters</code>
     <h2>4. Subject-specific vs population-averaged effects</h2>
     <p class="point">For a logistic model, the odds ratio for one person and the odds ratio for the population are different numbers, and the population one is always closer to 1.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>A mixed model’s coefficient is <em>conditional</em> (subject-specific): the change in odds for a given person, holding their random effect fixed. A GEE coefficient is <em>marginal</em> (population-averaged): the change in the odds of the population’s average risk. Averaging S-shaped curves that sit at different heights gives a flatter S, so the marginal effect is smaller.</dd>
-      <dt>Why it matters</dt>
-      <dd>The two estimate different things, so they will disagree even when both are fitted correctly. Comparing a GLMM odds ratio with a GEE or cohort odds ratio without saying which is which is a common error in meta-analyses and discussions.</dd>
-      <dt>How to read it</dt>
-      <dd>With identity (linear) links the two coincide. With log links only the intercept differs. With logit and probit links the slopes differ, and the gap grows with the random-intercept variance: roughly, if \(\sigma\) is the random-intercept SD on the log-odds scale, the log odds ratio shrinks by a factor of \(1/\sqrt{1 + 0.35\,\sigma^2}\).</dd>
-      <dt>What a change means</dt>
-      <dd>With \(\sigma = 2\), a subject-specific odds ratio of 3 corresponds to a population-averaged odds ratio of about 2. Nothing is wrong with either; they answer different questions.</dd>
-    </dl>
+    <div class="facets">
+      <p>A mixed model’s coefficient is <em>conditional</em> (subject-specific): the change in odds for a given person, holding their random effect fixed. A GEE coefficient is <em>marginal</em> (population-averaged): the change in the odds of the population’s average risk. Averaging S-shaped curves that sit at different heights gives a flatter S, so the marginal effect is smaller.</p>
+      <p><strong class="lead">Why it matters.</strong> The two estimate different things, so they will disagree even when both are fitted correctly. Comparing a GLMM odds ratio with a GEE or cohort odds ratio without saying which is which is a common error in meta-analyses and discussions.</p>
+      <p><strong class="lead">How to read it.</strong> With identity (linear) links the two coincide. With log links only the intercept differs. With logit and probit links the slopes differ, and the gap grows with the random-intercept variance: roughly, if \(\sigma\) is the random-intercept SD on the log-odds scale, the log odds ratio shrinks by a factor of \(1/\sqrt{1 + 0.35\,\sigma^2}\).</p>
+      <p><strong class="lead">When it changes.</strong> With \(\sigma = 2\), a subject-specific odds ratio of 3 corresponds to a population-averaged odds ratio of about 2. Nothing is wrong with either; they answer different questions.</p>
+    </div>
 
     <div class="widget" data-widget="marginal-conditional">
       <div class="widget-title">Average the S-curves</div>
@@ -277,16 +261,12 @@ performance::icc(m1)                 # share of variance between clusters</code>
     <h2>5. GEE: working correlation and robust standard errors</h2>
     <p class="point">GEE fits an ordinary GLM for the population average, makes a guess about the correlation, and then uses a robust (sandwich) standard error that stays valid even if the guess is wrong.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>Generalised estimating equations (Liang and Zeger 1986) model only the mean and a <em>working correlation</em> within clusters. No distribution is assumed for the cluster effects. The sandwich variance estimates the standard error from the observed spread of the cluster-level residuals, not from the assumed correlation.</dd>
-      <dt>Why it matters</dt>
-      <dd>It is robust and simple: the coefficients are consistent if the mean model is right, whatever the true correlation. The price is that it needs many clusters, gives no cluster-level estimates, and is weaker with missing data.</dd>
-      <dt>How to read it</dt>
-      <dd>The working correlation affects efficiency, not validity. A good choice narrows the confidence intervals; a poor one widens them but leaves them honest, provided there are enough clusters.</dd>
-      <dt>What a change means</dt>
-      <dd>If robust and model-based standard errors differ a lot, your working correlation is a poor guess. Report the robust ones.</dd>
-    </dl>
+    <div class="facets">
+      <p>Generalised estimating equations (Liang and Zeger 1986) model only the mean and a <em>working correlation</em> within clusters. No distribution is assumed for the cluster effects. The sandwich variance estimates the standard error from the observed spread of the cluster-level residuals, not from the assumed correlation.</p>
+      <p><strong class="lead">Why it matters.</strong> It is robust and simple: the coefficients are consistent if the mean model is right, whatever the true correlation. The price is that it needs many clusters, gives no cluster-level estimates, and is weaker with missing data.</p>
+      <p><strong class="lead">How to read it.</strong> The working correlation affects efficiency, not validity. A good choice narrows the confidence intervals; a poor one widens them but leaves them honest, provided there are enough clusters.</p>
+      <p><strong class="lead">When it changes.</strong> If robust and model-based standard errors differ a lot, your working correlation is a poor guess. Report the robust ones.</p>
+    </div>
 
     <div class="table-wrap">
       <table>
@@ -321,16 +301,12 @@ m2 &lt;- glmer(controlled ~ months + arm + (1 | patient), data = bp,
     <h2>6. Dropout and missing data</h2>
     <p class="point">Mixed models fitted by likelihood are valid when dropout depends on what you have already observed; standard GEE is not.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>In longitudinal studies people miss visits and drop out. Using the language of Lecture 3.5: standard GEE is unbiased if missingness is completely at random or depends only on covariates in the model. Likelihood-based mixed models are unbiased under missing at random (MAR), where dropout may depend on earlier observed outcomes, provided the model is right.</dd>
-      <dt>Why it matters</dt>
-      <dd>Dropout is rarely random. Patients whose BP stays high may stop attending, or be moved to another treatment. If that depends on their last recorded BP, the data are MAR, and an unweighted GEE will be biased.</dd>
-      <dt>How to read it</dt>
-      <dd>Look at the dropout pattern first: plot mean outcome over time separately for completers and for each dropout time. Diverging lines before dropout mean missingness relates to observed outcomes.</dd>
-      <dt>What a change means</dt>
-      <dd>To keep GEE under MAR, weight each observation by the inverse probability of remaining in the study (weighted GEE), or multiply impute first. Neither method rescues you if dropout depends on the unseen value itself (MNAR); that needs a sensitivity analysis.</dd>
-    </dl>
+    <div class="facets">
+      <p>In longitudinal studies people miss visits and drop out. Using the language of Lecture 3.5: standard GEE is unbiased if missingness is completely at random or depends only on covariates in the model. Likelihood-based mixed models are unbiased under missing at random (MAR), where dropout may depend on earlier observed outcomes, provided the model is right.</p>
+      <p><strong class="lead">Why it matters.</strong> Dropout is rarely random. Patients whose BP stays high may stop attending, or be moved to another treatment. If that depends on their last recorded BP, the data are MAR, and an unweighted GEE will be biased.</p>
+      <p><strong class="lead">How to read it.</strong> Look at the dropout pattern first: plot mean outcome over time separately for completers and for each dropout time. Diverging lines before dropout mean missingness relates to observed outcomes.</p>
+      <p><strong class="lead">When it changes.</strong> To keep GEE under MAR, weight each observation by the inverse probability of remaining in the study (weighted GEE), or multiply impute first. Neither method rescues you if dropout depends on the unseen value itself (MNAR); that needs a sensitivity analysis.</p>
+    </div>
 
     <div class="callout trap">
       <div class="callout-title">Trap</div>
@@ -360,12 +336,10 @@ m2 &lt;- glmer(controlled ~ months + arm + (1 | patient), data = bp,
       </table>
     </div>
 
-    <dl class="facets">
-      <dt>Few clusters</dt>
-      <dd>The sandwich estimator learns the variance from the clusters themselves, so with 10 or 15 clusters it is too small and tests reject too often. Mancl and DeRouen (2001) found plain robust tests with two to three times their nominal size in small samples. Use their correction (R package <code>geesmv</code>), a mixed model with Kenward–Roger degrees of freedom, or analyse cluster-level summaries.</dd>
-      <dt>Cluster randomised trials</dt>
-      <dd>When clinics, schools or villages are randomised, the cluster is the unit of inference. The sample size must include the design effect, the analysis must account for clustering, and the ICC must be reported (CONSORT extension for cluster trials, Campbell et al. 2012).</dd>
-    </dl>
+    <div class="facets">
+      <p><strong class="lead">Few clusters.</strong> The sandwich estimator learns the variance from the clusters themselves, so with 10 or 15 clusters it is too small and tests reject too often. Mancl and DeRouen (2001) found plain robust tests with two to three times their nominal size in small samples. Use their correction (R package <code>geesmv</code>), a mixed model with Kenward–Roger degrees of freedom, or analyse cluster-level summaries.</p>
+      <p><strong class="lead">Cluster randomised trials.</strong> When clinics, schools or villages are randomised, the cluster is the unit of inference. The sample size must include the design effect, the analysis must account for clustering, and the ICC must be reported (CONSORT extension for cluster trials, Campbell et al. 2012).</p>
+    </div>
 
     <div class="callout example">
       <div class="callout-title">Example</div>

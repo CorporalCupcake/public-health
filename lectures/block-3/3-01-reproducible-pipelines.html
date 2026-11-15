@@ -57,16 +57,12 @@
     <h2>1. One project, one folder, raw data read-only</h2>
     <p class="point">Keep each project in one self-contained folder where raw data go in untouched, and everything else is made by code.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>A fixed layout: downloaded files in <code>data-raw/</code>, never edited; functions in <code>R/</code>; derived data and outputs written only by the pipeline; a README that says how to get the data and rebuild. Paths are relative to the project root, never <code>C:/Users/me/…</code>.</dd>
-      <dt>Why it matters</dt>
-      <dd>If every derived file can be deleted and rebuilt, you can always answer “where did this number come from?”. If someone edited a file by hand, you cannot.</dd>
-      <dt>How to read it</dt>
-      <dd>Good: you can delete <code>data/</code> and the outputs, run one command, and get them back. Bad: a file called <code>final_v3_fixed.csv</code> that nobody can regenerate.</dd>
-      <dt>What a change means</dt>
-      <dd>A correction to the data becomes a new raw file plus a line of code, never an edit. The history of what changed is then in the code.</dd>
-    </dl>
+    <div class="facets">
+      <p>A fixed layout: downloaded files in <code>data-raw/</code>, never edited; functions in <code>R/</code>; derived data and outputs written only by the pipeline; a README that says how to get the data and rebuild. Paths are relative to the project root, never <code>C:/Users/me/…</code>.</p>
+      <p><strong class="lead">Why it matters.</strong> If every derived file can be deleted and rebuilt, you can always answer “where did this number come from?”. If someone edited a file by hand, you cannot.</p>
+      <p><strong class="lead">How to read it.</strong> Good: you can delete <code>data/</code> and the outputs, run one command, and get them back. Bad: a file called <code>final_v3_fixed.csv</code> that nobody can regenerate.</p>
+      <p><strong class="lead">When it changes.</strong> A correction to the data becomes a new raw file plus a line of code, never an edit. The history of what changed is then in the code.</p>
+    </div>
 
 <pre><code>project-3-nak/
 ├── data-raw/          # NHANES files as downloaded; read-only
@@ -94,16 +90,12 @@
     <h2>2. Version control, and what never goes in it</h2>
     <p class="point">Git records every change to your code; patient data, credentials and stored results must never enter it.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>Git keeps a history of commits, each a snapshot of the code with a message saying why it changed. GitHub hosts a copy and adds review tools. A <code>.gitignore</code> file lists what git must never track.</dd>
-      <dt>Why it matters</dt>
-      <dd>You can see exactly which code produced the results you submitted, undo a bad change, and show reviewers the analysis evolved honestly. Tag the commit you submit (for example <code>v1.0-submitted</code>).</dd>
-      <dt>How to read it</dt>
-      <dd>Good: small commits with messages like “exclude pregnant participants, per plan section 3.2”. Bad: one commit called “stuff” the night before submission.</dd>
-      <dt>What a change means</dt>
-      <dd>Once a file is committed and pushed, assume it is public forever. Deleting it in a later commit leaves it in the history.</dd>
-    </dl>
+    <div class="facets">
+      <p>Git keeps a history of commits, each a snapshot of the code with a message saying why it changed. GitHub hosts a copy and adds review tools. A <code>.gitignore</code> file lists what git must never track.</p>
+      <p><strong class="lead">Why it matters.</strong> You can see exactly which code produced the results you submitted, undo a bad change, and show reviewers the analysis evolved honestly. Tag the commit you submit (for example <code>v1.0-submitted</code>).</p>
+      <p><strong class="lead">How to read it.</strong> Good: small commits with messages like “exclude pregnant participants, per plan section 3.2”. Bad: one commit called “stuff” the night before submission.</p>
+      <p><strong class="lead">When it changes.</strong> Once a file is committed and pushed, assume it is public forever. Deleting it in a later commit leaves it in the history.</p>
+    </div>
 
 <pre><code># .gitignore: never commit data, results or secrets
 data-raw/
@@ -132,14 +124,11 @@ _targets/        # the pipeline's stored results contain data
     <h2>3. Environments: record the package versions</h2>
     <p class="point">An analysis depends on package versions as much as on code, so record them per project with renv.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>renv gives each project its own package library and a lockfile, <code>renv.lock</code>, listing the exact version of every package and the R version used. The lockfile goes in git.</dd>
-      <dt>Why it matters</dt>
-      <dd>Packages change defaults. An update to a survey or imputation package can change a standard error or a pooled estimate without any change to your code. A lockfile lets you, a coauthor or a reviewer rebuild with the versions you used.</dd>
-      <dt>How to read it</dt>
-      <dd><code>renv::status()</code> reports whether the library and the lockfile agree. If they do not, either snapshot (you meant to upgrade) or restore (you did not).</dd>
-    </dl>
+    <div class="facets">
+      <p>renv gives each project its own package library and a lockfile, <code>renv.lock</code>, listing the exact version of every package and the R version used. The lockfile goes in git.</p>
+      <p><strong class="lead">Why it matters.</strong> Packages change defaults. An update to a survey or imputation package can change a standard error or a pooled estimate without any change to your code. A lockfile lets you, a coauthor or a reviewer rebuild with the versions you used.</p>
+      <p><strong class="lead">How to read it.</strong> <code>renv::status()</code> reports whether the library and the lockfile agree. If they do not, either snapshot (you meant to upgrade) or restore (you did not).</p>
+    </div>
 
 <pre><code>renv::init()       # once: a project library plus renv.lock
 renv::snapshot()   # after installing or updating packages: record the versions
@@ -161,16 +150,12 @@ renv::restore()    # on a new machine: install exactly the recorded versions</co
     <h2>4. Pipelines: let the computer track what is stale</h2>
     <p class="point">A pipeline tool knows which outputs depend on which inputs, reruns only what a change invalidates, and refuses to let you report a stale result.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>You declare each step as a <em>target</em>: an output, the function that makes it, and what it needs. The tool builds a dependency graph (a DAG). The idea comes from Make, which rebuilds a file when its inputs are newer; snakemake does the same for Python. The R package targets goes further and compares hashes of the data and the code, not timestamps.</dd>
-      <dt>Why it matters</dt>
-      <dd>Project 3 has slow steps: 20 imputations, then Cox and competing-risks models on each. Rerunning everything after a typo fix wastes an hour, so people stop rerunning and end up reporting results from old code. A pipeline makes the honest path the fast path.</dd>
-      <dt>How to read it</dt>
-      <dd><code>tar_outdated()</code> lists what would rerun; <code>tar_visnetwork()</code> draws the graph with stale targets marked; <code>tar_make()</code> rebuilds them. “Everything up to date” means every output matches the current code and data.</dd>
-      <dt>What a change means</dt>
-      <dd>A change invalidates its target and everything downstream, and nothing else. A new data release reruns everything; a reworded paragraph reruns only the manuscript.</dd>
-    </dl>
+    <div class="facets">
+      <p>You declare each step as a <em>target</em>: an output, the function that makes it, and what it needs. The tool builds a dependency graph (a DAG). The idea comes from Make, which rebuilds a file when its inputs are newer; snakemake does the same for Python. The R package targets goes further and compares hashes of the data and the code, not timestamps.</p>
+      <p><strong class="lead">Why it matters.</strong> Project 3 has slow steps: 20 imputations, then Cox and competing-risks models on each. Rerunning everything after a typo fix wastes an hour, so people stop rerunning and end up reporting results from old code. A pipeline makes the honest path the fast path.</p>
+      <p><strong class="lead">How to read it.</strong> <code>tar_outdated()</code> lists what would rerun; <code>tar_visnetwork()</code> draws the graph with stale targets marked; <code>tar_make()</code> rebuilds them. “Everything up to date” means every output matches the current code and data.</p>
+      <p><strong class="lead">When it changes.</strong> A change invalidates its target and everything downstream, and nothing else. A new data release reruns everything; a reworded paragraph reruns only the manuscript.</p>
+    </div>
 
     <figure class="diagram">
       <div class="diagram-title">Diagram · The analysis pipeline, and what invalidates what</div>
@@ -270,14 +255,11 @@ list(
     <h2>5. Literate reporting: numbers flow from code to manuscript</h2>
     <p class="point">Every number in the paper should be computed where it appears, not typed in, so a reanalysis updates the text, the tables and the abstract together.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>Quarto mixes prose with code chunks and renders to Word, PDF or HTML. Inline code drops a value into a sentence. Tables come from model objects via broom or gtsummary (Lecture 3.2).</dd>
-      <dt>Why it matters</dt>
-      <dd>Revisions change numbers. With hand-typed numbers, the abstract, the results and Table 2 drift apart, and reviewers notice. With computed numbers, they cannot.</dd>
-      <dt>How to read it</dt>
-      <dd>Good: you could search the manuscript source and find no hard-coded estimate. Acceptable: a Word draft for coauthors, generated from the Quarto source, never edited back by hand.</dd>
-    </dl>
+    <div class="facets">
+      <p>Quarto mixes prose with code chunks and renders to Word, PDF or HTML. Inline code drops a value into a sentence. Tables come from model objects via broom or gtsummary (Lecture 3.2).</p>
+      <p><strong class="lead">Why it matters.</strong> Revisions change numbers. With hand-typed numbers, the abstract, the results and Table 2 drift apart, and reviewers notice. With computed numbers, they cannot.</p>
+      <p><strong class="lead">How to read it.</strong> Good: you could search the manuscript source and find no hard-coded estimate. Acceptable: a Word draft for coauthors, generated from the Quarto source, never edited back by hand.</p>
+    </div>
 
 <pre><code>```{r}
 hr &lt;- targets::tar_read(table_hr)       # read the stored result, do not refit
@@ -302,14 +284,11 @@ Each unit higher Na/K ratio was associated with a hazard ratio of
     <h2>6. Seeds and code review</h2>
     <p class="point">Random steps need fixed seeds so results repeat exactly; a second pair of eyes catches what reruns never will.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>A seed fixes the random number stream used by multiple imputation, bootstraps, cross-validation and simulations. Code review means someone else reads your code against the analysis plan before results are final.</dd>
-      <dt>Why it matters</dt>
-      <dd>Without a seed, the same code gives slightly different estimates each run, and nobody can tell a bug from noise. Without review, a correct pipeline faithfully reproduces a wrong analysis.</dd>
-      <dt>How to read it</dt>
-      <dd>Changing the seed should move estimates only in the last decimal. If a conclusion flips with the seed, the Monte Carlo error is too big: use more imputations or more bootstrap replicates.</dd>
-    </dl>
+    <div class="facets">
+      <p>A seed fixes the random number stream used by multiple imputation, bootstraps, cross-validation and simulations. Code review means someone else reads your code against the analysis plan before results are final.</p>
+      <p><strong class="lead">Why it matters.</strong> Without a seed, the same code gives slightly different estimates each run, and nobody can tell a bug from noise. Without review, a correct pipeline faithfully reproduces a wrong analysis.</p>
+      <p><strong class="lead">How to read it.</strong> Changing the seed should move estimates only in the last decimal. If a conclusion flips with the seed, the Monte Carlo error is too big: use more imputations or more bootstrap replicates.</p>
+    </div>
 
 <pre><code>imp &lt;- mice(analysis, m = 20, seed = 2026, printFlag = FALSE)  # the seed is part of the analysis</code></pre>
     <p>Pass the seed to the function that uses it, rather than one <code>set.seed()</code> at the top of a script; in a pipeline, targets also gives each target its own reproducible seed.</p>
@@ -341,16 +320,12 @@ Each unit higher Na/K ratio was associated with a hazard ratio of
     <h2>7. Pre-registered analysis plans</h2>
     <p class="point">Writing the analysis plan down, dated and frozen, before you look at the exposure–outcome results is what separates a test from a search.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>A statistical analysis plan: the primary exposure and outcome definitions, the model, the covariates and why (from a DAG), the handling of missing data, survey design and competing risks, and the sensitivity analyses. Registered with a timestamp, for example on OSF Registries.</dd>
-      <dt>Why it matters</dt>
-      <dd>NHANES is public, so nobody can stop you peeking. The plan is your evidence that the main analysis was chosen before the answer was known. It also enforces the project rules: the reporting guideline (STROBE for Project 3) is followed from the protocol stage, not retrofitted.</dd>
-      <dt>How to read it</dt>
-      <dd>Feasibility counts before the plan are fine and required by the project rules (“data before design”): how many participants have urine sodium and potassium and linked mortality. Associations between exposure and outcome are not.</dd>
-      <dt>What a change means</dt>
-      <dd>Plans can change. Record each deviation in a table: what changed, when, why, and whether it was before or after seeing results. Report the planned analysis too.</dd>
-    </dl>
+    <div class="facets">
+      <p>A statistical analysis plan: the primary exposure and outcome definitions, the model, the covariates and why (from a DAG), the handling of missing data, survey design and competing risks, and the sensitivity analyses. Registered with a timestamp, for example on OSF Registries.</p>
+      <p><strong class="lead">Why it matters.</strong> NHANES is public, so nobody can stop you peeking. The plan is your evidence that the main analysis was chosen before the answer was known. It also enforces the project rules: the reporting guideline (STROBE for Project 3) is followed from the protocol stage, not retrofitted.</p>
+      <p><strong class="lead">How to read it.</strong> Feasibility counts before the plan are fine and required by the project rules (“data before design”): how many participants have urine sodium and potassium and linked mortality. Associations between exposure and outcome are not.</p>
+      <p><strong class="lead">When it changes.</strong> Plans can change. Record each deviation in a table: what changed, when, why, and whether it was before or after seeing results. Report the planned analysis too.</p>
+    </div>
 
     <div class="callout trap">
       <div class="callout-title">Trap</div>
@@ -368,14 +343,11 @@ Each unit higher Na/K ratio was associated with a hazard ratio of
     <h2>8. Credentialed data, access logs and sharing code</h2>
     <p class="point">For credentialed data such as MIMIC-IV, share the code and never the data; keep a log that shows you handled them as agreed.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>PhysioNet credentialed access is personal: you complete training, sign a data use agreement for each dataset, and may not share the data or try to re-identify anyone. Derived datasets count as sensitive too; PhysioNet asks that they be shared only through PhysioNet under the same agreement.</dd>
-      <dt>Why it matters</dt>
-      <dd>A breach ends your access and can end a project, and it is a breach of trust with the patients whose records these are. Project 5A depends on MIMIC-IV, so the habits start now.</dd>
-      <dt>How to read it</dt>
-      <dd>A data-access log is one row per event: date, dataset and version, who accessed it, where it is stored, what was extracted, and when copies were deleted. A short log is enough; it answers an auditor’s or coauthor’s question in a minute.</dd>
-    </dl>
+    <div class="facets">
+      <p>PhysioNet credentialed access is personal: you complete training, sign a data use agreement for each dataset, and may not share the data or try to re-identify anyone. Derived datasets count as sensitive too; PhysioNet asks that they be shared only through PhysioNet under the same agreement.</p>
+      <p><strong class="lead">Why it matters.</strong> A breach ends your access and can end a project, and it is a breach of trust with the patients whose records these are. Project 5A depends on MIMIC-IV, so the habits start now.</p>
+      <p><strong class="lead">How to read it.</strong> A data-access log is one row per event: date, dataset and version, who accessed it, where it is stored, what was extracted, and when copies were deleted. A short log is enough; it answers an auditor’s or coauthor’s question in a minute.</p>
+    </div>
 
     <div class="callout trap">
       <div class="callout-title">Trap</div>

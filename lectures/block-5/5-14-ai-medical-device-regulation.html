@@ -57,14 +57,11 @@
     <h2>1. When software is a medical device</h2>
     <p class="point">Software is a medical device when its intended purpose is medical, and its risk class depends on how serious the condition is and how much the clinician relies on the output.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>The International Medical Device Regulators Forum (IMDRF) defines <strong>software as a medical device</strong> (SaMD) as software intended for one or more medical purposes that performs them without being part of a hardware device. An AI-ECG running in the cloud is SaMD; the same algorithm inside an ECG cart is software <em>in</em> a device. IMDRF’s 2014 framework grades risk on two axes: the state of the condition, and the significance of the information to the decision.</dd>
-      <dt>Why it matters</dt>
-      <dd>Intended use is set by the manufacturer’s claims and labelling, not by what the code could do. The same model labelled “for research” or “wellness” and labelled “to detect low ejection fraction” are different regulatory objects.</dd>
-      <dt>How to read it</dt>
-      <dd>In the table below, category IV is the highest risk. Most diagnostic AI sits in categories II–III.</dd>
-    </dl>
+    <div class="facets">
+      <p>The International Medical Device Regulators Forum (IMDRF) defines <strong>software as a medical device</strong> (SaMD) as software intended for one or more medical purposes that performs them without being part of a hardware device. An AI-ECG running in the cloud is SaMD; the same algorithm inside an ECG cart is software <em>in</em> a device. IMDRF’s 2014 framework grades risk on two axes: the state of the condition, and the significance of the information to the decision.</p>
+      <p><strong class="lead">Why it matters.</strong> Intended use is set by the manufacturer’s claims and labelling, not by what the code could do. The same model labelled “for research” or “wellness” and labelled “to detect low ejection fraction” are different regulatory objects.</p>
+      <p><strong class="lead">How to read it.</strong> In the table below, category IV is the highest risk. Most diagnostic AI sits in categories II–III.</p>
+    </div>
 
     <div class="table-wrap">
       <table>
@@ -104,14 +101,11 @@
       </table>
     </div>
 
-    <dl class="facets">
-      <dt>Why it matters</dt>
-      <dd>A 510(k) usually rests on bench and retrospective performance testing. Predicates chain: a 2026 device may be equivalent to a 2021 device that was equivalent to a non-AI device from 2015.</dd>
-      <dt>How to read it</dt>
-      <dd>The submission number tells you the route: K for 510(k), DEN for De Novo, P for PMA. The public decision summary states the predicate, the intended use and the performance testing.</dd>
-      <dt>What a change means</dt>
-      <dd>A De Novo grant for a new type of AI device opens the cheaper 510(k) route to every competitor that follows.</dd>
-    </dl>
+    <div class="facets">
+      <p><strong class="lead">Why it matters.</strong> A 510(k) usually rests on bench and retrospective performance testing. Predicates chain: a 2026 device may be equivalent to a 2021 device that was equivalent to a non-AI device from 2015.</p>
+      <p><strong class="lead">How to read it.</strong> The submission number tells you the route: K for 510(k), DEN for De Novo, P for PMA. The public decision summary states the predicate, the intended use and the performance testing.</p>
+      <p><strong class="lead">When it changes.</strong> A De Novo grant for a new type of AI device opens the cheaper 510(k) route to every competitor that follows.</p>
+    </div>
 
     <div class="callout example">
       <div class="callout-title">Example · Project 5B: the AI-ECG for low ejection fraction</div>
@@ -129,14 +123,11 @@
     <h2>3. The FDA AI-enabled device list as a dataset</h2>
     <p class="point">The FDA publishes a downloadable list of AI-enabled devices it has authorised; each row links to a decision summary, and those summaries are Project 5B’s raw data.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>The <strong>AI-Enabled Medical Device List</strong> on fda.gov (Medical Devices › Artificial Intelligence-Enabled Medical Devices), downloadable as CSV or Excel. Columns: date of final decision, submission number (linked to the FDA database entry and its summary), device, company, lead review panel and primary product code. The FDA finds devices by searching summaries and classifications for AI-related terms.</dd>
-      <dt>Why it matters</dt>
-      <dd>It is the closest thing to a sampling frame for regulated medical AI. By late 2025 it held about 1,250 devices; roughly three-quarters are radiology and about one in ten cardiovascular. It is updated periodically.</dd>
-      <dt>How to read it</dt>
-      <dd>The FDA says the list is <em>not comprehensive</em>: devices whose summaries do not use AI terms can be missed, and recent authorisations appear only after their summaries are published. The FDA has said it will explore tagging devices that use foundation models or large language models; as of late 2026 that is not a column.</dd>
-    </dl>
+    <div class="facets">
+      <p>The <strong>AI-Enabled Medical Device List</strong> on fda.gov (Medical Devices › Artificial Intelligence-Enabled Medical Devices), downloadable as CSV or Excel. Columns: date of final decision, submission number (linked to the FDA database entry and its summary), device, company, lead review panel and primary product code. The FDA finds devices by searching summaries and classifications for AI-related terms.</p>
+      <p><strong class="lead">Why it matters.</strong> It is the closest thing to a sampling frame for regulated medical AI. By late 2025 it held about 1,250 devices; roughly three-quarters are radiology and about one in ten cardiovascular. It is updated periodically.</p>
+      <p><strong class="lead">How to read it.</strong> The FDA says the list is <em>not comprehensive</em>: devices whose summaries do not use AI terms can be missed, and recent authorisations appear only after their summaries are published. The FDA has said it will explore tagging devices that use foundation models or large language models; as of late 2026 that is not a column.</p>
+    </div>
 
     <pre><code>library(readr); library(dplyr); library(janitor); library(lubridate)
 ai &lt;- read_csv("ai-enabled-devices.csv") |&gt; clean_names()   # downloaded from the FDA page
@@ -172,16 +163,12 @@ count(cv, year = year(decided), pathway)</code></pre>
     <h2>4. Locked versus adaptive models, and the PCCP</h2>
     <p class="point">A PCCP lets a manufacturer get a set of future model changes authorised in advance, with the testing rules written down, so each retrain does not need a new submission.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>A <strong>locked</strong> algorithm gives the same output for the same input every time; an <strong>adaptive</strong> one changes with new data. Nearly all authorised AI devices are locked. Section 515C of the US Food, Drug, and Cosmetic Act, added in 2022, lets the FDA authorise a PCCP. The FDA’s final guidance for AI-enabled devices was issued in December 2024 and reissued in August 2025. A PCCP has three parts: a <strong>description of modifications</strong>, a <strong>modification protocol</strong> (data, retraining, testing methods and pre-set acceptance criteria) and an <strong>impact assessment</strong> of benefits and risks.</dd>
-      <dt>Why it matters</dt>
-      <dd>Without a PCCP, a change that could significantly affect safety or effectiveness needs a new 510(k) or a PMA supplement. With one, changes specified in the plan and carried out by its protocol can ship without a new submission.</dd>
-      <dt>How to read it</dt>
-      <dd>The guidance names three kinds of acceptable change: performance changes from retraining on new data within the intended-use population; changes to inputs, such as new sources of the same signal type; and limited changes to use, such as a specific subpopulation within the original indication. Changes must keep the device within its intended use. The plan must say whether updates are automatic or manual, and global or local to a site.</dd>
-      <dt>What a change means</dt>
-      <dd>A change outside the plan, or a planned change that fails or departs from its protocol, falls back on the usual rules, which usually means a new submission. Labelling must say the device uses machine learning and has an authorised PCCP.</dd>
-    </dl>
+    <div class="facets">
+      <p>A <strong>locked</strong> algorithm gives the same output for the same input every time; an <strong>adaptive</strong> one changes with new data. Nearly all authorised AI devices are locked. Section 515C of the US Food, Drug, and Cosmetic Act, added in 2022, lets the FDA authorise a PCCP. The FDA’s final guidance for AI-enabled devices was issued in December 2024 and reissued in August 2025. A PCCP has three parts: a <strong>description of modifications</strong>, a <strong>modification protocol</strong> (data, retraining, testing methods and pre-set acceptance criteria) and an <strong>impact assessment</strong> of benefits and risks.</p>
+      <p><strong class="lead">Why it matters.</strong> Without a PCCP, a change that could significantly affect safety or effectiveness needs a new 510(k) or a PMA supplement. With one, changes specified in the plan and carried out by its protocol can ship without a new submission.</p>
+      <p><strong class="lead">How to read it.</strong> The guidance names three kinds of acceptable change: performance changes from retraining on new data within the intended-use population; changes to inputs, such as new sources of the same signal type; and limited changes to use, such as a specific subpopulation within the original indication. Changes must keep the device within its intended use. The plan must say whether updates are automatic or manual, and global or local to a site.</p>
+      <p><strong class="lead">When it changes.</strong> A change outside the plan, or a planned change that fails or departs from its protocol, falls back on the usual rules, which usually means a new submission. Labelling must say the device uses machine learning and has an authorised PCCP.</p>
+    </div>
 
     <figure class="diagram">
       <div class="diagram-title">Diagram · The total product lifecycle of an AI device with a PCCP</div>
@@ -268,12 +255,10 @@ count(cv, year = year(decided), pathway)</code></pre>
     <h2>5. Good Machine Learning Practice</h2>
     <p class="point">Ten short principles, agreed by the FDA, Health Canada and the UK’s MHRA, set out what regulators expect of how an AI device is built and tested.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>The Good Machine Learning Practice (GMLP) guiding principles were published in October 2021. The IMDRF adopted a nearly identical set as a final document (N88) in January 2025. The same three agencies later issued joint principles on PCCPs and on transparency.</dd>
-      <dt>Why it matters</dt>
-      <dd>They are not binding rules, but reviewers in many countries use them as the checklist behind their questions. Four of them bear directly on the kind of evidence you will appraise.</dd>
-    </dl>
+    <div class="facets">
+      <p>The Good Machine Learning Practice (GMLP) guiding principles were published in October 2021. The IMDRF adopted a nearly identical set as a final document (N88) in January 2025. The same three agencies later issued joint principles on PCCPs and on transparency.</p>
+      <p><strong class="lead">Why it matters.</strong> They are not binding rules, but reviewers in many countries use them as the checklist behind their questions. Four of them bear directly on the kind of evidence you will appraise.</p>
+    </div>
 
     <div class="table-wrap">
       <table>
@@ -298,14 +283,11 @@ count(cv, year = year(decided), pathway)</code></pre>
     <h2>6. The EU: MDR Rule 11 and the AI Act</h2>
     <p class="point">In the EU, Rule 11 of the Medical Device Regulation pushes most diagnostic software into class IIa or higher, and those AI devices are also “high-risk” under the AI Act, whose duties for them now start in August 2028.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd><strong>Rule 11</strong> (MDR Annex VIII): software that informs diagnostic or therapeutic decisions is class IIa, IIb if a wrong decision could cause serious deterioration or surgery, and III if it could cause death or irreversible deterioration. Monitoring software is IIa, or IIb for vital parameters where changes could mean immediate danger. Everything else is class I. The <strong>AI Act</strong> (Regulation (EU) 2024/1689) treats an AI system as high-risk under Article 6(1) when it is, or is a safety component of, a product that needs third-party (notified body) assessment under laws such as the MDR.</dd>
-      <dt>Why it matters</dt>
-      <dd>High-risk status adds AI-specific duties on top of the MDR: risk management, data governance, technical documentation, logging, transparency to users, human oversight, accuracy and robustness, and post-market monitoring. A single notified-body conformity assessment is meant to cover both laws.</dd>
-      <dt>How to read it</dt>
-      <dd>Under the AI Act, a change pre-determined by the provider and assessed at the initial conformity assessment is not a “substantial modification” (Article 43(4)), which is the EU’s nearest equivalent to a PCCP.</dd>
-    </dl>
+    <div class="facets">
+      <p><strong>Rule 11</strong> (MDR Annex VIII): software that informs diagnostic or therapeutic decisions is class IIa, IIb if a wrong decision could cause serious deterioration or surgery, and III if it could cause death or irreversible deterioration. Monitoring software is IIa, or IIb for vital parameters where changes could mean immediate danger. Everything else is class I. The <strong>AI Act</strong> (Regulation (EU) 2024/1689) treats an AI system as high-risk under Article 6(1) when it is, or is a safety component of, a product that needs third-party (notified body) assessment under laws such as the MDR.</p>
+      <p><strong class="lead">Why it matters.</strong> High-risk status adds AI-specific duties on top of the MDR: risk management, data governance, technical documentation, logging, transparency to users, human oversight, accuracy and robustness, and post-market monitoring. A single notified-body conformity assessment is meant to cover both laws.</p>
+      <p><strong class="lead">How to read it.</strong> Under the AI Act, a change pre-determined by the provider and assessed at the initial conformity assessment is not a “substantial modification” (Article 43(4)), which is the EU’s nearest equivalent to a PCCP.</p>
+    </div>
 
     <div class="table-wrap">
       <table>
@@ -336,14 +318,11 @@ count(cv, year = year(decided), pathway)</code></pre>
     <h2>7. Saudi Arabia: the SFDA’s AI guidance</h2>
     <p class="point">The SFDA requires marketing authorisation for AI devices and asks for clinical evidence at every risk class, with an explicit demand for local validation of devices approved elsewhere.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>SFDA guidance <strong>MDS-G010</strong>, <em>Guidance on Artificial Intelligence (AI) and Machine Learning (ML) technologies based Medical Devices</em> (version 1.0, dated November 2022, published January 2023). It covers AI and ML that diagnose, manage or predict disease, and sets out what is needed for Medical Device Marketing Authorization (MDMA).</dd>
-      <dt>Why it matters</dt>
-      <dd>It follows the IMDRF clinical evaluation model of three steps: a valid clinical association, analytical (technical) validation and clinical validation, which apply to every risk class.</dd>
-      <dt>How to read it</dt>
-      <dd>It is more explicit than the FDA on some evidence points, and less developed on updates: it has no PCCP mechanism. Changes go through the general change-notification rules (the last row of the table below).</dd>
-    </dl>
+    <div class="facets">
+      <p>SFDA guidance <strong>MDS-G010</strong>, <em>Guidance on Artificial Intelligence (AI) and Machine Learning (ML) technologies based Medical Devices</em> (version 1.0, dated November 2022, published January 2023). It covers AI and ML that diagnose, manage or predict disease, and sets out what is needed for Medical Device Marketing Authorization (MDMA).</p>
+      <p><strong class="lead">Why it matters.</strong> It follows the IMDRF clinical evaluation model of three steps: a valid clinical association, analytical (technical) validation and clinical validation, which apply to every risk class.</p>
+      <p><strong class="lead">How to read it.</strong> It is more explicit than the FDA on some evidence points, and less developed on updates: it has no PCCP mechanism. Changes go through the general change-notification rules (the last row of the table below).</p>
+    </div>
 
     <div class="table-wrap">
       <table>
@@ -373,14 +352,11 @@ count(cv, year = year(decided), pathway)</code></pre>
     <h2>8. What regulation means for evidence</h2>
     <p class="point">Regulators mostly certify that a device measures what it claims to; whether using it improves care is a separate question, answered by the designs in Lecture 5.15.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>A ladder of evidence for an AI device, which Project 5B codes for each device. Each rung answers a different question, as in Lecture 5.13’s diagram.</dd>
-      <dt>Why it matters</dt>
-      <dd>Health systems, HTA bodies and payers need the upper rungs. The 510(k) route rarely requires them, so they are often missing.</dd>
-      <dt>What a change means</dt>
-      <dd>A PCCP makes this harder to track. Version n+1 may differ from the version whose study you read, and the public record of what changed is thin. Post-deployment monitoring (Lecture 5.16) becomes part of the evidence, not an afterthought.</dd>
-    </dl>
+    <div class="facets">
+      <p>A ladder of evidence for an AI device, which Project 5B codes for each device. Each rung answers a different question, as in Lecture 5.13’s diagram.</p>
+      <p><strong class="lead">Why it matters.</strong> Health systems, HTA bodies and payers need the upper rungs. The 510(k) route rarely requires them, so they are often missing.</p>
+      <p><strong class="lead">When it changes.</strong> A PCCP makes this harder to track. Version n+1 may differ from the version whose study you read, and the public record of what changed is thin. Post-deployment monitoring (Lecture 5.16) becomes part of the evidence, not an afterthought.</p>
+    </div>
 
     <div class="table-wrap">
       <table>

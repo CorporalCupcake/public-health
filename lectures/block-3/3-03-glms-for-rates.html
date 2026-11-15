@@ -56,14 +56,11 @@
     <h2>1. Start from the measure you want to report</h2>
     <p class="point">Pick the family and link from the effect measure your readers need, then check the variance; never let the software default pick your measure.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>The <strong>link</strong> sets the scale on which covariates add up, so it fixes what an exponentiated coefficient means: a log link gives ratios of means (risk, rate or prevalence ratios), a logit link gives odds ratios, an identity link gives differences. The <strong>family</strong> sets how the variance grows with the mean, which drives the standard errors.</dd>
-      <dt>Why it matters</dt>
-      <dd>The link decides the answer’s meaning; the variance decides its honesty. You can get a correct point estimate with the wrong family (Poisson for a binary outcome) as long as you repair the variance with robust standard errors (section 6).</dd>
-      <dt>How to read it</dt>
-      <dd>In a methods section, look for three things stated plainly: family, link and how standard errors were computed. If the paper reports “relative risk” from a logistic model, the words and the model disagree.</dd>
-    </dl>
+    <div class="facets">
+      <p>The <strong>link</strong> sets the scale on which covariates add up, so it fixes what an exponentiated coefficient means: a log link gives ratios of means (risk, rate or prevalence ratios), a logit link gives odds ratios, an identity link gives differences. The <strong>family</strong> sets how the variance grows with the mean, which drives the standard errors.</p>
+      <p><strong class="lead">Why it matters.</strong> The link decides the answer’s meaning; the variance decides its honesty. You can get a correct point estimate with the wrong family (Poisson for a binary outcome) as long as you repair the variance with robust standard errors (section 6).</p>
+      <p><strong class="lead">How to read it.</strong> In a methods section, look for three things stated plainly: family, link and how standard errors were computed. If the paper reports “relative risk” from a logistic model, the words and the model disagree.</p>
+    </div>
 
     <div class="table-wrap">
       <table>
@@ -189,16 +186,12 @@
     <h2>2. Binary outcomes: risk ratios, not odds ratios</h2>
     <p class="point">For common outcomes the odds ratio sits further from 1 than the risk ratio, and readers will read it as a risk ratio; fit a model that reports the risk ratio directly.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>Two ways to get risk (or prevalence) ratios with covariates. <strong>Log-binomial</strong>: binomial family, log link; exact but often fails to converge, because fitted risks must stay below 1. <strong>Modified Poisson</strong>: Poisson family, log link, on the 0/1 outcome, with robust standard errors (Zou 2004). The Poisson variance is wrong for binary data, but the coefficients are consistent and the sandwich fixes the standard errors.</dd>
-      <dt>Why it matters</dt>
-      <dd>Hypertension, obesity, diabetes in older adults, statin use: the outcomes in Project 3 and most survey analyses are common. Lecture 2.1 showed an OR of about 0.6 that was really an RR of about 0.93.</dd>
-      <dt>How to read it</dt>
-      <dd>If the outcome is under about 10% in every group, OR and RR are close and logistic is fine. Above that, expect the OR to exaggerate: an OR of 2.0 with a baseline risk of 30% is an RR of about 1.5.</dd>
-      <dt>What a change means</dt>
-      <dd>Switching from logistic to modified Poisson pulls estimates towards 1 for common outcomes. That is not a loss of effect; it is the effect stated on the scale people actually read.</dd>
-    </dl>
+    <div class="facets">
+      <p>Two ways to get risk (or prevalence) ratios with covariates. <strong>Log-binomial</strong>: binomial family, log link; exact but often fails to converge, because fitted risks must stay below 1. <strong>Modified Poisson</strong>: Poisson family, log link, on the 0/1 outcome, with robust standard errors (Zou 2004). The Poisson variance is wrong for binary data, but the coefficients are consistent and the sandwich fixes the standard errors.</p>
+      <p><strong class="lead">Why it matters.</strong> Hypertension, obesity, diabetes in older adults, statin use: the outcomes in Project 3 and most survey analyses are common. Lecture 2.1 showed an OR of about 0.6 that was really an RR of about 0.93.</p>
+      <p><strong class="lead">How to read it.</strong> If the outcome is under about 10% in every group, OR and RR are close and logistic is fine. Above that, expect the OR to exaggerate: an OR of 2.0 with a baseline risk of 30% is an RR of about 1.5.</p>
+      <p><strong class="lead">When it changes.</strong> Switching from logistic to modified Poisson pulls estimates towards 1 for common outcomes. That is not a loss of effect; it is the effect stated on the scale people actually read.</p>
+    </div>
 
 <pre><code>library(sandwich); library(lmtest)
 # Prevalence ratio of hypertension by Na/K ratio quartile
@@ -228,17 +221,13 @@ exp(cbind(PR = coef(m_rr), ci))                           # prevalence ratios</c
     <h2>3. Rates: Poisson with a person-time offset</h2>
     <p class="point">A count means nothing until you divide it by the person-time that produced it; the offset does that division inside the model.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>An <strong>offset</strong> is a covariate with its coefficient fixed at 1. With log person-time as the offset, the model describes the log <em>rate</em>, and each exponentiated coefficient is a <strong>rate ratio</strong>:
-        \[ \log \mathbb{E}[\text{events}] = \log(\text{person-time}) + \beta_0 + \beta_1 x \]</dd>
-      <dt>Why it matters</dt>
-      <dd>Regions, clinics and exposure groups differ in size and in how long people were followed. Without the offset the model explains the counts, and the biggest groups have the most events whatever their risk.</dd>
-      <dt>How to read it</dt>
-      <dd>A rate ratio of 1.3 for the top Na/K quartile means 30% more cardiovascular deaths per person-year than the reference quartile, at the same covariate values. Poisson regression on individual follow-up gives the same estimates as on data collapsed into covariate cells with summed events and person-years, so large cohorts can be aggregated.</dd>
-      <dt>What a change means</dt>
-      <dd>Adding the offset changes a coefficient by exactly the extent to which person-time differs between the groups it compares. If adding it barely moves anything, the groups had similar person-time.</dd>
-    </dl>
+    <div class="facets">
+      <p>An <strong>offset</strong> is a covariate with its coefficient fixed at 1. With log person-time as the offset, the model describes the log <em>rate</em>, and each exponentiated coefficient is a <strong>rate ratio</strong>:
+        \[ \log \mathbb{E}[\text{events}] = \log(\text{person-time}) + \beta_0 + \beta_1 x \]</p>
+      <p><strong class="lead">Why it matters.</strong> Regions, clinics and exposure groups differ in size and in how long people were followed. Without the offset the model explains the counts, and the biggest groups have the most events whatever their risk.</p>
+      <p><strong class="lead">How to read it.</strong> A rate ratio of 1.3 for the top Na/K quartile means 30% more cardiovascular deaths per person-year than the reference quartile, at the same covariate values. Poisson regression on individual follow-up gives the same estimates as on data collapsed into covariate cells with summed events and person-years, so large cohorts can be aggregated.</p>
+      <p><strong class="lead">When it changes.</strong> Adding the offset changes a coefficient by exactly the extent to which person-time differs between the groups it compares. If adding it barely moves anything, the groups had similar person-time.</p>
+    </div>
 
     <div class="widget" data-widget="offset-demo">
       <div class="widget-title">Why rates need person-time</div>
@@ -266,16 +255,12 @@ exp(cbind(PR = coef(m_rr), ci))                           # prevalence ratios</c
     <h2>4. Overdispersion</h2>
     <p class="point">Real health counts are usually more variable than Poisson allows; ignore that and every interval is too narrow.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>Poisson assumes the variance equals the mean. <strong>Overdispersion</strong> means the variance is larger, usually because units differ in ways the model does not capture (unmeasured risk, clustering, outbreaks). The coefficients stay roughly right; the standard errors are too small.</dd>
-      <dt>Why it matters</dt>
-      <dd>Confidence intervals that should cover the truth 95% of the time may cover it 70% of the time. Spurious “significant” differences between regions or hospitals follow.</dd>
-      <dt>How to read it</dt>
-      <dd>The <strong>dispersion statistic</strong>, Pearson χ² divided by residual degrees of freedom, should be near 1. At 2, Poisson standard errors are about \(\sqrt{2} \approx 1.4\) times too small. Values well above 2 are common for counts by hospital, region or day.</dd>
-      <dt>What a change means</dt>
-      <dd>Moving from Poisson to negative binomial usually leaves rate ratios similar and widens intervals. If the rate ratios move a lot, the two models weight units differently and the mean model may be wrong (section 7).</dd>
-    </dl>
+    <div class="facets">
+      <p>Poisson assumes the variance equals the mean. <strong>Overdispersion</strong> means the variance is larger, usually because units differ in ways the model does not capture (unmeasured risk, clustering, outbreaks). The coefficients stay roughly right; the standard errors are too small.</p>
+      <p><strong class="lead">Why it matters.</strong> Confidence intervals that should cover the truth 95% of the time may cover it 70% of the time. Spurious “significant” differences between regions or hospitals follow.</p>
+      <p><strong class="lead">How to read it.</strong> The <strong>dispersion statistic</strong>, Pearson χ² divided by residual degrees of freedom, should be near 1. At 2, Poisson standard errors are about \(\sqrt{2} \approx 1.4\) times too small. Values well above 2 are common for counts by hospital, region or day.</p>
+      <p><strong class="lead">When it changes.</strong> Moving from Poisson to negative binomial usually leaves rate ratios similar and widens intervals. If the rate ratios move a lot, the two models weight units differently and the mean model may be wrong (section 7).</p>
+    </div>
 
     <div class="table-wrap">
       <table>
@@ -309,14 +294,11 @@ exp(cbind(PR = coef(m_rr), ci))                           # prevalence ratios</c
     <h2>5. Too many zeros</h2>
     <p class="point">Many zeros are not the same as too many zeros; reach for zero-inflated models only when a separate process makes some people unable to have any events.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd><strong>Zero-inflated</strong> models mix a “never” group (structural zeros) with a count model. <strong>Hurdle</strong> models split the question into “any events?” (logistic) and “how many, if any?” (truncated count).</dd>
-      <dt>Why it matters</dt>
-      <dd>A low-mean Poisson or a negative binomial already produces lots of zeros. Zero-inflated models add parameters that are hard to interpret and easy to overfit.</dd>
-      <dt>How to read it</dt>
-      <dd>Compare observed zeros with the zeros the negative binomial predicts (section 7). If they match, stop. If not, and there is a clear structural reason, a hurdle model is usually easier to explain.</dd>
-    </dl>
+    <div class="facets">
+      <p><strong>Zero-inflated</strong> models mix a “never” group (structural zeros) with a count model. <strong>Hurdle</strong> models split the question into “any events?” (logistic) and “how many, if any?” (truncated count).</p>
+      <p><strong class="lead">Why it matters.</strong> A low-mean Poisson or a negative binomial already produces lots of zeros. Zero-inflated models add parameters that are hard to interpret and easy to overfit.</p>
+      <p><strong class="lead">How to read it.</strong> Compare observed zeros with the zeros the negative binomial predicts (section 7). If they match, stop. If not, and there is a clear structural reason, a hurdle model is usually easier to explain.</p>
+    </div>
 
     <div class="callout example">
       <div class="callout-title">Example</div>
@@ -334,16 +316,12 @@ exp(cbind(PR = coef(m_rr), ci))                           # prevalence ratios</c
     <h2>6. Robust (sandwich) standard errors</h2>
     <p class="point">Sandwich standard errors protect your intervals when the variance model is wrong; they do nothing for coefficients that are biased.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>The sandwich estimator measures the spread of the estimates from the residuals themselves rather than from the family’s variance formula. The <strong>cluster-robust</strong> version adds up residuals within clusters (clinic, household, person with repeated visits), allowing correlation inside each one.</dd>
-      <dt>Why it matters</dt>
-      <dd>It makes modified Poisson valid, it is an alternative to quasi-Poisson for overdispersion, and it is the engine of GEE (Lecture 3.8) and of design-based survey variance (Lecture 3.4).</dd>
-      <dt>How to read it</dt>
-      <dd>If robust and model-based SEs agree, the variance model was fine. If robust SEs are much larger, there is overdispersion or clustering; trust the robust ones and ask why.</dd>
-      <dt>What a change means</dt>
-      <dd>Robust SEs twice the model-based ones mean the model-based intervals were half as wide as they should be, so the “significant” findings need re-checking.</dd>
-    </dl>
+    <div class="facets">
+      <p>The sandwich estimator measures the spread of the estimates from the residuals themselves rather than from the family’s variance formula. The <strong>cluster-robust</strong> version adds up residuals within clusters (clinic, household, person with repeated visits), allowing correlation inside each one.</p>
+      <p><strong class="lead">Why it matters.</strong> It makes modified Poisson valid, it is an alternative to quasi-Poisson for overdispersion, and it is the engine of GEE (Lecture 3.8) and of design-based survey variance (Lecture 3.4).</p>
+      <p><strong class="lead">How to read it.</strong> If robust and model-based SEs agree, the variance model was fine. If robust SEs are much larger, there is overdispersion or clustering; trust the robust ones and ask why.</p>
+      <p><strong class="lead">When it changes.</strong> Robust SEs twice the model-based ones mean the model-based intervals were half as wide as they should be, so the “significant” findings need re-checking.</p>
+    </div>
 
     <div class="callout trap">
       <div class="callout-title">Trap</div>
@@ -361,14 +339,11 @@ exp(cbind(PR = coef(m_rr), ci))                           # prevalence ratios</c
     <h2>7. Checking fit and reporting</h2>
     <p class="point">Check three things before you report a count model: dispersion, residual patterns, and whether the model reproduces the observed counts, zeros included.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd><strong>Dispersion</strong>: Pearson χ²/df near 1. <strong>Residuals</strong>: Pearson or deviance residuals are hard to read for small counts; <em>randomised quantile residuals</em> (the DHARMa package simulates them) should look uniform if the model is right. <strong>Observed vs expected counts</strong>: a rootogram or a simple table of how many 0s, 1s, 2s the model predicts.</dd>
-      <dt>Why it matters</dt>
-      <dd>Reviewers ask how you handled overdispersion and why you chose the family. A short fit paragraph in the methods, with a residual plot in the supplement, pre-empts most of those comments.</dd>
-      <dt>How to read it</dt>
-      <dd>Poisson and negative binomial can be compared by AIC (quasi-Poisson has no likelihood). A curve in residuals against a covariate means a non-linear effect (try a spline); a trend against time means a missing time term.</dd>
-    </dl>
+    <div class="facets">
+      <p><strong>Dispersion</strong>: Pearson χ²/df near 1. <strong>Residuals</strong>: Pearson or deviance residuals are hard to read for small counts; <em>randomised quantile residuals</em> (the DHARMa package simulates them) should look uniform if the model is right. <strong>Observed vs expected counts</strong>: a rootogram or a simple table of how many 0s, 1s, 2s the model predicts.</p>
+      <p><strong class="lead">Why it matters.</strong> Reviewers ask how you handled overdispersion and why you chose the family. A short fit paragraph in the methods, with a residual plot in the supplement, pre-empts most of those comments.</p>
+      <p><strong class="lead">How to read it.</strong> Poisson and negative binomial can be compared by AIC (quasi-Poisson has no likelihood). A curve in residuals against a covariate means a non-linear effect (try a spline); a trend against time means a missing time term.</p>
+    </div>
 
 <pre><code>library(MASS); library(DHARMa)
 # Cardiovascular deaths per person-year, by Na/K ratio quartile

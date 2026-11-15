@@ -55,16 +55,12 @@
     <h2>1. Validity and reliability</h2>
     <p class="point">Validity asks whether a measure hits the true value; reliability asks whether it gives the same answer twice. They are separate, and you need both.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd><strong>Validity</strong>: the measure captures what it claims to, without systematic error. It is checked against a better measure (<em>criterion validity</em>). <strong>Reliability</strong>: repeat measurements of the same thing agree. It is checked by repeating the test over time (<em>test–retest</em>), across observers (<em>inter-rater</em>) or within one observer (<em>intra-rater</em>).</dd>
-      <dt>Why it matters</dt>
-      <dd>Poor validity biases results in a direction you may not know. Poor reliability adds noise, which usually dilutes associations towards the null (regression dilution, Lecture 1.8) and wastes sample size.</dd>
-      <dt>How to read it</dt>
-      <dd>Reliability is necessary but not sufficient: an unreliable measure cannot be valid for individuals, but a perfectly reliable one can be consistently wrong.</dd>
-      <dt>What a change means</dt>
-      <dd>Averaging repeated readings improves reliability. It does nothing for validity. Three readings from a device that reads 5 mmHg high are still 5 mmHg high.</dd>
-    </dl>
+    <div class="facets">
+      <p><strong>Validity</strong>: the measure captures what it claims to, without systematic error. It is checked against a better measure (<em>criterion validity</em>). <strong>Reliability</strong>: repeat measurements of the same thing agree. It is checked by repeating the test over time (<em>test–retest</em>), across observers (<em>inter-rater</em>) or within one observer (<em>intra-rater</em>).</p>
+      <p><strong class="lead">Why it matters.</strong> Poor validity biases results in a direction you may not know. Poor reliability adds noise, which usually dilutes associations towards the null (regression dilution, Lecture 1.8) and wastes sample size.</p>
+      <p><strong class="lead">How to read it.</strong> Reliability is necessary but not sufficient: an unreliable measure cannot be valid for individuals, but a perfectly reliable one can be consistently wrong.</p>
+      <p><strong class="lead">When it changes.</strong> Averaging repeated readings improves reliability. It does nothing for validity. Three readings from a device that reads 5 mmHg high are still 5 mmHg high.</p>
+    </div>
 
     <figure class="diagram">
       <div class="diagram-title">Diagram · Reliability and validity are separate axes</div>
@@ -134,16 +130,12 @@
     <h2>2. Reliability of continuous measures: the ICC</h2>
     <p class="point">The intraclass correlation coefficient (ICC) is the share of all the variation in readings that comes from real differences between people rather than from measurement noise.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>Take repeated measurements on many people. Split the total variance into the part between people (signal) and the part within a person (noise). The ICC is the signal share, from 0 (all noise) to 1 (no noise).</dd>
-      <dt>Why it matters</dt>
-      <dd>For a measurement with classical random error, the ICC is the factor by which a regression slope on that exposure is shrunk. An ICC of 0.5 roughly halves a true association. This is regression dilution in one number.</dd>
-      <dt>How to read it</dt>
-      <dd>Koo and Li’s widely used bands: below 0.5 poor, 0.5–0.75 moderate, 0.75–0.9 good, above 0.9 excellent. Apply them to the confidence interval, not only the point estimate. Check which ICC form was used: <em>agreement</em> forms penalise a systematic offset between raters; <em>consistency</em> forms ignore it.</dd>
-      <dt>What a change means</dt>
-      <dd>The ICC rises if people differ more, even with the same measurement noise. The same blood pressure device has a higher ICC in a mixed clinic population than in a group of healthy 20-year-olds.</dd>
-    </dl>
+    <div class="facets">
+      <p>Take repeated measurements on many people. Split the total variance into the part between people (signal) and the part within a person (noise). The ICC is the signal share, from 0 (all noise) to 1 (no noise).</p>
+      <p><strong class="lead">Why it matters.</strong> For a measurement with classical random error, the ICC is the factor by which a regression slope on that exposure is shrunk. An ICC of 0.5 roughly halves a true association. This is regression dilution in one number.</p>
+      <p><strong class="lead">How to read it.</strong> Koo and Li’s widely used bands: below 0.5 poor, 0.5–0.75 moderate, 0.75–0.9 good, above 0.9 excellent. Apply them to the confidence interval, not only the point estimate. Check which ICC form was used: <em>agreement</em> forms penalise a systematic offset between raters; <em>consistency</em> forms ignore it.</p>
+      <p><strong class="lead">When it changes.</strong> The ICC rises if people differ more, even with the same measurement noise. The same blood pressure device has a higher ICC in a mixed clinic population than in a group of healthy 20-year-olds.</p>
+    </div>
 
     <div class="callout trap">
       <div class="callout-title">Trap</div>
@@ -166,16 +158,12 @@
     <h2>3. Agreement on categories: Cohen’s kappa</h2>
     <p class="point">Kappa measures how much two raters agree beyond the agreement they would reach by chance, given how often each says “yes”.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>Raw agreement minus chance agreement, divided by the most that could be gained over chance. 1 is perfect agreement; 0 is no better than chance.</dd>
-      <dt>Why it matters</dt>
-      <dd>It is the standard check for inter-rater reliability: two screeners in a systematic review (Lecture 2.12), two cardiologists reading ECGs, two coders assigning causes of death.</dd>
-      <dt>How to read it</dt>
-      <dd>Landis and Koch’s labels are the common shorthand: 0.21–0.40 fair, 0.41–0.60 moderate, 0.61–0.80 substantial, above 0.80 almost perfect. They called the bands arbitrary. For ordered categories (none, mild, severe), use <em>weighted</em> kappa, which gives partial credit for near misses.</dd>
-      <dt>What a change means</dt>
-      <dd>For the same raters, kappa drops as the finding gets rarer. A kappa going from 0.8 to 0.3 can mean the raters got worse, or only that you moved from a clinic to a screening population.</dd>
-    </dl>
+    <div class="facets">
+      <p>Raw agreement minus chance agreement, divided by the most that could be gained over chance. 1 is perfect agreement; 0 is no better than chance.</p>
+      <p><strong class="lead">Why it matters.</strong> It is the standard check for inter-rater reliability: two screeners in a systematic review (Lecture 2.12), two cardiologists reading ECGs, two coders assigning causes of death.</p>
+      <p><strong class="lead">How to read it.</strong> Landis and Koch’s labels are the common shorthand: 0.21–0.40 fair, 0.41–0.60 moderate, 0.61–0.80 substantial, above 0.80 almost perfect. They called the bands arbitrary. For ordered categories (none, mild, severe), use <em>weighted</em> kappa, which gives partial credit for near misses.</p>
+      <p><strong class="lead">When it changes.</strong> For the same raters, kappa drops as the finding gets rarer. A kappa going from 0.8 to 0.3 can mean the raters got worse, or only that you moved from a clinic to a screening population.</p>
+    </div>
 
     <div class="widget" data-widget="kappa-prevalence">
       <div class="widget-title">Same readers, different prevalence</div>
@@ -198,14 +186,11 @@
     <h2>4. Correlation is not agreement</h2>
     <p class="point">A high correlation shows that two methods rank people in the same order; it says nothing about whether they give the same number.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>Correlation measures how well the points fit <em>any</em> straight line. Agreement asks whether they fit one particular line: y = x.</dd>
-      <dt>Why it matters</dt>
-      <dd>Method-comparison papers often report r = 0.9 and declare a new method valid. A device that reads every person 25 mmol too high, or one that compresses everyone towards the middle, can still have r above 0.9.</dd>
-      <dt>How to read it</dt>
-      <dd>Correlation also depends on how spread out the people are. Test the same two methods in a wide range of people and r looks excellent; test them in a narrow range and it looks poor. The disagreement between methods has not changed.</dd>
-    </dl>
+    <div class="facets">
+      <p>Correlation measures how well the points fit <em>any</em> straight line. Agreement asks whether they fit one particular line: y = x.</p>
+      <p><strong class="lead">Why it matters.</strong> Method-comparison papers often report r = 0.9 and declare a new method valid. A device that reads every person 25 mmol too high, or one that compresses everyone towards the middle, can still have r above 0.9.</p>
+      <p><strong class="lead">How to read it.</strong> Correlation also depends on how spread out the people are. Test the same two methods in a wide range of people and r looks excellent; test them in a narrow range and it looks poor. The disagreement between methods has not changed.</p>
+    </div>
 
     <div class="callout trap">
       <div class="callout-title">Trap</div>
@@ -223,16 +208,12 @@
     <h2>5. Bland-Altman limits of agreement</h2>
     <p class="point">Plot the difference between two methods against their average; the mean difference is the bias, and the mean ± 1.96 SD of the differences is the range within which 95% of individual disagreements fall.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>For each person, compute the new-method reading minus the reference reading. The average is the <strong>bias</strong>. The bias plus and minus 1.96 standard deviations of those differences are the <strong>95% limits of agreement</strong>.</dd>
-      <dt>Why it matters</dt>
-      <dd>It answers the clinical question directly: “if I use the new method instead of the old one, how far off could I be for one patient?”</dd>
-      <dt>How to read it</dt>
-      <dd>Decide in advance what difference would not matter, then compare the limits with it. Look for patterns: a sloping cloud means <em>proportional bias</em> (the methods disagree more at high or low values); a fan shape means the error grows with the level, so analyse ratios or log values instead.</dd>
-      <dt>What a change means</dt>
-      <dd>Limits of agreement of −20 to +20 mmol/day might be fine for a population survey and useless for an individual patient. The plot does not decide; your threshold does.</dd>
-    </dl>
+    <div class="facets">
+      <p>For each person, compute the new-method reading minus the reference reading. The average is the <strong>bias</strong>. The bias plus and minus 1.96 standard deviations of those differences are the <strong>95% limits of agreement</strong>.</p>
+      <p><strong class="lead">Why it matters.</strong> It answers the clinical question directly: “if I use the new method instead of the old one, how far off could I be for one patient?”</p>
+      <p><strong class="lead">How to read it.</strong> Decide in advance what difference would not matter, then compare the limits with it. Look for patterns: a sloping cloud means <em>proportional bias</em> (the methods disagree more at high or low values); a fan shape means the error grows with the level, so analyse ratios or log values instead.</p>
+      <p><strong class="lead">When it changes.</strong> Limits of agreement of −20 to +20 mmol/day might be fine for a population survey and useless for an individual patient. The plot does not decide; your threshold does.</p>
+    </div>
 
     <div class="widget" data-widget="bland-altman">
       <div class="widget-title">High correlation, poor agreement</div>
@@ -260,14 +241,11 @@
     <h2>6. When the reference is imperfect</h2>
     <p class="point">Every validation compares one measure with another, and the reference has its own errors; know them before you trust the comparison.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>A <em>gold standard</em> is rarely gold. 24-hour urine misses sodium when collections are incomplete. Echocardiography readers disagree on ejection fraction. Chart review depends on what was written down.</dd>
-      <dt>Why it matters</dt>
-      <dd>Errors in the reference make a good new method look worse (it is penalised for disagreeing with a wrong answer), or a bad one look better if both share the same error.</dd>
-      <dt>What to do</dt>
-      <dd>Check the reference’s own quality (for urine, creatinine-based completeness checks); use the average of several reference readings; and feed the measured sensitivity, specificity or ICC into a bias analysis (Lecture 2.13).</dd>
-    </dl>
+    <div class="facets">
+      <p>A <em>gold standard</em> is rarely gold. 24-hour urine misses sodium when collections are incomplete. Echocardiography readers disagree on ejection fraction. Chart review depends on what was written down.</p>
+      <p><strong class="lead">Why it matters.</strong> Errors in the reference make a good new method look worse (it is penalised for disagreeing with a wrong answer), or a bad one look better if both share the same error.</p>
+      <p><strong class="lead">What to do.</strong> Check the reference’s own quality (for urine, creatinine-based completeness checks); use the average of several reference readings; and feed the measured sensitivity, specificity or ICC into a bias analysis (Lecture 2.13).</p>
+    </div>
 
     <div class="callout trap">
       <div class="callout-title">Trap</div>

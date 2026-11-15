@@ -56,16 +56,12 @@
     <h2>1. What each source sees and misses</h2>
     <p class="point">Claims record what was paid for, EHRs record what one organisation did, registries record what the law requires, and none of them records the patient's whole life.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd><strong>Claims</strong> are bills sent to an insurer: diagnoses, procedures and pharmacy dispensings, with dates, but almost no clinical values. <strong>EHRs</strong> hold what clinicians saw and did inside one health system: vital signs, labs, orders, notes. <strong>Registries</strong> record a defined set of events for a whole population (births, deaths, cancers, prescriptions dispensed). <strong>ICU databases</strong> such as MIMIC-IV are EHR extracts of extreme depth for a short stretch of time.</dd>
-      <dt>Why it matters</dt>
-      <dd>The gaps are not random. Claims see a drug only when it is dispensed and paid for, and lose people when they change insurer. EHRs see a prescription but not whether it was collected or taken, and miss care given elsewhere. Gaps that line up with exposure or outcome become bias.</dd>
-      <dt>How to read it</dt>
-      <dd>For each study variable, ask three things. Would this source record it at all? Would it record it the same way for exposed and unexposed? Would I know if it were missing, or would absence look like "no event"?</dd>
-      <dt>What a change means</dt>
-      <dd>Changing source changes the estimand. "Dispensed" in claims and "prescribed" in an EHR are different exposures. "Death" in an ICU database may mean in-hospital death only, unless death records are linked.</dd>
-    </dl>
+    <div class="facets">
+      <p><strong>Claims</strong> are bills sent to an insurer: diagnoses, procedures and pharmacy dispensings, with dates, but almost no clinical values. <strong>EHRs</strong> hold what clinicians saw and did inside one health system: vital signs, labs, orders, notes. <strong>Registries</strong> record a defined set of events for a whole population (births, deaths, cancers, prescriptions dispensed). <strong>ICU databases</strong> such as MIMIC-IV are EHR extracts of extreme depth for a short stretch of time.</p>
+      <p><strong class="lead">Why it matters.</strong> The gaps are not random. Claims see a drug only when it is dispensed and paid for, and lose people when they change insurer. EHRs see a prescription but not whether it was collected or taken, and miss care given elsewhere. Gaps that line up with exposure or outcome become bias.</p>
+      <p><strong class="lead">How to read it.</strong> For each study variable, ask three things. Would this source record it at all? Would it record it the same way for exposed and unexposed? Would I know if it were missing, or would absence look like "no event"?</p>
+      <p><strong class="lead">When it changes.</strong> Changing source changes the estimand. "Dispensed" in claims and "prescribed" in an EHR are different exposures. "Death" in an ICU database may mean in-hospital death only, unless death records are linked.</p>
+    </div>
 
     <div class="widget" data-widget="source-journey">
       <div class="widget-title">One patient, four data sources</div>
@@ -88,16 +84,12 @@
     <h2>2. Linking records across sources</h2>
     <p class="point">Linkage turns several partial views into one, but every missed or false link is a measurement error that can bias results.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd><strong>Deterministic</strong> linkage joins records that agree exactly on an identifier, such as a national ID number, or on a fixed set of fields. <strong>Probabilistic</strong> linkage weighs agreement on several imperfect fields (name, birth date, sex, postcode) and links pairs whose total weight passes a threshold. Fellegi and Sunter (1969) gave the theory: each field gets a weight from how often it agrees among true matches versus non-matches.</dd>
-      <dt>Why it matters</dt>
-      <dd>There are two kinds of error. A <strong>missed match</strong> loses an event: a death that is not linked looks like survival. A <strong>false match</strong> attaches someone else's event. Harron and colleagues (2014) showed that when linkage quality differs between groups, for example between hospitals, the bias in event rates can be large.</dd>
-      <dt>How to read it</dt>
-      <dd>A linked study should report the match rate, how links were made, and whether linked and unlinked records differ in age, sex, ethnicity or site. If unlinked records are concentrated in one group, so is the outcome misclassification.</dd>
-      <dt>What a change means</dt>
-      <dd>Raising the probabilistic threshold trades false matches for missed matches. Neither setting is neutral. A sensitivity analysis at two thresholds shows how much the answer depends on the choice.</dd>
-    </dl>
+    <div class="facets">
+      <p><strong>Deterministic</strong> linkage joins records that agree exactly on an identifier, such as a national ID number, or on a fixed set of fields. <strong>Probabilistic</strong> linkage weighs agreement on several imperfect fields (name, birth date, sex, postcode) and links pairs whose total weight passes a threshold. Fellegi and Sunter (1969) gave the theory: each field gets a weight from how often it agrees among true matches versus non-matches.</p>
+      <p><strong class="lead">Why it matters.</strong> There are two kinds of error. A <strong>missed match</strong> loses an event: a death that is not linked looks like survival. A <strong>false match</strong> attaches someone else's event. Harron and colleagues (2014) showed that when linkage quality differs between groups, for example between hospitals, the bias in event rates can be large.</p>
+      <p><strong class="lead">How to read it.</strong> A linked study should report the match rate, how links were made, and whether linked and unlinked records differ in age, sex, ethnicity or site. If unlinked records are concentrated in one group, so is the outcome misclassification.</p>
+      <p><strong class="lead">When it changes.</strong> Raising the probabilistic threshold trades false matches for missed matches. Neither setting is neutral. A sensitivity analysis at two thresholds shows how much the answer depends on the choice.</p>
+    </div>
 
     <div class="callout gulf">
       <div class="callout-title">In the Gulf</div>
@@ -129,14 +121,11 @@
       </table>
     </div>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>A map of where most published pharmacoepidemiology comes from. Nordic studies lean on the personal ID number; US studies on insurance claims; UK studies on GP records.</dd>
-      <dt>Why it matters</dt>
-      <dd>The same question answered in two systems can differ because the systems see different things, not because the drug works differently. Knowing each system's gap tells you which result to trust for which question.</dd>
-      <dt>How to read it</dt>
-      <dd>Match the question to the strength. Long-term cancer risk after a drug needs the decades of follow-up that registries give. An effect that depends on kidney function needs lab values, so EHRs or CPRD. An in-hospital ICU exposure needs an ICU database.</dd>
-    </dl>
+    <div class="facets">
+      <p>A map of where most published pharmacoepidemiology comes from. Nordic studies lean on the personal ID number; US studies on insurance claims; UK studies on GP records.</p>
+      <p><strong class="lead">Why it matters.</strong> The same question answered in two systems can differ because the systems see different things, not because the drug works differently. Knowing each system's gap tells you which result to trust for which question.</p>
+      <p><strong class="lead">How to read it.</strong> Match the question to the strength. Long-term cancer risk after a drug needs the decades of follow-up that registries give. An effect that depends on kidney function needs lab values, so EHRs or CPRD. An in-hospital ICU exposure needs an ICU database.</p>
+    </div>
 
     <div class="callout gulf">
       <div class="callout-title">In the Gulf</div>
@@ -210,16 +199,12 @@
       <figcaption>Simplified. The full CDM (version 5.4) has more tables, including procedure_occurrence, device_exposure, observation and note, plus derived tables such as drug_era. Each clinical row carries a person_id, dates, a standard concept_id, the original source value, and usually a visit_occurrence_id.</figcaption>
     </figure>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>The Observational Medical Outcomes Partnership (OMOP) Common Data Model is an open table design maintained by the OHDSI community. Each site writes an <strong>ETL</strong> (extract, transform, load) that copies its local data into these tables. The analyses then run against the shared structure.</dd>
-      <dt>Why it matters</dt>
-      <dd>Without a common model, a 10-database study needs 10 sets of code, each a chance to diverge. With one, the same cohort definition and the same analysis package run at every site, and only aggregate results leave each site. Data never have to be pooled.</dd>
-      <dt>How to read it</dt>
-      <dd>Each row keeps two codes: the standard <code>concept_id</code> used for analysis, and the <code>source_value</code> exactly as the hospital recorded it. When results look odd, go back to the source values. The ETL is where meaning is lost.</dd>
-      <dt>What a change means</dt>
-      <dd>An ETL change, such as a new mapping or a different rule for dating diagnoses, can shift results with no change in the patients. Record the ETL and vocabulary versions with every study.</dd>
-    </dl>
+    <div class="facets">
+      <p>The Observational Medical Outcomes Partnership (OMOP) Common Data Model is an open table design maintained by the OHDSI community. Each site writes an <strong>ETL</strong> (extract, transform, load) that copies its local data into these tables. The analyses then run against the shared structure.</p>
+      <p><strong class="lead">Why it matters.</strong> Without a common model, a 10-database study needs 10 sets of code, each a chance to diverge. With one, the same cohort definition and the same analysis package run at every site, and only aggregate results leave each site. Data never have to be pooled.</p>
+      <p><strong class="lead">How to read it.</strong> Each row keeps two codes: the standard <code>concept_id</code> used for analysis, and the <code>source_value</code> exactly as the hospital recorded it. When results look odd, go back to the source values. The ETL is where meaning is lost.</p>
+      <p><strong class="lead">When it changes.</strong> An ETL change, such as a new mapping or a different rule for dating diagnoses, can shift results with no change in the patients. Record the ETL and vocabulary versions with every study.</p>
+    </div>
 
     <div class="callout trap">
       <div class="callout-title">Trap</div>
@@ -232,16 +217,12 @@
     <h2>5. Vocabularies: from source codes to standard concepts</h2>
     <p class="point">Every source code is mapped to one standard concept, and the concept hierarchy lets a single ID stand for a disease and all its subtypes.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>Source codes such as ICD-10-CM <code>I48.91</code> are <em>non-standard</em> concepts. A "Maps to" relationship links each one to a <em>standard</em> concept in a reference vocabulary: SNOMED CT for conditions, RxNorm for drugs, LOINC for measurements. <code>concept_ancestor</code> stores the hierarchy, so the standard concept for atrial fibrillation (concept_id 313217, SNOMED 49436004) has paroxysmal and persistent AF among its descendants. The Athena website is where you browse and download the vocabularies.</dd>
-      <dt>Why it matters</dt>
-      <dd>A cohort written as "313217 and its descendants" finds AF whether the site recorded ICD-9, ICD-10-CM, ICD-10-AM or SNOMED codes. That is what makes a definition portable.</dd>
-      <dt>How to read it</dt>
-      <dd>Read a concept set as a list of standard IDs, each with "include descendants" on or off. Then check what the hierarchy actually pulls in. Some descendants may not belong in your definition.</dd>
-      <dt>What a change means</dt>
-      <dd>Mapping is not lossless. One ICD-10 code for "atrial fibrillation and flutter" maps to a combined concept, not to AF alone. A coarse source code cannot be made finer by mapping it.</dd>
-    </dl>
+    <div class="facets">
+      <p>Source codes such as ICD-10-CM <code>I48.91</code> are <em>non-standard</em> concepts. A "Maps to" relationship links each one to a <em>standard</em> concept in a reference vocabulary: SNOMED CT for conditions, RxNorm for drugs, LOINC for measurements. <code>concept_ancestor</code> stores the hierarchy, so the standard concept for atrial fibrillation (concept_id 313217, SNOMED 49436004) has paroxysmal and persistent AF among its descendants. The Athena website is where you browse and download the vocabularies.</p>
+      <p><strong class="lead">Why it matters.</strong> A cohort written as "313217 and its descendants" finds AF whether the site recorded ICD-9, ICD-10-CM, ICD-10-AM or SNOMED codes. That is what makes a definition portable.</p>
+      <p><strong class="lead">How to read it.</strong> Read a concept set as a list of standard IDs, each with "include descendants" on or off. Then check what the hierarchy actually pulls in. Some descendants may not belong in your definition.</p>
+      <p><strong class="lead">When it changes.</strong> Mapping is not lossless. One ICD-10 code for "atrial fibrillation and flutter" maps to a combined concept, not to AF alone. A coarse source code cannot be made finer by mapping it.</p>
+    </div>
 
     <pre><code>WITH af AS (                    -- first recorded AF per person
   SELECT co.person_id, MIN(co.condition_start_date) AS index_date
@@ -280,14 +261,11 @@ GROUP BY af.person_id, af.index_date;</code></pre>
     <h2>6. OHDSI and network studies</h2>
     <p class="point">OHDSI's tools let one study protocol run across dozens of OMOP databases while each site keeps its data.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>OHDSI (Observational Health Data Sciences and Informatics) is an open community that maintains the CDM and its tools. <strong>ATLAS</strong> is a web tool for building concept sets and cohort definitions. <strong>HADES</strong> is a set of R packages, including CohortMethod (propensity score cohort studies, Lecture 5.4), SelfControlledCaseSeries (Lecture 5.5) and PatientLevelPrediction. Achilles and the Data Quality Dashboard profile and check a database (Lecture 5.7).</dd>
-      <dt>Why it matters</dt>
-      <dd>In a network study, a coordinating team writes the protocol and a study package; each site runs it locally and returns only aggregate results. Running across many databases at once shows whether an effect replicates, and makes selective reporting harder.</dd>
-      <dt>How to read it</dt>
-      <dd>Look for the pre-registered protocol, negative control outcomes (Lecture 5.4) and a per-database forest plot. Agreement across claims and EHR databases is stronger evidence than a large pooled sample size.</dd>
-    </dl>
+    <div class="facets">
+      <p>OHDSI (Observational Health Data Sciences and Informatics) is an open community that maintains the CDM and its tools. <strong>ATLAS</strong> is a web tool for building concept sets and cohort definitions. <strong>HADES</strong> is a set of R packages, including CohortMethod (propensity score cohort studies, Lecture 5.4), SelfControlledCaseSeries (Lecture 5.5) and PatientLevelPrediction. Achilles and the Data Quality Dashboard profile and check a database (Lecture 5.7).</p>
+      <p><strong class="lead">Why it matters.</strong> In a network study, a coordinating team writes the protocol and a study package; each site runs it locally and returns only aggregate results. Running across many databases at once shows whether an effect replicates, and makes selective reporting harder.</p>
+      <p><strong class="lead">How to read it.</strong> Look for the pre-registered protocol, negative control outcomes (Lecture 5.4) and a per-database forest plot. Agreement across claims and EHR databases is stronger evidence than a large pooled sample size.</p>
+    </div>
 
     <div class="callout example">
       <div class="callout-title">Example · LEGEND-HTN</div>
@@ -310,16 +288,12 @@ GROUP BY af.person_id, af.index_date;</code></pre>
     <h2>7. MIMIC-IV in OMOP: Project 5A</h2>
     <p class="point">MIMIC-IV can be converted to OMOP, but the gaps that matter most for Project 5A sit exactly where the conversion is thinnest.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>MIMIC-IV is EHR data from Beth Israel Deaconess Medical Center in Boston, with dates shifted into the future to protect privacy. PhysioNet hosts an OMOP version of the 100-patient MIMIC-IV demo (version 0.9, Kallfelz and colleagues). Its ETL covers the core, hosp and icu modules and is designed to run on the full data too.</dd>
-      <dt>Why it matters</dt>
-      <dd>The demo notes list what is missing. ICU <code>inputevents</code> and <code>outputevents</code> are not yet included, and IV heparin infusions are recorded in inputevents. Notes are not populated, and some local codes remain unmapped. A Project 5A cohort written in ATLAS against this conversion would undercount anticoagulant exposure in the ICU.</dd>
-      <dt>How to read it</dt>
-      <dd>MIMIC-IV diagnoses are billing codes attached to the admission, with no time of day. Once in OMOP they become condition rows dated to the admission. "New-onset AF in the ICU" cannot be told apart from AF present on arrival. That is why Project 5A dates onset from ECGs and charted rhythm rather than from codes.</dd>
-      <dt>What a change means</dt>
-      <dd>Working in OMOP buys portability: the same definition could run in an OMOP version of another ICU database, or in a Saudi hospital's data once converted. It costs some detail. A sensible plan is to write the main analysis on native MIMIC-IV tables and an OMOP version for replication.</dd>
-    </dl>
+    <div class="facets">
+      <p>MIMIC-IV is EHR data from Beth Israel Deaconess Medical Center in Boston, with dates shifted into the future to protect privacy. PhysioNet hosts an OMOP version of the 100-patient MIMIC-IV demo (version 0.9, Kallfelz and colleagues). Its ETL covers the core, hosp and icu modules and is designed to run on the full data too.</p>
+      <p><strong class="lead">Why it matters.</strong> The demo notes list what is missing. ICU <code>inputevents</code> and <code>outputevents</code> are not yet included, and IV heparin infusions are recorded in inputevents. Notes are not populated, and some local codes remain unmapped. A Project 5A cohort written in ATLAS against this conversion would undercount anticoagulant exposure in the ICU.</p>
+      <p><strong class="lead">How to read it.</strong> MIMIC-IV diagnoses are billing codes attached to the admission, with no time of day. Once in OMOP they become condition rows dated to the admission. "New-onset AF in the ICU" cannot be told apart from AF present on arrival. That is why Project 5A dates onset from ECGs and charted rhythm rather than from codes.</p>
+      <p><strong class="lead">When it changes.</strong> Working in OMOP buys portability: the same definition could run in an OMOP version of another ICU database, or in a Saudi hospital's data once converted. It costs some detail. A sensible plan is to write the main analysis on native MIMIC-IV tables and an OMOP version for replication.</p>
+    </div>
 
     <div class="callout example">
       <div class="callout-title">Example · Project 5A, two pipelines</div>

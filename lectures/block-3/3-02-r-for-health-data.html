@@ -57,14 +57,11 @@
     <h2>1. R’s data model for a Python user</h2>
     <p class="point">In R everything is a vector, indexing starts at 1, and functions never change their arguments in place.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>There are no scalars: <code>5</code> is a numeric vector of length one. Operations are vectorised by default. A data frame is a list of equal-length column vectors; a tibble is a stricter data frame that prints better.</dd>
-      <dt>Why it matters</dt>
-      <dd>Most R surprises for Python users come from three places: 1-based indexing with negative indices meaning “drop”, silent recycling of short vectors, and copy-on-modify semantics (a function that edits a data frame returns a new one; the original is untouched).</dd>
-      <dt>How to read it</dt>
-      <dd>If code works only because of recycling or a lucky index, it will break quietly on the next dataset. Prefer explicit joins and named columns over positions.</dd>
-    </dl>
+    <div class="facets">
+      <p>There are no scalars: <code>5</code> is a numeric vector of length one. Operations are vectorised by default. A data frame is a list of equal-length column vectors; a tibble is a stricter data frame that prints better.</p>
+      <p><strong class="lead">Why it matters.</strong> Most R surprises for Python users come from three places: 1-based indexing with negative indices meaning “drop”, silent recycling of short vectors, and copy-on-modify semantics (a function that edits a data frame returns a new one; the original is untouched).</p>
+      <p><strong class="lead">How to read it.</strong> If code works only because of recycling or a lucky index, it will break quietly on the next dataset. Prefer explicit joins and named columns over positions.</p>
+    </div>
 
     <div class="table-wrap">
       <table>
@@ -95,16 +92,12 @@
     <h2>2. Factors and their traps</h2>
     <p class="point">A factor is a vector of integer codes with a table of labels, and its level order silently chooses your reference group.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>R’s type for categorical variables. Internally, codes 1, 2, 3…; the <em>levels</em> attribute maps codes to labels. An <em>ordered</em> factor adds an order (low &lt; middle &lt; high).</dd>
-      <dt>Why it matters</dt>
-      <dd>Models turn a factor into dummy columns and compare every level with the first level. Tables list levels in level order. The default order is alphabetical, which is rarely the order you want.</dd>
-      <dt>How to read it</dt>
-      <dd>Before any model, run <code>levels(x)</code> and <code>table(x, useNA = "ifany")</code>. The first level printed is your reference.</dd>
-      <dt>What a change means</dt>
-      <dd>Changing the reference changes every coefficient and p-value for that factor but not the fitted values. The model is the same; the questions it answers are different.</dd>
-    </dl>
+    <div class="facets">
+      <p>R’s type for categorical variables. Internally, codes 1, 2, 3…; the <em>levels</em> attribute maps codes to labels. An <em>ordered</em> factor adds an order (low &lt; middle &lt; high).</p>
+      <p><strong class="lead">Why it matters.</strong> Models turn a factor into dummy columns and compare every level with the first level. Tables list levels in level order. The default order is alphabetical, which is rarely the order you want.</p>
+      <p><strong class="lead">How to read it.</strong> Before any model, run <code>levels(x)</code> and <code>table(x, useNA = "ifany")</code>. The first level printed is your reference.</p>
+      <p><strong class="lead">When it changes.</strong> Changing the reference changes every coefficient and p-value for that factor but not the fitted values. The model is the same; the questions it answers are different.</p>
+    </div>
 
     <div class="table-wrap">
       <table>
@@ -137,14 +130,11 @@ d$smoke &lt;- forcats::fct_relevel(d$smoke, "Never")                      # or m
     <h2>3. Missing values: NA spreads, and survey codes hide</h2>
     <p class="point">R’s NA means “unknown”, so anything computed from it is unknown too; survey files add a second problem, missing values disguised as numbers.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd><code>NA + 1</code> is NA, <code>mean(x)</code> is NA if any value is, and <code>NA == NA</code> is NA, so test with <code>is.na()</code>. <code>na.rm = TRUE</code> drops missing values from a summary. <code>NULL</code> is “nothing at all”, and <code>NaN</code> is an undefined number such as 0/0.</dd>
-      <dt>Why it matters</dt>
-      <dd>Each function handles NA its own way, and some silently drop rows. <code>lm()</code> and <code>glm()</code> discard every row with a missing value in any variable in the formula (complete-case analysis), so adding a covariate can change who is in the model. <code>dplyr::filter()</code> drops rows where the condition is NA. <code>table()</code> hides NA unless asked.</dd>
-      <dt>How to read it</dt>
-      <dd>Always report the number analysed: <code>nobs(fit)</code>. If it differs between models, they are fitted to different people and cannot be compared directly. Lecture 3.5 covers what to do instead.</dd>
-    </dl>
+    <div class="facets">
+      <p><code>NA + 1</code> is NA, <code>mean(x)</code> is NA if any value is, and <code>NA == NA</code> is NA, so test with <code>is.na()</code>. <code>na.rm = TRUE</code> drops missing values from a summary. <code>NULL</code> is “nothing at all”, and <code>NaN</code> is an undefined number such as 0/0.</p>
+      <p><strong class="lead">Why it matters.</strong> Each function handles NA its own way, and some silently drop rows. <code>lm()</code> and <code>glm()</code> discard every row with a missing value in any variable in the formula (complete-case analysis), so adding a covariate can change who is in the model. <code>dplyr::filter()</code> drops rows where the condition is NA. <code>table()</code> hides NA unless asked.</p>
+      <p><strong class="lead">How to read it.</strong> Always report the number analysed: <code>nobs(fit)</code>. If it differs between models, they are fitted to different people and cannot be compared directly. Lecture 3.5 covers what to do instead.</p>
+    </div>
 
     <div class="table-wrap">
       <table>
@@ -178,14 +168,11 @@ nobs(fit)                                                            # who was a
     <h2>4. Tidyverse, base and data.table</h2>
     <p class="point">Use dplyr for clarity, data.table or duckdb for very large tables, and base R where a package would be overkill; they mix freely.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>The tidyverse (dplyr, tidyr, readr, ggplot2, forcats, lubridate) gives one verb per operation, chained with the pipe <code>|&gt;</code> (built into R since 4.1; <code>%&gt;%</code> is the older magrittr pipe). data.table is a fast, terse alternative: <code>dt[rows, columns, by = groups]</code>. Base R is what every package is built on.</dd>
-      <dt>Why it matters</dt>
-      <dd>Readable data preparation is reviewable data preparation (Lecture 3.1). For millions of rows, such as MIMIC-IV’s event tables, dplyr on a laptop becomes slow; data.table, or dplyr syntax running on duckdb or arrow, keeps it fast.</dd>
-      <dt>How to read it</dt>
-      <dd>Pick one style per project for data preparation. Mixing dplyr and data.table in one pipeline is legal but hard to review.</dd>
-    </dl>
+    <div class="facets">
+      <p>The tidyverse (dplyr, tidyr, readr, ggplot2, forcats, lubridate) gives one verb per operation, chained with the pipe <code>|&gt;</code> (built into R since 4.1; <code>%&gt;%</code> is the older magrittr pipe). data.table is a fast, terse alternative: <code>dt[rows, columns, by = groups]</code>. Base R is what every package is built on.</p>
+      <p><strong class="lead">Why it matters.</strong> Readable data preparation is reviewable data preparation (Lecture 3.1). For millions of rows, such as MIMIC-IV’s event tables, dplyr on a laptop becomes slow; data.table, or dplyr syntax running on duckdb or arrow, keeps it fast.</p>
+      <p><strong class="lead">How to read it.</strong> Pick one style per project for data preparation. Mixing dplyr and data.table in one pipeline is legal but hard to review.</p>
+    </div>
 
     <div class="table-wrap">
       <table>
@@ -220,14 +207,11 @@ nobs(fit)                                                            # who was a
     <h2>5. Dates and labelled survey data</h2>
     <p class="point">Dates are numbers counted from an origin, and survey files carry numbers with labels attached; both go wrong when you forget which they are.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>An R <code>Date</code> is days since 1 January 1970. lubridate parses (<code>ymd()</code>, <code>dmy()</code>) and measures (<code>time_length(interval(dob, exam), "years")</code>). haven reads Stata (<code>read_dta</code>), SPSS (<code>read_sav</code>) and SAS transport files (<code>read_xpt</code>, the NHANES format). Stata and SPSS columns arrive as <em>labelled</em> numbers: 1 with the label “Male”.</dd>
-      <dt>Why it matters</dt>
-      <dd>Survival analysis needs follow-up time, and survey analysis needs categories coded correctly. A date read with the wrong origin, or a region code treated as a number, gives a confident wrong answer.</dd>
-      <dt>How to read it</dt>
-      <dd>Convert labelled columns deliberately: <code>as_factor()</code> for categories, <code>zap_labels()</code> for true numbers. NHANES’s public linked mortality files give follow-up as person-months from interview and from examination, not as dates, so check which one matches your time origin.</dd>
-    </dl>
+    <div class="facets">
+      <p>An R <code>Date</code> is days since 1 January 1970. lubridate parses (<code>ymd()</code>, <code>dmy()</code>) and measures (<code>time_length(interval(dob, exam), "years")</code>). haven reads Stata (<code>read_dta</code>), SPSS (<code>read_sav</code>) and SAS transport files (<code>read_xpt</code>, the NHANES format). Stata and SPSS columns arrive as <em>labelled</em> numbers: 1 with the label “Male”.</p>
+      <p><strong class="lead">Why it matters.</strong> Survival analysis needs follow-up time, and survey analysis needs categories coded correctly. A date read with the wrong origin, or a region code treated as a number, gives a confident wrong answer.</p>
+      <p><strong class="lead">How to read it.</strong> Convert labelled columns deliberately: <code>as_factor()</code> for categories, <code>zap_labels()</code> for true numbers. NHANES’s public linked mortality files give follow-up as person-months from interview and from examination, not as dates, so check which one matches your time origin.</p>
+    </div>
 
 <pre><code>demo  &lt;- haven::read_xpt("data-raw/DEMO_J.XPT")      # NHANES 2017–2018 demographics
 steps &lt;- haven::read_dta("data-raw/steps.dta")      # labelled numbers: 1 = "Male", 2 = "Female"
@@ -250,16 +234,12 @@ d &lt;- d |> mutate(age = time_length(interval(dob, exam_date), "years"))</code>
     <h2>6. Model formulas and contrasts</h2>
     <p class="point">A formula is a compact recipe for the design matrix, and the contrast coding decides what each coefficient compares.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd><code>y ~ a + b</code> reads “y is modelled by a and b”. R expands each term into columns: a number stays one column, a factor becomes dummy columns, a spline becomes several. <em>Contrasts</em> are the rule for turning a factor into columns: the default, <em>treatment</em> coding, compares each level with the reference; <em>sum</em> coding compares each level with the average of the level means.</dd>
-      <dt>Why it matters</dt>
-      <dd>The same data and model give different-looking coefficient tables under different codings and references. Reviewers read your table; they need to know what each row compares.</dd>
-      <dt>How to read it</dt>
-      <dd>Under treatment coding, the intercept is the reference group’s value and each coefficient is a difference from it (a log rate ratio or log odds ratio in a GLM). Check <code>levels()</code> to know which group that is.</dd>
-      <dt>What a change means</dt>
-      <dd>Changing contrasts changes coefficients, standard errors and p-values for that factor, but not the fitted values or the overall fit. If fitted values change, you changed the model, not the coding.</dd>
-    </dl>
+    <div class="facets">
+      <p><code>y ~ a + b</code> reads “y is modelled by a and b”. R expands each term into columns: a number stays one column, a factor becomes dummy columns, a spline becomes several. <em>Contrasts</em> are the rule for turning a factor into columns: the default, <em>treatment</em> coding, compares each level with the reference; <em>sum</em> coding compares each level with the average of the level means.</p>
+      <p><strong class="lead">Why it matters.</strong> The same data and model give different-looking coefficient tables under different codings and references. Reviewers read your table; they need to know what each row compares.</p>
+      <p><strong class="lead">How to read it.</strong> Under treatment coding, the intercept is the reference group’s value and each coefficient is a difference from it (a log rate ratio or log odds ratio in a GLM). Check <code>levels()</code> to know which group that is.</p>
+      <p><strong class="lead">When it changes.</strong> Changing contrasts changes coefficients, standard errors and p-values for that factor, but not the fitted values or the overall fit. If fitted values change, you changed the model, not the coding.</p>
+    </div>
 
     <figure class="diagram">
       <div class="diagram-title">Diagram · Anatomy of an R model formula</div>
@@ -339,14 +319,11 @@ d &lt;- d |> mutate(age = time_length(interval(dob, exam_date), "years"))</code>
     <h2>7. From model to table and figure: broom and ggplot2</h2>
     <p class="point">broom turns any fitted model into a tidy data frame, and ggplot2 turns data frames into figures by mapping columns to visual properties.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>broom’s <code>tidy()</code> gives one row per coefficient, <code>glance()</code> one row per model, <code>augment()</code> one row per observation. ggplot2 is a grammar: data, <em>aesthetic mappings</em> (which column goes to x, y, colour), <em>geoms</em> (points, lines, ranges), scales, and facets (small multiples).</dd>
-      <dt>Why it matters</dt>
-      <dd>Tidy output feeds tables (gtsummary) and figures directly, so the numbers in the manuscript come straight from the model (Lecture 3.1). Most packages you will use, including survival, survey and lme4 (via broom.mixed), have tidy methods.</dd>
-      <dt>How to read it</dt>
-      <dd>For a GLM, ask <code>tidy()</code> for <code>exponentiate = TRUE</code> to get odds or rate ratios, and <code>conf.int = TRUE</code> for intervals.</dd>
-    </dl>
+    <div class="facets">
+      <p>broom’s <code>tidy()</code> gives one row per coefficient, <code>glance()</code> one row per model, <code>augment()</code> one row per observation. ggplot2 is a grammar: data, <em>aesthetic mappings</em> (which column goes to x, y, colour), <em>geoms</em> (points, lines, ranges), scales, and facets (small multiples).</p>
+      <p><strong class="lead">Why it matters.</strong> Tidy output feeds tables (gtsummary) and figures directly, so the numbers in the manuscript come straight from the model (Lecture 3.1). Most packages you will use, including survival, survey and lme4 (via broom.mixed), have tidy methods.</p>
+      <p><strong class="lead">How to read it.</strong> For a GLM, ask <code>tidy()</code> for <code>exponentiate = TRUE</code> to get odds or rate ratios, and <code>conf.int = TRUE</code> for intervals.</p>
+    </div>
 
 <pre><code>fit &lt;- glm(cvd ~ smoke + ns(age, 4) + sex, family = binomial, data = d)
 tidy(fit, exponentiate = TRUE, conf.int = TRUE) |>

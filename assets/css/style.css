@@ -252,26 +252,12 @@ nav.toc a { text-decoration: none; }
   font-weight: 600;
   margin-bottom: 1.1rem;
 }
-dl.facets {
-  display: grid;
-  grid-template-columns: 9.5rem 1fr;
-  gap: 0.55rem 1rem;
-  margin: 0 0 1.25rem;
-}
-dl.facets dt {
-  font-family: var(--font-ui);
-  font-size: 0.82rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--accent);
-  padding-top: 0.3rem;
-}
-dl.facets dd { margin: 0; }
-@media (max-width: 600px) {
-  dl.facets { grid-template-columns: 1fr; gap: 0.1rem; }
-  dl.facets dd { margin-bottom: 0.7rem; }
-}
+/* Facets read as ordinary paragraphs: the definition first, then short run-in lead-ins. */
+.facets { margin: 0 0 1.25rem; }
+.facets > p, .facets > div { margin: 0 0 0.85rem; }
+.facets > :last-child { margin-bottom: 0; }
+.facets .lead { font-weight: 700; color: var(--accent); }
+.facets > div > ul { margin: 0.4rem 0 0; }
 .callout.gulf { --c: var(--gulf); --c-bg: var(--gulf-bg); }
 .callout.ml { --c: var(--tier-master); --c-bg: var(--surface); }
 

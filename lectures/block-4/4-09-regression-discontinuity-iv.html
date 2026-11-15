@@ -56,16 +56,12 @@
     <h2>1. A cut-off makes a local experiment</h2>
     <p class="point">When a rule gives treatment to everyone above a threshold on a continuous score, people just below and just above are alike in everything except treatment, so a jump in outcomes at the threshold is the treatment’s effect there.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>The score is the <strong>running variable</strong> (age, a lab value, a risk score, birth weight). The key assumption is <strong>continuity</strong>: without the treatment, average outcomes would change smoothly through the cut-off. Then anything that jumps there must be caused by the thing that jumps there, the treatment.</dd>
-      <dt>Why it matters</dt>
-      <dd>The assignment rule is known and written down, so there is no hidden selection to model. Of all observational designs, RD comes closest to a trial, and reviewers know it.</dd>
-      <dt>How to read it</dt>
-      <dd>The estimate is the effect <em>at the cut-off</em> for people whose score sits near it. Moving it to people far from the cut-off is extrapolation, and needs its own argument.</dd>
-      <dt>What a change means</dt>
-      <dd>Card, Dobkin and Maestas found 7-day mortality about 1 percentage point lower just after age 65 (when US Medicare starts) among severely ill emergency admissions. That is about a 20% relative fall, for patients aged about 65, through better insurance cover.</dd>
-    </dl>
+    <div class="facets">
+      <p>The score is the <strong>running variable</strong> (age, a lab value, a risk score, birth weight). The key assumption is <strong>continuity</strong>: without the treatment, average outcomes would change smoothly through the cut-off. Then anything that jumps there must be caused by the thing that jumps there, the treatment.</p>
+      <p><strong class="lead">Why it matters.</strong> The assignment rule is known and written down, so there is no hidden selection to model. Of all observational designs, RD comes closest to a trial, and reviewers know it.</p>
+      <p><strong class="lead">How to read it.</strong> The estimate is the effect <em>at the cut-off</em> for people whose score sits near it. Moving it to people far from the cut-off is extrapolation, and needs its own argument.</p>
+      <p><strong class="lead">When it changes.</strong> Card, Dobkin and Maestas found 7-day mortality about 1 percentage point lower just after age 65 (when US Medicare starts) among severely ill emergency admissions. That is about a 20% relative fall, for patients aged about 65, through better insurance cover.</p>
+    </div>
 
     <div class="table-wrap">
       <table>
@@ -137,16 +133,12 @@
     <h2>2. Estimating the jump: local, linear, not polynomial</h2>
     <p class="point">Fit a straight line on each side of the cut-off, using only data inside a window, and read off the gap where the lines meet the cut-off; the window width (bandwidth) trades bias against noise.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd><strong>Local linear regression</strong>: within a bandwidth \(h\) either side, fit a line, weighting points nearer the cut-off more (a triangular kernel). Modern software picks \(h\) to minimise mean squared error and reports <strong>robust bias-corrected</strong> confidence intervals (Calonico, Cattaneo and Titiunik), which allow for the leftover curvature bias.</dd>
-      <dt>Why it matters</dt>
-      <dd>A wide window uses more data but lets curvature far from the cut-off bend the lines (bias). A narrow window is faithful but noisy. No choice is free, so report the estimate across a range of bandwidths.</dd>
-      <dt>How to read it</dt>
-      <dd>A good RD paper shows a binned scatter plot with the fit, the main estimate at the data-driven bandwidth, and the same estimate at half and double that bandwidth. If the jump is invisible in the plot, be wary of a significant estimate.</dd>
-      <dt>What a change means</dt>
-      <dd>An estimate that moves from −1.0 to −0.4 as the window widens means curvature is leaking in. One that swings sign as the window narrows means there is too little data near the cut-off.</dd>
-    </dl>
+    <div class="facets">
+      <p><strong>Local linear regression</strong>: within a bandwidth \(h\) either side, fit a line, weighting points nearer the cut-off more (a triangular kernel). Modern software picks \(h\) to minimise mean squared error and reports <strong>robust bias-corrected</strong> confidence intervals (Calonico, Cattaneo and Titiunik), which allow for the leftover curvature bias.</p>
+      <p><strong class="lead">Why it matters.</strong> A wide window uses more data but lets curvature far from the cut-off bend the lines (bias). A narrow window is faithful but noisy. No choice is free, so report the estimate across a range of bandwidths.</p>
+      <p><strong class="lead">How to read it.</strong> A good RD paper shows a binned scatter plot with the fit, the main estimate at the data-driven bandwidth, and the same estimate at half and double that bandwidth. If the jump is invisible in the plot, be wary of a significant estimate.</p>
+      <p><strong class="lead">When it changes.</strong> An estimate that moves from −1.0 to −0.4 as the window widens means curvature is leaking in. One that swings sign as the window narrows means there is too little data near the cut-off.</p>
+    </div>
 
     <div class="widget" data-widget="rd-explorer">
       <div class="widget-title">RD explorer</div>
@@ -180,14 +172,11 @@ rdrobust(ldl, risk, c = 20, h = 2 * h)</code></pre>
     <h2>3. Checking an RD: sorting, balance, placebos</h2>
     <p class="point">Continuity can’t be tested directly, but it has visible consequences: no pile-up of people just past the cut-off, no jump in characteristics fixed before treatment, and no jumps where nothing happens.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd><strong>Manipulation</strong> (sorting): if people or clinicians can push the score over the line, those just above differ from those just below. A <strong>density test</strong> (McCrary, 2008; the newer <code>rddensity</code> of Cattaneo, Jansson and Ma) looks for a jump in how many people sit at each score. <strong>Covariate balance</strong>: things fixed before treatment (age, sex, past diagnoses) should not jump. <strong>Placebo cut-offs</strong>: fake thresholds should show no effect.</dd>
-      <dt>Why it matters</dt>
-      <dd>Clinical scores are often recorded by people who know the threshold. Blood pressure readings show digit preference, and a borderline lab value can be repeated until it qualifies. Each of these breaks the “as-if random near the cut-off” logic.</dd>
-      <dt>How to read it</dt>
-      <dd>Card and colleagues showed that admission rates and comorbidities change smoothly at 65, so the patients just over 65 were not sicker or a different mix. That is what a passed balance check looks like.</dd>
-    </dl>
+    <div class="facets">
+      <p><strong>Manipulation</strong> (sorting): if people or clinicians can push the score over the line, those just above differ from those just below. A <strong>density test</strong> (McCrary, 2008; the newer <code>rddensity</code> of Cattaneo, Jansson and Ma) looks for a jump in how many people sit at each score. <strong>Covariate balance</strong>: things fixed before treatment (age, sex, past diagnoses) should not jump. <strong>Placebo cut-offs</strong>: fake thresholds should show no effect.</p>
+      <p><strong class="lead">Why it matters.</strong> Clinical scores are often recorded by people who know the threshold. Blood pressure readings show digit preference, and a borderline lab value can be repeated until it qualifies. Each of these breaks the “as-if random near the cut-off” logic.</p>
+      <p><strong class="lead">How to read it.</strong> Card and colleagues showed that admission rates and comorbidities change smoothly at 65, so the patients just over 65 were not sicker or a different mix. That is what a passed balance check looks like.</p>
+    </div>
 
     <div class="table-wrap">
       <table>
@@ -222,14 +211,11 @@ rdrobust(ldl, risk, c = 17)                   # placebo cut-off: should be about
     <h2>4. Instrumental variables with a health-services instrument</h2>
     <p class="point">An instrument is something that changes the chance of treatment, shares no causes with the outcome, and affects the outcome only through treatment; it lets you compare people sorted by the instrument rather than by the confounded treatment choice.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>Lecture 2.19 introduced the three core assumptions with genes as the instrument (Mendelian randomisation). Here the instrument is a feature of the health system. McClellan, McNeil and Newhouse (1994) used <strong>differential distance</strong>: how much farther a heart-attack patient lived from a hospital that did cardiac catheterisation than from the nearest hospital of any kind. Nearer patients were more likely to be catheterised, for reasons that had nothing to do with how sick they were.</dd>
-      <dt>Why it matters</dt>
-      <dd>Clinicians catheterise the patients who look most likely to benefit, so treated patients look far better than untreated ones (confounding by indication, Lecture 2.6). The IV analysis compared near and far patients instead, and found that more catheterisation brought little survival gain for the patients whose treatment depended on distance.</dd>
-      <dt>How to read it</dt>
-      <dd>Relevance is checked in the data. Independence is made plausible by showing that measured confounders are balanced across the instrument. Exclusion and monotonicity are argued from how the system works; no test can confirm them.</dd>
-    </dl>
+    <div class="facets">
+      <p>Lecture 2.19 introduced the three core assumptions with genes as the instrument (Mendelian randomisation). Here the instrument is a feature of the health system. McClellan, McNeil and Newhouse (1994) used <strong>differential distance</strong>: how much farther a heart-attack patient lived from a hospital that did cardiac catheterisation than from the nearest hospital of any kind. Nearer patients were more likely to be catheterised, for reasons that had nothing to do with how sick they were.</p>
+      <p><strong class="lead">Why it matters.</strong> Clinicians catheterise the patients who look most likely to benefit, so treated patients look far better than untreated ones (confounding by indication, Lecture 2.6). The IV analysis compared near and far patients instead, and found that more catheterisation brought little survival gain for the patients whose treatment depended on distance.</p>
+      <p><strong class="lead">How to read it.</strong> Relevance is checked in the data. Independence is made plausible by showing that measured confounders are balanced across the instrument. Exclusion and monotonicity are argued from how the system works; no test can confirm them.</p>
+    </div>
 
     <figure class="diagram">
       <div class="diagram-title">Diagram · An IV analysis of catheterisation after heart attack</div>
@@ -291,21 +277,17 @@ rdrobust(ldl, risk, c = 17)                   # placebo cut-off: should be about
     <h2>5. Whose effect? Compliers and the LATE</h2>
     <p class="point">When effects vary between people, IV estimates the average effect only among <strong>compliers</strong>, the people whose treatment the instrument actually changed.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>Sort people by how they would respond to the instrument. <strong>Always-takers</strong> get treated either way; <strong>never-takers</strong> never do; <strong>compliers</strong> get treated only if encouraged (live near); <strong>defiers</strong> do the opposite. <strong>Monotonicity</strong> assumes there are no defiers. Then the IV estimate is the effect among compliers: the <strong>local average treatment effect</strong> (LATE; Imbens and Angrist, 1994).</dd>
-      <dt>Why it matters</dt>
-      <dd>Always-takers and never-takers have the same treatment whatever the instrument, so the instrument tells you nothing about them. Compliers are the “marginal” patients, the ones a policy change at the margin would affect. That is useful for policy, but it is not the average effect across everyone.</dd>
-      <dt>How to read it</dt>
-      <dd>The basic estimate is the <strong>Wald ratio</strong>: the instrument’s effect on the outcome (the intention-to-treat, ITT, effect) divided by its effect on treatment (the <strong>first stage</strong>, which is also the share of compliers).</dd>
-    </dl>
+    <div class="facets">
+      <p>Sort people by how they would respond to the instrument. <strong>Always-takers</strong> get treated either way; <strong>never-takers</strong> never do; <strong>compliers</strong> get treated only if encouraged (live near); <strong>defiers</strong> do the opposite. <strong>Monotonicity</strong> assumes there are no defiers. Then the IV estimate is the effect among compliers: the <strong>local average treatment effect</strong> (LATE; Imbens and Angrist, 1994).</p>
+      <p><strong class="lead">Why it matters.</strong> Always-takers and never-takers have the same treatment whatever the instrument, so the instrument tells you nothing about them. Compliers are the “marginal” patients, the ones a policy change at the margin would affect. That is useful for policy, but it is not the average effect across everyone.</p>
+      <p><strong class="lead">How to read it.</strong> The basic estimate is the <strong>Wald ratio</strong>: the instrument’s effect on the outcome (the intention-to-treat, ITT, effect) divided by its effect on treatment (the <strong>first stage</strong>, which is also the share of compliers).</p>
+    </div>
 
     \[ \text{LATE} = \frac{\text{ITT: difference in outcome between instrument groups}}{\text{first stage: difference in treatment rate between instrument groups}} \]
 
-    <dl class="facets">
-      <dt>What a change means</dt>
-      <dd>If near patients die 1.8 percentage points less and are catheterised 30 points more, the effect among compliers is 1.8 / 0.30 = 6 points fewer deaths per 100 treated. A first stage of 3 points with the same ITT would imply 60 points, a sign that something other than catheterisation is at work.</dd>
-    </dl>
+    <div class="facets">
+      <p><strong class="lead">When it changes.</strong> If near patients die 1.8 percentage points less and are catheterised 30 points more, the effect among compliers is 1.8 / 0.30 = 6 points fewer deaths per 100 treated. A first stage of 3 points with the same ITT would imply 60 points, a sign that something other than catheterisation is at work.</p>
+    </div>
 
     <div class="widget" data-widget="iv-late">
       <div class="widget-title">Compliers, defiers and the Wald estimate</div>
@@ -330,14 +312,11 @@ rdrobust(ldl, risk, c = 17)                   # placebo cut-off: should be about
     <h2>6. Weak instruments and instruments that fail</h2>
     <p class="point">A weak first stage turns small biases into large ones and makes the estimate unstable, so a good instrument must be both strong and clean.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>The strength of an instrument is summarised by the <strong>first-stage F-statistic</strong>. The old rule “F above 10” (Staiger and Stock, 1997) controls bias, not the error rate of tests. Lee, McCrary, Moreira and Porter (2022) showed that a true 5% test with the usual ±1.96 needs F above about 105, or a larger critical value (their tF method) or Anderson–Rubin intervals.</dd>
-      <dt>Why it matters</dt>
-      <dd>Any direct path from instrument to outcome is divided by the first stage. A tiny exclusion violation over a small first stage becomes a large bias. Weak-instrument estimates also lean towards the confounded ordinary regression answer (Bound, Jaeger and Baker, 1995).</dd>
-      <dt>How to read it</dt>
-      <dd>Look for the first-stage F, the first-stage effect in natural units (“near patients were catheterised 25 points more often”), and a reduced-form (ITT) estimate. If the reduced form is null, the IV estimate is null too, however it is dressed up.</dd>
-    </dl>
+    <div class="facets">
+      <p>The strength of an instrument is summarised by the <strong>first-stage F-statistic</strong>. The old rule “F above 10” (Staiger and Stock, 1997) controls bias, not the error rate of tests. Lee, McCrary, Moreira and Porter (2022) showed that a true 5% test with the usual ±1.96 needs F above about 105, or a larger critical value (their tF method) or Anderson–Rubin intervals.</p>
+      <p><strong class="lead">Why it matters.</strong> Any direct path from instrument to outcome is divided by the first stage. A tiny exclusion violation over a small first stage becomes a large bias. Weak-instrument estimates also lean towards the confounded ordinary regression answer (Bound, Jaeger and Baker, 1995).</p>
+      <p><strong class="lead">How to read it.</strong> Look for the first-stage F, the first-stage effect in natural units (“near patients were catheterised 25 points more often”), and a reduced-form (ITT) estimate. If the reduced form is null, the IV estimate is null too, however it is dressed up.</p>
+    </div>
 
     <div class="table-wrap">
       <table>
@@ -391,12 +370,10 @@ lm(died ~ near_cath + age + sex + diabetes, data = ami)   # reduced form (ITT)</
       </table>
     </div>
 
-    <dl class="facets">
-      <dt>Why it matters</dt>
-      <dd>Both designs can look like magic: no confounders to list. That makes reviewers more sceptical, not less. Hernán and Robins called instruments “an epidemiologist’s dream?”, with the question mark doing the work.</dd>
-      <dt>How to read it</dt>
-      <dd>Triangulate. An RD, an IV and a target trial emulation (Lecture 4.5) of the same question rest on different assumptions. If they agree, no single bias is likely to explain all three (Lecture 4.11).</dd>
-    </dl>
+    <div class="facets">
+      <p><strong class="lead">Why it matters.</strong> Both designs can look like magic: no confounders to list. That makes reviewers more sceptical, not less. Hernán and Robins called instruments “an epidemiologist’s dream?”, with the question mark doing the work.</p>
+      <p><strong class="lead">How to read it.</strong> Triangulate. An RD, an IV and a target trial emulation (Lecture 4.5) of the same question rest on different assumptions. If they agree, no single bias is likely to explain all three (Lecture 4.11).</p>
+    </div>
 
     <div class="callout trap">
       <div class="callout-title">Trap</div>

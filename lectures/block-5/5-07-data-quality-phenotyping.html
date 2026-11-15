@@ -55,16 +55,12 @@
     <h2>1. Generic data quality: conformance, completeness, plausibility</h2>
     <p class="point">Before asking whether a database can answer your question, ask whether its values are what they claim to be: in the right format, present when they should be, and believable.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>Kahn and colleagues (2016) harmonised dozens of data-quality vocabularies into three categories. <strong>Conformance</strong>: values follow the specification (valid codes, units, date formats, foreign keys that point somewhere). <strong>Completeness</strong>: values are present where expected, regardless of what they are. <strong>Plausibility</strong>: values are believable (a heart rate of 900 is not; discharge before admission is not). Each is checked in two contexts: <em>verification</em>, against rules inside the dataset, and <em>validation</em>, against an outside reference such as national rates.</dd>
-      <dt>Why it matters</dt>
-      <dd>Every later step assumes the raw values mean what they say. A unit change in a lab feed, a hospital that stopped recording weight, or an extract that dropped one ICU for a year will bias results silently. These checks are cheap and catch the embarrassing errors first.</dd>
-      <dt>How to read it</dt>
-      <dd>Look at trends, not single numbers. A completeness of 60% for weight is fine if it is stable; a drop from 95% to 40% in one year is a pipeline problem. Plausibility failures cluster: if 2% of heart rates are implausible in one unit only, suspect a device or mapping issue there.</dd>
-      <dt>What a change means</dt>
-      <dd>Passing more checks means fewer gross errors, not a better answer. The OHDSI Data Quality Dashboard runs over 3,300 Kahn-style checks on an OMOP database (Lecture 5.6), and a database can pass almost all of them and still be useless for your question.</dd>
-    </dl>
+    <div class="facets">
+      <p>Kahn and colleagues (2016) harmonised dozens of data-quality vocabularies into three categories. <strong>Conformance</strong>: values follow the specification (valid codes, units, date formats, foreign keys that point somewhere). <strong>Completeness</strong>: values are present where expected, regardless of what they are. <strong>Plausibility</strong>: values are believable (a heart rate of 900 is not; discharge before admission is not). Each is checked in two contexts: <em>verification</em>, against rules inside the dataset, and <em>validation</em>, against an outside reference such as national rates.</p>
+      <p><strong class="lead">Why it matters.</strong> Every later step assumes the raw values mean what they say. A unit change in a lab feed, a hospital that stopped recording weight, or an extract that dropped one ICU for a year will bias results silently. These checks are cheap and catch the embarrassing errors first.</p>
+      <p><strong class="lead">How to read it.</strong> Look at trends, not single numbers. A completeness of 60% for weight is fine if it is stable; a drop from 95% to 40% in one year is a pipeline problem. Plausibility failures cluster: if 2% of heart rates are implausible in one unit only, suspect a device or mapping issue there.</p>
+      <p><strong class="lead">When it changes.</strong> Passing more checks means fewer gross errors, not a better answer. The OHDSI Data Quality Dashboard runs over 3,300 Kahn-style checks on an OMOP database (Lecture 5.6), and a database can pass almost all of them and still be useless for your question.</p>
+    </div>
 
     <figure class="diagram">
       <div class="diagram-title">Diagram · From raw tables to an analysable variable</div>
@@ -154,16 +150,12 @@ ORDER BY share_implausible DESC;</code></pre>
     <h2>2. Fitness for purpose: relevance and reliability</h2>
     <p class="point">Regulators do not ask “is this database good?”; they ask whether it is relevant to this question and whether its key variables are reliable enough to support a decision.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>The FDA’s final guidance on EHR and claims data (July 2024) uses two words. <strong>Relevance</strong>: the source captures the exposure, outcome and key covariates, in enough representative patients, over a long enough window. <strong>Reliability</strong>: those data are accurate, complete and traceable, from the point of care through every curation step to the analysis file. EMA’s Data Quality Framework (December 2023) uses five dimensions: reliability, extensiveness, coherence, timeliness and relevance.</dd>
-      <dt>Why it matters</dt>
-      <dd>The FDA guidance asks sponsors to explain why they chose a source, and which others they considered and rejected. A study in a well-curated database can still fail review if the outcome is poorly captured there.</dd>
-      <dt>How to read it</dt>
-      <dd>Go variable by variable: for the exposure, the outcome, time zero and each key confounder, ask “is it recorded, when, by whom, and how often is it wrong?” One red cell in that table can sink the study.</dd>
-      <dt>What a change means</dt>
-      <dd>Moving a question from one source to another changes fitness, even with the same patients: MIMIC-IV records ICU heparin infusions to the minute but does not see strokes treated at other hospitals after discharge.</dd>
-    </dl>
+    <div class="facets">
+      <p>The FDA’s final guidance on EHR and claims data (July 2024) uses two words. <strong>Relevance</strong>: the source captures the exposure, outcome and key covariates, in enough representative patients, over a long enough window. <strong>Reliability</strong>: those data are accurate, complete and traceable, from the point of care through every curation step to the analysis file. EMA’s Data Quality Framework (December 2023) uses five dimensions: reliability, extensiveness, coherence, timeliness and relevance.</p>
+      <p><strong class="lead">Why it matters.</strong> The FDA guidance asks sponsors to explain why they chose a source, and which others they considered and rejected. A study in a well-curated database can still fail review if the outcome is poorly captured there.</p>
+      <p><strong class="lead">How to read it.</strong> Go variable by variable: for the exposure, the outcome, time zero and each key confounder, ask “is it recorded, when, by whom, and how often is it wrong?” One red cell in that table can sink the study.</p>
+      <p><strong class="lead">When it changes.</strong> Moving a question from one source to another changes fitness, even with the same patients: MIMIC-IV records ICU heparin infusions to the minute but does not see strokes treated at other hospitals after discharge.</p>
+    </div>
 
     <div class="table-wrap">
       <table>
@@ -193,16 +185,12 @@ ORDER BY share_implausible DESC;</code></pre>
     <h2>3. Computable phenotypes</h2>
     <p class="point">A phenotype is a precise, runnable definition of a clinical state (“new-onset AF during this ICU stay, with onset time”), and every exposure, outcome and eligibility criterion in an RWD study is one.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd><strong>Rule-based</strong> phenotypes combine codes, labs, medicines, procedures and measurements with AND, OR, counts and time windows (“two AF codes 30 days apart”, “AF on an ECG and a rate-control drug within 24 hours”). <strong>Probabilistic or ML</strong> phenotypes give each patient a probability, from a model trained on chart-reviewed or “silver-standard” labels. Shared libraries hold reusable definitions: PheKB (from the eMERGE network) and the OHDSI Phenotype Library.</dd>
-      <dt>Why it matters</dt>
-      <dd>The phenotype decides who enters the study, when their clock starts, and what counts as an event. Changing “one AF code” to “two AF codes” can shrink the cohort a lot and shift it towards sicker, more persistent disease.</dd>
-      <dt>How to read it</dt>
-      <dd>Every phenotype trades <strong>sensitivity</strong> (share of true cases it catches) against <strong>PPV</strong> (share of flagged patients who truly have it). AND raises PPV and lowers sensitivity; OR does the reverse. For time zero, a third property matters: how close the phenotype’s date is to the true onset.</dd>
-      <dt>What a change means</dt>
-      <dd>Adding an exclusion based on history (“no AF in earlier admissions”) turns “has AF” into “has <em>new</em> AF”. It raises PPV for new onset but only as far as the history is visible: patients whose earlier care happened elsewhere slip through.</dd>
-    </dl>
+    <div class="facets">
+      <p><strong>Rule-based</strong> phenotypes combine codes, labs, medicines, procedures and measurements with AND, OR, counts and time windows (“two AF codes 30 days apart”, “AF on an ECG and a rate-control drug within 24 hours”). <strong>Probabilistic or ML</strong> phenotypes give each patient a probability, from a model trained on chart-reviewed or “silver-standard” labels. Shared libraries hold reusable definitions: PheKB (from the eMERGE network) and the OHDSI Phenotype Library.</p>
+      <p><strong class="lead">Why it matters.</strong> The phenotype decides who enters the study, when their clock starts, and what counts as an event. Changing “one AF code” to “two AF codes” can shrink the cohort a lot and shift it towards sicker, more persistent disease.</p>
+      <p><strong class="lead">How to read it.</strong> Every phenotype trades <strong>sensitivity</strong> (share of true cases it catches) against <strong>PPV</strong> (share of flagged patients who truly have it). AND raises PPV and lowers sensitivity; OR does the reverse. For time zero, a third property matters: how close the phenotype’s date is to the true onset.</p>
+      <p><strong class="lead">When it changes.</strong> Adding an exclusion based on history (“no AF in earlier admissions”) turns “has AF” into “has <em>new</em> AF”. It raises PPV for new onset but only as far as the history is visible: patients whose earlier care happened elsewhere slip through.</p>
+    </div>
 
     <figure class="diagram">
       <div class="diagram-title">Diagram · The phenotype development and validation cycle</div>
@@ -260,16 +248,12 @@ ORDER BY share_implausible DESC;</code></pre>
     <h2>4. Validating against chart review</h2>
     <p class="point">A validation study measures how wrong a phenotype is; to correct a relative risk you usually need both PPV and sensitivity, and you need them separately in the treated and the untreated.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>Draw a sample, have trained reviewers judge each patient against an agreed reference definition (blinded to exposure), and compare with the phenotype. Lecture 2.11 gave you the accuracy measures. The design decides what you can estimate: sampling only phenotype-positives gives PPV, and nothing about missed cases.</dd>
-      <dt>Why it matters</dt>
-      <dd>Most published outcome validations report PPV alone, because reviewing positives is cheap. But PPV cannot reveal cases the phenotype missed, so it cannot tell you whether ascertainment differs between treated and untreated, which is the error that biases a ratio away from the truth in either direction (Lecture 2.8).</dd>
-      <dt>How to read it</dt>
-      <dd>For a rare outcome with non-differential error, specificity, which drives PPV, is what protects the risk ratio; sensitivity mostly matters for absolute risks. If sensitivity differs by exposure, the risk ratio is biased by roughly the ratio of the two sensitivities, and PPV will not show it.</dd>
-      <dt>What a change means</dt>
-      <dd>A PPV of 95% in both groups and equal sensitivity: the RR is nearly right. A PPV of 95% in both groups but sensitivity 90% in treated and 70% in untreated (treated patients are monitored more): the observed RR is inflated by about 90/70 ≈ 1.3.</dd>
-    </dl>
+    <div class="facets">
+      <p>Draw a sample, have trained reviewers judge each patient against an agreed reference definition (blinded to exposure), and compare with the phenotype. Lecture 2.11 gave you the accuracy measures. The design decides what you can estimate: sampling only phenotype-positives gives PPV, and nothing about missed cases.</p>
+      <p><strong class="lead">Why it matters.</strong> Most published outcome validations report PPV alone, because reviewing positives is cheap. But PPV cannot reveal cases the phenotype missed, so it cannot tell you whether ascertainment differs between treated and untreated, which is the error that biases a ratio away from the truth in either direction (Lecture 2.8).</p>
+      <p><strong class="lead">How to read it.</strong> For a rare outcome with non-differential error, specificity, which drives PPV, is what protects the risk ratio; sensitivity mostly matters for absolute risks. If sensitivity differs by exposure, the risk ratio is biased by roughly the ratio of the two sensitivities, and PPV will not show it.</p>
+      <p><strong class="lead">When it changes.</strong> A PPV of 95% in both groups and equal sensitivity: the RR is nearly right. A PPV of 95% in both groups but sensitivity 90% in treated and 70% in untreated (treated patients are monitored more): the observed RR is inflated by about 90/70 ≈ 1.3.</p>
+    </div>
 
     <div class="widget" data-widget="validation-bias">
       <div class="widget-title">What PPV can and cannot fix</div>
@@ -307,16 +291,12 @@ by(v, v$anticoag, function(d) with(d, sum(w * (algo &amp; truth)) / sum(w * trut
     <h2>5. Project 5A: ECG-defined AF onset vs ICD codes</h2>
     <p class="point">A discharge code can say that a patient had AF at some point; only a timed source such as the ECG can say when it started, and in a target trial emulation the start is the whole design.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>MIMIC-IV-ECG holds about 800,000 ten-second 12-lead diagnostic ECGs from nearly 160,000 MIMIC-IV patients (2008–2019), each with a timestamp, machine measurements and machine-generated report text, and links to cardiologist reports where one exists. Project 5A defines AF onset as the first ECG read as AF during the ICU stay, in a patient with no AF before.</dd>
-      <dt>Why it matters</dt>
-      <dd>ICD codes in MIMIC-IV are assigned per hospital admission at discharge. They carry no time, and they do not separate AF that started in the ICU from AF the patient arrived with. Using them for time zero would mix prevalent and new AF and create immortal time (Lectures 5.3 and 4.5).</dd>
-      <dt>How to read it</dt>
-      <dd>12-lead ECGs are snapshots. The true onset lies between the last ECG in sinus rhythm and the first in AF, so onset is interval-censored. Nurse-charted rhythm in the ICU charting tables is more frequent and can narrow that interval.</dd>
-      <dt>What a change means</dt>
-      <dd>Requiring a cardiologist-confirmed read, or AF on two ECGs, raises PPV but delays time zero for some patients and drops brief episodes. Each choice is a sensitivity analysis to pre-specify.</dd>
-    </dl>
+    <div class="facets">
+      <p>MIMIC-IV-ECG holds about 800,000 ten-second 12-lead diagnostic ECGs from nearly 160,000 MIMIC-IV patients (2008–2019), each with a timestamp, machine measurements and machine-generated report text, and links to cardiologist reports where one exists. Project 5A defines AF onset as the first ECG read as AF during the ICU stay, in a patient with no AF before.</p>
+      <p><strong class="lead">Why it matters.</strong> ICD codes in MIMIC-IV are assigned per hospital admission at discharge. They carry no time, and they do not separate AF that started in the ICU from AF the patient arrived with. Using them for time zero would mix prevalent and new AF and create immortal time (Lectures 5.3 and 4.5).</p>
+      <p><strong class="lead">How to read it.</strong> 12-lead ECGs are snapshots. The true onset lies between the last ECG in sinus rhythm and the first in AF, so onset is interval-censored. Nurse-charted rhythm in the ICU charting tables is more frequent and can narrow that interval.</p>
+      <p><strong class="lead">When it changes.</strong> Requiring a cardiologist-confirmed read, or AF on two ECGs, raises PPV but delays time zero for some patients and drops brief episodes. Each choice is a sensitivity analysis to pre-specify.</p>
+    </div>
 
     <div class="table-wrap">
       <table>

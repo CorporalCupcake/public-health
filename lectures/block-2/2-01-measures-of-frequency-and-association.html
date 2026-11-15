@@ -66,16 +66,12 @@
       </table>
     </div>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>Three summaries of how often a disease starts. A <strong>risk</strong> is a probability over a fixed window. A <strong>rate</strong> is a speed: events per unit of time lived at risk. <strong>Odds</strong> are the risk divided by its complement: a risk of 20% is odds of 0.2 ÷ 0.8 = 0.25, or “1 case for every 4 non-cases”.</dd>
-      <dt>Why it matters</dt>
-      <dd>Each design delivers one of them naturally. A closed cohort with full follow-up gives risks. A cohort where people join and leave gives rates. A case-control study and a logistic model give odds. Mixing them up is the most common error in reading results.</dd>
-      <dt>How to read it</dt>
-      <dd>For a rare outcome all three are close: a 1-year risk of 1% is odds of about 0.0101 and a rate of about 1 per 100 person-years. As the outcome gets common they pull apart, and the odds grows fastest. Prevalence (Lecture 1.4) is a fourth, separate measure: existing cases at one moment, not new ones.</dd>
-      <dt>What a change means</dt>
-      <dd>A risk can only double if it starts below 50%. A rate or odds has no ceiling, so a “doubling” means different things on each scale.</dd>
-    </dl>
+    <div class="facets">
+      <p>Three summaries of how often a disease starts. A <strong>risk</strong> is a probability over a fixed window. A <strong>rate</strong> is a speed: events per unit of time lived at risk. <strong>Odds</strong> are the risk divided by its complement: a risk of 20% is odds of 0.2 ÷ 0.8 = 0.25, or “1 case for every 4 non-cases”.</p>
+      <p><strong class="lead">Why it matters.</strong> Each design delivers one of them naturally. A closed cohort with full follow-up gives risks. A cohort where people join and leave gives rates. A case-control study and a logistic model give odds. Mixing them up is the most common error in reading results.</p>
+      <p><strong class="lead">How to read it.</strong> For a rare outcome all three are close: a 1-year risk of 1% is odds of about 0.0101 and a rate of about 1 per 100 person-years. As the outcome gets common they pull apart, and the odds grows fastest. Prevalence (Lecture 1.4) is a fourth, separate measure: existing cases at one moment, not new ones.</p>
+      <p><strong class="lead">When it changes.</strong> A risk can only double if it starts below 50%. A rate or odds has no ceiling, so a “doubling” means different things on each scale.</p>
+    </div>
 
     <div class="callout trap">
       <div class="callout-title">Trap</div>
@@ -93,16 +89,12 @@
     <h2>2. Person-time and rates</h2>
     <p class="point">A rate divides events by the total time people were actually watched while at risk, so it copes with people joining late, leaving early or dying of something else.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd><strong>Person-time</strong> adds up, person by person, the time each one was under observation and still able to have the event. One person followed for 10 years and ten people followed for 1 year both give 10 person-years. A person stops contributing at the event, at loss to follow-up, at death from another cause, or at the end of the study.</dd>
-      <dt>Why it matters</dt>
-      <dd>Real cohorts are untidy. A risk needs everyone followed for the full window, which rarely happens. A rate uses all the follow-up you have, which is why most cohort papers and registries report rates, and why Poisson regression with person-time as an offset (Lecture 3.3) is a workhorse.</dd>
-      <dt>How to read it</dt>
-      <dd>“12 per 100 person-years” means: if you watched 100 people for a year, or 50 people for two years, you would expect about 12 events. Rates are usually quoted per 1,000 or per 100,000 person-years.</dd>
-      <dt>What a change means</dt>
-      <dd>For short windows and rare events, risk ≈ rate × time. That breaks down when the event is common or the window is long, because people who have had the event can’t have it again.</dd>
-    </dl>
+    <div class="facets">
+      <p><strong>Person-time</strong> adds up, person by person, the time each one was under observation and still able to have the event. One person followed for 10 years and ten people followed for 1 year both give 10 person-years. A person stops contributing at the event, at loss to follow-up, at death from another cause, or at the end of the study.</p>
+      <p><strong class="lead">Why it matters.</strong> Real cohorts are untidy. A risk needs everyone followed for the full window, which rarely happens. A rate uses all the follow-up you have, which is why most cohort papers and registries report rates, and why Poisson regression with person-time as an offset (Lecture 3.3) is a workhorse.</p>
+      <p><strong class="lead">How to read it.</strong> “12 per 100 person-years” means: if you watched 100 people for a year, or 50 people for two years, you would expect about 12 events. Rates are usually quoted per 1,000 or per 100,000 person-years.</p>
+      <p><strong class="lead">When it changes.</strong> For short windows and rare events, risk ≈ rate × time. That breaks down when the event is common or the window is long, because people who have had the event can’t have it again.</p>
+    </div>
 
     <figure class="diagram">
       <div class="diagram-title">Diagram · Person-time in a small cohort</div>
@@ -201,21 +193,17 @@
     <h2>3. Ratio measures: risk ratio, rate ratio, odds ratio</h2>
     <p class="point">A ratio measure divides the frequency in the exposed by the frequency in the unexposed, so it says how many times more common the outcome is.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>The <strong>risk ratio</strong> (RR, also “relative risk”) divides risks. The <strong>rate ratio</strong> divides rates; a hazard ratio from a Cox model (Lecture 3.6) is its close cousin. The <strong>odds ratio</strong> (OR) divides odds. In a 2×2 table with exposed cases \(a\), exposed non-cases \(b\), unexposed cases \(c\) and unexposed non-cases \(d\):</dd>
-    </dl>
+    <div class="facets">
+      <p>The <strong>risk ratio</strong> (RR, also “relative risk”) divides risks. The <strong>rate ratio</strong> divides rates; a hazard ratio from a Cox model (Lecture 3.6) is its close cousin. The <strong>odds ratio</strong> (OR) divides odds. In a 2×2 table with exposed cases \(a\), exposed non-cases \(b\), unexposed cases \(c\) and unexposed non-cases \(d\):</p>
+    </div>
 
     \[ \text{OR} = \frac{a/b}{c/d} = \frac{ad}{bc} \]
 
-    <dl class="facets">
-      <dt>Why it matters</dt>
-      <dd>Ratios measure <em>strength</em> of association, which is what you weigh when asking whether an exposure causes disease (Lecture 2.10). They are also fairly stable across populations with different baseline risks, which is why meta-analyses and GBD risk curves (Lecture 1.7) are built from them.</dd>
-      <dt>How to read it</dt>
-      <dd>1 means no association. Above 1, more disease in the exposed; below 1, less. An RR of 1.2 is weak and easily produced by modest bias; 2 to 3 is moderate; above 5 is strong and hard to explain away (smoking and lung cancer is around 10 or more).</dd>
-      <dt>What a change means</dt>
-      <dd>An RR moving from 1.2 to 2 means the excess risk in the exposed went from 20% extra to 100% extra, a five-fold larger excess. Ratios are symmetric on the log scale: an RR of 0.5 is as strong as an RR of 2, just in the other direction.</dd>
-    </dl>
+    <div class="facets">
+      <p><strong class="lead">Why it matters.</strong> Ratios measure <em>strength</em> of association, which is what you weigh when asking whether an exposure causes disease (Lecture 2.10). They are also fairly stable across populations with different baseline risks, which is why meta-analyses and GBD risk curves (Lecture 1.7) are built from them.</p>
+      <p><strong class="lead">How to read it.</strong> 1 means no association. Above 1, more disease in the exposed; below 1, less. An RR of 1.2 is weak and easily produced by modest bias; 2 to 3 is moderate; above 5 is strong and hard to explain away (smoking and lung cancer is around 10 or more).</p>
+      <p><strong class="lead">When it changes.</strong> An RR moving from 1.2 to 2 means the excess risk in the exposed went from 20% extra to 100% extra, a five-fold larger excess. Ratios are symmetric on the log scale: an RR of 0.5 is as strong as an RR of 2, just in the other direction.</p>
+    </div>
 
     <div class="callout trap">
       <div class="callout-title">Trap</div>
@@ -233,21 +221,17 @@
     <h2>4. Difference measures and the number needed to treat</h2>
     <p class="point">A difference measure subtracts, so it says how many extra (or fewer) cases the exposure produces per person, which is what a health service or a patient actually experiences.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>The <strong>risk difference</strong> (RD, or “absolute risk reduction” when it favours treatment) is risk in the exposed minus risk in the unexposed. The <strong>rate difference</strong> does the same for rates. The <strong>number needed to treat</strong> (NNT) is the RD turned upside down:</dd>
-    </dl>
+    <div class="facets">
+      <p>The <strong>risk difference</strong> (RD, or “absolute risk reduction” when it favours treatment) is risk in the exposed minus risk in the unexposed. The <strong>rate difference</strong> does the same for rates. The <strong>number needed to treat</strong> (NNT) is the RD turned upside down:</p>
+    </div>
 
     \[ \text{NNT} = \frac{1}{\text{RD}} \]
 
-    <dl class="facets">
-      <dt>Why it matters</dt>
-      <dd>Differences measure <em>impact</em>. Deaths averted, cases prevented and costs saved (Project 1) are all differences. Two treatments with the same RR can have very different value if the patients start at different risks.</dd>
-      <dt>How to read it</dt>
-      <dd>0 means no difference. An RD of −2 percentage points over 5 years means 2 fewer events per 100 people treated for 5 years; the NNT is 50. When the exposure harms, the same sum gives the <strong>number needed to harm</strong> (NNH). An NNT always needs a time period and a comparator.</dd>
-      <dt>What a change means</dt>
-      <dd>NNT falls as baseline risk rises: halving a 20% risk gives NNT 10, halving a 2% risk gives NNT 100. Same drug, same RR, ten times the value per patient treated.</dd>
-    </dl>
+    <div class="facets">
+      <p><strong class="lead">Why it matters.</strong> Differences measure <em>impact</em>. Deaths averted, cases prevented and costs saved (Project 1) are all differences. Two treatments with the same RR can have very different value if the patients start at different risks.</p>
+      <p><strong class="lead">How to read it.</strong> 0 means no difference. An RD of −2 percentage points over 5 years means 2 fewer events per 100 people treated for 5 years; the NNT is 50. When the exposure harms, the same sum gives the <strong>number needed to harm</strong> (NNH). An NNT always needs a time period and a comparator.</p>
+      <p><strong class="lead">When it changes.</strong> NNT falls as baseline risk rises: halving a 20% risk gives NNT 10, halving a 2% risk gives NNT 100. Same drug, same RR, ten times the value per patient treated.</p>
+    </div>
 
     <div class="callout trap">
       <div class="callout-title">Trap</div>
@@ -265,16 +249,12 @@
     <h2>5. When the odds ratio is not the risk ratio</h2>
     <p class="point">The odds ratio is close to the risk ratio only when the outcome is rare; when the outcome is common, the OR is always further from 1 than the RR.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>When risks are small, odds ≈ risk, so OR ≈ RR. This is the <strong>rare disease assumption</strong>. As the outcome becomes common, odds grow faster than risks and the OR drifts away from 1: above the RR when the exposure is harmful, below it when protective.</dd>
-      <dt>Why it matters</dt>
-      <dd>Logistic regression is the default model for binary outcomes, so ORs are everywhere, and readers almost always interpret them as RRs. For common outcomes (hypertension, diabetes, obesity, any treatment decision) that exaggerates the effect.</dd>
-      <dt>How to read it</dt>
-      <dd>As a rough rule, if the outcome occurs in under about 10% of the unexposed, read the OR as an RR. Above that, convert it, or ask for an RR or risk difference directly (Zhang &amp; Yu give a simple correction; marginal standardisation is better).</dd>
-      <dt>What a change means</dt>
-      <dd>With a true RR of 2, the OR is about 2.1 at a 5% baseline risk, about 2.7 at 20%, and 6 at 40%. The association did not get stronger; only the scale changed.</dd>
-    </dl>
+    <div class="facets">
+      <p>When risks are small, odds ≈ risk, so OR ≈ RR. This is the <strong>rare disease assumption</strong>. As the outcome becomes common, odds grow faster than risks and the OR drifts away from 1: above the RR when the exposure is harmful, below it when protective.</p>
+      <p><strong class="lead">Why it matters.</strong> Logistic regression is the default model for binary outcomes, so ORs are everywhere, and readers almost always interpret them as RRs. For common outcomes (hypertension, diabetes, obesity, any treatment decision) that exaggerates the effect.</p>
+      <p><strong class="lead">How to read it.</strong> As a rough rule, if the outcome occurs in under about 10% of the unexposed, read the OR as an RR. Above that, convert it, or ask for an RR or risk difference directly (Zhang &amp; Yu give a simple correction; marginal standardisation is better).</p>
+      <p><strong class="lead">When it changes.</strong> With a true RR of 2, the OR is about 2.1 at a 5% baseline risk, about 2.7 at 20%, and 6 at 40%. The association did not get stronger; only the scale changed.</p>
+    </div>
 
     <div class="widget" data-widget="two-by-two">
       <div class="widget-title">A 2×2 table, live</div>
@@ -312,16 +292,12 @@
       </table>
     </div>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>The same effect expressed two ways. “Halves your risk” is relative. “1 fewer event per 100 people over 10 years” is absolute. The table shows one treatment (illustrative numbers): the RR is identical, the benefit is ten times larger in the high-risk group.</dd>
-      <dt>Why it matters</dt>
-      <dd>Relative effects sound bigger and are what drug adverts and headlines prefer. Absolute effects are what patients and payers need: they drive NNTs, costs per case prevented and the ICERs of Lecture 1.10.</dd>
-      <dt>How to read it</dt>
-      <dd>Read the relative effect to judge whether the association is real and strong; read the absolute effect to judge whether it is worth acting on. If a paper gives only one, find the baseline risk and work out the other.</dd>
-      <dt>What a change means</dt>
-      <dd>An effect can be constant on one scale and vary on the other. If the RR is the same in men and women but women start at lower risk, the RD differs. Whether there is “effect modification” depends on the scale you chose (Lecture 2.9).</dd>
-    </dl>
+    <div class="facets">
+      <p>The same effect expressed two ways. “Halves your risk” is relative. “1 fewer event per 100 people over 10 years” is absolute. The table shows one treatment (illustrative numbers): the RR is identical, the benefit is ten times larger in the high-risk group.</p>
+      <p><strong class="lead">Why it matters.</strong> Relative effects sound bigger and are what drug adverts and headlines prefer. Absolute effects are what patients and payers need: they drive NNTs, costs per case prevented and the ICERs of Lecture 1.10.</p>
+      <p><strong class="lead">How to read it.</strong> Read the relative effect to judge whether the association is real and strong; read the absolute effect to judge whether it is worth acting on. If a paper gives only one, find the baseline risk and work out the other.</p>
+      <p><strong class="lead">When it changes.</strong> An effect can be constant on one scale and vary on the other. If the RR is the same in men and women but women start at lower risk, the RD differs. Whether there is “effect modification” depends on the scale you chose (Lecture 2.9).</p>
+    </div>
 
     <div class="callout trap">
       <div class="callout-title">Trap</div>

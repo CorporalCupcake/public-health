@@ -55,16 +55,12 @@
     <h2>1. Effect modification</h2>
     <p class="point">Effect modification means the effect of an exposure differs across levels of a third variable, so one summary number would hide something true.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>You estimate the exposure effect separately within groups (<em>strata</em>) of a third variable, the <em>modifier</em>: age, sex, baseline risk, genotype. If the stratum-specific effects differ by more than chance, that variable modifies the effect.</dd>
-      <dt>Why it matters</dt>
-      <dd>It tells you who to target, whose results transfer to which population, and whether a single pooled estimate is a fair summary. A treatment that helps on average can do nothing, or harm, in a subgroup.</dd>
-      <dt>How to read it</dt>
-      <dd>Compare the stratum estimates and the confidence interval for their difference (or ratio). Two RRs of 1.8 and 2.1 with wide intervals are compatible with no modification. RRs of 1.1 and 3.0 with tight intervals are not.</dd>
-      <dt>What a change means</dt>
-      <dd>If the effect in older adults moves from equal to twice that in younger adults, a policy aimed at older adults now buys more per person reached. The average effect has not changed; the map of where it lands has.</dd>
-    </dl>
+    <div class="facets">
+      <p>You estimate the exposure effect separately within groups (<em>strata</em>) of a third variable, the <em>modifier</em>: age, sex, baseline risk, genotype. If the stratum-specific effects differ by more than chance, that variable modifies the effect.</p>
+      <p><strong class="lead">Why it matters.</strong> It tells you who to target, whose results transfer to which population, and whether a single pooled estimate is a fair summary. A treatment that helps on average can do nothing, or harm, in a subgroup.</p>
+      <p><strong class="lead">How to read it.</strong> Compare the stratum estimates and the confidence interval for their difference (or ratio). Two RRs of 1.8 and 2.1 with wide intervals are compatible with no modification. RRs of 1.1 and 3.0 with tight intervals are not.</p>
+      <p><strong class="lead">When it changes.</strong> If the effect in older adults moves from equal to twice that in younger adults, a policy aimed at older adults now buys more per person reached. The average effect has not changed; the map of where it lands has.</p>
+    </div>
 
     <div class="callout example">
       <div class="callout-title">Example</div>
@@ -87,16 +83,12 @@
     <h2>2. It depends on the scale</h2>
     <p class="point">“Is there effect modification?” has no answer until you say “on which scale”: the same data can show none on the ratio scale and plenty on the difference scale.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>The <strong>multiplicative scale</strong> compares ratios (RR, OR, hazard ratio). The <strong>additive scale</strong> compares differences (risk difference, RD). Effect modification on one scale is called <em>effect measure modification</em>, because it is a property of the measure as much as of the biology.</dd>
-      <dt>Why it matters</dt>
-      <dd>If baseline risk differs between groups, a constant RR forces the RD to differ, and a constant RD forces the RR to differ. When both factors have any effect, the absence of modification on one scale guarantees its presence on the other.</dd>
-      <dt>How to read it</dt>
-      <dd>Always ask what the baseline risk is in each stratum. A common RR across groups with very different baseline risks means very different numbers of cases caused, or prevented, in each.</dd>
-      <dt>What a change means</dt>
-      <dd>An RR of 2 in a group with 2% baseline risk adds 2 cases per 100. The same RR of 2 in a group with 20% baseline risk adds 20 per 100: ten times as many cases from the “same” effect.</dd>
-    </dl>
+    <div class="facets">
+      <p>The <strong>multiplicative scale</strong> compares ratios (RR, OR, hazard ratio). The <strong>additive scale</strong> compares differences (risk difference, RD). Effect modification on one scale is called <em>effect measure modification</em>, because it is a property of the measure as much as of the biology.</p>
+      <p><strong class="lead">Why it matters.</strong> If baseline risk differs between groups, a constant RR forces the RD to differ, and a constant RD forces the RR to differ. When both factors have any effect, the absence of modification on one scale guarantees its presence on the other.</p>
+      <p><strong class="lead">How to read it.</strong> Always ask what the baseline risk is in each stratum. A common RR across groups with very different baseline risks means very different numbers of cases caused, or prevented, in each.</p>
+      <p><strong class="lead">When it changes.</strong> An RR of 2 in a group with 2% baseline risk adds 2 cases per 100. The same RR of 2 in a group with 20% baseline risk adds 20 per 100: ten times as many cases from the “same” effect.</p>
+    </div>
 
     <figure class="diagram">
       <div class="diagram-title">Diagram · Same relative risk, different risk difference</div>
@@ -156,21 +148,17 @@
     <h2>3. Interaction and RERI</h2>
     <p class="point">Interaction asks whether two exposures together do more than you would expect from each alone; RERI measures the excess on the additive scale.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>Lay out four groups with one shared reference: neither exposure, A only, B only, both. Express each group’s risk relative to “neither”: \(RR_{10}\), \(RR_{01}\), \(RR_{11}\). The <strong>relative excess risk due to interaction</strong> (RERI) is the part of the joint risk ratio not explained by adding the two separate excesses.</dd>
-    </dl>
+    <div class="facets">
+      <p>Lay out four groups with one shared reference: neither exposure, A only, B only, both. Express each group’s risk relative to “neither”: \(RR_{10}\), \(RR_{01}\), \(RR_{11}\). The <strong>relative excess risk due to interaction</strong> (RERI) is the part of the joint risk ratio not explained by adding the two separate excesses.</p>
+    </div>
 
     \[ \text{RERI} = RR_{11} - RR_{10} - RR_{01} + 1 \]
 
-    <dl class="facets">
-      <dt>Why it matters</dt>
-      <dd>RERI works with ratios, so you can get it from a case-control study or a logistic model (with ORs standing in for RRs when the outcome is rare), yet it answers the additive question.</dd>
-      <dt>How to read it</dt>
-      <dd>RERI = 0: effects add exactly. RERI &gt; 0: <em>superadditive</em>, the pair causes extra cases beyond the sum. RERI &lt; 0: <em>subadditive</em>. On the multiplicative scale, compare \(RR_{11}\) with \(RR_{10} \times RR_{01}\): equal means no multiplicative interaction.</dd>
-      <dt>What a change means</dt>
-      <dd>A RERI of 2 means the joint exposure adds twice the baseline risk on top of what the two separate effects would add. If baseline risk is 1%, that is 2 extra cases per 100 people with both exposures.</dd>
-    </dl>
+    <div class="facets">
+      <p><strong class="lead">Why it matters.</strong> RERI works with ratios, so you can get it from a case-control study or a logistic model (with ORs standing in for RRs when the outcome is rare), yet it answers the additive question.</p>
+      <p><strong class="lead">How to read it.</strong> RERI = 0: effects add exactly. RERI &gt; 0: <em>superadditive</em>, the pair causes extra cases beyond the sum. RERI &lt; 0: <em>subadditive</em>. On the multiplicative scale, compare \(RR_{11}\) with \(RR_{10} \times RR_{01}\): equal means no multiplicative interaction.</p>
+      <p><strong class="lead">When it changes.</strong> A RERI of 2 means the joint exposure adds twice the baseline risk on top of what the two separate effects would add. If baseline risk is 1%, that is 2 extra cases per 100 people with both exposures.</p>
+    </div>
 
     <div class="widget" data-widget="interaction-table">
       <div class="widget-title">Two exposures, four risks</div>
@@ -193,16 +181,12 @@
     <h2>4. Why the additive scale matters</h2>
     <p class="point">Public health decisions are about cases prevented, and cases are counted on the additive scale, so additive interaction tells you where an intervention does the most good.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>If removing exposure A prevents more cases per person in group B+ than in B−, there is additive interaction between A and B (or modification of A’s risk difference by B). With limited resources, you act first where the risk difference is largest.</dd>
-      <dt>Why it matters</dt>
-      <dd>Ratio measures are convenient for modelling and fairly stable across settings, so papers report them. But a ministry funds programmes in cases, deaths and DALYs. Translating a common RR into stratum-specific absolute effects is how a pooled estimate becomes a targeting decision.</dd>
-      <dt>How to read it</dt>
-      <dd>Positive additive interaction: target the group that already carries the second exposure. Negative: the second exposure “uses up” some of the cases, so removing A achieves less there than you would expect.</dd>
-      <dt>What a change means</dt>
-      <dd>In the asbestos example, getting an asbestos worker to stop smoking prevents far more lung cancer than getting a non-exposed smoker to stop, even though the RR for smoking is similar in both.</dd>
-    </dl>
+    <div class="facets">
+      <p>If removing exposure A prevents more cases per person in group B+ than in B−, there is additive interaction between A and B (or modification of A’s risk difference by B). With limited resources, you act first where the risk difference is largest.</p>
+      <p><strong class="lead">Why it matters.</strong> Ratio measures are convenient for modelling and fairly stable across settings, so papers report them. But a ministry funds programmes in cases, deaths and DALYs. Translating a common RR into stratum-specific absolute effects is how a pooled estimate becomes a targeting decision.</p>
+      <p><strong class="lead">How to read it.</strong> Positive additive interaction: target the group that already carries the second exposure. Negative: the second exposure “uses up” some of the cases, so removing A achieves less there than you would expect.</p>
+      <p><strong class="lead">When it changes.</strong> In the asbestos example, getting an asbestos worker to stop smoking prevents far more lung cancer than getting a non-exposed smoker to stop, even though the RR for smoking is similar in both.</p>
+    </div>
 
     <div class="callout gulf">
       <div class="callout-title">Example · Project 8</div>
@@ -220,14 +204,11 @@
     <h2>5. Effect modification is not confounding</h2>
     <p class="point">Confounding is a bias you remove; effect modification is a finding you report.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>A <strong>confounder</strong> distorts the crude estimate because it is linked to both exposure and outcome (Lecture 2.6). A <strong>modifier</strong> changes the size of the true effect. The same variable can be both, one, or neither.</dd>
-      <dt>Why it matters</dt>
-      <dd>The two call for opposite actions. For confounding you adjust and give one pooled estimate. For effect modification you give stratum-specific estimates, because a pooled one averages over real differences and depends on how the strata are mixed in your sample.</dd>
-      <dt>How to tell</dt>
-      <dd>Stratify and compare. See the table.</dd>
-    </dl>
+    <div class="facets">
+      <p>A <strong>confounder</strong> distorts the crude estimate because it is linked to both exposure and outcome (Lecture 2.6). A <strong>modifier</strong> changes the size of the true effect. The same variable can be both, one, or neither.</p>
+      <p><strong class="lead">Why it matters.</strong> The two call for opposite actions. For confounding you adjust and give one pooled estimate. For effect modification you give stratum-specific estimates, because a pooled one averages over real differences and depends on how the strata are mixed in your sample.</p>
+      <p><strong class="lead">How to tell.</strong> Stratify and compare. See the table.</p>
+    </div>
 
     <div class="table-wrap">
       <table>
@@ -257,14 +238,11 @@
     <h2>6. How to report it</h2>
     <p class="point">Give readers enough numbers to judge modification on both scales themselves; a single interaction p-value is not enough.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>Knol and VanderWeele’s recommendations: present the effect of each exposure combination against one shared reference group, the effect of each exposure within strata of the other, and interaction on both scales (RERI and the ratio of RRs), all with confidence intervals.</dd>
-      <dt>Why it matters</dt>
-      <dd>Readers differ in which scale they need. A clinician or policy-maker usually needs absolute effects; a meta-analyst usually needs ratios. A full table serves both.</dd>
-      <dt>Interaction or modification?</dt>
-      <dd>Strictly, <strong>interaction</strong> is about two exposures you could both change (smoking and asbestos). <strong>Effect modification</strong> needs only one: the modifier can be a marker you would never intervene on, such as sex or nationality. The arithmetic is the same; the causal claim is different. You need to control confounding for both factors to claim interaction, but only for the exposure to claim modification.</dd>
-    </dl>
+    <div class="facets">
+      <p>Knol and VanderWeele’s recommendations: present the effect of each exposure combination against one shared reference group, the effect of each exposure within strata of the other, and interaction on both scales (RERI and the ratio of RRs), all with confidence intervals.</p>
+      <p><strong class="lead">Why it matters.</strong> Readers differ in which scale they need. A clinician or policy-maker usually needs absolute effects; a meta-analyst usually needs ratios. A full table serves both.</p>
+      <p><strong class="lead">Interaction or modification?</strong> Strictly, <strong>interaction</strong> is about two exposures you could both change (smoking and asbestos). <strong>Effect modification</strong> needs only one: the modifier can be a marker you would never intervene on, such as sex or nationality. The arithmetic is the same; the causal claim is different. You need to control confounding for both factors to claim interaction, but only for the exposure to claim modification.</p>
+    </div>
 
     <div class="table-wrap">
       <table>

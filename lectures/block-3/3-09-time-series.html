@@ -57,16 +57,12 @@
     <h2>1. Trend, season and noise</h2>
     <p class="point">Most health series are a slow trend, plus a repeating season, plus a remainder that is not pure noise; separate the three before you interpret anything.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>The <em>trend</em> is the long-run level: population growth, ageing, changes in coding. The <em>season</em> is a pattern that repeats with a fixed period: winter flu, summer heat, school terms, weekends. The <em>remainder</em> is what is left, and in health data it usually has memory (autocorrelation).</dd>
-      <dt>Why it matters</dt>
-      <dd>Each component can impersonate an effect. A rising trend makes any “after” period look worse than “before”. A season makes any change that starts in spring look like it worked by summer.</dd>
-      <dt>How to read it</dt>
-      <dd>Plot the raw series first, over several full cycles. Then look at the remainder’s autocorrelation: if it still shows peaks at 12 and 24 months, the season is not fully removed; if it decays slowly, the trend is not.</dd>
-      <dt>What a change means</dt>
-      <dd>A seasonal amplitude of 80 admissions on a base of 500 means summer months run about 30% above winter. Any before–after comparison shorter than a year is then mostly measuring the calendar.</dd>
-    </dl>
+    <div class="facets">
+      <p>The <em>trend</em> is the long-run level: population growth, ageing, changes in coding. The <em>season</em> is a pattern that repeats with a fixed period: winter flu, summer heat, school terms, weekends. The <em>remainder</em> is what is left, and in health data it usually has memory (autocorrelation).</p>
+      <p><strong class="lead">Why it matters.</strong> Each component can impersonate an effect. A rising trend makes any “after” period look worse than “before”. A season makes any change that starts in spring look like it worked by summer.</p>
+      <p><strong class="lead">How to read it.</strong> Plot the raw series first, over several full cycles. Then look at the remainder’s autocorrelation: if it still shows peaks at 12 and 24 months, the season is not fully removed; if it decays slowly, the trend is not.</p>
+      <p><strong class="lead">When it changes.</strong> A seasonal amplitude of 80 admissions on a base of 500 means summer months run about 30% above winter. Any before–after comparison shorter than a year is then mostly measuring the calendar.</p>
+    </div>
 
     <div class="widget" data-widget="ts-decompose">
       <div class="widget-title">Build a health time series</div>
@@ -89,16 +85,12 @@
     <h2>2. Two calendars: summer heat and Ramadan</h2>
     <p class="point">In the Gulf, health activity follows two calendars: the solar one (heat, school year) and the lunar Hijri one (Ramadan, Eid, Hajj), which drifts about 11 days earlier every Gregorian year.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>The Hijri year has 354 or 355 days, so each Islamic month starts about 11 days earlier in the Gregorian calendar each year, and makes a full lap of the seasons in about 33 years. Ramadan, the Eid holidays and Hajj move with it.</dd>
-      <dt>Why it matters</dt>
-      <dd>Month-of-year terms or Fourier terms with a 12-month period capture solar seasons only. A Ramadan effect lands in a different Gregorian month each year, so it spreads across those terms, inflates the residual variance, and can be confused with a policy that started in the same months.</dd>
-      <dt>How to read it</dt>
-      <dd>Add a Ramadan indicator (the share of days in each week or month that fall in Ramadan), and similar ones for Eid and Hajj where relevant. Because the overlap with summer changes from year to year, a long enough series can separate the Ramadan effect from the heat effect.</dd>
-      <dt>What a change means</dt>
-      <dd>Over a short series the two are tangled: from 2010 to 2016 Ramadan fell in high summer, so in those years a “summer” term partly measures Ramadan and vice versa.</dd>
-    </dl>
+    <div class="facets">
+      <p>The Hijri year has 354 or 355 days, so each Islamic month starts about 11 days earlier in the Gregorian calendar each year, and makes a full lap of the seasons in about 33 years. Ramadan, the Eid holidays and Hajj move with it.</p>
+      <p><strong class="lead">Why it matters.</strong> Month-of-year terms or Fourier terms with a 12-month period capture solar seasons only. A Ramadan effect lands in a different Gregorian month each year, so it spreads across those terms, inflates the residual variance, and can be confused with a policy that started in the same months.</p>
+      <p><strong class="lead">How to read it.</strong> Add a Ramadan indicator (the share of days in each week or month that fall in Ramadan), and similar ones for Eid and Hajj where relevant. Because the overlap with summer changes from year to year, a long enough series can separate the Ramadan effect from the heat effect.</p>
+      <p><strong class="lead">When it changes.</strong> Over a short series the two are tangled: from 2010 to 2016 Ramadan fell in high summer, so in those years a “summer” term partly measures Ramadan and vice versa.</p>
+    </div>
 
     <figure class="diagram">
       <div class="diagram-title">Diagram · Ramadan drifting through the Gregorian year</div>
@@ -156,16 +148,12 @@
     <h2>3. Autocorrelation and why OLS standard errors are wrong</h2>
     <p class="point">When each month resembles the last, a series of 60 months carries far less information than 60 independent observations, and ordinary regression does not know that.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd><em>Autocorrelation</em> is the correlation of a series with its own past. The simplest model is AR(1): this month’s residual is \(\phi\) times last month’s plus fresh noise. \(\phi = 0\) is independence; \(\phi\) near 1 is a series that wanders and takes a long time to forget a shock.</dd>
-      <dt>Why it matters</dt>
-      <dd>Positive autocorrelation makes OLS standard errors too small, so trends and intervention effects look more certain than they are. It can also produce trends out of nothing: a strongly autocorrelated series wanders, and ordinary regression reads the wander as a trend.</dd>
-      <dt>How to read it</dt>
-      <dd>Lag-1 autocorrelation of residuals around 0.1 is minor; 0.3–0.5 is common in monthly health series and matters; above 0.7 changes conclusions.</dd>
-      <dt>What a change means</dt>
-      <dd>For a trend or a mean, the variance is inflated by roughly the factor below. \(\phi = 0.5\) inflates it about threefold, so the true standard error is about 1.7 times the naive one. At \(\phi = 0.8\) it is about 3 times.</dd>
-    </dl>
+    <div class="facets">
+      <p><em>Autocorrelation</em> is the correlation of a series with its own past. The simplest model is AR(1): this month’s residual is \(\phi\) times last month’s plus fresh noise. \(\phi = 0\) is independence; \(\phi\) near 1 is a series that wanders and takes a long time to forget a shock.</p>
+      <p><strong class="lead">Why it matters.</strong> Positive autocorrelation makes OLS standard errors too small, so trends and intervention effects look more certain than they are. It can also produce trends out of nothing: a strongly autocorrelated series wanders, and ordinary regression reads the wander as a trend.</p>
+      <p><strong class="lead">How to read it.</strong> Lag-1 autocorrelation of residuals around 0.1 is minor; 0.3–0.5 is common in monthly health series and matters; above 0.7 changes conclusions.</p>
+      <p><strong class="lead">When it changes.</strong> For a trend or a mean, the variance is inflated by roughly the factor below. \(\phi = 0.5\) inflates it about threefold, so the true standard error is about 1.7 times the naive one. At \(\phi = 0.8\) it is about 3 times.</p>
+    </div>
 
     \[ \text{variance inflation} \approx \frac{1+\phi}{1-\phi} \]
 
@@ -190,16 +178,12 @@
     <h2>4. Reading the ACF and PACF; stationarity</h2>
     <p class="point">The ACF and PACF are the fingerprints of a series: a few shapes tell you whether to difference, which ARIMA terms to try, and whether a season is left over.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>The <em>ACF</em> plots the correlation between the series and itself shifted by 1, 2, 3… steps. The <em>PACF</em> plots the same correlation after removing the effect of the shorter lags. A series is <em>stationary</em> if its mean, variance and autocorrelation do not change over time: no trend and no changing spread.</dd>
-      <dt>Why it matters</dt>
-      <dd>ARIMA models need a stationary series. A trending series has to be <em>differenced</em> (modelled as month-to-month change) or detrended first, or every correlation is dominated by the trend.</dd>
-      <dt>How to read it</dt>
-      <dd>Bars inside the dashed band (about ±2/√n) are consistent with zero. Look at the shape, not single bars: one in twenty will poke out by chance.</dd>
-      <dt>What a change means</dt>
-      <dd>After one difference, an ACF that drops quickly to zero means you are done. A large negative spike at lag 1 means you have over-differenced.</dd>
-    </dl>
+    <div class="facets">
+      <p>The <em>ACF</em> plots the correlation between the series and itself shifted by 1, 2, 3… steps. The <em>PACF</em> plots the same correlation after removing the effect of the shorter lags. A series is <em>stationary</em> if its mean, variance and autocorrelation do not change over time: no trend and no changing spread.</p>
+      <p><strong class="lead">Why it matters.</strong> ARIMA models need a stationary series. A trending series has to be <em>differenced</em> (modelled as month-to-month change) or detrended first, or every correlation is dominated by the trend.</p>
+      <p><strong class="lead">How to read it.</strong> Bars inside the dashed band (about ±2/√n) are consistent with zero. Look at the shape, not single bars: one in twenty will poke out by chance.</p>
+      <p><strong class="lead">When it changes.</strong> After one difference, an ACF that drops quickly to zero means you are done. A large negative spike at lag 1 means you have over-differenced.</p>
+    </div>
 
     <figure class="diagram">
       <div class="diagram-title">Diagram · ACF and PACF reading guide</div>
@@ -278,12 +262,10 @@ fc  &lt;- forecast(fit, h = 12)  # next 12 months, with prediction intervals
 plot(fc)</code></pre>
     <p><code>ts</code> tells R the data are monthly, so seasonal lags are 12 apart. <code>auto.arima</code> picks the orders, <code>checkresiduals</code> checks that the residuals look like white noise, and <code>forecast</code> projects forward with intervals that widen with the horizon.</p>
 
-    <dl class="facets">
-      <dt>Why it matters</dt>
-      <dd>ARIMA is the standard baseline for forecasting a single health series, and its errors model is how you make a regression honest about autocorrelation.</dd>
-      <dt>How to read it</dt>
-      <dd>An ARIMA(1,1,1)(0,1,1)<sub>12</sub> means: difference once and once seasonally, then one AR term, one MA term and one seasonal MA term. Coefficients have no causal meaning; judge the model by its residuals and its out-of-sample forecasts.</dd>
-    </dl>
+    <div class="facets">
+      <p><strong class="lead">Why it matters.</strong> ARIMA is the standard baseline for forecasting a single health series, and its errors model is how you make a regression honest about autocorrelation.</p>
+      <p><strong class="lead">How to read it.</strong> An ARIMA(1,1,1)(0,1,1)<sub>12</sub> means: difference once and once seasonally, then one AR term, one MA term and one seasonal MA term. Coefficients have no causal meaning; judge the model by its residuals and its out-of-sample forecasts.</p>
+    </div>
 
     <div class="callout trap">
       <div class="callout-title">Trap</div>
@@ -296,16 +278,12 @@ plot(fc)</code></pre>
     <h2>6. Count series: Poisson regression with seasonality</h2>
     <p class="point">For daily or monthly counts, the epidemiologist’s default is not ARIMA but a Poisson-type regression with smooth terms for season and trend, scaled for overdispersion.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>A GLM (Lecture 3.3) of counts on time. Season is captured with <em>Fourier terms</em>: pairs of sine and cosine waves with a 12-month period (the first harmonic), 6-month period (the second), and so on. Each extra pair lets the seasonal shape be less like a pure wave. Overdispersion is handled with a scale parameter (quasi-Poisson) or a negative binomial model.</dd>
-      <dt>Why it matters</dt>
-      <dd>It keeps counts as counts, uses population offsets for rates, and gives rate ratios that epidemiologists read directly. Bhaskaran and colleagues’ tutorial (2013) uses this approach for daily deaths and ozone in London, comparing calendar-month strata, Fourier terms and splines for the long-term and seasonal pattern.</dd>
-      <dt>How to read it</dt>
-      <dd>Two harmonics capture most simple annual shapes; add more if residuals still show a seasonal pattern. A dispersion parameter of 1 is pure Poisson; health counts usually come out above 1, and the intervals widen by its square root (a dispersion of 4 doubles their width).</dd>
-      <dt>What a change means</dt>
-      <dd>Too few seasonal terms leave season in the residuals and can bias the effect of a seasonal exposure such as temperature. Too flexible a spline of time can soak up the very effect you are trying to measure.</dd>
-    </dl>
+    <div class="facets">
+      <p>A GLM (Lecture 3.3) of counts on time. Season is captured with <em>Fourier terms</em>: pairs of sine and cosine waves with a 12-month period (the first harmonic), 6-month period (the second), and so on. Each extra pair lets the seasonal shape be less like a pure wave. Overdispersion is handled with a scale parameter (quasi-Poisson) or a negative binomial model.</p>
+      <p><strong class="lead">Why it matters.</strong> It keeps counts as counts, uses population offsets for rates, and gives rate ratios that epidemiologists read directly. Bhaskaran and colleagues’ tutorial (2013) uses this approach for daily deaths and ozone in London, comparing calendar-month strata, Fourier terms and splines for the long-term and seasonal pattern.</p>
+      <p><strong class="lead">How to read it.</strong> Two harmonics capture most simple annual shapes; add more if residuals still show a seasonal pattern. A dispersion parameter of 1 is pure Poisson; health counts usually come out above 1, and the intervals widen by its square root (a dispersion of 4 doubles their width).</p>
+      <p><strong class="lead">When it changes.</strong> Too few seasonal terms leave season in the residuals and can bias the effect of a seasonal exposure such as temperature. Too flexible a spline of time can soak up the very effect you are trying to measure.</p>
+    </div>
 
 <pre><code>adm$t &lt;- seq_len(nrow(adm))          # month index 1, 2, 3, ...
 m &lt;- glm(count ~ t +
@@ -332,14 +310,11 @@ summary(m)$dispersion                 # &gt; 1 means overdispersion</code></pre>
     <h2>7. Forecasting is not explanation</h2>
     <p class="point">A model that forecasts well can tell you nothing about causes, and a model that estimates an effect well may forecast badly; decide which job you are doing first.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd><em>Forecasting</em> predicts future values: bed demand, flu peaks, the expected deaths in a heatwave. <em>Explanation</em> estimates the effect of something: a policy, a temperature rise, an exposure.</dd>
-      <dt>Why it matters</dt>
-      <dd>They are judged differently. Forecasts are judged by out-of-sample error at the horizon you care about. Effect estimates are judged by confounding control, correct standard errors and sensitivity analyses.</dd>
-      <dt>How to read it</dt>
-      <dd>For a forecast, ask for error on held-out <em>later</em> data, compared with a naive baseline (same month last year). For an effect, ask what the counterfactual is and how seasonality and autocorrelation were handled.</dd>
-    </dl>
+    <div class="facets">
+      <p><em>Forecasting</em> predicts future values: bed demand, flu peaks, the expected deaths in a heatwave. <em>Explanation</em> estimates the effect of something: a policy, a temperature rise, an exposure.</p>
+      <p><strong class="lead">Why it matters.</strong> They are judged differently. Forecasts are judged by out-of-sample error at the horizon you care about. Effect estimates are judged by confounding control, correct standard errors and sensitivity analyses.</p>
+      <p><strong class="lead">How to read it.</strong> For a forecast, ask for error on held-out <em>later</em> data, compared with a naive baseline (same month last year). For an effect, ask what the counterfactual is and how seasonality and autocorrelation were handled.</p>
+    </div>
 
     <div class="callout example">
       <div class="callout-title">Example</div>
@@ -362,14 +337,11 @@ summary(m)$dispersion                 # &gt; 1 means overdispersion</code></pre>
     <h2>8. Preview: interrupted time series</h2>
     <p class="point">Interrupted time series compares what happened after an intervention with what the pre-intervention trend and season predict would have happened.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>Segmented regression: a pre-intervention trend, plus a change in <em>level</em> at the intervention, plus a change in <em>slope</em> afterwards, with season and autocorrelation handled as in this lecture.</dd>
-      <dt>Why it matters</dt>
-      <dd>It is the main design for evaluating population-wide policies with no control group, such as a national tax, a smoking ban or a salt limit. It is the subject of Lecture 4.7, and an ingredient of Project 4.</dd>
-      <dt>How to read it</dt>
-      <dd>In the formula below, \(\beta_2\) is the immediate step and \(\beta_3\) the change in trend. A level drop with no slope change is a one-off shift; a slope change with no step is a gradual effect.</dd>
-    </dl>
+    <div class="facets">
+      <p>Segmented regression: a pre-intervention trend, plus a change in <em>level</em> at the intervention, plus a change in <em>slope</em> afterwards, with season and autocorrelation handled as in this lecture.</p>
+      <p><strong class="lead">Why it matters.</strong> It is the main design for evaluating population-wide policies with no control group, such as a national tax, a smoking ban or a salt limit. It is the subject of Lecture 4.7, and an ingredient of Project 4.</p>
+      <p><strong class="lead">How to read it.</strong> In the formula below, \(\beta_2\) is the immediate step and \(\beta_3\) the change in trend. A level drop with no slope change is a one-off shift; a slope change with no step is a gradual effect.</p>
+    </div>
 
     \[ Y_t = \beta_0 + \beta_1 t + \beta_2 X_t + \beta_3 (t - T_0) X_t \]
     <p>Here \(t\) is time, \(T_0\) the start of the intervention and \(X_t\) is 0 before it and 1 after. Add Fourier terms or month terms for season, and a Ramadan term in the Gulf.</p>

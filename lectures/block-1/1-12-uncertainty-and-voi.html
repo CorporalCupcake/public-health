@@ -67,12 +67,10 @@
       </table>
     </div>
 
-    <dl class="facets">
-      <dt>Why it matters</dt>
-      <dd>A model that reports one number hides how fragile it is. Decision-makers need to know whether the answer would change if the inputs were a bit different.</dd>
-      <dt>How to tell</dt>
-      <dd>Ask whether more data on an input would settle it (parameter), whether it is about how the model is built (structural), or whether it is a value choice no data can settle (methodological).</dd>
-    </dl>
+    <div class="facets">
+      <p><strong class="lead">Why it matters.</strong> A model that reports one number hides how fragile it is. Decision-makers need to know whether the answer would change if the inputs were a bit different.</p>
+      <p><strong class="lead">How to tell.</strong> Ask whether more data on an input would settle it (parameter), whether it is about how the model is built (structural), or whether it is a value choice no data can settle (methodological).</p>
+    </div>
 
     <div class="callout trap">
       <div class="callout-title">Trap</div>
@@ -90,14 +88,11 @@
     <h2>2. One-way and tornado analysis</h2>
     <p class="point">Deterministic sensitivity analysis changes one input at a time to its plausible low and high values and records how much the result moves.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd><strong>One-way</strong>: vary one input, hold the rest at their best estimates. A <strong>tornado diagram</strong> shows a horizontal bar per input, its width the range of results, sorted widest at the top. <strong>Threshold analysis</strong> asks how far an input must move before the decision flips.</dd>
-      <dt>Why it matters</dt>
-      <dd>It is quick and easy to explain. It shows which inputs the result leans on, which guides where to look harder.</dd>
-      <dt>How to read it</dt>
-      <dd>A wide bar that crosses the threshold (or zero net benefit) means that input can change the decision. A wide bar that stays on one side changes the size of the answer but not the decision.</dd>
-    </dl>
+    <div class="facets">
+      <p><strong>One-way</strong>: vary one input, hold the rest at their best estimates. A <strong>tornado diagram</strong> shows a horizontal bar per input, its width the range of results, sorted widest at the top. <strong>Threshold analysis</strong> asks how far an input must move before the decision flips.</p>
+      <p><strong class="lead">Why it matters.</strong> It is quick and easy to explain. It shows which inputs the result leans on, which guides where to look harder.</p>
+      <p><strong class="lead">How to read it.</strong> A wide bar that crosses the threshold (or zero net benefit) means that input can change the decision. A wide bar that stays on one side changes the size of the answer but not the decision.</p>
+    </div>
 
     <figure class="diagram">
       <div class="diagram-title">Diagram · A tornado diagram</div>
@@ -149,16 +144,12 @@
     <h2>3. Probabilistic sensitivity analysis</h2>
     <p class="point">Probabilistic sensitivity analysis (PSA) gives every uncertain input a probability distribution, draws all inputs at once, runs the model, and repeats thousands of times.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>Each run uses one plausible set of inputs and gives one cost and one health result per option. Thousands of runs give a cloud of results that reflects all the input uncertainty together. Distributions are chosen to fit the kind of input: <strong>beta</strong> for probabilities (bounded 0–1), <strong>gamma or lognormal</strong> for costs (positive, skewed), <strong>lognormal</strong> for relative risks.</dd>
-      <dt>Why it matters</dt>
-      <dd>It answers the question one-way analysis can’t: given everything we don’t know, how likely is this option to be the best? Most guidelines and journals expect it, and it is the input for value of information.</dd>
-      <dt>How to read it</dt>
-      <dd>Plot the runs on the cost-effectiveness plane (Lecture 1.10). A tight cloud in one quadrant means a confident answer. A cloud spread across quadrants, or straddling the threshold line, means the decision is uncertain. Report the mean across runs as the main result.</dd>
-      <dt>What a change means</dt>
-      <dd>Narrowing one input’s distribution (say, after a new meta-analysis) shrinks the cloud only as far as that input drove the spread.</dd>
-    </dl>
+    <div class="facets">
+      <p>Each run uses one plausible set of inputs and gives one cost and one health result per option. Thousands of runs give a cloud of results that reflects all the input uncertainty together. Distributions are chosen to fit the kind of input: <strong>beta</strong> for probabilities (bounded 0–1), <strong>gamma or lognormal</strong> for costs (positive, skewed), <strong>lognormal</strong> for relative risks.</p>
+      <p><strong class="lead">Why it matters.</strong> It answers the question one-way analysis can’t: given everything we don’t know, how likely is this option to be the best? Most guidelines and journals expect it, and it is the input for value of information.</p>
+      <p><strong class="lead">How to read it.</strong> Plot the runs on the cost-effectiveness plane (Lecture 1.10). A tight cloud in one quadrant means a confident answer. A cloud spread across quadrants, or straddling the threshold line, means the decision is uncertain. Report the mean across runs as the main result.</p>
+      <p><strong class="lead">When it changes.</strong> Narrowing one input’s distribution (say, after a new meta-analysis) shrinks the cloud only as far as that input drove the spread.</p>
+    </div>
 
     <div class="widget" data-widget="psa-cloud">
       <div class="widget-title">A PSA cloud on the cost-effectiveness plane</div>
@@ -186,16 +177,12 @@
     <h2>4. Acceptability curves</h2>
     <p class="point">A cost-effectiveness acceptability curve (CEAC) shows, for each possible threshold, the probability that each option is the most cost-effective.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>For a given threshold, compute net monetary benefit (Lecture 1.10) for each option in every PSA run, and count the share of runs in which each option wins. Repeat across a range of thresholds and plot.</dd>
-      <dt>Why it matters</dt>
-      <dd>It answers the decision-maker’s question without forcing one threshold, which suits countries like Saudi Arabia with no single agreed threshold.</dd>
-      <dt>How to read it</dt>
-      <dd>A curve near 1 means the option is almost surely best at that threshold. A curve near 0.5 between two options means it is close to a coin toss. At very low thresholds the cheapest option tends to win; at high thresholds, the most effective.</dd>
-      <dt>What a change means</dt>
-      <dd>A rise from 0.6 to 0.9 as the threshold increases means the option becomes clearly worth it once each DALY is valued more. A flat curve means the decision barely depends on the threshold.</dd>
-    </dl>
+    <div class="facets">
+      <p>For a given threshold, compute net monetary benefit (Lecture 1.10) for each option in every PSA run, and count the share of runs in which each option wins. Repeat across a range of thresholds and plot.</p>
+      <p><strong class="lead">Why it matters.</strong> It answers the decision-maker’s question without forcing one threshold, which suits countries like Saudi Arabia with no single agreed threshold.</p>
+      <p><strong class="lead">How to read it.</strong> A curve near 1 means the option is almost surely best at that threshold. A curve near 0.5 between two options means it is close to a coin toss. At very low thresholds the cheapest option tends to win; at high thresholds, the most effective.</p>
+      <p><strong class="lead">When it changes.</strong> A rise from 0.6 to 0.9 as the threshold increases means the option becomes clearly worth it once each DALY is valued more. A flat curve means the decision barely depends on the threshold.</p>
+    </div>
 
     <p>The interactive in section 5 draws this curve from simulated runs and lets you test the trap below.</p>
 
@@ -215,16 +202,12 @@
     <h2>5. Value of perfect information</h2>
     <p class="point">The expected value of perfect information (EVPI) is the most it would be worth paying to remove all uncertainty before deciding.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>In each PSA run, imagine you knew that run’s inputs were true and picked the best option for them. Average those best outcomes. Then compare with what you get by picking the one option that is best on average today. The gap, in net benefit, is EVPI: the expected loss from deciding under uncertainty.</dd>
-      <dt>Why it matters</dt>
-      <dd>It sets an upper bound on the value of more research. Multiply the per-person EVPI by the number of people the decision affects over its lifetime to get the population EVPI. If that is below the cost of any feasible study, decide now; more research can’t pay off.</dd>
-      <dt>How to read it</dt>
-      <dd>EVPI is zero when the same option wins in every run: there is nothing to learn that would change the decision. It is highest when the decision is close (the ICER is near the threshold) and uncertainty is large.</dd>
-      <dt>What a change means</dt>
-      <dd>A large population EVPI says research could be worth it, not which research. That is the next section.</dd>
-    </dl>
+    <div class="facets">
+      <p>In each PSA run, imagine you knew that run’s inputs were true and picked the best option for them. Average those best outcomes. Then compare with what you get by picking the one option that is best on average today. The gap, in net benefit, is EVPI: the expected loss from deciding under uncertainty.</p>
+      <p><strong class="lead">Why it matters.</strong> It sets an upper bound on the value of more research. Multiply the per-person EVPI by the number of people the decision affects over its lifetime to get the population EVPI. If that is below the cost of any feasible study, decide now; more research can’t pay off.</p>
+      <p><strong class="lead">How to read it.</strong> EVPI is zero when the same option wins in every run: there is nothing to learn that would change the decision. It is highest when the decision is close (the ICER is near the threshold) and uncertainty is large.</p>
+      <p><strong class="lead">When it changes.</strong> A large population EVPI says research could be worth it, not which research. That is the next section.</p>
+    </div>
 
     <figure class="diagram">
       <div class="diagram-title">Diagram · EVPI from five PSA runs</div>
@@ -274,14 +257,11 @@
     <h2>6. Which uncertainty matters: EVPPI</h2>
     <p class="point">The expected value of partial perfect information (EVPPI) is the value of learning one input, or a group of inputs, exactly, with everything else still uncertain.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>The same logic as EVPI, applied to a subset of inputs. It is what you would gain from a study that measured, say, compliance perfectly while leaving the other inputs as they are.</dd>
-      <dt>Why it matters</dt>
-      <dd>It ranks research priorities by their effect on the decision, not by how uncertain the inputs look. Groups of inputs that would be measured in the same study (e.g. all costs) should be assessed together.</dd>
-      <dt>How to read it</dt>
-      <dd>Compare EVPPIs across inputs. The input with the largest EVPPI is where research would pay most. The <strong>expected value of sample information</strong> (EVSI) goes one step further: the value of a real study of a given size, which can be set against what the study costs.</dd>
-    </dl>
+    <div class="facets">
+      <p>The same logic as EVPI, applied to a subset of inputs. It is what you would gain from a study that measured, say, compliance perfectly while leaving the other inputs as they are.</p>
+      <p><strong class="lead">Why it matters.</strong> It ranks research priorities by their effect on the decision, not by how uncertain the inputs look. Groups of inputs that would be measured in the same study (e.g. all costs) should be assessed together.</p>
+      <p><strong class="lead">How to read it.</strong> Compare EVPPIs across inputs. The input with the largest EVPPI is where research would pay most. The <strong>expected value of sample information</strong> (EVSI) goes one step further: the value of a real study of a given size, which can be set against what the study costs.</p>
+    </div>
 
     <div class="callout trap">
       <div class="callout-title">Trap</div>
@@ -299,16 +279,12 @@
     <h2>7. Metamodels for EVPPI</h2>
     <p class="point">Regression-based EVPPI fits a fast statistical model (a metamodel) to the PSA output, so you can estimate EVPPI from the PSA you already ran instead of running the model millions more times.</p>
 
-    <dl class="facets">
-      <dt>What it does</dt>
-      <dd>EVPPI needs, for each value of the input of interest, the expected net benefit averaged over all other inputs. The direct way nests a second simulation inside each draw, which is very slow. Strong, Oakley &amp; Brennan (2014) showed you can regress each option’s net benefit on the input of interest across the PSA runs. The fitted values estimate that average; the leftover noise is the other inputs, which is exactly what you want to average out.</dd>
-      <dt>Which metamodel</dt>
-      <dd>For one to a few inputs, a generalised additive model (GAM: flexible smooth curves). For larger groups, a Gaussian process. Other flexible learners work in principle. The SAVI web tool and the <code>voi</code> and <code>BCEA</code> R packages implement the standard methods.</dd>
-      <dt>How to read it</dt>
-      <dd>Check the metamodel fit as you would any regression: residual plots, and the standard error of the EVPPI estimate. Then read the EVPPI as in section 6.</dd>
-      <dt>What a change means</dt>
-      <dd>More PSA runs give a more precise EVPPI. If adding runs moves your EVPPI ranking, you didn’t have enough.</dd>
-    </dl>
+    <div class="facets">
+      <p><strong class="lead">What it does.</strong> EVPPI needs, for each value of the input of interest, the expected net benefit averaged over all other inputs. The direct way nests a second simulation inside each draw, which is very slow. Strong, Oakley &amp; Brennan (2014) showed you can regress each option’s net benefit on the input of interest across the PSA runs. The fitted values estimate that average; the leftover noise is the other inputs, which is exactly what you want to average out.</p>
+      <p><strong class="lead">Which metamodel.</strong> For one to a few inputs, a generalised additive model (GAM: flexible smooth curves). For larger groups, a Gaussian process. Other flexible learners work in principle. The SAVI web tool and the <code>voi</code> and <code>BCEA</code> R packages implement the standard methods.</p>
+      <p><strong class="lead">How to read it.</strong> Check the metamodel fit as you would any regression: residual plots, and the standard error of the EVPPI estimate. Then read the EVPPI as in section 6.</p>
+      <p><strong class="lead">When it changes.</strong> More PSA runs give a more precise EVPPI. If adding runs moves your EVPPI ranking, you didn’t have enough.</p>
+    </div>
 
     <div class="callout trap">
       <div class="callout-title">Trap</div>

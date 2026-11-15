@@ -66,14 +66,11 @@
       </table>
     </div>
 
-    <dl class="facets">
-      <dt>Why it matters</dt>
-      <dd>None of the three can be fixed by adjusting for time on treatment. The people who are missing are missing because of the drug and the outcome, which is selection bias (Lecture 2.7), not confounding.</dd>
-      <dt>How to read it</dt>
-      <dd>In a methods section, look for the words “new users”, “initiators” or “incident users”, a stated washout, and covariates measured before the first dispensing. “Current users” compared with “non-users” at a calendar date is a prevalent-user design.</dd>
-      <dt>What a change means</dt>
-      <dd>If a prevalent-user study and a new-user study of the same drug disagree, and the new-user hazard ratio is higher early in follow-up, early harm plus depletion is the first explanation to test.</dd>
-    </dl>
+    <div class="facets">
+      <p><strong class="lead">Why it matters.</strong> None of the three can be fixed by adjusting for time on treatment. The people who are missing are missing because of the drug and the outcome, which is selection bias (Lecture 2.7), not confounding.</p>
+      <p><strong class="lead">How to read it.</strong> In a methods section, look for the words “new users”, “initiators” or “incident users”, a stated washout, and covariates measured before the first dispensing. “Current users” compared with “non-users” at a calendar date is a prevalent-user design.</p>
+      <p><strong class="lead">When it changes.</strong> If a prevalent-user study and a new-user study of the same drug disagree, and the new-user hazard ratio is higher early in follow-up, early harm plus depletion is the first explanation to test.</p>
+    </div>
 
     <div class="callout trap">
       <div class="callout-title">Trap</div>
@@ -91,16 +88,12 @@
     <h2>2. Lookback, washout and who counts as new</h2>
     <p class="point">A “new user” is only new relative to what your data can see; the lookback window defines that, and it must be long enough to catch prior use and short enough to keep a usable cohort.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>The <strong>lookback</strong> is the period before the index date in which you check eligibility and measure covariates. The <strong>washout</strong> is the requirement of no use of the study drugs during it. People must also be observable for the whole window (continuous enrolment in claims, a prior visit in EHRs), otherwise “no use” just means “no data”.</dd>
-      <dt>Why it matters</dt>
-      <dd>Too short a washout lets prevalent users with a refill gap back in as “new”. Too long a washout excludes people with short enrolment, often younger, poorer or more mobile patients, which narrows who the result applies to.</dd>
-      <dt>How to read it</dt>
-      <dd>Six to twelve months is typical in claims data for chronic drugs. Check that the washout covers both arms (new to A <em>and</em> to B), and whether “new” means new to the drug, the class or all treatment for the condition.</dd>
-      <dt>What a change means</dt>
-      <dd>If lengthening the washout from 6 to 24 months moves the estimate, some “new users” in the short version were returning users, whose risk differs.</dd>
-    </dl>
+    <div class="facets">
+      <p>The <strong>lookback</strong> is the period before the index date in which you check eligibility and measure covariates. The <strong>washout</strong> is the requirement of no use of the study drugs during it. People must also be observable for the whole window (continuous enrolment in claims, a prior visit in EHRs), otherwise “no use” just means “no data”.</p>
+      <p><strong class="lead">Why it matters.</strong> Too short a washout lets prevalent users with a refill gap back in as “new”. Too long a washout excludes people with short enrolment, often younger, poorer or more mobile patients, which narrows who the result applies to.</p>
+      <p><strong class="lead">How to read it.</strong> Six to twelve months is typical in claims data for chronic drugs. Check that the washout covers both arms (new to A <em>and</em> to B), and whether “new” means new to the drug, the class or all treatment for the condition.</p>
+      <p><strong class="lead">When it changes.</strong> If lengthening the washout from 6 to 24 months moves the estimate, some “new users” in the short version were returning users, whose risk differs.</p>
+    </div>
 
     <div class="table-wrap">
       <table>
@@ -142,14 +135,11 @@ WHERE f.index_date &gt;= op.observation_period_start_date + INTERVAL '365 days'
     <h2>3. The ACNU design and its estimand</h2>
     <p class="point">An active-comparator, new-user (ACNU) study emulates a pragmatic head-to-head trial: among people who need treatment, what happens if they start A instead of B; how you handle switching decides the exact question.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>Index date at the first dispensing of A or B; eligibility and covariates from the lookback; follow-up from the index date. In target trial language (Lecture 4.5), assignment, eligibility and time zero coincide, and the treatment strategies are “start A” versus “start B”.</dd>
-      <dt>Why it matters</dt>
-      <dd>The estimand is the effect of initiating A versus B in people for whom both were plausible choices. It is not the effect of A versus nothing, and not the effect in people who would never be offered either drug.</dd>
-      <dt>How to read it</dt>
-      <dd>A hazard ratio of 0.85 for A versus B means starting A rather than B is associated with 15% lower hazard. If B itself is beneficial, A can still be worse than no treatment would be for some outcome; the design cannot tell you.</dd>
-    </dl>
+    <div class="facets">
+      <p>Index date at the first dispensing of A or B; eligibility and covariates from the lookback; follow-up from the index date. In target trial language (Lecture 4.5), assignment, eligibility and time zero coincide, and the treatment strategies are “start A” versus “start B”.</p>
+      <p><strong class="lead">Why it matters.</strong> The estimand is the effect of initiating A versus B in people for whom both were plausible choices. It is not the effect of A versus nothing, and not the effect in people who would never be offered either drug.</p>
+      <p><strong class="lead">How to read it.</strong> A hazard ratio of 0.85 for A versus B means starting A rather than B is associated with 15% lower hazard. If B itself is beneficial, A can still be worse than no treatment would be for some outcome; the design cannot tell you.</p>
+    </div>
 
     <figure class="diagram">
       <div class="diagram-title">Diagram · One patient, three ways to count follow-up</div>
@@ -243,12 +233,10 @@ WHERE f.index_date &gt;= op.observation_period_start_date + INTERVAL '365 days'
       </table>
     </div>
 
-    <dl class="facets">
-      <dt>Why it matters</dt>
-      <dd>Propensity scores (Lecture 5.4) can only balance what is measured. A well-chosen comparator balances the unmeasured parts of “needs this kind of treatment”: severity, health-seeking, contact with care.</dd>
-      <dt>How to read it</dt>
-      <dd>After choosing the comparator, look at the unadjusted baseline table. If the arms already look similar before any weighting, the comparator is doing its job. Large differences in frailty markers mean channelling, and the propensity model is being asked to do too much.</dd>
-    </dl>
+    <div class="facets">
+      <p><strong class="lead">Why it matters.</strong> Propensity scores (Lecture 5.4) can only balance what is measured. A well-chosen comparator balances the unmeasured parts of “needs this kind of treatment”: severity, health-seeking, contact with care.</p>
+      <p><strong class="lead">How to read it.</strong> After choosing the comparator, look at the unadjusted baseline table. If the arms already look similar before any weighting, the comparator is doing its job. Large differences in frailty markers mean channelling, and the propensity model is being asked to do too much.</p>
+    </div>
 
     <div class="callout example">
       <div class="callout-title">Example · SGLT2 inhibitors vs DPP-4 inhibitors</div>
@@ -266,14 +254,11 @@ WHERE f.index_date &gt;= op.observation_period_start_date + INTERVAL '365 days'
     <h2>5. Non-users and the healthy adherer</h2>
     <p class="point">Non-users have no index date, often no indication and less contact with care; adherent users are healthier in ways the data do not record; both comparisons can make a useless drug look strongly protective.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>A <strong>non-user comparator</strong> is anyone not taking the drug. Three problems come with it: non-users may not have the indication, those with the indication may be untreated because they are too frail (confounding by contraindication), and there is no first dispensing to set their time zero. The <strong>healthy adherer effect</strong> is that people who take any medicine faithfully, even a placebo, have better outcomes.</dd>
-      <dt>Why it matters</dt>
-      <dd>In the Coronary Drug Project, men in the placebo arm who took at least 80% of their capsules had a five-year mortality of 15.1%, against 28.3% for poor adherers. A meta-analysis by Simpson and colleagues (2006) found good adherence to placebo associated with lower mortality (OR 0.56). Adherence marks prognosis; it is not a treatment.</dd>
-      <dt>How to read it</dt>
-      <dd>Implausible benefits are the giveaway: a drug that reduces deaths from accidents or infections, or a benefit that appears within weeks for a drug that acts over years. These are natural negative control outcomes.</dd>
-    </dl>
+    <div class="facets">
+      <p>A <strong>non-user comparator</strong> is anyone not taking the drug. Three problems come with it: non-users may not have the indication, those with the indication may be untreated because they are too frail (confounding by contraindication), and there is no first dispensing to set their time zero. The <strong>healthy adherer effect</strong> is that people who take any medicine faithfully, even a placebo, have better outcomes.</p>
+      <p><strong class="lead">Why it matters.</strong> In the Coronary Drug Project, men in the placebo arm who took at least 80% of their capsules had a five-year mortality of 15.1%, against 28.3% for poor adherers. A meta-analysis by Simpson and colleagues (2006) found good adherence to placebo associated with lower mortality (OR 0.56). Adherence marks prognosis; it is not a treatment.</p>
+      <p><strong class="lead">How to read it.</strong> Implausible benefits are the giveaway: a drug that reduces deaths from accidents or infections, or a benefit that appears within weeks for a drug that acts over years. These are natural negative control outcomes.</p>
+    </div>
 
     <div class="widget" data-widget="comparator-choice">
       <div class="widget-title">Four comparisons of a drug that does nothing</div>
@@ -301,14 +286,11 @@ WHERE f.index_date &gt;= op.observation_period_start_date + INTERVAL '365 days'
     <h2>6. The comparator problem in Project 5A</h2>
     <p class="point">For anticoagulation in new-onset AF during critical illness there is no drug a clinician would give “instead”, so the comparator is a strategy, not a drug, and the design has to make up for that.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>The clinical choice is between starting therapeutic anticoagulation and not starting it, while almost everyone receives prophylactic-dose heparin (Lecture 5.1). The natural target trial compares “start therapeutic anticoagulation within a set number of hours of ECG-defined AF onset” with “do not start it during that window”.</dd>
-      <dt>Why it matters</dt>
-      <dd>“Not started” is the non-user problem in its sharpest form. Patients who are bleeding, have low platelets, are about to have surgery or are close to death are not anticoagulated. They will die more often for reasons that have nothing to do with the drug.</dd>
-      <dt>How to read it</dt>
-      <dd>Walkey and colleagues (<em>JAMA Cardiology</em>, 2016) studied about 27,000 propensity-matched patients with AF during sepsis in a US hospital database. In-hospital ischaemic stroke was similar with and without parenteral anticoagulation (1.3% vs 1.4%), and clinically significant bleeding was more common with it (8.6% vs 7.2%). Your study must improve on this, not repeat it: better onset timing from the ECG and a cleaner time zero.</dd>
-    </dl>
+    <div class="facets">
+      <p>The clinical choice is between starting therapeutic anticoagulation and not starting it, while almost everyone receives prophylactic-dose heparin (Lecture 5.1). The natural target trial compares “start therapeutic anticoagulation within a set number of hours of ECG-defined AF onset” with “do not start it during that window”.</p>
+      <p><strong class="lead">Why it matters.</strong> “Not started” is the non-user problem in its sharpest form. Patients who are bleeding, have low platelets, are about to have surgery or are close to death are not anticoagulated. They will die more often for reasons that have nothing to do with the drug.</p>
+      <p><strong class="lead">How to read it.</strong> Walkey and colleagues (<em>JAMA Cardiology</em>, 2016) studied about 27,000 propensity-matched patients with AF during sepsis in a US hospital database. In-hospital ischaemic stroke was similar with and without parenteral anticoagulation (1.3% vs 1.4%), and clinically significant bleeding was more common with it (8.6% vs 7.2%). Your study must improve on this, not repeat it: better onset timing from the ECG and a cleaner time zero.</p>
+    </div>
 
     <div class="table-wrap">
       <table>

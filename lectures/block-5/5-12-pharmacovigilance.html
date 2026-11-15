@@ -55,14 +55,11 @@
     <h2>1. Spontaneous reporting systems</h2>
     <p class="point">A spontaneous reporting system collects case reports of suspected adverse reactions; it tells you that harms happen, not how often.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>Clinicians, patients and manufacturers send reports of a suspected drug–event link to a national centre. Manufacturers are legally required to report; health professionals and patients mostly report voluntarily. Each report holds the drugs, the events (coded in MedDRA), and some patient detail and narrative. National databases feed the WHO global database, VigiBase, run by the Uppsala Monitoring Centre (UMC).</dd>
-      <dt>Why it matters</dt>
-      <dd>Reports cover every patient on every drug, from launch onwards, at low cost. They are the main way rare, unexpected harms are first noticed, especially harms that a clinician recognises as unusual.</dd>
-      <dt>How to read it</dt>
-      <dd>There is no denominator. You know how many reports mention a drug and event, but not how many people took the drug, nor how many events went unreported. Read counts as “this has been seen”, not as a rate.</dd>
-    </dl>
+    <div class="facets">
+      <p>Clinicians, patients and manufacturers send reports of a suspected drug–event link to a national centre. Manufacturers are legally required to report; health professionals and patients mostly report voluntarily. Each report holds the drugs, the events (coded in MedDRA), and some patient detail and narrative. National databases feed the WHO global database, VigiBase, run by the Uppsala Monitoring Centre (UMC).</p>
+      <p><strong class="lead">Why it matters.</strong> Reports cover every patient on every drug, from launch onwards, at low cost. They are the main way rare, unexpected harms are first noticed, especially harms that a clinician recognises as unusual.</p>
+      <p><strong class="lead">How to read it.</strong> There is no denominator. You know how many reports mention a drug and event, but not how many people took the drug, nor how many events went unreported. Read counts as “this has been seen”, not as a rate.</p>
+    </div>
 
     <div class="table-wrap">
       <table>
@@ -97,16 +94,12 @@
     <h2>2. What drives reporting, beyond the drug</h2>
     <p class="point">Whether a reaction is reported depends on how serious, new and newsworthy it seems, so reporting is biased in predictable ways.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>Three forces shape the database. <strong>Under-reporting</strong>: only a small and unknown share of reactions are ever reported, and the share varies by drug and event. <strong>Stimulated (notoriety) reporting</strong>: publicity, a regulatory warning or a lawsuit makes reports surge. <strong>Duplicates</strong>: the same case reported by the doctor, the patient and the company.</dd>
-      <dt>Why it matters</dt>
-      <dd>Disproportionality compares reporting patterns, not risks. Anything that changes how one drug–event pair is reported changes its ratio, even if the true risk is unchanged.</dd>
-      <dt>How to read it</dt>
-      <dd>Look at when reports arrived. A burst of reports just after a media story, mostly from lawyers or consumers, with thin clinical detail, points to stimulated reporting. Reports from clinicians, with dates and rechallenge information, are worth more.</dd>
-      <dt>What a change means</dt>
-      <dd>A ratio that doubles in the month after a safety warning tells you about the warning, not about the drug.</dd>
-    </dl>
+    <div class="facets">
+      <p>Three forces shape the database. <strong>Under-reporting</strong>: only a small and unknown share of reactions are ever reported, and the share varies by drug and event. <strong>Stimulated (notoriety) reporting</strong>: publicity, a regulatory warning or a lawsuit makes reports surge. <strong>Duplicates</strong>: the same case reported by the doctor, the patient and the company.</p>
+      <p><strong class="lead">Why it matters.</strong> Disproportionality compares reporting patterns, not risks. Anything that changes how one drug–event pair is reported changes its ratio, even if the true risk is unchanged.</p>
+      <p><strong class="lead">How to read it.</strong> Look at when reports arrived. A burst of reports just after a media story, mostly from lawyers or consumers, with thin clinical detail, points to stimulated reporting. Reports from clinicians, with dates and rechallenge information, are worth more.</p>
+      <p><strong class="lead">When it changes.</strong> A ratio that doubles in the month after a safety warning tells you about the warning, not about the drug.</p>
+    </div>
 
     <div class="callout example">
       <div class="callout-title">Example · The Weber effect</div>
@@ -124,16 +117,12 @@
     <h2>3. Small counts and Bayesian shrinkage</h2>
     <p class="point">When a pair has only one or two reports, its observed-to-expected ratio is mostly noise; shrinkage pulls it towards 1 until the reports pile up.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>Disproportionality compares <em>O</em>, the reports for a drug–event pair, with <em>E</em>, the number expected if drug and event were unrelated. E is the drug’s total reports times the event’s total reports, divided by all reports. Lecture 2.16 used the PRR and ROR. With millions of pairs, many have tiny E, so one report gives a huge ratio. Bayesian methods add a little prior information that shrinks ratios built on few reports.</dd>
-      <dt>Why it matters</dt>
-      <dd>Screening millions of pairs is a massive multiple-testing problem. Without shrinkage, the top of the list fills with single-report pairs that are chance. Shrinkage ranks pairs by how sure we are of an excess, not by how big the raw ratio is.</dd>
-      <dt>How to read it</dt>
-      <dd>The two widely used methods report a shrunk estimate and a lower bound. UMC’s <strong>information component</strong> (IC, from the BCPNN method) is on a log2 scale; a signal is screened in when the lower 95% bound, <strong>IC025</strong>, is above 0. The FDA’s <strong>multi-item gamma Poisson shrinker</strong> (MGPS) gives the empirical Bayes geometric mean (<strong>EBGM</strong>); a common screening rule is a lower 5% bound, <strong>EB05</strong>, of at least 2.</dd>
-      <dt>What a change means</dt>
-      <dd>An IC rising from 0.5 to 2 means reports went from about 1.4 to 4 times the expected number. A rising IC025 means the excess is becoming more certain as reports accumulate.</dd>
-    </dl>
+    <div class="facets">
+      <p>Disproportionality compares <em>O</em>, the reports for a drug–event pair, with <em>E</em>, the number expected if drug and event were unrelated. E is the drug’s total reports times the event’s total reports, divided by all reports. Lecture 2.16 used the PRR and ROR. With millions of pairs, many have tiny E, so one report gives a huge ratio. Bayesian methods add a little prior information that shrinks ratios built on few reports.</p>
+      <p><strong class="lead">Why it matters.</strong> Screening millions of pairs is a massive multiple-testing problem. Without shrinkage, the top of the list fills with single-report pairs that are chance. Shrinkage ranks pairs by how sure we are of an excess, not by how big the raw ratio is.</p>
+      <p><strong class="lead">How to read it.</strong> The two widely used methods report a shrunk estimate and a lower bound. UMC’s <strong>information component</strong> (IC, from the BCPNN method) is on a log2 scale; a signal is screened in when the lower 95% bound, <strong>IC025</strong>, is above 0. The FDA’s <strong>multi-item gamma Poisson shrinker</strong> (MGPS) gives the empirical Bayes geometric mean (<strong>EBGM</strong>); a common screening rule is a lower 5% bound, <strong>EB05</strong>, of at least 2.</p>
+      <p><strong class="lead">When it changes.</strong> An IC rising from 0.5 to 2 means reports went from about 1.4 to 4 times the expected number. A rising IC025 means the excess is becoming more certain as reports accumulate.</p>
+    </div>
 
     <p>A simple form of the IC, with shrinkage built in, is the one formula worth remembering:</p>
     <p>\[ \mathrm{IC} = \log_2 \frac{O + 0.5}{E + 0.5} \]</p>
@@ -174,14 +163,11 @@ print(ebout, threshold = 2)                               # pairs with EB05 at o
     <h2>4. Masking and other traps in the database</h2>
     <p class="point">Every ratio is relative to the rest of the database, so what else is in the database can hide or create a signal.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd><strong>Masking</strong>: when one drug is reported very often with an event, it inflates the background rate of that event. Other drugs with a real excess then look ordinary. <strong>Confounding by indication</strong> (Lecture 5.4) also works in reports: drugs for diabetes are reported with diabetic complications. <strong>Event coding</strong> matters too. The same harm split across several MedDRA terms can fall below every threshold.</dd>
-      <dt>Why it matters</dt>
-      <dd>A clean result does not mean no risk. Wang and colleagues (2010) showed that masking can hide real signals, especially for events dominated by one well-known drug.</dd>
-      <dt>How to read it</dt>
-      <dd>For an important null result, ask which drugs dominate the event’s reports, and re-run without them. Check whether grouping related MedDRA terms changes the picture. Compare against drugs with the same indication to reduce confounding by indication.</dd>
-    </dl>
+    <div class="facets">
+      <p><strong>Masking</strong>: when one drug is reported very often with an event, it inflates the background rate of that event. Other drugs with a real excess then look ordinary. <strong>Confounding by indication</strong> (Lecture 5.4) also works in reports: drugs for diabetes are reported with diabetic complications. <strong>Event coding</strong> matters too. The same harm split across several MedDRA terms can fall below every threshold.</p>
+      <p><strong class="lead">Why it matters.</strong> A clean result does not mean no risk. Wang and colleagues (2010) showed that masking can hide real signals, especially for events dominated by one well-known drug.</p>
+      <p><strong class="lead">How to read it.</strong> For an important null result, ask which drugs dominate the event’s reports, and re-run without them. Check whether grouping related MedDRA terms changes the picture. Compare against drugs with the same indication to reduce confounding by indication.</p>
+    </div>
 
     <div class="callout example">
       <div class="callout-title">Example · Hidden by a famous neighbour</div>
@@ -199,14 +185,11 @@ print(ebout, threshold = 2)                               # pairs with EB05 at o
     <h2>5. From signal to action</h2>
     <p class="point">Statistical detection is the first of several steps; most of the work, and the decision, comes after it.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>Signal management follows a fixed sequence, set out for the EU in EMA’s Good Pharmacovigilance Practices (GVP) Module IX. Detect a possible signal; validate it by reading the cases; prioritise by seriousness and public health impact; assess all the evidence; recommend action. Detection draws on spontaneous reports, the literature, studies and active surveillance.</dd>
-      <dt>Why it matters</dt>
-      <dd>Most statistical signals are closed at validation: duplicates, a known reaction, an obvious other cause, or cases that do not hold up. The ones that survive get a structured assessment, often with a population study (Lectures 5.2–5.5).</dd>
-      <dt>How to read it</dt>
-      <dd>At validation, look for timing that fits, improvement when the drug stopped (dechallenge), return when restarted (rechallenge), and no better explanation. A few well-documented cases can outweigh hundreds of thin ones.</dd>
-    </dl>
+    <div class="facets">
+      <p>Signal management follows a fixed sequence, set out for the EU in EMA’s Good Pharmacovigilance Practices (GVP) Module IX. Detect a possible signal; validate it by reading the cases; prioritise by seriousness and public health impact; assess all the evidence; recommend action. Detection draws on spontaneous reports, the literature, studies and active surveillance.</p>
+      <p><strong class="lead">Why it matters.</strong> Most statistical signals are closed at validation: duplicates, a known reaction, an obvious other cause, or cases that do not hold up. The ones that survive get a structured assessment, often with a population study (Lectures 5.2–5.5).</p>
+      <p><strong class="lead">How to read it.</strong> At validation, look for timing that fits, improvement when the drug stopped (dechallenge), return when restarted (rechallenge), and no better explanation. A few well-documented cases can outweigh hundreds of thin ones.</p>
+    </div>
 
     <figure class="diagram">
       <div class="diagram-title">Diagram · The signal management cycle</div>
@@ -285,14 +268,11 @@ print(ebout, threshold = 2)                               # pairs with EB05 at o
     <h2>6. Active surveillance and machine learning</h2>
     <p class="point">Active surveillance answers the questions reports cannot, with denominators from EHR and claims data; machine learning mostly helps with the volume of reports.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>The FDA’s <strong>Sentinel</strong> system queries claims and EHR data from partner organisations in a common data model. Its <strong>ARIA</strong> tools (Active Risk Identification and Analysis) run standard cohort and self-controlled analyses (Lecture 5.5) quickly. By law, the FDA must consider whether ARIA could answer a safety question before it requires a company to run a post-marketing study. In the EU, DARWIN EU plays a similar role (Lecture 5.11). Machine learning and natural language processing (NLP) are now used to read case narratives, find duplicates and triage reports.</dd>
-      <dt>Why it matters</dt>
-      <dd>Active surveillance gives incidence and comparisons, so it can confirm or refute a signal from reports. The 2026 merger of FDA reporting systems into AEMS, and its use of AI, means more of the first pass will be automated.</dd>
-      <dt>How to read it</dt>
-      <dd>For an active surveillance result, apply the full Block 5 toolkit: new users, an active comparator, validated outcomes, time-related biases. For an ML triage tool, ask what it misses. Its sensitivity for <em>serious, unexpected</em> cases matters more than overall accuracy.</dd>
-    </dl>
+    <div class="facets">
+      <p>The FDA’s <strong>Sentinel</strong> system queries claims and EHR data from partner organisations in a common data model. Its <strong>ARIA</strong> tools (Active Risk Identification and Analysis) run standard cohort and self-controlled analyses (Lecture 5.5) quickly. By law, the FDA must consider whether ARIA could answer a safety question before it requires a company to run a post-marketing study. In the EU, DARWIN EU plays a similar role (Lecture 5.11). Machine learning and natural language processing (NLP) are now used to read case narratives, find duplicates and triage reports.</p>
+      <p><strong class="lead">Why it matters.</strong> Active surveillance gives incidence and comparisons, so it can confirm or refute a signal from reports. The 2026 merger of FDA reporting systems into AEMS, and its use of AI, means more of the first pass will be automated.</p>
+      <p><strong class="lead">How to read it.</strong> For an active surveillance result, apply the full Block 5 toolkit: new users, an active comparator, validated outcomes, time-related biases. For an ML triage tool, ask what it misses. Its sensitivity for <em>serious, unexpected</em> cases matters more than overall accuracy.</p>
+    </div>
 
     <div class="table-wrap">
       <table>

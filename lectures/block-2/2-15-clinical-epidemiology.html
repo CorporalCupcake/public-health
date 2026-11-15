@@ -55,16 +55,12 @@
     <h2>1. Diagnostic accuracy studies</h2>
     <p class="point">A diagnostic accuracy study gives the new test and a reference standard to the same patients, the ones the test is meant for, and cross-tabulates the results.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>A cross-sectional study. Enrol consecutive patients in whom the diagnosis is genuinely uncertain. Apply the <em>index test</em> (the one being evaluated) and the <em>reference standard</em> (the best available way to find out who has the disease) to everyone. Each reading is made blind to the other.</dd>
-      <dt>Why it matters</dt>
-      <dd>Sensitivity, specificity and likelihood ratios are not fixed properties of a test. They describe how the test performed in one group of patients. If that group is unlike the patients you will use it on, the numbers will not carry over.</dd>
-      <dt>How to read it</dt>
-      <dd>Ask three questions first. Who was enrolled, and how? Did everyone get the same reference standard? Was anyone excluded after testing? Look at the accuracy figures only after that.</dd>
-      <dt>What a change means</dt>
-      <dd>Moving the threshold of a continuous test (or of an AI model’s score) trades sensitivity against specificity. The ROC curve shows every such trade. The study should state which threshold it used and whether that threshold was chosen in the same data.</dd>
-    </dl>
+    <div class="facets">
+      <p>A cross-sectional study. Enrol consecutive patients in whom the diagnosis is genuinely uncertain. Apply the <em>index test</em> (the one being evaluated) and the <em>reference standard</em> (the best available way to find out who has the disease) to everyone. Each reading is made blind to the other.</p>
+      <p><strong class="lead">Why it matters.</strong> Sensitivity, specificity and likelihood ratios are not fixed properties of a test. They describe how the test performed in one group of patients. If that group is unlike the patients you will use it on, the numbers will not carry over.</p>
+      <p><strong class="lead">How to read it.</strong> Ask three questions first. Who was enrolled, and how? Did everyone get the same reference standard? Was anyone excluded after testing? Look at the accuracy figures only after that.</p>
+      <p><strong class="lead">When it changes.</strong> Moving the threshold of a continuous test (or of an AI model’s score) trades sensitivity against specificity. The ROC curve shows every such trade. The study should state which threshold it used and whether that threshold was chosen in the same data.</p>
+    </div>
 
     <figure class="diagram">
       <div class="diagram-title">Diagram · The diagnostic accuracy study and where bias enters</div>
@@ -175,16 +171,12 @@
     <h2>3. Likelihood ratios: from pre-test to post-test probability</h2>
     <p class="point">A likelihood ratio says how much a test result should move your belief, and the starting point, the pre-test probability, matters as much as the test.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>LR+ is how much more likely a positive result is in someone with the disease than in someone without: sensitivity ÷ (1 − specificity). LR− is the same for a negative result: (1 − sensitivity) ÷ specificity. An LR of 1 means the result tells you nothing.</dd>
-      <dt>Why it matters</dt>
-      <dd>Clinicians and patients want the post-test probability, “given this result, how likely is the disease?”. Sensitivity and specificity do not give that on their own. LRs do, once combined with the pre-test probability.</dd>
-      <dt>How to read it</dt>
-      <dd>As a rough guide, LRs above 10 or below 0.1 often change decisions, 5–10 and 0.1–0.2 moderately, 2–5 and 0.2–0.5 a little, and 1–2 or 0.5–1 rarely. For pre-test probabilities between about 10% and 90%, an LR of 2, 5 or 10 adds roughly 15, 30 or 45 percentage points, and 0.5, 0.2 or 0.1 subtracts the same.</dd>
-      <dt>What a change means</dt>
-      <dd>The same positive result means very different things at different starting points. That is why screening a low-risk population produces mostly false positives even with a good test.</dd>
-    </dl>
+    <div class="facets">
+      <p>LR+ is how much more likely a positive result is in someone with the disease than in someone without: sensitivity ÷ (1 − specificity). LR− is the same for a negative result: (1 − sensitivity) ÷ specificity. An LR of 1 means the result tells you nothing.</p>
+      <p><strong class="lead">Why it matters.</strong> Clinicians and patients want the post-test probability, “given this result, how likely is the disease?”. Sensitivity and specificity do not give that on their own. LRs do, once combined with the pre-test probability.</p>
+      <p><strong class="lead">How to read it.</strong> As a rough guide, LRs above 10 or below 0.1 often change decisions, 5–10 and 0.1–0.2 moderately, 2–5 and 0.2–0.5 a little, and 1–2 or 0.5–1 rarely. For pre-test probabilities between about 10% and 90%, an LR of 2, 5 or 10 adds roughly 15, 30 or 45 percentage points, and 0.5, 0.2 or 0.1 subtracts the same.</p>
+      <p><strong class="lead">When it changes.</strong> The same positive result means very different things at different starting points. That is why screening a low-risk population produces mostly false positives even with a good test.</p>
+    </div>
 
     <p>The rule works on the odds scale:</p>
     \[ \text{post-test odds} = \text{pre-test odds} \times LR \]
@@ -216,14 +208,11 @@
     <h2>4. Prognosis research: the four PROGRESS questions</h2>
     <p class="point">“Prognosis research” covers four different questions, and mixing them up leads to the wrong study design and the wrong conclusion.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>The PROGRESS series (2013) split prognosis research into four types: what usually happens to people with a condition; which single factors are associated with outcome; how to combine factors into an individual risk; and which factors predict who benefits from a treatment.</dd>
-      <dt>Why it matters</dt>
-      <dd>Each type needs different data and analysis. A prognostic factor study is not a causal study, and a model built for prediction is not built to explain.</dd>
-      <dt>How to read it</dt>
-      <dd>Identify which of the four questions a paper is answering before judging its methods. Many papers drift between them in the discussion section.</dd>
-    </dl>
+    <div class="facets">
+      <p>The PROGRESS series (2013) split prognosis research into four types: what usually happens to people with a condition; which single factors are associated with outcome; how to combine factors into an individual risk; and which factors predict who benefits from a treatment.</p>
+      <p><strong class="lead">Why it matters.</strong> Each type needs different data and analysis. A prognostic factor study is not a causal study, and a model built for prediction is not built to explain.</p>
+      <p><strong class="lead">How to read it.</strong> Identify which of the four questions a paper is answering before judging its methods. Many papers drift between them in the discussion section.</p>
+    </div>
 
     <div class="table-wrap">
       <table>
@@ -253,16 +242,12 @@
     <h2>5. Developing and validating prediction models</h2>
     <p class="point">A prediction model is only as good as its performance in new patients, and the usual reason it fails there is overfitting or a different population.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd><strong>Development</strong>: fit a model to predict an outcome from predictors available at the moment of prediction. <strong>Internal validation</strong>: estimate how optimistic that fit is, using bootstrapping or cross-validation in the same data. <strong>External validation</strong>: test the frozen model in new data from another time, place or setting. <strong>Updating</strong>: recalibrate or refit it for the new setting.</dd>
-      <dt>Why it matters</dt>
-      <dd>A model fitted with too many predictors for its number of events learns the noise in its development data. Its predictions are then too extreme in new patients. Riley and colleagues (2020) give formulas for the minimum sample size that keeps this in check, based on the number of predictors, the outcome rate and the expected model fit.</dd>
-      <dt>How to read it</dt>
-      <dd>Trust an external validation more than an internal one, and internal validation more than the apparent performance in the development data. Ask whether the validation population matches yours.</dd>
-      <dt>What a change means</dt>
-      <dd>If a model ranks patients well in a new setting but its risks are off, it often needs only recalibration, not a new model. Refitting from scratch throws away what transferred.</dd>
-    </dl>
+    <div class="facets">
+      <p><strong>Development</strong>: fit a model to predict an outcome from predictors available at the moment of prediction. <strong>Internal validation</strong>: estimate how optimistic that fit is, using bootstrapping or cross-validation in the same data. <strong>External validation</strong>: test the frozen model in new data from another time, place or setting. <strong>Updating</strong>: recalibrate or refit it for the new setting.</p>
+      <p><strong class="lead">Why it matters.</strong> A model fitted with too many predictors for its number of events learns the noise in its development data. Its predictions are then too extreme in new patients. Riley and colleagues (2020) give formulas for the minimum sample size that keeps this in check, based on the number of predictors, the outcome rate and the expected model fit.</p>
+      <p><strong class="lead">How to read it.</strong> Trust an external validation more than an internal one, and internal validation more than the apparent performance in the development data. Ask whether the validation population matches yours.</p>
+      <p><strong class="lead">When it changes.</strong> If a model ranks patients well in a new setting but its risks are off, it often needs only recalibration, not a new model. Refitting from scratch throws away what transferred.</p>
+    </div>
 
     <div class="callout trap">
       <div class="callout-title">Trap</div>
@@ -285,16 +270,12 @@
     <h2>6. Discrimination is not calibration</h2>
     <p class="point">Discrimination asks whether the model ranks people correctly; calibration asks whether its risks are right. A model can score well on one and badly on the other.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd><strong>Discrimination</strong> is measured by the C-statistic (the AUC for a binary outcome): the probability that a random patient with the outcome got a higher predicted risk than a random patient without it. <strong>Calibration</strong> compares predicted with observed risk. It is summarised by <em>calibration-in-the-large</em> (is the average prediction right?) and the <em>calibration slope</em> (are predictions too extreme or too modest?), and best seen in a calibration plot.</dd>
-      <dt>Why it matters</dt>
-      <dd>Treatment thresholds use absolute risk: start a statin at 10%, anticoagulate above a stroke risk. A model that predicts 20% for people whose true risk is 10% will overtreat, however good its AUC.</dd>
-      <dt>How to read it</dt>
-      <dd>A calibration slope below 1 means the predictions are too extreme, the usual sign of overfitting. A curve lying entirely above the diagonal means the model underestimates risk throughout, the usual sign of a new population with a higher baseline risk.</dd>
-      <dt>What a change means</dt>
-      <dd>Any transformation that keeps the order of predictions leaves the C-statistic unchanged. You cannot detect miscalibration from the AUC.</dd>
-    </dl>
+    <div class="facets">
+      <p><strong>Discrimination</strong> is measured by the C-statistic (the AUC for a binary outcome): the probability that a random patient with the outcome got a higher predicted risk than a random patient without it. <strong>Calibration</strong> compares predicted with observed risk. It is summarised by <em>calibration-in-the-large</em> (is the average prediction right?) and the <em>calibration slope</em> (are predictions too extreme or too modest?), and best seen in a calibration plot.</p>
+      <p><strong class="lead">Why it matters.</strong> Treatment thresholds use absolute risk: start a statin at 10%, anticoagulate above a stroke risk. A model that predicts 20% for people whose true risk is 10% will overtreat, however good its AUC.</p>
+      <p><strong class="lead">How to read it.</strong> A calibration slope below 1 means the predictions are too extreme, the usual sign of overfitting. A curve lying entirely above the diagonal means the model underestimates risk throughout, the usual sign of a new population with a higher baseline risk.</p>
+      <p><strong class="lead">When it changes.</strong> Any transformation that keeps the order of predictions leaves the C-statistic unchanged. You cannot detect miscalibration from the AUC.</p>
+    </div>
 
     <div class="widget" data-widget="calibration">
       <div class="widget-title">Break the calibration, keep the AUC</div>

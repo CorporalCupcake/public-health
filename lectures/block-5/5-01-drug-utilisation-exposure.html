@@ -55,16 +55,12 @@
     <h2>1. Drug utilisation: who uses what, how much</h2>
     <p class="point">Before asking whether a drug helps or harms, count who uses it, at what dose and for how long; those counts are the denominator of every safety question and often a finding in themselves.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd><strong>Drug utilisation research</strong> describes prescribing and use in a population. Two WHO tools make counts comparable. The <strong>ATC</strong> (Anatomical Therapeutic Chemical) code classifies a drug in five levels: apixaban is B01AF02 (B blood, B01 antithrombotic agents, B01AF direct factor Xa inhibitors). The <strong>DDD</strong> (defined daily dose) is the assumed average maintenance dose per day for the drug’s main indication in adults: 10 mg for apixaban, 7.5 mg for warfarin.</dd>
-      <dt>Why it matters</dt>
-      <dd>Utilisation numbers give the denominator for pharmacovigilance (Lecture 5.12), show channelling (who gets which drug, Lecture 5.2), and decide feasibility. Prevalence of use (the share using in a period) and <strong>incidence of use</strong> (the share starting) answer different questions: safety studies of early harms need starters.</dd>
-      <dt>How to read it</dt>
-      <dd>Population use is reported as DDDs per 1,000 inhabitants per day. A value of 10 means that, on an average day, about 1% of the population takes one standard dose, if real doses match the DDD.</dd>
-      <dt>What a change means</dt>
-      <dd>DDDs rising while the number of users is flat means higher doses or longer use, not more patients. Incidence of use falling while prevalence rises means people stay on the drug longer, or the users are ageing in place.</dd>
-    </dl>
+    <div class="facets">
+      <p><strong>Drug utilisation research</strong> describes prescribing and use in a population. Two WHO tools make counts comparable. The <strong>ATC</strong> (Anatomical Therapeutic Chemical) code classifies a drug in five levels: apixaban is B01AF02 (B blood, B01 antithrombotic agents, B01AF direct factor Xa inhibitors). The <strong>DDD</strong> (defined daily dose) is the assumed average maintenance dose per day for the drug’s main indication in adults: 10 mg for apixaban, 7.5 mg for warfarin.</p>
+      <p><strong class="lead">Why it matters.</strong> Utilisation numbers give the denominator for pharmacovigilance (Lecture 5.12), show channelling (who gets which drug, Lecture 5.2), and decide feasibility. Prevalence of use (the share using in a period) and <strong>incidence of use</strong> (the share starting) answer different questions: safety studies of early harms need starters.</p>
+      <p><strong class="lead">How to read it.</strong> Population use is reported as DDDs per 1,000 inhabitants per day. A value of 10 means that, on an average day, about 1% of the population takes one standard dose, if real doses match the DDD.</p>
+      <p><strong class="lead">When it changes.</strong> DDDs rising while the number of users is flat means higher doses or longer use, not more patients. Incidence of use falling while prevalence rises means people stay on the drug longer, or the users are ageing in place.</p>
+    </div>
 
     <div class="callout trap">
       <div class="callout-title">Trap</div>
@@ -184,16 +180,12 @@ WHERE e.medication ILIKE ANY (ARRAY['%heparin%','%enoxaparin%','%apixaban%','%wa
     <h2>3. Persistence and adherence: PDC and MPR</h2>
     <p class="point">Persistence asks how long people stay on a drug; adherence asks how fully they take it while on it; PDC and MPR both estimate adherence from refills, and they disagree exactly when refills overlap.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>The ABC taxonomy (Vrijens and colleagues, 2012) splits adherence into three phases: <strong>initiation</strong> (first dose taken), <strong>implementation</strong> (how closely dosing matches the regimen) and <strong>discontinuation</strong>. <strong>Persistence</strong> is the time from initiation to discontinuation. The <strong>medication possession ratio</strong> (MPR) adds up days’ supply and divides by the days in a period. The <strong>proportion of days covered</strong> (PDC) counts each calendar day at most once.</dd>
-      <dt>Why it matters</dt>
-      <dd>Adherence is an outcome in its own right (does a policy improve it?), a description of real-world use, and a dangerous variable to adjust for, because adherers differ from non-adherers in ways that predict health (Lecture 5.2).</dd>
-      <dt>How to read it</dt>
-      <dd>PDC of at least 80% is the usual threshold for “adherent” in quality measures. MPR can exceed 100% when patients refill early; PDC cannot. Report which measure, which period and how overlaps were handled.</dd>
-      <dt>What a change means</dt>
-      <dd>A PDC moving from 60% to 80% means one more day in five covered. An MPR moving from 90% to 120% may mean nothing more than earlier refills.</dd>
-    </dl>
+    <div class="facets">
+      <p>The ABC taxonomy (Vrijens and colleagues, 2012) splits adherence into three phases: <strong>initiation</strong> (first dose taken), <strong>implementation</strong> (how closely dosing matches the regimen) and <strong>discontinuation</strong>. <strong>Persistence</strong> is the time from initiation to discontinuation. The <strong>medication possession ratio</strong> (MPR) adds up days’ supply and divides by the days in a period. The <strong>proportion of days covered</strong> (PDC) counts each calendar day at most once.</p>
+      <p><strong class="lead">Why it matters.</strong> Adherence is an outcome in its own right (does a policy improve it?), a description of real-world use, and a dangerous variable to adjust for, because adherers differ from non-adherers in ways that predict health (Lecture 5.2).</p>
+      <p><strong class="lead">How to read it.</strong> PDC of at least 80% is the usual threshold for “adherent” in quality measures. MPR can exceed 100% when patients refill early; PDC cannot. Report which measure, which period and how overlaps were handled.</p>
+      <p><strong class="lead">When it changes.</strong> A PDC moving from 60% to 80% means one more day in five covered. An MPR moving from 90% to 120% may mean nothing more than earlier refills.</p>
+    </div>
 
     \[ \text{PDC} = \frac{\text{days in the period with drug on hand}}{\text{days in the period}} \]
 
@@ -213,16 +205,12 @@ WHERE e.medication ILIKE ANY (ARRAY['%heparin%','%enoxaparin%','%apixaban%','%wa
     <h2>4. Building exposure episodes</h2>
     <p class="point">Dispensing data give you dots; exposure is the line you draw between them, and the grace period and stockpiling rules decide where that line breaks.</p>
 
-    <dl class="facets">
-      <dt>What it is</dt>
-      <dd>Each fill covers a <strong>days’ supply</strong> (quantity divided by daily dose). Consecutive fills join into a <strong>treatment episode</strong> unless the gap between them exceeds the <strong>grace period</strong> (a permissible gap, in days or as a percentage of the last supply). <strong>Stockpiling</strong> (carry-over) moves leftover supply from an early refill to the end of the current supply. The episode usually ends at the last day of supply plus the grace period.</dd>
-      <dt>Why it matters</dt>
-      <dd>These rules decide who is a “current user” on the day of an event, how long persistence is, and when people are censored in as-treated analyses (Lecture 5.2). They are analytic choices, so they belong in the protocol with a sensitivity analysis.</dd>
-      <dt>How to read it</dt>
-      <dd>For chronic drugs, grace periods of 30–90 days or 50–100% of the last supply are common. For an acute effect (bleeding on an anticoagulant) the grace period should be short, close to how long the drug acts. Show results for two or three values.</dd>
-      <dt>What a change means</dt>
-      <dd>A longer grace period gives fewer, longer episodes, so more events count as “exposed” and persistence looks better. If the hazard ratio moves a lot with the grace period, the effect depends on events that happen just after stopping, which is a finding to explain, not hide.</dd>
-    </dl>
+    <div class="facets">
+      <p>Each fill covers a <strong>days’ supply</strong> (quantity divided by daily dose). Consecutive fills join into a <strong>treatment episode</strong> unless the gap between them exceeds the <strong>grace period</strong> (a permissible gap, in days or as a percentage of the last supply). <strong>Stockpiling</strong> (carry-over) moves leftover supply from an early refill to the end of the current supply. The episode usually ends at the last day of supply plus the grace period.</p>
+      <p><strong class="lead">Why it matters.</strong> These rules decide who is a “current user” on the day of an event, how long persistence is, and when people are censored in as-treated analyses (Lecture 5.2). They are analytic choices, so they belong in the protocol with a sensitivity analysis.</p>
+      <p><strong class="lead">How to read it.</strong> For chronic drugs, grace periods of 30–90 days or 50–100% of the last supply are common. For an acute effect (bleeding on an anticoagulant) the grace period should be short, close to how long the drug acts. Show results for two or three values.</p>
+      <p><strong class="lead">When it changes.</strong> A longer grace period gives fewer, longer episodes, so more events count as “exposed” and persistence looks better. If the hazard ratio moves a lot with the grace period, the effect depends on events that happen just after stopping, which is a finding to explain, not hide.</p>
+    </div>
 
     <div class="widget" data-widget="exposure-episodes">
       <div class="widget-title">Build exposure episodes from a dispensing record</div>
@@ -271,14 +259,11 @@ ep &lt;- compute.treatment.episodes(
       </table>
     </div>
 
-    <dl class="facets">
-      <dt>Why it matters</dt>
-      <dd>Misclassifying exposure is information bias (Lecture 2.8). If the drug acts only while taken, counting past users as exposed adds people with no effect to the exposed group and pulls the estimate towards 1.</dd>
-      <dt>How to read it</dt>
-      <dd>A good paper states the definition, the biological reason for it, and how results change under the alternatives. Current-use estimates far from past-use estimates, with past use near 1, fit an acute effect that wears off.</dd>
-      <dt>What a change means</dt>
-      <dd>An odds ratio of 2.0 for current use and 1.2 for ever use is not a contradiction: the ever-use group is mostly people who were no longer taking the drug.</dd>
-    </dl>
+    <div class="facets">
+      <p><strong class="lead">Why it matters.</strong> Misclassifying exposure is information bias (Lecture 2.8). If the drug acts only while taken, counting past users as exposed adds people with no effect to the exposed group and pulls the estimate towards 1.</p>
+      <p><strong class="lead">How to read it.</strong> A good paper states the definition, the biological reason for it, and how results change under the alternatives. Current-use estimates far from past-use estimates, with past use near 1, fit an acute effect that wears off.</p>
+      <p><strong class="lead">When it changes.</strong> An odds ratio of 2.0 for current use and 1.2 for ever use is not a contradiction: the ever-use group is mostly people who were no longer taking the drug.</p>
+    </div>
 
     <div class="callout trap">
       <div class="callout-title">Trap</div>
