@@ -210,10 +210,6 @@ exp(cbind(PR = coef(m_rr), ci))                           # prevalence ratios</c
       <p>Diabetes and obesity are common among Saudi and other Gulf adults, so cross-sectional studies that report logistic ORs for them overstate the prevalence ratios. When you appraise or pool such studies, check the baseline prevalence before reading an OR of 2 as “twice as common”.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>Logistic loss is right for classification and calibrated probabilities. For effect estimation the problem is not the model but the scale of the reported contrast. You can also keep the logistic model and report marginal risk ratios by standardisation: predict everyone’s risk with exposure set to 1 and to 0, then compare the averages (the g-formula, Block 4). In Python: <code>statsmodels</code> GLM with <code>family=Poisson()</code> and <code>cov_type="HC0"</code>.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->
@@ -244,10 +240,6 @@ exp(cbind(PR = coef(m_rr), ci))                           # prevalence ratios</c
       <p>Putting population or follow-up time in as an ordinary covariate, or weighting by it. A free coefficient on log(person-time) answers a different question (does the rate change with group size?) and can soak up part of the exposure effect. Use an offset unless you have a reason to think rates truly scale with size.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>Gradient boosting has the same idea: with a Poisson objective, pass log exposure as the starting score (<code>base_margin</code> in XGBoost, <code>init_score</code> in LightGBM). Leaving it out means the model learns exposure size, not risk. A Poisson model on finely split follow-up time is also how Cox models connect to GLMs (Lecture 3.6).</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->

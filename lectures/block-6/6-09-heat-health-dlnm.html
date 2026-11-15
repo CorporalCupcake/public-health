@@ -263,11 +263,6 @@ plot(pred, "overall")                                # cumulative J-curve
 plot(pred, "slices", var = 36)                       # lag-response at 36 °C</code></pre>
     <p>The cross-basis puts a natural spline on temperature (knots at the 10th, 75th and 90th percentiles, as in the multi-country studies) and on lags 0–21 (knots spaced on a log scale, because the shape changes fastest at short lags). The quasi-Poisson model adds 8 degrees of freedom per year for season and trend and day of week. <code>crosspred</code> converts the coefficients into relative risks against a reference temperature; we find the MMT and re-centre there. For the case-crossover version, fit the same cross-basis with <code>gnm(deaths ~ cb, eliminate = factor(stratum), family = quasipoisson)</code>, where the stratum is year–month–weekday.</p>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>A cross-basis is a tensor-product spline: the same construction as <code>te()</code> smooths in a GAM, or feature crossing of two basis expansions. DLNMs can also be fitted as penalised GAMs in <code>mgcv</code>, which picks the smoothness by REML instead of by fixed knots.</p>
-    </div>
-
     <div class="callout trap">
       <div class="callout-title">Trap</div>
       <p>Over-reading the surface's corners. The hottest temperatures at long lags rest on a handful of days; their wiggles are noise. Report the cumulative curve and a few pre-specified slices with confidence intervals, not the colours of the extreme cells.</p>

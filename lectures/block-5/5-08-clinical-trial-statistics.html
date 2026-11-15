@@ -187,10 +187,6 @@
       <p>Calling an analysis that excludes non-adherers “per-protocol” and treating it as the effect of the drug. Without adjustment for the reasons for non-adherence, it is an observational comparison inside a trial, with all the biases of Lectures 5.2 to 5.4.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>This is the A/B-testing rule “analyse by assignment, not by exposure”. Users who actually saw the new feature differ from those assigned who never opened it. Analysing by exposure reintroduces selection; ITT is the assignment-level comparison that randomisation protects.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->
@@ -269,10 +265,6 @@
       <p>Adjusting only for the covariates that happened to be imbalanced. Choose covariates for their prognostic strength, before unblinding. And for odds ratios and hazard ratios, adjusted and unadjusted estimates target different estimands (conditional vs marginal, because these measures are non-collapsible), so state which one you report.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>This is CUPED in online experiments: regress out the pre-experiment version of the metric and the treatment-effect variance shrinks. Same logic, same condition: the covariate must be measured before assignment, or it can absorb part of the effect.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->
@@ -307,10 +299,6 @@ summary(sp)              # boundaries and cumulative alpha spent at each look</c
       <p>Reporting the final p-value from a group-sequential trial as if it were a fixed-size trial. Once stopping depends on the data, the naive p-value, point estimate and confidence interval are all biased; the trial should report stage-wise adjusted inference.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>The same problem as checking an A/B dashboard daily and shipping when p dips below 0.05. Industry fixes include sequential tests and “always-valid” p-values; trials use alpha spending. Either way, the rule must exist before the data do.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->

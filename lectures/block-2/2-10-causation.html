@@ -100,10 +100,6 @@
       <p>Believing a large sample fixes confounding. It shrinks random error, not bias. If doctors treat the sickest, a million patients give a very precise wrong answer.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>A predictive model fits \(\Pr[Y \mid X]\) and is rewarded for exploiting any association, confounded or not. In ICU data, “received a vasopressor” predicts death, because the sickest get vasopressors. A model can be excellent at prediction and useless as a guide to action. Causal questions need \(\Pr[Y(x)]\): what happens if we <em>set</em> X. Shifting the inputs by intervention is a distribution shift that a predictive model was never trained on.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->

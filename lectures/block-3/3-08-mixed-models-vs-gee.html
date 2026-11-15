@@ -112,10 +112,6 @@
       <p>“Ignoring clustering always makes standard errors too small.” Only for effects that vary between clusters. For effects that vary <em>within</em> a cluster, such as change over time within a patient, each person acts as their own control. There, ignoring the correlation usually makes standard errors too <em>large</em>, which is why a paired t-test beats a two-sample one. Either way the naive answer is wrong.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>This is the same problem as leakage in cross-validation. If one patient’s visits land in both the training and test folds, the model is rewarded for recognising patients, not for generalising. Split by patient (scikit-learn’s <code>GroupKFold</code>), and by hospital if you want to claim the model transfers to new hospitals.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->
@@ -217,10 +213,6 @@ performance::icc(m1)                 # share of variance between clusters</code>
       <p>The US Medicare 30-day mortality measures for heart attack, developed by Krumholz and colleagues (2006), are built on a hierarchical (mixed) logistic model with a random intercept per hospital. Each hospital’s risk-standardised rate comes from its shrunken estimate, not its raw rate. That design choice is what stops a small hospital with one bad month from topping the list.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>Partial pooling is ridge regression on the cluster effects. A normal random effect is an L2 penalty whose strength is the residual variance divided by the between-cluster variance. The difference is that a mixed model estimates the penalty from the data (empirical Bayes) instead of by cross-validation. Fully Bayesian hierarchical models (Lecture 8.8) put a prior on it instead. Python: <code>statsmodels</code> <code>MixedLM</code>.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->

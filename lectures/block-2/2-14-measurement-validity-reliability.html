@@ -147,10 +147,6 @@
       <p>Sodium intake swings from day to day, so a single 24-hour urine has modest reliability for an individual’s usual intake, even though it is the most valid measure available (Lecture 1.8). A study that collects two or more 24-hour urines on a subsample can estimate the ICC and correct its risk estimates for dilution.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>The ICC is the share of variance explained by a random intercept for person: the R² of “who was measured”. Low ICC means noisy features, and noise in an input (unlike noise in the label) biases a linear model’s coefficient towards zero. That is the errors-in-variables problem.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->
@@ -252,10 +248,6 @@
       <p>Treating disagreement with the reference as error in the new method only. If two methods disagree, either can be wrong. Bland-Altman plots against the <em>mean</em> of the two, not against the reference, for this reason.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>Your labels are measurements too. If two cardiologists labelling ECGs agree with kappa 0.6, no model can be judged much above that agreement against one of them, and a model that “beats the cardiologist” may simply match the other cardiologist’s errors. Report inter-annotator agreement for your reference labels, and when labels are noisy, use an adjudicated panel as the test-set reference. This matters for Project 5B: ask how each AI device’s reference standard was produced.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->

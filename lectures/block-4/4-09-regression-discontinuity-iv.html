@@ -156,11 +156,6 @@ rdrobust(ldl, risk, c = 20, h = h / 2) # sensitivity: half and double the bandwi
 rdrobust(ldl, risk, c = 20, h = 2 * h)</code></pre>
     <p><code>rdplot</code> draws the picture readers will judge you by. <code>rdrobust</code> picks the bandwidth, fits a line on each side and gives a conventional estimate plus a robust bias-corrected interval; quote the robust one. The last two lines refit with the window halved and doubled.</p>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>This is the bias–variance trade-off with a kernel smoother, evaluated at the worst possible place: the boundary of the data, where every smoother is weakest. High-order polynomials misbehave at edges for the same reason as Runge’s phenomenon. A flexible ML learner fitted globally and read off at the cut-off has the same problem. Python users have the same tools in the <code>rdrobust</code> and <code>rddensity</code> packages.</p>
-    </div>
-
     <div class="callout trap">
       <div class="callout-title">Trap</div>
       <p>Trying several bandwidths, kernels and polynomial degrees and reporting the one that “works”. Pre-specify the data-driven bandwidth with a local linear fit, and show the rest as sensitivity analyses, in a figure if possible.</p>
@@ -301,10 +296,6 @@ rdrobust(ldl, risk, c = 17)                   # placebo cut-off: should be about
       <p>Treating disagreement between two valid IV studies as a contradiction. Distance moves one group of patients; physician preference moves another. Each recovers its own compliers’ effect, and both can be right. Describe the compliers (their average age, severity and so on can be estimated) before comparing.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>Two-stage least squares looks like “predict treatment from the instrument, then regress the outcome on the prediction”. Doing that by hand with a nonlinear or ML first stage (the “forbidden regression”) gives biased estimates and wrong standard errors. Use an IV estimator, or double/debiased ML for IV (<code>DoubleML</code> in R and Python) if you want flexible models for covariates.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->

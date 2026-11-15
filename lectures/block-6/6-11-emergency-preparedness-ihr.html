@@ -96,10 +96,6 @@
       <p>Confusing notification with a declared emergency. Countries notify many events each year; almost none become a PHEIC. A notification starts a confidential conversation with WHO; only the Director-General can determine a PHEIC (section 3).</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>Annex 2 is a hand-built, high-sensitivity classifier with a 2-of-4 rule. It is designed to over-notify, because a missed emergency costs far more than a false alarm handled privately. Like any screening rule, its PPV depends on prevalence (2.11): most notified events turn out not to be emergencies, and that is by design.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->
@@ -236,11 +232,6 @@
          family = quasipoisson, data = covid_countries)
 exp(coef(m))   # rate ratio per 10 index points, holding age and trust fixed</code></pre>
     <p>A country-level rate model (3.3): deaths with a population offset, the index scaled per 10 points, and age and trust as covariates. <code>quasipoisson</code> allows for overdispersion. This is still an ecological analysis (2.4): it says how countries differ, not what preparedness does for a person, and trust may itself be shaped by the same institutions the index scores.</p>
-
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>The GHS Index is a hand-weighted feature score never trained on outcomes, so poor predictive validity is not surprising. It is also exposed to Goodhart’s law: once a score drives funding, countries optimise the score (write the plan) rather than the target (respond well). Validate any index against held-out outcomes, as you would a model.</p>
-    </div>
 
     <div class="callout trap">
       <div class="callout-title">Trap</div>

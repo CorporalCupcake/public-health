@@ -243,10 +243,6 @@ fit &lt;- coxph(Surv(months, died) ~ trial, data = d,
       <p>Imputing a prognostic factor that is missing in most of the external data, then claiming balance on it. If ECOG performance status is recorded for 30% of registry patients, and recording depends on how sick they were, the imputed balance is an assumption, not a finding. Report the analysis restricted to patients with the factor recorded as a check (Lecture 3.5).</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>This is covariate-shift correction. The trial is the target domain and the external data are the source. The odds weight \( e/(1-e) \) is the density ratio \( p_{\text{trial}}(x)/p_{\text{ext}}(x) \) up to a constant, estimated by a domain classifier. As in domain adaptation, weighting fixes a shift in \( p(x) \) only. If the outcome model \( p(y \mid x) \) itself differs between sources, because of era or measurement, no reweighting can recover it.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->
@@ -284,10 +280,6 @@ post &lt;- postmix(rmap, n = 30, r = 12)         # update with the concurrent co
       <p>Assuming dynamic borrowing makes conflict harmless. With a small trial control arm, the data cannot tell a 5-point drift from noise. The prior keeps borrowing and the bias passes through. Adaptive methods protect against <em>large, obvious</em> conflict. Small, plausible drift, which is the usual kind, needs judgement about whether the sources are exchangeable before any data are seen. Simulate how the design behaves (false-positive rate and power) across a range of drifts. FDA’s draft guidance on Bayesian methods (January 2026) asks sponsors to justify the prior in advance and to report how much it is worth in effective sample size.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>This is transfer learning with a learned trust weight. The power prior is a fixed sample weight on source-domain examples. The commensurate and robust priors resemble hierarchical shrinkage: the model learns from the data how far the source parameter may sit from the target. ESS plays the role of an “effective number of source examples”.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->

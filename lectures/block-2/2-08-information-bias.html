@@ -172,10 +172,6 @@
       <p>“Misclassification was non-differential, so our estimate is conservative and the true effect is larger.” The toward-the-null rule is about the <em>average</em> over many studies. In any one study, random error can put the estimate on either side. And the rule only holds under the conditions in section 4.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>This is label noise on an input. Random flips in a binary feature weaken its learned association with the target, the same attenuation you see when you add noise to a feature and watch its coefficient shrink. Flips whose rate depends on the target are a different beast: they can inflate the feature’s apparent importance.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->
@@ -216,11 +212,6 @@
       <p>Mothers of babies born with malformations often think hard about everything they took in pregnancy; mothers of healthy babies have less reason to. The same medicine can be reported more completely by case mothers, producing an association from memory alone. Studies have checked this by comparing interview answers with prescription or antenatal records.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>Detection bias is leakage’s cousin. In EHR data, a test is ordered <em>because</em> the clinician suspects the disease, so “test ordered” or “number of lab values” predicts the diagnosis without telling you anything about causes. Features measured more intensively in one group than another carry information about who was looked at, not just about who is sick.</p>
-    </div>
-
     <div class="callout trap">
       <div class="callout-title">Trap</div>
       <p>Assuming recall bias always inflates. If cases under-report a stigmatised exposure (such as alcohol in settings where it is socially sensitive) more than controls, the bias runs toward the null or beyond. Think about which group has the stronger reason to misreport, and in which direction.</p>
@@ -243,10 +234,6 @@
       <p>Insurance claims and hospital information systems across the Gulf code diagnoses with ICD-10, often for billing. Coding practice can differ between hospitals, between public and private sectors and over time. Before using a code-based outcome, look for a validation of that definition in the same setting, or validate it yourself on a sample of charts, and check that coding practice doesn’t differ by the exposure, for example between insurance types.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>ICD codes as training labels are noisy labels. Noise in the <em>training</em> labels mostly costs accuracy. Noise in the <em>test</em> labels biases the evaluation itself: a model can look worse than it is (when it is right and the label is wrong) or better (when it learns the coders’ habits). Projects 5B and 7 depend on getting the reference standard right (Lectures 2.11 and 2.14).</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->

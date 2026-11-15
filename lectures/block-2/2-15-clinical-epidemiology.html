@@ -160,10 +160,6 @@
       <p>“Sensitivity and specificity do not depend on prevalence, so they transfer.” The arithmetic is true; the practice is not. A change in prevalence usually comes with a change in case mix, milder disease and different look-alikes, and that moves sensitivity and specificity. The AI-ECG above is a clean demonstration.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>Spectrum bias is dataset shift by another name: the training and test sets were drawn from a different distribution of cases than deployment will see. Partial verification is a labelling problem: if only flagged cases get labels, the “negatives” in your test set are unlabelled, not negative. Both are reasons to distrust a held-out test set from the development hospital.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->
@@ -197,10 +193,6 @@
       <p>In a breathless patient with a 20% pre-test probability, a negative AI-ECG with the Mayo LR− of 0.16 takes the probability to about 4%, which may be low enough to defer an echo. With the Russian-cohort LR− of 0.75, the same negative result leaves it near 16%, barely changed. The decision a negative result supports depends on which population the LR came from.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>The LR is the Bayes factor, and the nomogram is a logistic model with a single feature: the log LR is added to the prior log-odds. Chaining tests by multiplying their LRs is the naive Bayes assumption of conditional independence. Two ECG criteria that both reflect a thick left ventricle are not independent, so multiplying their LRs overcounts the evidence. A multivariable model fitted on the right patients avoids that.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->
@@ -259,10 +251,6 @@
       <p>Most cardiovascular risk scores in use in the Gulf were developed in North American or European cohorts. The WHO’s 2019 cardiovascular risk charts were recalibrated separately for 21 world regions because absolute risk differs so much between them. Before using any imported score to set treatment thresholds in a Saudi clinic, ask for a local calibration check. A model can rank Saudi patients perfectly well and still misstate their absolute risk.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>Clinical prediction adds two rules to what you know. First, leakage is often clinical rather than technical: a troponin ordered because the doctor already suspected infarction carries the doctor’s judgement into the model. Second, a random train–test split from one hospital is internal validation. Clinical evaluation expects temporal or geographical validation, and for deployment, a check that predictions are calibrated in the new site.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->

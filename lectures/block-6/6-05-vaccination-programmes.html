@@ -210,11 +210,6 @@ or &lt;- exp(coef(fit)["vaccinated"])
 1 - or                               # VE, adjusted for age and calendar time</code></pre>
     <p>Calendar time matters because both vaccination and infection are seasonal: early in the season few are vaccinated and few test positive, so ignoring week confounds VE. Splines let age and week enter smoothly.</p>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>The design is selection on a variable (being tested) that sits downstream of both the infection and care-seeking, which you know from Lecture 2.7 as collider territory. Here the selection is deliberate and helps, because it equalises care-seeking. It fails when the vaccine has its own path into the selection, the dashed arrow: then conditioning on testing opens a biased path, just as in collider bias.</p>
-    </div>
-
     <div class="callout trap">
       <div class="callout-title">Trap</div>
       <p>Including test-negative controls who tested for a different reason (pre-operative screening, travel) alongside symptomatic cases. They do not share the care-seeking pathway, so the design’s main protection is lost. Restrict to people tested because of a defined symptom set, and analyse by time since symptom onset to limit false negatives from late testing.</p>
@@ -306,10 +301,6 @@ or &lt;- exp(coef(fit)["vaccinated"])
       <p>Blaming low coverage on hesitancy when the problem is access. Unvaccinated people are often willing but face practical barriers (distance, cost, time off work, language). Measure both, and check for constraints before designing persuasion campaigns.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>Hesitancy surveys are a measurement problem (Lecture 2.14): latent constructs, item wording, and validity across languages. Social-media sentiment models are tempting but measure a loud, unrepresentative sample; treat them as an early-warning signal and validate against surveys and uptake.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->

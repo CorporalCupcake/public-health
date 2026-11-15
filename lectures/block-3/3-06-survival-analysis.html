@@ -179,10 +179,6 @@
       <p>Your exposure, the urinary sodium-to-potassium ratio, comes from a single spot urine sample, not a 24-hour collection (Lecture 2.14). People who are already ill eat less, so their urine may look “low sodium” shortly before they die. A standard check is to start follow-up two years after the exam (delayed entry at year 2, dropping people who died earlier). If the hazard ratio changes a lot, early deaths from existing illness were driving it.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>Choosing the time scale is choosing the matching key in a matched design: each death becomes a case, matched to everyone at risk at the same value of the clock. Age as time scale is matching exactly on age, instead of putting age into the model as a feature and hoping its shape is right.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->
@@ -243,10 +239,6 @@ svykm(Surv(years, died) ~ nak_group, design = des)</code></pre>
       <p>Hernán (2010), “The hazards of hazard ratios”, points out that a period-specific HR compares the people who are still alive in each group, and after the first deaths those survivors are no longer comparable, even in a randomised trial. If treatment kills the most susceptible early, the treated survivors are a hardier group, and later HRs look protective even when the treatment does no good to anyone. He used the Women’s Health Initiative trial of oestrogen plus progestin, where the HR for coronary heart disease was highest in the first year and fell over follow-up. His advice: report survival curves and risks at fixed times, which keep the randomised comparison intact.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>The hazard is the event density divided by the share still event-free: the same object as the per-step “probability of churn given not churned yet” in a discrete-time model. A discrete-time survival model is just logistic regression on person-period rows, and a Cox model is its continuous-time limit with the baseline left unspecified.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->
@@ -355,10 +347,6 @@ rmst2(d$years, d$cvd, arm = d$high_nak, tau = 10)</code></pre>
       <p>Uno and colleagues (2014) argued that RMST should be reported routinely beside the HR, because it does not depend on proportional hazards and gives an absolute, clinically readable difference. Delayed benefit, as with some cancer immunotherapies, is the common case where PH fails in trials; in cohorts, early follow-up dominated by people already ill is the common case.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>A time-varying coefficient is an interaction between the feature and time; stratifying is giving each stratum its own intercept function. RMST is just the expectation of \(\min(T, \tau)\): a truncated mean, estimable without any model. Survival forests and DeepSurv-type models (Python: <code>lifelines</code>, <code>scikit-survival</code>) relax PH too, but give up the single interpretable HR.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->

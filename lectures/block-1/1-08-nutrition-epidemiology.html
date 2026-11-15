@@ -156,10 +156,6 @@
       <p>Assuming that “validated against 24-hour urine” means interchangeable. An equation can match 24-hour urine on the population mean and still fail badly at ranking individuals or at the tails, which is what you need for distributions (Project 1) and for risk curves (Project 3).</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>A spot equation is a regression prediction, and predictions regress to the mean: the predicted values have less spread than the true ones. Using a model’s prediction as a feature in a second model also carries over the first model’s inputs. Here those inputs (age, body size, creatinine) are confounders, so the second model learns their effect and labels it “sodium”.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->
@@ -238,11 +234,6 @@
     <div class="callout trap">
       <div class="callout-title">Trap</div>
       <p>Treating dilution as a safe, conservative bias. It only flattens the slope when the error is purely random and in the exposure alone. Error linked to the outcome, or to confounders (as with spot equations), can bend the curve or invent a shape, such as a J-curve.</p>
-    </div>
-
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>This is errors-in-variables. Noise in a feature shrinks its fitted coefficient; noise in the label does not (it only widens the uncertainty). The correction factor is the feature’s reliability: true-signal variance divided by total variance.</p>
     </div>
 
     <div class="callout gulf">

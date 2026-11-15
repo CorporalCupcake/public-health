@@ -215,11 +215,6 @@
       <p><strong class="lead">When it changes.</strong> A change in the virus (better human-to-human transmission) or in exposure (camel contact during travel) would change the answer, which is why screening continues.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>This is the zero-count problem from model evaluation: a classifier with no false positives on 300 test cases still has a plausible false-positive rate up to about 1%. Who was tested also matters: screening only symptomatic pilgrims, or only some airports, is a biased sample (2.8). Ask what the test population was before reading “no cases found” as “no risk”.</p>
-    </div>
-
     <div class="callout trap">
       <div class="callout-title">Trap</div>
       <p>Concluding from MERS that the Hajj carries no risk of new pathogens. Respiratory viruses with high R spread easily there; the absence of MERS reflects MERS’s own biology, not the crowd’s safety.</p>
@@ -302,11 +297,6 @@ res &lt;- earsC(s, control = list(method = "C2", baseline = 7, alpha = 0.001,
 alarms(res)       # TRUE on days far above the recent baseline
 plot(res)         # counts with the alarm threshold</code></pre>
     <p><code>sts</code> turns a vector of daily counts into a surveillance time series. <code>earsC</code> applies the EARS C2 method, designed for short baselines: each day is compared with the mean and spread of a 7-day window that ends two days earlier, so a slowly building outbreak does not hide in its own baseline. <code>range</code> sets which days get evaluated (after the first 30). Expect alarms on the busiest ritual days; read them alongside the timetable.</p>
-
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>Mass-gathering surveillance is anomaly detection on a short, non-stationary series: the population itself changes daily as pilgrims move. A fixed threshold built from normal Makkah data would fire all the time. Use rates per pilgrim-day where you can (an offset, 3.3), and baselines from the same ritual days in past years.</p>
-    </div>
 
     <div class="callout trap">
       <div class="callout-title">Trap</div>

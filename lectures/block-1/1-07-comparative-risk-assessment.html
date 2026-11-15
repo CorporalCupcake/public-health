@@ -67,10 +67,6 @@
       <p>Reading “attributable” as “avoidable”. Attributable burden is what a different exposure history would have prevented. What a policy can avoid starting today is smaller: exposure can’t be pushed all the way to the counterfactual, and risk falls only over years.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>It is an intervention on an input distribution, not a prediction. You hold the outcome model fixed, replace the exposure distribution with a counterfactual one, and compare expected outcomes. That is only valid if the exposure–outcome curve is causal, which is why GBD insists on causal evidence before a risk enters the analysis.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->
@@ -288,11 +284,6 @@
     <div class="callout trap">
       <div class="callout-title">Trap</div>
       <p>Expecting attributable fractions to partition the burden like a pie chart. They don’t, because causes interact. Each PAF answers its own counterfactual question. To ask “how much if we removed several risks?”, compute a joint PAF.</p>
-    </div>
-
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>Shapley values force feature attributions to add up to the prediction by averaging over every ordering of features. PAFs make no such promise: each one is a separate “remove this, keep the rest” counterfactual, closer to a leave-one-feature-out ablation. With interactions, ablation effects don’t sum to the total, and PAFs don’t either.</p>
     </div>
 
     <div class="callout analogy">

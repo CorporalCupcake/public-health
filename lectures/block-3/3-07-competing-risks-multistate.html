@@ -127,10 +127,6 @@ aj &lt;- survfit(Surv(years, status) ~ nak_q, data = d, weights = wt_pooled)
 summary(aj, times = 15)   # CIF for cvd and other at 15 years, by Na/K quartile</code></pre>
     <p>When the status is a factor whose first level is censoring, <code>survfit</code> gives Aalen-Johansen CIFs for each cause instead of a Kaplan-Meier curve. Survey weights give the right point estimates, but the standard errors are not design-based; use replicate weights or a bootstrap over PSUs if you need intervals (Lecture 3.4). <code>cmprsk::cuminc</code> gives the same CIFs plus Gray’s test, without weights.</p>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>Competing risks is multi-class survival. The cause-specific hazards are the per-class rates; the CIF is the marginal probability of each class by time \(t\). Treating other classes as censored is like training a binary classifier that throws away every example of the other classes and then reading its output as an unconditional probability. Python’s <code>lifelines</code> has an Aalen-Johansen fitter.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->

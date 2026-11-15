@@ -27,7 +27,7 @@
     Maths: inline \( ... \), display \[ ... \].
   - Short sentences, plain words, define jargon in a few words on first use. Lists: top 3 only.
   - Check-yourself questions test meaning and judgement, not arithmetic.
-  Callout classes: trap, example, analogy, gulf (Saudi/GCC example), ml (link to stats/ML background), key.
+  Callout classes: trap, example, analogy, gulf (Saudi/GCC example), key. No ML-background callouts.
 -->
 <header class="site-header">
   <div class="inner">
@@ -64,10 +64,12 @@
     <p class="point">Lead with the point in one sentence.</p>
 
     <div class="facets">
-      <p>Plain-words definition. Define jargon in a few words.</p>
-      <p><strong class="lead">Why it matters.</strong> What decision or result depends on it.</p>
-      <p><strong class="lead">How to read it.</strong> What counts as good, bad or typical.</p>
-      <p><strong class="lead">When it changes.</strong> E.g. “a relative risk going from 1.2 to 2 means…”.</p>
+      <!-- Two to four connected paragraphs of natural prose, no labels. Between them they should
+           answer: what it is (plain definition, jargon defined), why it matters, how to read a value
+           (good, bad, typical), and what a change means. See lecture 1.4 for the voice. -->
+      <p>Plain-words definition, with the key term in bold and a concrete number or case.</p>
+      <p>Why it matters and how to read a value, flowing on from the definition.</p>
+      <p>What a change means, e.g. “a relative risk going from 1.2 to 2 means…”.</p>
     </div>
 
     <!-- Optional: small table for reading values -->

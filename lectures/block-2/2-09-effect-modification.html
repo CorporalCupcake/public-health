@@ -137,10 +137,6 @@
       <p>Saying “the effect was the same in men and women” because the hazard ratios matched. If women had half the baseline risk, the exposure caused half as many cases per woman. Name the scale every time: “no modification of the hazard ratio by sex”.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>A logistic regression without a product term is not “no interaction”. It assumes no interaction on the log-odds scale, which builds in interaction on the probability scale: the same coefficient moves a 2% risk far less than a 40% risk. The choice of link function is a choice of scale. Tree models and neural nets learn interactions on whatever scale the loss sees, so ask on which scale an explanation (SHAP interaction values, partial dependence) is reported.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->

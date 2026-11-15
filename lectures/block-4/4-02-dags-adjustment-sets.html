@@ -79,10 +79,6 @@
       <p>Thinking that only paths that follow the arrows matter. Association does not care about direction: A ← C → Y transmits association just as well as A → Y. Direction decides only which paths are <em>causal</em> (all arrows pointing away from the treatment) and which are biasing.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>This is the same d-separation that defines conditional independence in a Bayesian network. The difference is the reading of the arrows: in a Bayes net any factorisation consistent with the data will do, while in a causal DAG each arrow is a claim about what would change under intervention. Two DAGs can imply the same independencies and give opposite adjustment advice.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->
@@ -260,10 +256,6 @@ impliedConditionalIndependencies(g)    # what the data should show if g is right
       <p>VanderWeele’s (2019) modified disjunctive cause criterion: adjust for each pre-treatment covariate that is a cause of the treatment, the outcome or both; remove any known instrument; and include good proxies for unmeasured common causes. It works whenever some subset of the measured variables is sufficient, without needing the full DAG.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>If you build a propensity model by throwing in every feature that predicts treatment, you will reward instruments: they predict treatment best precisely because they do nothing else. A higher AUC then buys more variance and amplified bias, not less confounding. The propensity model’s job is to balance confounders, not to predict treatment well (Lecture 4.3).</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->

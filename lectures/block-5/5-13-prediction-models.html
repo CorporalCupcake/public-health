@@ -138,10 +138,6 @@ plot(calibrate(fit, B = 500))     # optimism-corrected calibration curve</code><
       <p>“I used the lasso, so overfitting is handled.” Riley and colleagues (2021) showed that penalisation is least reliable exactly when it is most needed: in small samples the tuning parameter is itself estimated with large error, so the amount of shrinkage can be badly wrong. Penalisation complements an adequate sample size; it does not replace one.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>The bootstrap correction is the clinical cousin of nested cross-validation: whatever was tuned must be tuned again inside each resample. Flexible learners are hungrier than regression. In van der Ploeg and colleagues’ 2014 simulations, logistic regression stabilised at roughly 20–50 events per variable, while random forests, support vector machines and neural networks still showed high optimism beyond 200. For tabular clinical data of typical size, that hunger usually outweighs their flexibility (Section 8).</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->
@@ -320,10 +316,6 @@ dca(low_ef ~ ai_ecg_risk + clinical_risk, data = ext,
       <p>Assuming that a fair <em>model</em> fixes an unfair <em>label</em>. Obermeyer and colleagues (2019) found that a widely used US algorithm predicted health-care costs as a proxy for health need. Because less was spent on Black patients at the same level of illness, they had to be sicker to get the same score. The model was accurate for the target it was given. The target was wrong.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>You know the impossibility results: when base rates differ between groups, a classifier cannot be calibrated within groups and also have equal false-positive and false-negative rates. In clinical prediction the usual choice is within-group calibration, because the threshold is a clinical decision about individual risk. Say which fairness criterion you chose and why. Recalibration is the clinical name for what you would call fine-tuning only the output layer.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->
@@ -347,10 +339,6 @@ dca(low_ef ~ ai_ecg_risk + clinical_risk, data = ext,
       <p>Generalising that result to all data. For tabular predictors such as age, blood pressure and laboratory values, gains from ML are usually small. For raw signals and images, such as a 12-lead ECG waveform, deep learning extracts features no regression could, which is why the AI-ECG exists at all. The fair comparison is with a well-specified regression on the same information, using splines and the same validation.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>PROBAST+AI added questions on problems you know well, such as data leakage and dataset shift. In clinical work, leakage often comes from timing: a feature recorded after the prediction moment, or a test ordered because the clinician already suspected the outcome. Write down the prediction time point first, then check every feature against it.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->

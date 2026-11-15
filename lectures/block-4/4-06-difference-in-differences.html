@@ -131,10 +131,6 @@
       <p>Believing TWFE is safe because “it controls for unit and time”. The fixed effects are fine; the problem is which comparisons the single coefficient averages and with what weights. Even with no noise and perfect parallel trends, as in the widget, TWFE can be wrong.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>TWFE is OLS, and OLS weights observations by their leverage on the residualised regressor, not by policy relevance. After removing unit and year means, an early adopter in a late year looks “less treated than average”, so its residualised treatment can turn negative. It is the same reason a linear model fitted to heterogeneous data reports a slope no subgroup has.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->
@@ -176,10 +172,6 @@ ggdid(es)                                    # event-study plot</code></pre>
       <p>Thinking the new estimators rescue a bad comparison. They fix the <em>weighting</em> problem of TWFE, nothing else. If Kuwait’s trend would not have matched Saudi Arabia’s, Callaway–Sant’Anna is just as biased as TWFE.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>The imputation estimator is “train on controls, predict the counterfactual”: fit a model of the untreated outcome on untreated cells only, predict treated cells, and average treated-minus-predicted. Synthetic control (Lecture 4.8) is the same move with a different model, and the T-learner in Lecture 4.4 is its individual-level cousin.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->

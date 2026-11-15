@@ -324,10 +324,6 @@ regTermTest(cox, ~nak_q)                         # joint Wald test for quartiles
       <p>The Project 3 fallback pools STEPS surveys from several GCC countries. Each survey keeps its own strata and PSUs: make stratum and PSU identifiers unique by country, and treat country as a stratum. Then decide what the weights should represent: each country’s population (a pooled “GCC adult” estimate dominated by Saudi Arabia) or each country equally. Say which, and why.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p><code>sample_weight</code> in scikit-learn gives weighted point estimates but no design-based uncertainty. Clustering also matters for validation: if people from the same PSU fall in both training and test folds, performance is optimistic. Split folds by PSU (grouped cross-validation), the survey version of patient-level splitting.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->

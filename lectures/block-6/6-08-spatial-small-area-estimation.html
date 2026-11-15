@@ -102,11 +102,6 @@ areas$rr &lt;- fit$summary.fitted.values$mean   # smoothed relative risk
 summary(fit)$hyperpar                        # "Phi": the spatial share</code></pre>
     <p><code>poly2nb</code> builds the neighbour list from the area polygons; INLA fits a Poisson model with expected counts as the offset and a BYM2 random effect per area; the fitted values are smoothed relative risks, and the mixing parameter (called Phi in the output) says how much of the variation is spatial. <code>brms</code> offers the same model with <code>car(..., type = "bym2")</code>.</p>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>Global empirical Bayes is James–Stein shrinkage, a close relative of ridge regression. The structured BYM term is a Gaussian Markov random field whose precision matrix is the graph Laplacian of the neighbour graph: the same smoothness penalty as Laplacian regularisation in graph-based semi-supervised learning. INLA is fast approximate Bayesian inference for exactly this family of latent Gaussian models.</p>
-    </div>
-
     <div class="callout trap">
       <div class="callout-title">Trap</div>
       <p>Smoothing away a real, sharp hotspot. Spatial smoothing assumes neighbours are similar; a genuine point source affecting one small area, such as a contaminated well, can be pulled toward its unaffected neighbours. Smoothed maps are for describing broad patterns, not for finding the one odd area.</p>
@@ -301,11 +296,6 @@ summary(fit)$hyperpar                        # "Phi": the spatial share</code></
       <p><strong class="lead">Why it matters.</strong> Heat stress varies more between coastal and inland places than air temperature suggests, because coastal humidity drives the wet bulb. A GCC-wide average would hide that the humid coast and the dry interior may need different ban hours.</p>
       <p><strong class="lead">How to read it.</strong> Cell-level trend p-values are spatially autocorrelated, so many "significant" cells next to each other are not many independent findings. Control the false discovery rate, or test "field significance" with resampling that preserves the spatial pattern.</p>
       <p><strong class="lead">When it changes.</strong> A trend of +40 hours per decade above the moderate-work limit in a coastal cell means about one more working week of hazardous hours each summer than a generation ago.</p>
-    </div>
-
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>Weight cells by where workers are, not by area: most GCC land is empty desert. Gridded population layers (for example WorldPop or the EU's GHS-POP) let you compute a population-weighted exposure for each city or country. That is a weighted average, so check how sensitive the national figure is to the weighting layer.</p>
     </div>
 
     <div class="callout trap">

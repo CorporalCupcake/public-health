@@ -98,11 +98,6 @@
       <p><strong class="lead">When it changes.</strong> Moving from one city monitor to a 1 km model changes the question you can answer, from "do high-pollution days raise deaths?" to "do people living in more polluted neighbourhoods die earlier?".</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>Modern PM2.5 surfaces are supervised learning: monitors are labels, satellite aerosol optical depth, weather and land use are features, and random forests or gradient boosting predict everywhere. The usual ML traps carry over with a spatial twist. Random cross-validation leaks through spatial autocorrelation, so use spatially blocked folds; and the prediction error you then carry into a health model is measurement error with structure, which is the next section.</p>
-    </div>
-
     <div class="callout trap">
       <div class="callout-title">Trap</div>
       <p>Treating outdoor concentration as personal exposure. People spend most of the day indoors, and in a Gulf summer the indoor share is higher still. The outdoor value is the right exposure for a policy that changes outdoor air, but a poor proxy for what any individual inhaled.</p>
@@ -239,11 +234,6 @@ f   &lt;- wf_request(req, path = "data")
 t2m &lt;- rast(f, subds = "t2m") - 273.15       # kelvin to °C, one layer per hour
 ta  &lt;- extract(t2m, vect(cbind(46.7, 24.7), crs = "EPSG:4326"))  # Riyadh's cell</code></pre>
     <p>The request asks the Copernicus Climate Data Store for one month of hourly fields over the Arabian Peninsula; <code>terra</code> reads the NetCDF file and pulls the hourly series for the grid cell containing a city. Project 6 loops this over months and years and adds the radiation fields that WBGT needs.</p>
-
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>Think of ERA5 as a very good smoother, not ground truth: it is fit to observations, so it inherits their gaps (fewer stations early on, satellites only from the 1970s). That makes early decades less certain. Check a trend's sensitivity to the start year. In Python, <code>xarray</code> reads the same files, and ECMWF's <code>thermofeel</code> library computes WBGT from them.</p>
-    </div>
 
     <div class="callout trap">
       <div class="callout-title">Trap</div>

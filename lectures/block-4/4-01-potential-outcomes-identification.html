@@ -147,10 +147,6 @@
       <p>Reporting the treatment coefficient from a logistic model with covariates as “the effect”. That is a conditional odds ratio. Odds ratios are <strong>non-collapsible</strong>: the conditional OR differs from the marginal OR even with no confounding at all, and it changes as you add covariates that predict the outcome. Choose a marginal risk difference or risk ratio, then get it by standardisation (Lecture 4.3).</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>The individual-level effect averaged within covariate strata is the CATE (conditional average treatment effect), the target of uplift modelling and the meta-learners in Lecture 4.4. ATE versus ATT is like evaluating a model on the deployment population versus the training population: the same function, averaged over a different covariate distribution, gives a different number.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->
@@ -171,11 +167,6 @@
     <div class="callout trap">
       <div class="callout-title">Trap</div>
       <p>“With enough data and a flexible enough model, machine learning will find the causal effect.” Flexible models improve step 5 of the ladder. They do nothing for step 3. If a strong confounder is missing from the data, a perfect learner estimates the wrong statistical estimand perfectly.</p>
-    </div>
-
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>You have met identifiability before: the labels of components in a mixture model, or a regression with perfectly collinear features. More data does not help because many parameter values fit the data distribution equally well. Causal identification is the same idea: without the assumptions, many different counterfactual worlds are consistent with the observed joint distribution.</p>
     </div>
 
     <div class="callout analogy">
@@ -234,10 +225,6 @@
       <p>Anticoagulation in the ICU is withheld from patients who are bleeding, frail, about to have surgery, or moving to comfort care. Severity scores and laboratory values are in MIMIC-IV; frailty and goals-of-care conversations are often recorded poorly or not at all in structured data. Those gaps are where exchangeability is weakest, so they are where the bias analysis in Project 5A should focus.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>No validation set can test exchangeability, because you never observe the counterfactual label. It is like assuming that no omitted feature drives both which rows got labelled and what their labels are. Cross-validated performance is blind to it.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->
@@ -288,10 +275,6 @@ ggplot(d, aes(ps, fill = factor(anticoag))) +
   geom_histogram(bins = 40, alpha = 0.5, position = "identity")</code></pre>
     <p>This fits a logistic propensity model, compares the score distributions of treated and untreated patients, and plots them on one axis. Look first at the tails: where one colour has bars and the other has none, positivity fails.</p>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>Positivity is overlap of support, the same issue as covariate shift. Importance weights (target density over source density) explode where the source has almost no mass, and no reweighting can create data in an empty region. A flexible outcome model predicting there is doing out-of-distribution prediction, with all the confidence and none of the evidence.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->

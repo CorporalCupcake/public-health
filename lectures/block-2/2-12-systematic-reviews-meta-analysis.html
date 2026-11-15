@@ -221,11 +221,6 @@
       <p class="widget-note" style="margin:0 0 0.8rem">Box size is each study’s weight. Switch between fixed-effect and random-effects weights, drop studies, and turn up the true spread between studies. Watch I², τ and the prediction interval respond.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>Random effects is a two-level hierarchical model: partial pooling, the same idea as empirical Bayes shrinkage or a mixed model. Fixed effect is complete pooling; analysing each study alone is no pooling. Inverse-variance weighting is also how you would combine independent, unbiased estimators in an ensemble, and like an ensemble it cannot cancel a bias that all members share.</p>
-    </div>
-
     <div class="callout trap">
       <div class="callout-title">Trap</div>
       <p>Choosing the model by a heterogeneity test (“Q was not significant, so fixed effect”). The test has little power with few studies. Choose the model from what you believe about the studies, in the protocol. In practice, report random effects with a modern τ² estimator (REML) and a Hartung–Knapp interval when studies are few; the simple DerSimonian–Laird method in the widget understates uncertainty then.</p>

@@ -122,10 +122,6 @@
       <p>Believing that adjusting for the recorded diagnosis removes confounding by indication. The diagnosis code is the same for mild and severe disease. Severity, which drives both treatment and outcome, often lives only in the clinician’s head.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>The treatment decision is itself a model: clinicians map patient features to “treat” or “don’t treat”. If you could predict that decision perfectly from recorded features, treated and untreated patients would have no overlap and there would be nothing to compare. Good observational designs need patients for whom the decision was genuinely a toss-up. That is the propensity-score idea in Block 5.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->
@@ -249,10 +245,6 @@
       <p>Reading a PRR as a relative risk. Reports depend on publicity, how new the drug is, litigation and who prescribes it. A drug with many reports of one serious event can also <em>mask</em> signals for other events, because its total reports grow. A signal is a hypothesis, to be tested with a proper study.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>The PRR is the <em>lift</em> of association-rule mining: how much more often the event appears with this drug than at baseline. Like lift, it is unstable when counts are small. That is why the WHO’s VigiBase uses a Bayesian measure, the information component, which shrinks small-count estimates towards no association. The FDA uses a similar empirical Bayes measure. Lecture 5.12 covers both.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->

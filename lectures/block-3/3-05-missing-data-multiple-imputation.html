@@ -192,10 +192,6 @@ summary(pool(fit), conf.int = TRUE)        # Rubin's rules</code></pre>
       <p>Single imputation: filling with the mean, the last value, or one regression prediction, then analysing as if the data were complete. Mean imputation shrinks variance and distorts associations; any single imputation treats guesses as data, so intervals are too narrow. The <em>missing-indicator method</em> (fill with 0, add a “was missing” dummy) is biased for confounders in observational studies.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>scikit-learn’s <code>IterativeImputer</code> is modelled on MICE, but by default it returns one deterministic imputation: fine for a prediction pipeline, wrong for inference. Flexible imputers (random forests, missForest) give accurate point predictions yet too little spread, which understates uncertainty unless they are used inside a proper MI loop. In MI the goal is plausible draws, not the best guess.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->

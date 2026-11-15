@@ -81,10 +81,6 @@
       <p>Using <code>x[-1]</code> to mean “the last value”. In R it returns everything except the first value, with no error. Write <code>tail(x, 1)</code> or <code>x[length(x)]</code>.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>R’s modelling functions take a data frame and a formula, not an <code>X</code> matrix and a <code>y</code> vector. The formula builds the design matrix for you, which is convenient and is also where the defaults in sections 2 and 6 bite.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->
@@ -157,10 +153,6 @@ nobs(fit)                                                            # who was a
       <p>Missing values stored as numbers. In NHANES and most survey files, “refused” and “don’t know” are numeric codes, not NA. Left in, a 77 or 999 becomes a real value: an extreme drinker or an implausible income, pulling means and slopes. R cannot know; only the codebook does.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>Your pandas reflexes are inverted. pandas skips missing values quietly in summaries, so you rarely see them; R refuses to give an answer, so you notice. R is noisier but safer: a summary that returns NA is telling you to decide how missing data should be handled, and that decision belongs in the analysis plan.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->
@@ -308,10 +300,6 @@ d &lt;- d |> mutate(age = time_length(interval(dob, exam_date), "years"))</code>
       <p>Reading the intercept under sum coding as the overall mean. It is the unweighted average of the group means, which differs from the mean of all participants whenever groups differ in size. And sum coding leaves out the last level’s coefficient: it equals minus the sum of the others.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>Treatment coding is one-hot encoding with the first column dropped (<code>drop="first"</code> in scikit-learn); the dropped level becomes the intercept. statsmodels formulas use the same default as R. A full one-hot encoding with an intercept is collinear, which a penalised ML model tolerates and an unpenalised GLM does not.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->
@@ -362,11 +350,6 @@ tidy(fit, exponentiate = TRUE, conf.int = TRUE) |>
           <tr><td>Getting NHANES</td><td>haven (<code>read_xpt</code>); nhanesA to download by file name</td><td>Project 3</td></tr>
         </tbody>
       </table>
-    </div>
-
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>Python covers prediction well (lifelines and scikit-survival for survival, statsmodels for GLMs). But design-based survey inference, imputation pooled across survey designs, and competing-risks regression are far more mature in R, and they are exactly what Project 3 needs. Use Python for ECG signal processing in Block 5; use R for the epidemiological analysis.</p>
     </div>
 
     <div class="callout example">

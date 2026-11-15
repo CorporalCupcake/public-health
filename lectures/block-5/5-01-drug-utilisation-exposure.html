@@ -194,10 +194,6 @@ WHERE e.medication ILIKE ANY (ARRAY['%heparin%','%enoxaparin%','%apixaban%','%wa
       <p>Treating refill-based adherence as pills swallowed. Both measures show possession, not ingestion. They also say nothing about people who never filled the first prescription, the most common form of non-adherence for some drugs. Refill data cannot see it; e-prescription data with dispensing linked can.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>Adherence measured during follow-up is a post-treatment variable. Using it as a feature or as a subgroup (“among adherent patients the drug worked”) is conditioning on something the outcome process can affect, the same leak as using future information at prediction time. Lecture 5.2 shows the healthy adherer effect this produces.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->

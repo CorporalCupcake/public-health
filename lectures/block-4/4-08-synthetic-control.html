@@ -140,11 +140,6 @@
       <figcaption>The real problem is often one-dimensional: in Proposition 99, New Hampshire had the highest cigarette sales of any donor in every pre-policy year, so as a placebo it could not be fitted at all. Shaded area: every mix of donors that convex weights can produce.</figcaption>
     </figure>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>Synthetic control is a constrained regression: regress the treated unit’s pre-period outcomes on the donors’ pre-period outcomes, with no intercept and weights on the simplex. The simplex fixes the L1 norm at 1, so, like the lasso, it tends to give sparse solutions. It is also matching, but on the whole pre-period trajectory rather than on a few covariates. The classic version (<code>Synth</code>) adds a second, outer optimisation choosing how much each predictor counts.</p>
-    </div>
-
     <div class="callout trap">
       <div class="callout-title">Trap</div>
       <p>Reading the weights as causal importance or similarity in every respect (“Saudi Arabia is 40% like Country X”). They are whatever reproduces the pre-period path. Different weight sets can fit almost equally well (try it in the next widget), so do not build a story on one donor’s weight.</p>
@@ -179,11 +174,6 @@ plot(sc)       # gap by year</code></pre>
     <div class="callout trap">
       <div class="callout-title">Trap</div>
       <p>Adding donors until the pre-period fit is perfect. Every extra donor is another free parameter. With more donors than pre-years, an exact fit is almost guaranteed, and the post-period gap then reflects noise as much as the policy. Keep the pool small and relevant, and test the fit out of sample.</p>
-    </div>
-
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>This is overfitting in the ordinary sense: pre-RMSPE is training loss, the post period is the test set, and you never see the test labels (the untreated outcome). The simplex constraint is regularisation; augmented synthetic control adds a ridge penalty (section 6). Rolling “backdating” checks are time-series cross-validation.</p>
     </div>
 
     <div class="callout analogy">

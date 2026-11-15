@@ -73,10 +73,6 @@
       <p>Reading "no record" as "did not happen". In claims, a missing diagnosis code may mean the condition was absent, was present but not billed, or was treated after the person changed insurer. Studies define an <strong>observation period</strong>, the time during which the database would have seen an event, and only count absence inside it.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>This is dataset shift at the level of the data-generating process. A model trained on EHR features learns the hospital's recording habits as much as the patient's biology: a lab is ordered <em>because</em> a clinician was worried. Missingness is informative, and differs between sources. A feature that means one thing in an EHR may not exist in claims at all.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->

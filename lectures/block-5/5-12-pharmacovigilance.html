@@ -152,10 +152,6 @@ print(ebout, threshold = 2)                               # pairs with EB05 at o
       <p>Thinking shrinkage removes bias. It only handles <em>chance</em> from small counts. A pair inflated by stimulated reporting or confounding by indication (Drug J in the widget) has plenty of reports, so shrinkage leaves it alone, and it still screens in.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>This is additive (Laplace) smoothing and empirical Bayes, the same idea as smoothing click-through rates for items with few impressions. The +0.5 is a fixed pseudo-count; MGPS learns the prior from all pairs, as hierarchical models do. Ranking by the lower bound rather than the point estimate is the same move as ranking by a lower confidence bound to avoid rewarding items with three lucky clicks.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->
@@ -295,10 +291,6 @@ print(ebout, threshold = 2)                               # pairs with EB05 at o
       <p>A spontaneous-report signal of QT prolongation with a new antimicrobial is a classic case. Validation looks for cases with ECGs and timing that fit. Active surveillance then asks the population question: a self-controlled case series (Lecture 5.5) of ventricular arrhythmia or sudden death around exposure, in claims or EHR data. A hospital ECG database, like MIMIC-IV-ECG in Project 5A, could add measured QTc before and after starting the drug, which neither reports nor claims provide.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>Signal detection is anomaly detection under heavy, non-random label noise: the “labels” are reports shaped by publicity and habit. Treat a large language model reading narratives like any other model. Validate it against human coders on held-out cases, report recall by seriousness, and monitor it for drift as reporting patterns change.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->

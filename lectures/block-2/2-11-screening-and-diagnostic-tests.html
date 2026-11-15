@@ -110,10 +110,6 @@
       <p>Quoting a PPV from a validation study in a different population. A study that enrolled half cases and half controls has 50% “prevalence” by design; its PPV says nothing about a population where 1 in 200 has the disease. Sensitivity and specificity travel (roughly); predictive values do not.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>Sensitivity is recall; PPV is precision; prevalence is class balance. A classifier validated on a balanced dataset will have far lower precision when deployed where positives are rare. An AI-ECG model that flags low ejection fraction with excellent discrimination in a cardiology clinic will still produce mostly false alarms if run on everyone in primary care. This is why precision–recall curves, not just ROC curves, matter for rare outcomes.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->
@@ -138,10 +134,6 @@
       <p>Choosing a model or test on AUC alone. AUC ignores prevalence and calibration (whether a predicted 20% risk really means 20 in 100). Two tests with the same AUC can perform very differently at the threshold you need, and a well-ranked but miscalibrated risk score will put the wrong people over a treatment threshold.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>This is exactly classifier threshold tuning. The epidemiology twist is that the threshold is a value judgement: set it from the relative costs of false negatives and false positives (decision curve analysis formalises this), not by maximising Youden’s index or accuracy. Recalibrate to the target population before choosing it.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->

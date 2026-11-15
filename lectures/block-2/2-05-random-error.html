@@ -67,10 +67,6 @@
       <p>“The study had 2 million patients, so the result is solid.” Size buys precision, not validity. Huge electronic health record studies often report intervals so narrow they look like certainty, while the real uncertainty lies in confounding and misclassification, which the interval does not include.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>This is the variance–bias split. Random error is variance: it falls as data grow. Bias is the gap between what your pipeline estimates and the true quantity, and more data from the same biased source just estimates the wrong thing more precisely. A model trained on 10 million records from one hospital system still inherits that system’s selection.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->
@@ -139,10 +135,6 @@
       <p>Treating p &lt; 0.05 as a finish line. The threshold is a convention, and crossing it turns a continuous result into a yes/no that throws away the effect size, the precision and the plausibility. Report exact p-values if you must report them at all, and never only the stars.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>A p-value is P(data this extreme | null), not P(null | data). It is the same mix-up as confusing a test’s sensitivity, P(positive | disease), with its positive predictive value, P(disease | positive). Turning one into the other needs a base rate, or prior: how plausible the hypothesis was before the study. That is Bayesian territory (Block 3) and diagnostic-test territory (Lecture 2.11).</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->
@@ -237,10 +229,6 @@
       <p>First reports of a new association are often the largest. Ioannidis described this pattern as “why most discovered true associations are inflated”: the first study is often the one that was lucky enough to be significant, and later, larger studies drift toward a smaller effect. When you read a striking first result, mentally shrink it.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>The same mechanism as picking the best model on a validation set: its validation score is optimistic because you chose it for being high. The best of many noisy estimates is biased upward. Fresh test data, or shrinkage, corrects it; in epidemiology, replication and meta-analysis play that role.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->

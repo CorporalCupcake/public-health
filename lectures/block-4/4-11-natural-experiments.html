@@ -226,11 +226,6 @@
       <p>Saudi Arabia and the UAE introduced 5% VAT in January 2018, months after their drink taxes, and Saudi Arabia raised VAT to 15% in July 2020. Any price-sensitive outcome moves with these. That is a reason to look at drinks relative to other foods (VAT hit both, the excise tax only drinks) and to check whether the estimated effect jumps at VAT dates rather than at tax dates.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>Where official series don’t exist, ML can build them: scraping menu and price data from delivery apps, classifying products by sugar band from ingredient text, or extracting calorie labels from menu images. This creates outcome and compliance series that a later ITS or DiD can use. Start collecting before the next policy, because no one can scrape the past.</p>
-    </div>
-
     <div class="callout trap">
       <div class="callout-title">Trap</div>
       <p>Running an ITS on modelled estimates, such as GBD sodium intake, to evaluate the salt limit. Modelled series are smoothed and partly driven by covariates, and most do not include any data from after the policy. Any “effect” found is the model’s assumptions, not evidence.</p>
@@ -312,11 +307,6 @@ summary(fit)   # level and slope changes at each date</code></pre>
           <tr><td>Were choices fixed in advance?</td><td>A registered protocol; deviations reported</td></tr>
         </tbody>
       </table>
-    </div>
-
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>ITS and synthetic control are forecasting problems: predict the counterfactual series, then compare. Bayesian structural time-series (Google’s <code>CausalImpact</code>) does this with a flexible model. Treat it like any forecaster: backtest by pretending the policy started earlier (a placebo in time) and check the error. A model that can’t predict the pre-period can’t be trusted after it.</p>
     </div>
 
     <div class="callout trap">

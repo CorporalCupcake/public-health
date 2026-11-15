@@ -191,10 +191,6 @@
       <p>A study of cardiovascular deaths among oil-and-gas workers in the Gulf that compared them with national mortality would almost certainly find an SMR below 1. Migrant workers add a second layer: health screening before a work visa, and the tendency for sick workers to return home, both remove ill people from the cohort and its death records. Within-workforce comparisons (by job, heat exposure or shift pattern) are the honest design.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>This is selection on a variable related to the outcome, like training a model only on customers who stayed and testing it on everyone. The training population was filtered by health, so its baseline is not the general population’s. Lecture 2.7 treats it as selection bias.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->
@@ -250,11 +246,6 @@
     <div class="callout example">
       <div class="callout-title">Example</div>
       <p>A 2001 study reported that actors who won an Oscar lived nearly four years longer than nominees who didn’t. But to win, an actor must survive to the ceremony, and the analysis credited winners with their pre-award years. A reanalysis counting winners as “winners” only from the day they won found an advantage of about a year, with a confidence interval including zero (Sylvestre, Huszti &amp; Hanley, 2006).</p>
-    </div>
-
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>This is look-ahead leakage. A feature (“will be treated”) is defined using the future and then used as if known at time zero. The fix is the same as in time-series ML: only use information available at the moment you start the clock.</p>
     </div>
 
     <div class="callout analogy">

@@ -158,10 +158,6 @@
       <p>Adjusting an ecological analysis for group-level confounders and assuming that fixes it. Ecological bias can arise even without confounding, whenever the effect of exposure differs between groups or depends on other factors within groups. Only individual-level data inside groups can rule it out.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>This is Simpson’s paradox in regression form. A model trained on country-level aggregates and then used to score individuals has learned the between-country slope, not the within-person one. Mixed models with group means as separate predictors (“within-between” models) estimate both slopes at once.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->
@@ -243,10 +239,6 @@
       <p>Choosing control windows only before the event when the exposure trends over time. In a warming spell, or across the summer, earlier days are cooler than later ones, so “before” controls make heat look harmful even if it isn’t. Time-stratified control days on both sides of the event, within the same month, avoid this.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>This is a person fixed-effects model. Conditional logistic regression with one stratum per person is like demeaning features within each user before fitting: only within-person variation is used, so anything constant per person can’t confound. The price is the same as in ML: features that never vary within a person get no coefficient. Lecture 5.5 extends this to the self-controlled case series.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->

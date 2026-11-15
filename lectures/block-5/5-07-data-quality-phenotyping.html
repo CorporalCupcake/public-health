@@ -139,10 +139,6 @@ ORDER BY share_implausible DESC;</code></pre>
       <p>Generic quality checks are a spell-checker. They catch typos in every document. They cannot tell you whether the essay answers the exam question.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>This is schema and data validation in an ML pipeline: type checks (conformance), null rates (completeness) and range checks (plausibility), monitored for drift. Same limitation too: a pipeline can pass every expectation while the labels are systematically wrong.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->
@@ -237,10 +233,6 @@ ORDER BY share_implausible DESC;</code></pre>
       <p>Training an ML phenotype on diagnosis codes as labels and then calling it “better than codes”. It has learned to predict the codes, errors included. Probabilistic phenotypes need some chart-reviewed truth, at least for evaluation.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>Rule-based phenotyping is weak supervision: each rule is a noisy labelling function. OHDSI’s PheValuator uses the same idea as anchor-based noisy-label learning. It takes patients who almost certainly have the condition (very specific criteria) and almost certainly do not, fits a diagnostic model, and uses its predicted probabilities as a “probabilistic gold standard” to estimate the sensitivity, specificity and PPV of any rule without chart review. Version 2.0 (2022) agreed better with chart-review PPVs than the original. It is a useful screen, not a replacement for reviewing charts.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->
@@ -320,10 +312,6 @@ by(v, v$anticoag, function(d) with(d, sum(w * (algo &amp; truth)) / sum(w * trut
       <p>Validating AF onset only among anticoagulated patients because their charts are richer. If detection differs by treatment, which is plausible because treated patients are monitored more closely, the error is differential and the hazard ratio can move either way. Validate in both arms, and carry the arm-specific numbers into the bias analysis.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>You could train an AF detector on the raw MIMIC-IV-ECG waveforms and use it as the phenotype. That shifts the validation question rather than removing it: report the detector’s sensitivity and PPV against human-read waveforms in this population, and check that its errors do not differ by treatment arm. A model with excellent AUROC on a public benchmark is still an unvalidated phenotype here.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->

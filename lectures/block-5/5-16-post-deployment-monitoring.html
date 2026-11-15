@@ -147,10 +147,6 @@
       <p>“The AUC has held, so the model is fine.” Davis and colleagues followed models for hospital-acquired acute kidney injury across nine years of US Veterans Affairs admissions: discrimination held up, while calibration drifted into steady overprediction as AKI rates changed. A stable AUC with drifting calibration means the ranking is right and the numbers are wrong. Any decision made on a threshold is then wrong too.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>Same taxonomy as the dataset-shift literature. Under pure label shift you can estimate the new outcome rate from the model’s own outputs on unlabelled data (black-box shift estimation) and correct the intercept. Under covariate shift, importance weighting reweights old labelled data to look like new patients. Concept drift has no shortcut: you need new labels.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->
@@ -278,10 +274,6 @@ m$month[which(m$cusum &gt; h)[1]]     # first alarm (NA if none)</code></pre>
       <p>Fixing the feedback loop by retraining only on unflagged patients. They are a selected group (everyone below the old threshold), so the model loses the high-risk range entirely. Record treatment and model it, or keep a randomised hold-out: a causal problem needs a causal fix.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>The same trap as a recommender trained on its own recommendations, or a fraud model trained on cases the old model flagged for review. The ML fixes carry over: log the action taken, keep an exploration slice (a small share of patients handled without the model), and use off-policy evaluation with known propensities.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->

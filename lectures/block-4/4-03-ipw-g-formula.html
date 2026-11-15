@@ -79,10 +79,6 @@
       <p>Survey weights (Lecture 3.4). A survey that under-samples young men gives each young man a larger weight so the sample looks like the population. IPW does the same, except the “population” it targets is everyone under treatment, and everyone under no treatment.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>This is importance weighting under covariate shift. The treated arm is a sample from \(p(L \mid A=1)\); you want averages over \(p(L)\); the importance weight \(p(L)/p(L \mid A=1)\) is proportional to \(1/\Pr[A=1 \mid L]\). Everything you know about importance weighting carries over, including its failure mode: unbounded weights where the source has little support.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->
@@ -95,11 +91,6 @@
       <p><strong class="lead">Why it matters.</strong> IPW is only as good as this model. A misspecified propensity model leaves residual imbalance, and with it residual confounding, in a way the outcome comparison cannot repair.</p>
       <p><strong class="lead">How to read it.</strong> Fit it, weight, then check balance on every covariate, including squares and interactions you think matter. If balance is poor, revise the model (add a spline, an interaction) and check again. The outcome is never looked at during this loop, which keeps the analysis honest.</p>
       <p><strong class="lead">When it changes.</strong> Switching from logistic regression to boosted trees or another ensemble can reduce bias when the true treatment model is both non-linear and non-additive (Lee, Lessler and Stuart, 2010). A flexible model that overfits can also push scores towards 0 and 1 and create extreme weights. Judge it on balance and weights, not on cross-validated accuracy.</p>
-    </div>
-
-    <div class="callout ml">
-      <div class="callout-title">From your ML background · Why AUC is the wrong target</div>
-      <p>A propensity model is a classifier, but its job is different. A very high AUC means treatment is nearly predictable from covariates, which is a positivity problem, not a success. The easiest way to raise AUC is to add instruments, which increases variance and amplifies residual bias (Lecture 4.2). Westreich and colleagues (2011) pointed out that a high c-statistic is neither necessary nor sufficient for controlling confounding, and that chasing it can reduce overlap. Target balance (standardised mean differences) and well-behaved weights; methods such as entropy balancing or CBPS optimise balance directly. Python users: <code>DoWhy</code> or <code>econml</code> wrap the same steps.</p>
     </div>
 
     <div class="callout trap">
@@ -172,10 +163,6 @@ avg_comparisons(om, variables = "anticoag", newdata = subset(anticoag == 1))  # 
       </table>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>The g-formula with one model is the S-learner: a single model with treatment as a feature, queried twice. Fitting separate models for treated and untreated is the T-learner. Lecture 4.4 shows why flexible learners plugged into this formula need a correction to give valid confidence intervals.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->

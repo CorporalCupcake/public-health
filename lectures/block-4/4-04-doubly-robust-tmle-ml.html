@@ -149,10 +149,6 @@ summary(res$g$g1W)     # estimated propensity scores: check the extremes</code><
       <p>Plugging ML into IPW or the g-formula alone. Flexible learners trade bias for variance and converge slowly; with a single-model estimator, that leftover bias passes straight into the effect and the confidence interval does not cover. Doubly robust estimators are what make ML safe here, because the two models’ errors multiply rather than add (section 5).</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>This is ML in its comfort zone: two supervised prediction tasks, \(Y\) from \((A, X)\) and \(A\) from \(X\), scored on held-out loss. The causal part is everything around them: which \(X\) (the DAG), what estimand, and how the two predictions are combined. A model with the best AUC for treatment is not the goal; one that balances confounders and keeps propensities away from 0 and 1 is. Python: <code>DoubleML</code> and <code>EconML</code> do the same jobs.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->
@@ -226,10 +222,6 @@ aipw$fit()$summary(g.bound = 0.025)   # RD, RR, OR with CIs; PS bounded at 0.025
 aipw$plot.p_score()                   # overlap of propensity scores by group</code></pre>
     <p><code>k_split = 5</code> requests five-fold cross-fitting. <code>g.bound</code> truncates the estimated propensities at 0.025 and 0.975, a guard against huge weights; report that you did it and how many people it touched.</p>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>This is out-of-fold prediction, as in stacking or target encoding without leakage. Scoring a person with a model that saw their label is the causal version of evaluating on the training set: the error looks small and the inference is overconfident.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->

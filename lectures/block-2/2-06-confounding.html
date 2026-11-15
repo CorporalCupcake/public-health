@@ -115,10 +115,6 @@
       <p>“We adjusted for every variable available.” More adjustment is not safer. Adjusting for consequences of the exposure removes part of the effect; adjusting for consequences of both exposure and outcome invents associations. Choose variables for their causal role, not their availability.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>Feature selection for prediction and covariate selection for causal estimation are different problems. A feature can improve prediction precisely because it is a consequence of the outcome (or of the exposure), and that is exactly what you must not adjust for. SHAP values and feature importance describe the fitted model, not causes. To read an exposure’s coefficient causally, the other covariates must be chosen by the DAG.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->
@@ -204,10 +200,6 @@
       <p>In hospitalised patients with new atrial fibrillation, clinicians tend to withhold anticoagulation from patients who are bleeding, frail or near the end of life. Those patients also die sooner. A naive comparison in MIMIC-IV could make anticoagulation look strongly protective against death. Target trial emulation (Block 5) is designed to handle exactly this.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>Caruana and colleagues described a pneumonia mortality model that learned asthma <em>lowered</em> the risk of death. Asthmatic patients with pneumonia were sent straight to intensive care, and the extra care lowered their death rate. The model was right about the data and dangerous as a guide to triage. Prediction models trained on treated patients learn treatment policy as if it were biology.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->

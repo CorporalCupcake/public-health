@@ -66,10 +66,6 @@
       <p>Treating model output as an observation. A model that says “12,000 deaths averted” has measured nothing. It has projected the consequences of its inputs and assumptions. Its numbers are only as good as the evidence and structure behind them, which is why Lecture 1.12 exists.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>This is a mechanistic simulator, not a fitted predictor. Its structure comes from disease biology and its parameters from the literature, not from minimising a loss on one dataset. When you do tune parameters to match observed data (calibration), it is closer to fitting a simulator than training a model.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->
@@ -82,7 +78,6 @@
       <p><strong class="lead">Why it matters.</strong> It is transparent and fast. It suits short horizons and one-off events, such as whether to test, how accurate the test is, and what treatment follows.</p>
       <p><strong class="lead">Where it breaks.</strong> Time and repeated events. A chronic disease where people can have a stroke, recover, have another and die, year after year, makes the tree branch without end.</p>
     </div>
-
 
     <figure class="diagram">
       <div class="diagram-title">Diagram · A decision tree</div>
@@ -149,7 +144,6 @@
       <p><strong class="lead">When it changes.</strong> An intervention works by changing an arrow. Lowering the well-to-stroke probability by 10% keeps more of the cohort in “well”, where costs are low and health is high, for every remaining cycle.</p>
     </div>
 
-
     <div class="widget" data-widget="markov-cohort">
       <div class="widget-title">A Markov cohort model</div>
       <p class="widget-note" style="margin:0 0 0.8rem">1,000 well people enter. Each year, a share moves along each arrow. Move the sliders to change the arrows, and the year slider to see where the cohort is at that point. Then switch to “With policy”.</p>
@@ -167,10 +161,6 @@
       <p>Students in a school. Each year some move up a grade, some repeat, some leave. Track the share in each grade year by year and you know how many will graduate, without following any one student.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>It is a discrete-time Markov chain with an age-varying transition matrix, with a reward (cost and health) attached to each state. A cohort model propagates the distribution over states; a microsimulation samples individual trajectories from the same chain.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->
@@ -212,7 +202,6 @@
       <p><strong class="lead">Why “proportional”.</strong> Diseases are treated as independent: the chance of having stroke doesn’t change your chance of having heart disease, beyond what both share through age. This lets each disease be modelled separately and keeps the model small.</p>
       <p><strong class="lead">How to read the output.</strong> Differences between the intervention and business-as-usual runs: deaths averted, life-years and health-adjusted life-years (HALYs, a QALY-like measure from disability weights) gained, and health care costs averted, by sex, age and year.</p>
     </div>
-
 
     <figure class="diagram">
       <div class="diagram-title">Diagram · How a multistate life table models a salt policy</div>
@@ -311,10 +300,6 @@
       <p>Calling it external validation when the model is compared with the data it was built from. Matching GBD deaths when GBD deaths were an input only shows the code runs, not that the projections are right. True external validation uses data the model never saw.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>The same idea as train–test leakage. Fitting to GBD and then “validating” against GBD is reporting training accuracy. Verification with extreme values is unit testing.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->

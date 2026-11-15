@@ -67,11 +67,6 @@
       <p>Writing “residual confounding may have biased our results towards the null” with no numbers. That sentence is almost always a guess, and the direction is often wrong. QBA forces you to say how strong the bias would need to be and whether that is believable.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>A test-set confidence interval for AUC covers sampling noise in the test set. It says nothing about dataset shift, label noise or leakage. Those are systematic errors, and they are the ones that sink deployed models. QBA is the epidemiologist’s version of stress-testing a result under named failure modes.</p>
-    </div>
-
     <div class="callout analogy">
       <div class="callout-title">Analogy</div>
       <p>Weighing yourself ten times on a bathroom scale averages away the wobble but not a scale set 2 kg low. To fix that you need to know, or assume, how far off the scale is.</p>
@@ -211,10 +206,6 @@
       <p>Reading a probabilistic simulation interval as more objective than a simple analysis because it looks statistical. It is built from distributions you chose. A narrow distribution on a badly guessed parameter gives a narrow, confident, wrong interval.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>This is the same Monte Carlo machinery as probabilistic sensitivity analysis in Lecture 1.12: put distributions on uncertain inputs, push draws through a deterministic function, summarise the outputs. Here the function is the bias formula and the inputs are bias parameters.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->

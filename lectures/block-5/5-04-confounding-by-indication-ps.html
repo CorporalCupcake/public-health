@@ -147,10 +147,6 @@ bal.tab(m_att, thresholds = c(m = 0.1))</code></pre>
       <p>Reporting the PS model's c-statistic as evidence of quality. A PS with an AUC of 0.95 means the groups barely overlap, which is bad news, not good. A high AUC can also come from including variables that predict treatment but not the outcome (instruments), which add variance and can amplify bias from unmeasured confounding.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>The PS is a nuisance model, so its loss function is not log-loss on treatment. Its job is to make the weighted covariate distributions match. Methods such as entropy balancing and covariate-balancing propensity scores (<code>method = "ebal"</code> or <code>"cbps"</code> in WeightIt) optimise balance directly. It is the same lesson as calibration versus discrimination in Lecture 2.15: the right metric depends on what the model is for.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->
@@ -289,10 +285,6 @@ bal.tab(m_att, thresholds = c(m = 0.1))</code></pre>
       <p>Tuning the PS model by cross-validated AUC. The model that best predicts treatment is the one that best separates the groups, which minimises overlap. Tune for balance, or use a doubly robust estimator so that the outcome model can rescue a mediocre PS.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>Think of the PS as a domain-adaptation weight: you are reweighting the "untreated" domain to look like the "treated" one. Importance weights in covariate-shift correction are the same object, with the same failure: when the domains barely overlap, a few samples get huge weights and the estimate becomes noise.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->

@@ -184,10 +184,6 @@ intervals(m)        # CIs, plus the estimated AR(1) coefficient</code></pre>
       <p>“The Durbin–Watson test found no autocorrelation.” With 12 annual points the test has almost no power, so a non-significant result is no reassurance. Absence of evidence again (Lecture 2.5). Assume some autocorrelation, and show how results change across plausible values.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>The naive interval assumes each point is a fresh draw. With φ = 0.5, ten consecutive points carry the information of roughly three independent ones: it is the same reason you cannot shuffle a time series into random cross-validation folds. Newey–West is a kernel estimate of the long-run variance, and like any kernel estimate it needs data well beyond the bandwidth to work.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->

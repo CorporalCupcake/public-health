@@ -127,11 +127,6 @@
       <p><strong class="lead">When it changes.</strong> A jump that coincides exactly with a new multiplex PCR panel in the lab is probably detection, not transmission. A jump confined to one ward, one restaurant’s customers or one dialysis unit is probably real.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>This is distribution shift in the labelling process. A detector trained on last year’s counts fires when the measuring instrument changes, not only when the world changes. Statistical outbreak detection (the <code>surveillance</code> package’s Farrington-type algorithms, Lecture 6.3) gives the alert; step 1 is the human check that the alert is not a data-pipeline change.</p>
-    </div>
-
     <div class="callout trap">
       <div class="callout-title">Trap</div>
       <p>Calling a cluster an outbreak because the cases are close in space. Small numbers cluster by chance, and people go looking for clusters after noticing a few. Ask whether the count exceeds what is expected for that population, and whether the cases share a plausible common exposure.</p>
@@ -202,11 +197,6 @@
     <div class="callout gulf">
       <div class="callout-title">Gulf example · MERS in Al-Hasa hospitals, 2013</div>
       <p>Between 1 April and 23 May 2013, 23 confirmed MERS-CoV cases were reported in Al-Hasa in Saudi Arabia’s Eastern Province (Assiri et al., <em>NEJM</em> 2013). Person, place and time did the work: 21 of the 23 cases were acquired person to person in haemodialysis units, intensive care units and inpatient wards of three health care facilities. The median incubation period was estimated at 5.2 days (95% CI 1.9 to 14.7) and the serial interval at 7.6 days (2.5 to 23.1). The descriptive picture, chains of cases in health care settings rather than a single community source, pointed control at infection prevention in hospitals.</p>
-    </div>
-
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>The line list is a tidy table, and most errors are data-engineering errors: duplicate people found through two routes, onset dates typed as report dates, free-text symptoms. Deduplicate on several identifiers, store onset and report dates separately, and code exposures as yes/no/unknown, not blanks. Unknown is information.</p>
     </div>
 
     <div class="callout trap">
@@ -282,10 +272,6 @@ sapply(foods, function(f)
       <p>Testing fourteen foods and declaring any with p &lt; 0.05 the source. With many exposures, one or two will cross the line by chance, and protective-looking foods (chocolate ice cream at Oswego, RR about 0.7) are usually substitutes for the real vehicle. At Oswego, 19 of the 47 chocolate eaters skipped vanilla, against 2 of 27 non-chocolate eaters; among vanilla eaters the attack rate was 79% with chocolate and 80% without. Look for one exposure with a large effect that explains most cases, and confirm it with the lab or the kitchen.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>The food table is a multiple-comparisons and feature-correlation problem. Foods served together are collinear, so a model with all foods may spread the effect between them. Field epidemiologists handle this with stratification (vanilla ice cream within strata of chocolate) rather than a large regression, because the samples are small and the question is which single exposure explains the cases.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->

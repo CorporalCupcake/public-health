@@ -276,11 +276,6 @@ plot(est)                                          # infections, reports and R_t
       <p>The US COVID-19 Forecast Hub pooled weekly mortality forecasts from dozens of teams, mechanistic and statistical. Cramer and colleagues (2022) found the multi-model ensemble was among the most consistently accurate, while individual models were often best one week and poor the next. The practical lesson: combine models of different kinds, and evaluate on a fixed, pre-registered schedule.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>Fitting an ODE model is training a tiny, highly structured network: a handful of interpretable weights, a strong inductive bias, and a loss on observed counts. The identifiability problem of section 4 is the familiar one of a flat loss surface along a ridge; priors (regularisation) or extra data sources fix it. Hybrids exist, such as neural networks for the time-varying transmission rate inside an SEIR model, or physics-informed neural networks. They keep the counterfactual ability only as long as the mechanistic structure carries the intervention.</p>
-    </div>
-
     <div class="callout trap">
       <div class="callout-title">Trap</div>
       <p>Judging a scenario model by whether its worst case happened. If the projection prompted action that bent the curve, the worst case was never going to be observed. Judge scenario models by whether their assumptions were stated and plausible, and judge forecasts by their scores.</p>

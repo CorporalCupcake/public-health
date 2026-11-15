@@ -166,10 +166,6 @@
       <p>In a statin model, the relative risk of heart attack might come from a meta-analysis as 0.75 (95% CI 0.70–0.80). Rather than plugging in 0.75, PSA draws a new value each run from a lognormal distribution matching that interval, so the uncertainty in the trial evidence flows into the final result.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>PSA is Monte Carlo forward propagation of parameter uncertainty, the same idea as sampling from a posterior and pushing each draw through a model to get a predictive distribution. Input distributions play the role of priors or posteriors; outputs are a sample, not a point estimate.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->
@@ -291,12 +287,7 @@
       <p>An overfitted metamodel inflates EVPPI. If the fitted values chase noise from the other inputs, they vary more than the true average does, and the method reads that spurious variation as decision-relevant information. Underfitting does the opposite. Choose flexibility by cross-validation or the model’s own smoothing, not by maximising fit.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>The metamodel is estimating a conditional expectation, the expected net benefit given the input of interest, which is exactly what squared-error regression targets. So any well-regularised learner fits the framework. The ML-specific risk is the one above: on this task variance doesn’t average away, it adds bias upwards, because the method takes a maximum over the fitted values.</p>
-    </div>
-
-    <div class="callout ml">
+    <div class="callout key">
       <div class="callout-title">Second use: emulators</div>
       <p>A metamodel can also stand in for a slow simulator, so you can run PSA or calibration on the fast surrogate. Gaussian process emulators are the classic tool. A PMSLT like Project 1 usually runs fast enough that you won’t need this, but large microsimulations do.</p>
     </div>

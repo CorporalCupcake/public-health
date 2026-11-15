@@ -85,11 +85,6 @@
       <p><strong class="lead">When it changes.</strong> Larger GWAS find more hits and better weights. Height now has more than 12,000 independent signals from about 5 million people (Yengo and colleagues, 2022), and its score explains far more variation than a decade ago, in European-ancestry people.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>A PGS is a sparse linear model with millions of features, trained on one distribution. Its weights partly encode the correlation structure between SNPs (linkage disequilibrium) and allele frequencies of the training population. Apply it to a population with different LD and frequencies and you have covariate shift: accuracy drops and calibration breaks. The fix is the same as in ML: more diverse training data.</p>
-    </div>
-
     <div class="callout trap">
       <div class="callout-title">Trap</div>
       <p>Assuming a PGS works equally well everywhere. About 79% of GWAS participants were of European ancestry when Martin and colleagues (2019) checked, and scores built from UK Biobank were about 2 times less accurate in East Asian and 4.5 times less accurate in African-ancestry people. Arab populations are a very small share of GWAS data, so expect worse performance and check before using one.</p>
@@ -159,11 +154,6 @@
       </svg>
       <figcaption>Solid arrows are allowed. The crossed dashed paths must not exist. Only assumption 1 can be checked directly in data; 2 and 3 are argued from biology and probed with sensitivity analyses.</figcaption>
     </figure>
-
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>This is the instrumental-variable estimator from econometrics, with genes in place of Angrist and Krueger’s quarter of birth. With one instrument it is the Wald ratio; with many it is two-stage least squares, and IVW on summary statistics approximates it. Lecture 4.9 covers IVs in policy evaluation.</p>
-    </div>
 
     <div class="callout trap">
       <div class="callout-title">Trap</div>

@@ -106,10 +106,6 @@
       <p>Reading 66% estimate agreement as “observational studies are wrong a third of the time”. A trial’s 95% CI misses a second, independent estimate of the same quantity quite often by chance alone, especially when the trial is small. Agreement metrics have ceilings well below 100%, which the widget shows when emulation differences are set to zero.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>Benchmarking is held-out validation for a causal pipeline: the trial result plays the role of the label. As in ML, the test is only honest if the protocol (the “model”) is frozen before the labels are seen. That is why RCT-DUPLICATE registered every emulation in advance.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->
@@ -300,10 +296,6 @@ plotCalibrationEffect(nc$logRr, nc$seLogRr, log(0.85), 0.08, null)</code></pre>
       <p>Claiming that 5A “emulates a trial” as if a trial result existed to be reproduced. Say instead that it emulates a <em>hypothetical</em> target trial, list how the emulation differs from it, and be explicit that agreement with nothing is not validation.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>Negative controls are the epidemiological version of a label-permutation sanity check: run the full pipeline where the right answer is “nothing”, and see how often it reports something. A pipeline that finds signal in shuffled labels, or in outcomes the drug cannot touch, is leaking.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->

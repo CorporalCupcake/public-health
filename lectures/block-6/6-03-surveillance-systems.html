@@ -171,11 +171,6 @@
       <p><strong class="lead">When it changes.</strong> A 30% rise in emergency visits for respiratory complaints in one week is a prompt to check virology results and weather, not a declared outbreak.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>Google Flu Trends predicted influenza-like illness from search queries. Lazer and colleagues (2014) showed it overestimated the 2012–13 US season badly, at times predicting more than double CDC’s figure. Their diagnosis is familiar from ML: features chosen by correlation with a short training period, overfitting, and drift because the search engine itself kept changing. Digital signals are useful features, but they need regular recalibration against a ground-truth series and should be combined with, not substituted for, traditional surveillance.</p>
-    </div>
-
     <div class="callout trap">
       <div class="callout-title">Trap</div>
       <p>Building a syndromic system and never deciding what happens when it alarms. Without an agreed response protocol (who checks, how fast, against what other data) the alarms are ignored after the first few false ones, and the system loses its only advantage, speed.</p>
@@ -237,10 +232,6 @@
       <p>Forgetting that PPV depends on prevalence, exactly as for screening (Lecture 2.11). When a disease is rare, even a specific case definition yields mostly false positives; when an outbreak alarm is checked every week for a rare event, most alarms are false. A system’s PPV in an epidemic year says little about its PPV in a quiet one.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>Estimating sensitivity needs ground truth that the system itself did not produce. Capture–recapture, matching two independent case lists (say, laboratory records and notifications), estimates the cases both missed. It assumes the two sources are independent, which they rarely are: the same severe cases tend to appear in both, so the estimate of missed cases is usually too small. This is the same issue as estimating recall with two correlated annotators.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->

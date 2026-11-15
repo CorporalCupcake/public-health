@@ -299,10 +299,6 @@ summary(m)$dispersion                 # &gt; 1 means overdispersion</code></pre>
       <p>Reporting plain Poisson standard errors. Daily and monthly health counts are almost always more variable than Poisson allows, so plain Poisson intervals are too narrow. Check the dispersion and use quasi-Poisson or negative binomial; report which.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>Fourier terms are fixed basis functions, the same trick as random Fourier features or the positional encodings in a transformer: they turn a periodic input into something a linear model can fit. Choosing the number of harmonics is a bias–variance choice; residual diagnostics or AIC can guide it.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->
@@ -326,10 +322,6 @@ summary(m)$dispersion                 # &gt; 1 means overdispersion</code></pre>
       <p>Choosing the model for an effect estimate by how well it fits or forecasts. A flexible trend that follows the data closely can forecast well precisely because it has absorbed the intervention’s effect. For explanation, fix the model’s structure (season, trend, covariates) from subject knowledge before looking at the effect.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>Random k-fold cross-validation leaks the future into training. Use rolling-origin evaluation: train up to month t, forecast t+1 to t+h, move t forward (<code>forecast::tsCV</code>, or scikit-learn’s <code>TimeSeriesSplit</code>). Watch for subtler leakage too: features computed with the whole series, such as a scaler or a smoothed trend. On sequence models: LSTMs and transformers shine when you have many related series and rich covariates. For one short monthly series, ARIMA or exponential smoothing is usually as good. In the M4 forecasting competition (Makridakis et al. 2018), pure machine-learning methods did poorly and the winner was a hybrid of exponential smoothing and a neural network.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->

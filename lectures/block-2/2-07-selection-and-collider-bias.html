@@ -132,10 +132,6 @@
       <p>Among successful film actors, talent and good looks seem negatively related. Not because talent makes you plain, but because it takes talent <em>or</em> looks to get cast. Look only at people who made it and the less talented ones are, by necessity, the better-looking.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>This is “explaining away” in a Bayesian network: two independent parents become dependent once you observe their shared child. In a model, adding a feature that is a common effect of the exposure and the outcome (a test ordered, a referral, an admission) opens exactly this path. Conditioning on a feature is not neutral.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->
@@ -258,11 +254,6 @@
     <div class="facets">
       <p><strong class="lead">Why it matters.</strong> Weighting works only if you measured the variables that drive selection. If selection depends on something unrecorded, no analysis recovers the population.</p>
       <p><strong class="lead">How to read it.</strong> In Project 2’s risk-of-bias assessment, ask for each study: how were participants sampled, what was the response rate, how many 24-hour urine collections were incomplete and excluded, and could exclusion relate to salt intake?</p>
-    </div>
-
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>Training data are selected data. An ECG model trained on patients whose clinicians ordered an echocardiogram learns from people who were already suspected of heart disease. Its accuracy there says little about performance in screening, and any association it learns between features may be a product of who got the test. This is dataset shift, with a causal explanation: the selection node.</p>
     </div>
 
     <div class="callout trap">

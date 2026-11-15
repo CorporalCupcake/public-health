@@ -113,10 +113,6 @@ _targets/        # the pipeline's stored results contain data
       <p>“The repository is private, so the data are safe.” A private repository is still a copy on someone else’s server, one setting away from public, and copying credentialed data there can breach its data use agreement. Keep patient-level data out of git entirely, including the pipeline’s cache, plots of individual records and printed data frames in notebooks.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>Same discipline as keeping training data and model weights out of a code repository. Track data versions by file hash instead: the pipeline below does this for you, as DVC does in Python projects.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->
@@ -139,10 +135,6 @@ renv::restore()    # on a new machine: install exactly the recorded versions</co
       <p>Believing the lockfile freezes everything. It records the R version but does not install R, and it does not capture system libraries or the operating system. For full rebuilds years later, add a container image (for example a rocker image with the same R version). For a paper, renv plus a note of R version and platform is usually enough.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>renv is the R equivalent of a virtual environment plus a lockfile (<code>venv</code> with <code>poetry.lock</code>, or a conda environment file).</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->
@@ -244,10 +236,6 @@ list(
       <p>The <code>run_all.R</code> script, or worse, an interactive session with objects from last Tuesday. A table rendered from an object in memory may have come from code you have since changed. Two less obvious gaps: targets does not notice a package update unless you ask it to track that package (<code>tar_option_set(imports = …)</code>), and it cannot see files your functions read without declaring them.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>This is the same idea as a DVC or Airflow pipeline, or a build cache: content-addressed outputs and a dependency graph. The difference is that targets tracks your R functions themselves, so editing a function invalidates exactly the targets that call it.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->
@@ -361,10 +349,6 @@ Each unit higher Na/K ratio was associated with a hazard ratio of
 
     <p><strong>Sharing code with the paper.</strong> At submission (alongside the medRxiv preprint, project rule 5), make the repository public, tag the submitted version, and archive it on Zenodo, which issues a DOI for each GitHub release. Include a licence, the lockfile, and a README that says how to obtain the data. For NHANES, a script can download the public files; for MIMIC, the README points to PhysioNet and the reader gets their own access.</p>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>The release-with-a-DOI habit is the same as publishing model weights with a model card: someone else can run exactly what you ran, and cite it.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->

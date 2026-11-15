@@ -151,10 +151,6 @@
       <p>Reading every risk factor as a treatment target. A score uses whatever predicts. A variable can carry a large coefficient because it stands in for something unmeasured. Before treating it, ask for trial or genetic evidence that changing it changes risk.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>This is the prediction-versus-intervention split. A risk score is a supervised model of \(P(\text{event}\mid\text{features})\). A feature with high importance tells you nothing about what happens if you intervene on it. That needs the causal tools of Block 4.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->
@@ -313,10 +309,6 @@
       <p>Judging a score by its C-statistic alone. A score with C = 0.78 can still predict twice the true risk. Always ask for the calibration plot, or at least observed versus expected events, in the population where it will be used.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>This is domain shift, mostly <em>label shift</em>: the base rate changes while the feature–outcome relation is roughly stable. The fix is the one you know: keep the model, update the intercept (calibration-in-the-large), and if needed refit the slope on the linear predictor, as in Platt scaling. Monotone recalibration leaves AUC untouched. Lecture 5.13 takes this further.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->

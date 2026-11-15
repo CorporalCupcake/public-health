@@ -94,10 +94,6 @@
       <p>Computing “the risk of disease in the exposed” from a case-control table, or a risk difference or NNT. Those numbers reflect your choice of control-to-case ratio, not the population. Only ratio measures carry over.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>This is downsampling the majority class. If you keep all positives and a random fraction of negatives, logistic regression slopes (log odds ratios) are unbiased; only the intercept shifts, by the log of the sampling fraction. King and Zeng’s “prior correction” for rare events is exactly the case-control result. The predicted probabilities are wrong until you correct the intercept, just as case-control risks are.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->
@@ -285,10 +281,6 @@
       <p>Suppose a hospital cohort of 100,000 patients has stored ECGs, and you want to test a feature that needs expert manual annotation. Annotating every ECG is impossible. Annotate the ECGs of everyone who had sudden cardiac death, plus four risk-set controls each, and you estimate the same rate ratio a full-cohort analysis would, at a few percent of the effort.</p>
     </div>
 
-    <div class="callout ml">
-      <div class="callout-title">From your ML background</div>
-      <p>Risk-set sampling is negative sampling done carefully. For each positive (a case at time t), you sample a few negatives from those who could have been positive at that same moment. Conditional logistic regression over these matched sets approximates the Cox partial likelihood, much as sampled softmax approximates a full softmax.</p>
-    </div>
   </section>
 
   <!-- ===================================================== -->
