@@ -57,9 +57,8 @@
 
     <div class="facets">
       <p>Segmented regression (Lecture 3.9) fits a pre-period line, then lets the level and the slope change at the intervention. The <strong>level change</strong> is the immediate step; the <strong>slope change</strong> is how much faster or slower the series moves afterwards. The extended pre-period line is the <strong>counterfactual</strong>.</p>
-      <p><strong class="lead">Why it matters.</strong> Every causal claim from ITS rests on that projection. Its assumption is the time-series cousin of parallel trends (Lecture 4.6): nothing except the policy changed the series’ path at that moment.</p>
-      <p><strong class="lead">How to read it.</strong> Report the effect at a stated horizon, combining both terms, with its interval, in absolute and relative form (“3.1 kg per person lower, 7% below the projection, five years after”). Do not report the level and slope coefficients as two separate effects.</p>
-      <p><strong class="lead">When it changes.</strong> A level change of −2 with a slope change of +0.5 per year means an initial drop that erodes: by year 4 the series is back on its old path. The two coefficients only make sense together.</p>
+      <p>Every causal claim from ITS rests on that projection. Its assumption is the time-series cousin of parallel trends (Lecture 4.6): nothing except the policy changed the series’ path at that moment.</p>
+      <p>The two coefficients only make sense together. A level change of −2 with a slope change of +0.5 per year means an initial drop that erodes: by year 4 the series is back on its old path. So do not report them as two separate effects. Report the effect at a stated horizon, combining both terms, with its interval, in absolute and relative form (“3.1 kg per person lower, 7% below the projection, five years after”).</p>
     </div>
 
     \[ \text{effect } k \text{ periods after} = \beta_2 + \beta_3\, k \]
@@ -83,9 +82,8 @@
 
     <div class="facets">
       <p>The <strong>impact model</strong> is the hypothesised shape of the effect: a step, a change in slope, both, a temporary dip, a delayed start, or a gradual <strong>phase-in</strong> to a new level. Lopez Bernal, Cummins and Gasparrini (2017) make choosing it a priori, from theory and earlier evidence, an explicit step of their tutorial, and discourage selecting it from the outcome data.</p>
-      <p><strong class="lead">Why it matters.</strong> Each shape answers a different question and has different power. With six candidate shapes and two or three possible start dates, one of them will fit a noisy series “significantly” by chance.</p>
-      <p><strong class="lead">How to read it.</strong> A good protocol states the shape, the start date, any <strong>transition period</strong> (excluded or modelled as a ramp), and the mechanism behind them. Other shapes become sensitivity analyses, labelled as such.</p>
-      <p><strong class="lead">When it changes.</strong> Moving the start by one period, or switching from a step to a ramp, should change the estimate little if the effect is real and well timed. Large swings mean the data cannot tell the shapes apart.</p>
+      <p>The reason is that each shape answers a different question and has different power. With six candidate shapes and two or three possible start dates, one of them will fit a noisy series “significantly” by chance. So a good protocol states the shape, the start date, any <strong>transition period</strong> (excluded or modelled as a ramp), and the mechanism behind them. Other shapes become sensitivity analyses, labelled as such.</p>
+      <p>Those sensitivity analyses are a test of the result. Moving the start by one period, or switching from a step to a ramp, should change the estimate little if the effect is real and well timed. Large swings mean the data cannot tell the shapes apart.</p>
     </div>
 
     <figure class="diagram">
@@ -160,9 +158,8 @@
 
     <div class="facets">
       <p>The tools are those of Lecture 3.9: Fourier or month terms for season, and for autocorrelation either Newey–West standard errors, generalised least squares with AR(1) errors (Prais–Winsten), or regression with ARIMA errors. What is ITS-specific is where they bite.</p>
-      <p><strong class="lead">Why it matters.</strong> Positive autocorrelation lets a series wander, and a wander that happens to start near the intervention looks like a level or slope change. The slope change is hit hardest because it is estimated from the trend of a short segment. With an uneven split of seasons (say the post-period starts every year in a low month), season alone creates a level change.</p>
-      <p><strong class="lead">How to read it.</strong> Check residual ACF and PACF plots after fitting season. With many points, report autocorrelation-aware intervals and say how. With few points, say plainly that autocorrelation cannot be estimated well, so even the corrected intervals are optimistic.</p>
-      <p><strong class="lead">When it changes.</strong> If the interval for the level change roughly doubles when you switch from OLS to Newey–West or GLS, the naive result was overstated; a result that is only significant with naive errors is not a finding.</p>
+      <p>Positive autocorrelation lets a series wander, and a wander that happens to start near the intervention looks like a level or slope change. The slope change is hit hardest because it is estimated from the trend of a short segment. Season can fool you too: with an uneven split of seasons (say the post-period starts every year in a low month), season alone creates a level change.</p>
+      <p>So check residual ACF and PACF plots after fitting season. With many points, report autocorrelation-aware intervals and say how. With few points, say plainly that autocorrelation cannot be estimated well, so even the corrected intervals are optimistic. If the interval for the level change roughly doubles when you switch from OLS to Newey–West or GLS, the naive result was overstated; a result that is only significant with naive errors is not a finding.</p>
     </div>
 
     <div class="widget" data-widget="its-builder">
@@ -192,10 +189,9 @@ intervals(m)        # CIs, plus the estimated AR(1) coefficient</code></pre>
     <p class="point">A comparison series that the policy should not affect, but that shares the same shocks, removes much of what a single series cannot rule out.</p>
 
     <div class="facets">
-      <p>Two kinds of control. A <strong>control population</strong>: the same outcome in an untaxed place (Kuwait). A <strong>control outcome</strong>: an outcome in the same place that the policy should not touch but that shares the same shocks (a food group outside the tax). <strong>Controlled ITS</strong> fits both series together and estimates how much more the treated series’ level and slope changed than the control’s.</p>
-      <p><strong class="lead">Why it matters.</strong> A single series cannot separate the policy from anything else that happened at the same time. A control that moves in the same way at the policy date flags a shared shock; one that does not makes the policy explanation stronger.</p>
-      <p><strong class="lead">How to read it.</strong> Unlike DiD, controlled ITS lets the two series have different pre-trends and compares the <em>changes</em> in level and slope. That is more flexible, but it needs enough pre-points to estimate two trends, and it still assumes the gap between the series would have continued on its own path.</p>
-      <p><strong class="lead">When it changes.</strong> If Saudi supply drops by 3 kg in 2018 and Kuwait’s drops by 2 kg, the controlled estimate is about −1 kg, not −3: two-thirds of the apparent effect was shared.</p>
+      <p>There are two kinds of control. A <strong>control population</strong> is the same outcome in an untaxed place (Kuwait). A <strong>control outcome</strong> is an outcome in the same place that the policy should not touch but that shares the same shocks (a food group outside the tax). <strong>Controlled ITS</strong> fits both series together and estimates how much more the treated series’ level and slope changed than the control’s.</p>
+      <p>A single series cannot separate the policy from anything else that happened at the same time. A control that moves in the same way at the policy date flags a shared shock; one that does not makes the policy explanation stronger. If Saudi supply drops by 3 kg in 2018 and Kuwait’s drops by 2 kg, the controlled estimate is about −1 kg, not −3: two-thirds of the apparent effect was shared.</p>
+      <p>This is not the same as DiD. Controlled ITS lets the two series have different pre-trends and compares the <em>changes</em> in level and slope. That is more flexible, but it needs enough pre-points to estimate two trends, and it still assumes the gap between the series would have continued on its own path.</p>
     </div>
 
     <pre><code>d2 &lt;- rbind(transform(saudi, taxed = 1), transform(kuwait, taxed = 0))
@@ -233,9 +229,8 @@ coef(m2)[c("post:taxed", "time_after:taxed")]   # extra level / slope change</co
 
     <div class="facets">
       <p>These are the classic threats to quasi-experiments (Shadish, Cook and Campbell). ITS rules out slow, steady confounders, because they are part of the pre-trend. It does not rule out anything that changes abruptly near the policy date.</p>
-      <p><strong class="lead">Why it matters.</strong> Reviewers will ask, “what else happened in 2017–2018?” A methods section that names the co-interventions and shows how each was handled answers before they ask.</p>
-      <p><strong class="lead">How to read it.</strong> For each threat, ask whether its timing matches the policy and whether it would also move the control series. If it matches and the control does not share it, it is a live alternative explanation.</p>
-      <p><strong class="lead">When it changes.</strong> A co-intervention one year after the policy is separable with monthly data and nearly inseparable with annual data. Coarser time means more threats coincide.</p>
+      <p>So reviewers will ask, “what else happened in 2017–2018?” A methods section that names the co-interventions and shows how each was handled answers before they ask. For each threat, ask whether its timing matches the policy and whether it would also move the control series. If it matches and the control does not share it, it is a live alternative explanation.</p>
+      <p>The time unit decides how many threats you can separate. A co-intervention one year after the policy is separable with monthly data and nearly inseparable with annual data. Coarser time means more threats coincide.</p>
     </div>
 
     <div class="callout trap">
@@ -256,9 +251,8 @@ coef(m2)[c("post:taxed", "time_after:taxed")]   # extra level / slope change</co
 
     <div class="facets">
       <p>FAOSTAT’s food balance sheets are annual, and the series compiled with the current method starts in 2010. For Saudi Arabia that gives 2010–2016 as clean pre-tax years (seven points), a part-exposed 2017, and post years that also contain VAT, the 2019 widening and COVID-19.</p>
-      <p><strong class="lead">Why it matters.</strong> Power depends on the number of points, their split before and after, noise, effect size and autocorrelation. Cochrane EPOC’s minimum of three points each side is an inclusion floor for reviews, not a guarantee of power. Lopez Bernal and colleagues give no fixed minimum and recommend simulation-based power calculations in advance (Zhang and colleagues 2011).</p>
-      <p><strong class="lead">How to read it.</strong> Before fitting, simulate: with your expected noise and plausible autocorrelation, how large a level change would you detect 80% of the time? If the answer is larger than any plausible tax effect, say so and present ITS as description.</p>
-      <p><strong class="lead">When it changes.</strong> Going from 7 to 14 pre-points (by splicing the old FAOSTAT series) seems to double the information, but it imports a measurement break into the pre-period, which can bias the trend more than the extra points help.</p>
+      <p>That is not much to work with. Power depends on the number of points, their split before and after, noise, effect size and autocorrelation. Cochrane EPOC’s minimum of three points each side is an inclusion floor for reviews, not a guarantee of power. Lopez Bernal and colleagues give no fixed minimum and recommend simulation-based power calculations in advance (Zhang and colleagues 2011).</p>
+      <p>So simulate before fitting: with your expected noise and plausible autocorrelation, how large a level change would you detect 80% of the time? If the answer is larger than any plausible tax effect, say so and present ITS as description. More points are not always the fix. Going from 7 to 14 pre-points (by splicing the old FAOSTAT series) seems to double the information, but it imports a measurement break into the pre-period, which can bias the trend more than the extra points help.</p>
     </div>
 
     <pre><code>sim_p &lt;- function(n_pre = 7, n_post = 5, level = -2, sd = 1.5, phi = 0.3) {

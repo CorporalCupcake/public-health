@@ -59,9 +59,9 @@
 
     <div class="facets">
       <p>Riley and colleagues (2019–2020) replaced “10 events per variable” with a calculation. For a binary outcome it finds the smallest sample that meets three criteria: <strong>(1)</strong> little overfitting, defined as an expected shrinkage factor of at least 0.9 (predictor effects would need shrinking by 10% or less); <strong>(2)</strong> a gap of at most 0.05 between apparent and optimism-adjusted Nagelkerke R²; and <strong>(3)</strong> the overall outcome risk estimated within ±0.05. The answer is the largest of the three.</p>
-      <p><strong class="lead">Why it matters.</strong> Too small a sample gives a model whose predictions are too extreme in new patients. That error is invisible in the development data, and no later trick fully repairs it.</p>
-      <p><strong class="lead">How to read it.</strong> Count <em>parameters</em>, not variables: a spline with four knots costs three, a five-level category costs four, and every candidate you screened counts, even those you dropped. Input the expected C-statistic or R² from earlier work, and be pessimistic.</p>
-      <p><strong class="lead">When it changes.</strong> The required events per parameter rise as the expected signal falls and the outcome gets rarer. A weak model of a rare outcome may need far more than 10 events per parameter; a strong model of a common outcome may need fewer.</p>
+      <p>Getting this wrong is costly. Too small a sample gives a model whose predictions are too extreme in new patients. That error is invisible in the development data, and no later trick fully repairs it.</p>
+      <p>Count <em>parameters</em>, not variables: a spline with four knots costs three, a five-level category costs four, and every candidate you screened counts, even those you dropped. Input the expected C-statistic or R² from earlier work, and be pessimistic.</p>
+      <p>That is why no fixed ratio works. The required events per parameter rise as the expected signal falls and the outcome gets rarer. A weak model of a rare outcome may need far more than 10 events per parameter; a strong model of a common outcome may need fewer.</p>
     </div>
 
     <pre><code>library(pmsampsize)
@@ -88,8 +88,8 @@ pmsampsize(type = "b", cstatistic = 0.75, parameters = 20, prevalence = 0.05)</c
 
     <div class="facets">
       <p>Keep age, NT-proBNP, QRS duration or an AI-ECG score as continuous. Allow a curve with <strong>restricted cubic splines</strong> (smooth curves joined at a few “knots”, linear at the ends) or fractional polynomials. Three to five knots is usual.</p>
-      <p><strong class="lead">Why it matters.</strong> Dichotomising a predictor costs about as much power as discarding a third of the data, and it says a patient just below the cut-off has the same risk as one far below it. Royston, Altman and Sauerbrei called it “a bad idea”, and Collins and colleagues showed it worsens both discrimination and calibration.</p>
-      <p><strong class="lead">How to read it.</strong> Look at the plotted shape of each spline. A J-shape (blood pressure and mortality) or a plateau (troponin beyond a ceiling) is information a straight line or a cut-off would lose.</p>
+      <p>Cutting a predictor in two is expensive. Dichotomising costs about as much power as discarding a third of the data, and it says a patient just below the cut-off has the same risk as one far below it. Royston, Altman and Sauerbrei called it “a bad idea”, and Collins and colleagues showed it worsens both discrimination and calibration.</p>
+      <p>Once fitted, look at the plotted shape of each spline. A J-shape (blood pressure and mortality) or a plateau (troponin beyond a ceiling) is information a straight line or a cut-off would lose.</p>
     </div>
 
     <pre><code>library(rms)
@@ -118,9 +118,8 @@ plot(Predict(fit, pr_ms))       # the fitted shape of the PR-interval effect</co
 
     <div class="facets">
       <p><strong>Optimism</strong> is the gap between apparent performance and performance in new patients from the same population. Harrell’s bootstrap estimates it: refit the whole modelling process in each bootstrap sample, test each refit on the original data, and average the drop. <strong>Shrinkage</strong> (a uniform shrinkage factor, ridge, lasso or elastic net) makes coefficients smaller so predictions are less extreme.</p>
-      <p><strong class="lead">Why it matters.</strong> The bootstrap-corrected calibration slope is your best guess of how far predictions are too extreme. A value of 0.8 says “shrink the coefficients by 20%”.</p>
-      <p><strong class="lead">How to read it.</strong> Optimism in the C-statistic of 0.01–0.02 is modest. Corrected slopes of 0.9 or above are reassuring. Below 0.8 means the sample was too small for the model you tried to fit.</p>
-      <p><strong class="lead">When it changes.</strong> Halving the events per parameter roughly doubles the optimism. Every step of the modelling (variable selection, spline choice, tuning) must be repeated inside each bootstrap sample, or the correction is itself optimistic.</p>
+      <p>The bootstrap-corrected calibration slope is your best guess of how far predictions are too extreme: a value of 0.8 says “shrink the coefficients by 20%”. Optimism in the C-statistic of 0.01–0.02 is modest. Corrected slopes of 0.9 or above are reassuring, and below 0.8 means the sample was too small for the model you tried to fit.</p>
+      <p>Optimism grows quickly as data thin out: halving the events per parameter roughly doubles it. And every step of the modelling (variable selection, spline choice, tuning) must be repeated inside each bootstrap sample, or the correction is itself optimistic.</p>
     </div>
 
     <pre><code>v &lt;- validate(fit, B = 500)      # Harrell's bootstrap, 500 resamples
@@ -147,9 +146,8 @@ plot(calibrate(fit, B = 500))     # optimism-corrected calibration curve</code><
 
     <div class="facets">
       <p><strong>Internal–external cross-validation</strong> leaves out one hospital, region or calendar period at a time, develops on the rest and validates on the one left out. It shows how performance varies across settings, and the final model is still fitted on all the data. <strong>External validation</strong> tests the frozen model in data the developers never touched.</p>
-      <p><strong class="lead">Why it matters.</strong> Performance is not a property of a model. It is a property of a model <em>in a population</em>. Heterogeneity across sites, not the average, tells you whether the model will transport.</p>
-      <p><strong class="lead">How to read it.</strong> A pooled C-statistic of 0.80 with site values from 0.70 to 0.88 and calibration slopes from 0.6 to 1.2 means the model needs local checking everywhere. Random-effects meta-analysis of site-level performance summarises this.</p>
-      <p><strong class="lead">When it changes.</strong> Old rules of thumb asked for at least 100, preferably 200, events in a validation set. Riley and colleagues (2024) now calculate it from the precision you want for calibration, discrimination and net benefit (R package <code>pmvalsampsize</code>). Calibration usually needs the most.</p>
+      <p>Both rest on one idea: performance is not a property of a model but of a model <em>in a population</em>. Heterogeneity across sites, not the average, tells you whether the model will transport. A pooled C-statistic of 0.80 with site values from 0.70 to 0.88 and calibration slopes from 0.6 to 1.2 means the model needs local checking everywhere. Random-effects meta-analysis of site-level performance summarises this.</p>
+      <p>The guidance on validation size has moved on. Old rules of thumb asked for at least 100, preferably 200, events in a validation set. Riley and colleagues (2024) now calculate it from the precision you want for calibration, discrimination and net benefit (R package <code>pmvalsampsize</code>). Calibration usually needs the most.</p>
     </div>
 
     <figure class="diagram">
@@ -223,10 +221,9 @@ plot(calibrate(fit, B = 500))     # optimism-corrected calibration curve</code><
     <p class="point">Calibration has levels, from “the average is right” to “every risk is right”; aim for the level that makes decisions safe, and check it with a flexible curve, not a table of deciles.</p>
 
     <div class="facets">
-      <p><strong>Calibration-in-the-large</strong>: is the mean predicted risk equal to the observed event rate? <strong>Calibration slope</strong>: are predictions too extreme (below 1) or too timid (above 1)? A <strong>flexible calibration curve</strong> (loess or splines of the outcome on the predicted risk) shows where along the risk range the model is off.</p>
-      <p><strong class="lead">Why it matters.</strong> Van Calster and colleagues (2016) showed that “moderate” calibration, a correct curve, guarantees that decisions made with the model do no harm compared with not using it. Intercept and slope alone (“weak” calibration) do not.</p>
-      <p><strong class="lead">How to read it.</strong> Intercept near 0 and slope near 1 are necessary, not sufficient. Read the curve where your decisions are made: a model can be fine at 2–10% and badly off at 30%. Show the spread of predictions under the curve, since a curve over empty regions means nothing.</p>
-      <p><strong class="lead">When it changes.</strong> A slope of 0.7 at external validation means risks above the average are overstated and those below understated. A positive intercept with a slope near 1 means a uniformly higher baseline risk, which intercept-only recalibration can fix (Section 7).</p>
+      <p><strong>Calibration-in-the-large</strong> asks whether the mean predicted risk equals the observed event rate. The <strong>calibration slope</strong> asks whether predictions are too extreme (below 1) or too timid (above 1). A <strong>flexible calibration curve</strong> (loess or splines of the outcome on the predicted risk) shows where along the risk range the model is off.</p>
+      <p>The curve is what counts. Van Calster and colleagues (2016) showed that “moderate” calibration, a correct curve, guarantees that decisions made with the model do no harm compared with not using it. Intercept and slope alone (“weak” calibration) do not. So intercept near 0 and slope near 1 are necessary, not sufficient. Read the curve where your decisions are made: a model can be fine at 2–10% and badly off at 30%. Show the spread of predictions under the curve, since a curve over empty regions means nothing.</p>
+      <p>Each kind of miscalibration has its own meaning. A slope of 0.7 at external validation means risks above the average are overstated and those below understated. A positive intercept with a slope near 1 means a uniformly higher baseline risk, which intercept-only recalibration can fix (Section 7).</p>
     </div>
 
     <p>Both summary numbers come from one logistic regression of the observed outcome on the model’s linear predictor (LP, the predicted log-odds):</p>
@@ -270,9 +267,8 @@ glm(low_ef ~ lp, family = binomial, data = ext)           # calibration slope</c
 
     <div class="facets">
       <p>Pick a <strong>threshold probability</strong> \(p_t\) at which you would act, say refer for echocardiography. The threshold encodes how you weigh harms: referring at 10% means one missed case is as bad as nine unnecessary referrals. <strong>Net benefit</strong> counts true positives and subtracts false positives weighted by those odds. A <strong>decision curve</strong> (Vickers and Elkin, 2006) plots it over a range of reasonable thresholds.</p>
-      <p><strong class="lead">Why it matters.</strong> It is the only common measure that puts the model on the same scale as “refer everyone” and “refer no one”. A model with a fine AUC can still lose to a default strategy at the thresholds clinicians actually use, especially if miscalibrated.</p>
-      <p><strong class="lead">How to read it.</strong> Read the curves only over thresholds that clinicians would plausibly choose. A net benefit of 0.05 means five net true positives per 100 patients: the same as finding five extra cases with no false positives.</p>
-      <p><strong class="lead">When it changes.</strong> Where the model’s curve sits below “treat all” or zero, using it is worse than ignoring it. Overestimated risks hurt at high thresholds, underestimated risks at low ones.</p>
+      <p>It is the only common measure that puts the model on the same scale as “refer everyone” and “refer no one”. That matters because a model with a fine AUC can still lose to a default strategy at the thresholds clinicians actually use, especially if miscalibrated.</p>
+      <p>Read the curves only over thresholds that clinicians would plausibly choose. A net benefit of 0.05 means five net true positives per 100 patients: the same as finding five extra cases with no false positives. Where the model’s curve sits below “treat all” or zero, using it is worse than ignoring it. Overestimated risks hurt at high thresholds, underestimated risks at low ones.</p>
     </div>
 
     \[ \text{NB} = \frac{TP}{n} - \frac{FP}{n} \times \frac{p_t}{1-p_t} \]
@@ -305,10 +301,9 @@ dca(low_ef ~ ai_ecg_risk + clinical_risk, data = ext,
     <p class="point">Check performance in the groups the model will be used on, and when a model drifts or moves, repair it with the smallest change that works.</p>
 
     <div class="facets">
-      <p><strong>Subgroup performance</strong>: discrimination, and above all calibration, by sex, age band, ethnicity, site and device type. <strong>Updating</strong> uses local data to fix a model rather than replace it, in increasing order of data hunger: recalibration-in-the-large (new intercept), logistic recalibration (intercept and slope), revision (re-estimate some coefficients), extension (add a predictor), full refit.</p>
-      <p><strong class="lead">Why it matters.</strong> A model that is well calibrated overall can overpredict in women and underpredict in men, which means unequal treatment at one threshold. Small local datasets rarely support a refit, but they easily support recalibration.</p>
-      <p><strong class="lead">How to read it.</strong> Within-group calibration is the fairness check that matters most when one threshold is applied to everyone. Equal C-statistics across groups do not imply equal calibration.</p>
-      <p><strong class="lead">When it changes.</strong> If ranking transfers but the baseline differs, update the intercept. If the slope is also off, recalibrate both. Revise or extend only with plenty of events, and validate the updated model again.</p>
+      <p><strong>Subgroup performance</strong> means discrimination, and above all calibration, by sex, age band, ethnicity, site and device type. <strong>Updating</strong> uses local data to fix a model rather than replace it. In increasing order of data hunger: recalibration-in-the-large (new intercept), logistic recalibration (intercept and slope), revision (re-estimate some coefficients), extension (add a predictor), full refit.</p>
+      <p>A model that is well calibrated overall can overpredict in women and underpredict in men, which means unequal treatment at one threshold. So within-group calibration is the fairness check that matters most when one threshold is applied to everyone. Equal C-statistics across groups do not imply equal calibration.</p>
+      <p>Small local datasets rarely support a refit, but they easily support recalibration. If ranking transfers but the baseline differs, update the intercept. If the slope is also off, recalibrate both. Revise or extend only with plenty of events, and validate the updated model again.</p>
     </div>
 
     <div class="callout trap">
@@ -325,8 +320,8 @@ dca(low_ef ~ ai_ecg_risk + clinical_risk, data = ext,
 
     <div class="facets">
       <p><strong>PROBAST+AI</strong> (Moons and colleagues, <em>BMJ</em>, March 2025) updates and replaces the 2019 PROBAST. It covers models built with regression or AI methods. It has two parts: model <em>development</em>, judged for quality and applicability (16 signalling questions), and model <em>evaluation</em>, judged for risk of bias and applicability (18). Each part has four domains: participants and data sources, predictors, outcome, and analysis. TRIPOD+AI (2024) is the matching reporting checklist; PROBAST+AI is the appraisal tool.</p>
-      <p><strong class="lead">Why it matters.</strong> Systematic reviews of prediction models, and Project 5B, rate each study’s risk of bias. The analysis domain sinks most studies: too few events, dichotomised predictors, no calibration, no optimism correction, data leakage.</p>
-      <p><strong class="lead">How to read it.</strong> A single “high” domain makes the overall rating high risk of bias. Applicability is separate: a well-conducted study in emergency patients may not apply to your screening population.</p>
+      <p>Systematic reviews of prediction models, and Project 5B, use it to rate each study’s risk of bias. The analysis domain sinks most studies: too few events, dichotomised predictors, no calibration, no optimism correction, data leakage.</p>
+      <p>The rating is strict. A single “high” domain makes the overall rating high risk of bias. Applicability is separate: a well-conducted study in emergency patients may not apply to your screening population.</p>
     </div>
 
     <div class="callout example">

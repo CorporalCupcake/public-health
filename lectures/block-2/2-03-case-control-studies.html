@@ -57,9 +57,8 @@
 
     <div class="facets">
       <p>A case-control study selects people by <strong>outcome</strong>, then looks back at their exposure. The cases are everyone (or a random sample of everyone) who developed the disease in a defined population and period. The controls are a sample of that same population, used to estimate how common exposure was in it.</p>
-      <p><strong class="lead">Why it matters.</strong> For a rare disease a cohort would need hundreds of thousands of people to collect a few hundred cases. A case-control study collects those cases directly. It is also the design of choice when the exposure is expensive to measure, when latency is long, or when you need an answer in weeks (outbreak investigations).</p>
-      <p><strong class="lead">How to read it.</strong> The result is an odds ratio. If exposure is more common in cases than controls, the OR is above 1. Section 4 explains exactly what it estimates.</p>
-      <p><strong class="lead">What it can’t give you.</strong> Absolute risks or rates, because you chose how many controls to take. You can get them only if you know the size of the source population or the overall disease rate.</p>
+      <p>The design earns its place with rare diseases. A cohort would need hundreds of thousands of people to collect a few hundred cases; a case-control study collects those cases directly. It is also the design of choice when the exposure is expensive to measure, when latency is long, or when you need an answer in weeks (outbreak investigations).</p>
+      <p>The result is an odds ratio: if exposure is more common in cases than controls, the OR is above 1. Section 4 explains exactly what it estimates. What it can’t give you is absolute risks or rates, because you chose how many controls to take. You can get them only if you know the size of the source population or the overall disease rate.</p>
     </div>
 
     <div class="callout example">
@@ -85,8 +84,7 @@
 
     <div class="facets">
       <p>In a case-control table, the share of exposed people who are cases depends on how many controls you chose: take twice as many controls and the “risk” halves. What you can estimate is the <strong>exposure odds</strong> in cases and in controls. Their ratio is mathematically identical to the ratio of disease odds you would have got from the full population.</p>
-      <p><strong class="lead">Why it matters.</strong> This is why case-control studies work at all. Sampling all cases and a fraction of non-cases multiplies both exposed and unexposed non-case counts by the same fraction, which cancels in the odds ratio.</p>
-      <p><strong class="lead">How to read it.</strong> Read it as an odds ratio from the source population. Whether it also equals a risk ratio or rate ratio depends on how controls were sampled (Section 4).</p>
+      <p>This is why case-control studies work at all. Sampling all cases and a fraction of non-cases multiplies both exposed and unexposed non-case counts by the same fraction, which cancels in the odds ratio. So read the result as an odds ratio from the source population. Whether it also equals a risk ratio or rate ratio depends on how controls were sampled (Section 4).</p>
     </div>
 
     <div class="callout trap">
@@ -103,9 +101,8 @@
 
     <div class="facets">
       <p>The <strong>study base</strong> (or source population) is the people, and the time, in which the cases arose. Controls are a sample of it. The practical test: <em>if this control had developed the disease, would they have become a case in my study?</em> If no, they don’t belong.</p>
-      <p><strong class="lead">Why it matters.</strong> Controls exist to estimate how common exposure is in the base. If they come from somewhere else, or are picked in a way linked to exposure, the OR is biased however carefully cases were found. Most bad case-control studies fail here.</p>
-      <p><strong class="lead">How to read it.</strong> Population-based cases with random population controls is the cleanest. Hospital controls are convenient, but only valid if their reason for admission is unrelated to the exposure and they come from the same catchment as the cases.</p>
-      <p><strong class="lead">When it changes.</strong> If the controls’ exposure prevalence is pushed up, the OR is pushed down, and vice versa. Over-sampling exposed controls by 50% cuts the OR by about a third.</p>
+      <p>Controls exist to estimate how common exposure is in the base. If they come from somewhere else, or are picked in a way linked to exposure, the OR is biased however carefully cases were found. Most bad case-control studies fail here. The bias runs in a predictable direction: push the controls’ exposure prevalence up and the OR is pushed down, and vice versa. Over-sampling exposed controls by 50% cuts the OR by about a third.</p>
+      <p>Population-based cases with random population controls is the cleanest set-up. Hospital controls are convenient, but only valid if their reason for admission is unrelated to the exposure and they come from the same catchment as the cases.</p>
     </div>
 
     <figure class="diagram">
@@ -189,9 +186,9 @@
     </div>
 
     <div class="facets">
-      <p><strong class="lead">Why it matters.</strong> The “rare disease assumption” is often quoted as a weakness of all case-control studies. It isn’t. It applies only to cumulative sampling. Most modern studies use incidence density sampling, which estimates the rate ratio with no rare-disease requirement.</p>
-      <p><strong class="lead">How to read it.</strong> Find the sentence in the methods that says how and when controls were chosen. “Controls were selected from those at risk at the date of each case’s diagnosis” means a rate ratio. “Controls were people without the disease at the end of the study” means an odds ratio.</p>
-      <p><strong class="lead">When it changes.</strong> Under incidence density sampling a person can be a control early and a case later. That is correct, not a mistake: at the earlier time, they were part of the population at risk.</p>
+      <p>The “rare disease assumption” is often quoted as a weakness of all case-control studies. It isn’t. It applies only to cumulative sampling. Most modern studies use incidence density sampling, which estimates the rate ratio with no rare-disease requirement.</p>
+      <p>To tell which you have, find the sentence in the methods that says how and when controls were chosen. “Controls were selected from those at risk at the date of each case’s diagnosis” means a rate ratio. “Controls were people without the disease at the end of the study” means an odds ratio.</p>
+      <p>One feature of incidence density sampling looks like a mistake but isn’t: a person can be a control early and a case later. That is correct, because at the earlier time they were part of the population at risk.</p>
     </div>
 
     <div class="widget" data-widget="cc-sample">
@@ -212,8 +209,8 @@
 
     <div class="facets">
       <p>A <strong>nested case-control</strong> study takes every case in a cohort and, at each case’s event time, samples a few controls from those still at risk (incidence density sampling). A <strong>case-cohort</strong> study draws a random <strong>subcohort</strong> at the start, then adds every case, inside or outside it.</p>
-      <p><strong class="lead">Why it matters.</strong> Biobanks store blood for hundreds of thousands of people. Assaying all of them costs a fortune; assaying the cases and a few controls costs little and loses little precision. The cohort already defines the study base, so control selection is clean.</p>
-      <p><strong class="lead">How to choose.</strong> Nested case-control suits one outcome and time-matched comparisons; it is analysed with conditional logistic regression and estimates the rate ratio. Case-cohort lets one subcohort serve as the comparison group for many outcomes, and is analysed with a weighted Cox model.</p>
+      <p>Both exist because biobanks store blood for hundreds of thousands of people. Assaying all of them costs a fortune; assaying the cases and a few controls costs little and loses little precision. And since the cohort already defines the study base, control selection is clean.</p>
+      <p>The choice between them depends on the question. Nested case-control suits one outcome and time-matched comparisons; it is analysed with conditional logistic regression and estimates the rate ratio. Case-cohort lets one subcohort serve as the comparison group for many outcomes, and is analysed with a weighted Cox model.</p>
     </div>
 
     <figure class="diagram">
@@ -289,9 +286,9 @@
     <p class="point">Matching controls to cases on a confounder makes the analysis more efficient, but does not remove confounding unless the analysis respects the matching.</p>
 
     <div class="facets">
-      <p>Choosing controls so that they resemble each case on factors such as age and sex: individually (four controls of the same age band for each case) or by frequency (the same age mix overall).</p>
-      <p><strong class="lead">Why it matters.</strong> Matching on a strong confounder makes strata balanced, so the adjusted estimate is more precise. But in a case-control study, matching itself pulls the controls’ exposure towards the cases’, so a matched design analysed without accounting for matching is biased towards no effect.</p>
-      <p><strong class="lead">How to read it.</strong> Check the paper used conditional logistic regression (individual matching) or adjusted for the matching factors (frequency matching). You can’t study the effect of a matching factor itself.</p>
+      <p>Matching means choosing controls so that they resemble each case on factors such as age and sex, either individually (four controls of the same age band for each case) or by frequency (the same age mix overall).</p>
+      <p>Matching on a strong confounder makes strata balanced, so the adjusted estimate is more precise. But in a case-control study, matching itself pulls the controls’ exposure towards the cases’, so a matched design analysed without accounting for matching is biased towards no effect.</p>
+      <p>So check the paper used conditional logistic regression (individual matching) or adjusted for the matching factors (frequency matching). And remember that you can’t study the effect of a matching factor itself.</p>
     </div>
 
     <div class="callout trap">

@@ -68,9 +68,9 @@
     </div>
 
     <div class="facets">
-      <p><strong class="lead">Why it matters.</strong> Each type needs a different response. Prior shift is often fixed by updating the intercept; concept drift needs new coefficients or a new model; covariate shift may need nothing, or a model that was never validated on these patients.</p>
-      <p><strong class="lead">How to read it.</strong> Ask three questions when performance moves: did the inputs change, did the outcome rate change, or did the link between them change? Data errors (a broken feed, a renamed lab code) mimic all three, so rule them out first.</p>
-      <p><strong class="lead">When it changes.</strong> An observed-to-expected ratio moving from 1.0 to 1.3 means 30% more events than the model predicts. If discrimination is unchanged, suspect prior shift or a coding change before concept drift.</p>
+      <p>The three types are worth telling apart because each needs a different response. Prior shift is often fixed by updating the intercept; concept drift needs new coefficients or a new model; covariate shift may need nothing, or a model that was never validated on these patients.</p>
+      <p>So when performance moves, ask three questions: did the inputs change, did the outcome rate change, or did the link between them change? Data errors (a broken feed, a renamed lab code) mimic all three, so rule them out first.</p>
+      <p>Take an observed-to-expected ratio moving from 1.0 to 1.3: there are 30% more events than the model predicts. If discrimination is unchanged, suspect prior shift or a coding change before concept drift.</p>
     </div>
 
     <figure class="diagram">
@@ -166,9 +166,9 @@
     </div>
 
     <div class="facets">
-      <p><strong class="lead">Why it matters.</strong> A 1-year mortality model cannot be checked on last month’s patients. Fast signals are your early warning; labelled performance is the verdict.</p>
-      <p><strong class="lead">How to read it.</strong> An input alarm is a reason to look, not proof of harm. A falling alert rate with stable inputs points at the model or its plumbing; a rising rate with shifting inputs points at the population.</p>
-      <p><strong class="lead">When it changes.</strong> If the alert rate jumps from 5% to 9% of patients overnight, check for a data or software change first. Real populations rarely change that fast, except in a pandemic.</p>
+      <p>The two speeds exist because a 1-year mortality model cannot be checked on last month’s patients. Fast signals are your early warning; labelled performance is the verdict.</p>
+      <p>That means an input alarm is a reason to look, not proof of harm. A falling alert rate with stable inputs points at the model or its plumbing; a rising rate with shifting inputs points at the population.</p>
+      <p>Speed of change is a clue too. If the alert rate jumps from 5% to 9% of patients overnight, check for a data or software change first. Real populations rarely change that fast, except in a pandemic.</p>
     </div>
 
     <div class="callout trap">
@@ -189,9 +189,9 @@
 
     <div class="facets">
       <p><strong>Calibration-in-the-large</strong> compares the observed event rate with the mean predicted risk. The <strong>calibration slope</strong> shows whether predictions are too extreme (slope below 1) or too timid (above 1). Recalibration refits these two numbers on recent data and leaves the model’s internal weights alone.</p>
-      <p><strong class="lead">Why it matters.</strong> Updating two parameters needs a few hundred events; refitting a model needs thousands, and a new model is a new device, which may need a regulatory route (the PCCP in Lecture 5.14).</p>
-      <p><strong class="lead">How to read it.</strong> Observed/expected near 1 and slope near 1: fine. O/E off but slope fine: update the intercept. Slope off: logistic recalibration. Discrimination falling: recalibration will not help; the model needs new information.</p>
-      <p><strong class="lead">When it changes.</strong> An intercept update moving from 0 to +0.3 on the log-odds scale raises every predicted odds by about 35%. It shifts all risks up without changing who ranks above whom.</p>
+      <p>That is far cheaper than starting again. Updating two parameters needs a few hundred events; refitting a model needs thousands, and a new model is a new device, which may need a regulatory route (the PCCP in Lecture 5.14).</p>
+      <p>The readings map onto actions. Observed/expected near 1 and slope near 1: fine. O/E off but slope fine: update the intercept. Slope off: logistic recalibration. Discrimination falling: recalibration will not help; the model needs new information.</p>
+      <p>An intercept update moving from 0 to +0.3 on the log-odds scale raises every predicted odds by about 35%. It shifts all risks up without changing who ranks above whom.</p>
     </div>
 
     <pre><code>new$lp &lt;- qlogis(new$p_hat)                         # model's linear predictor
@@ -214,10 +214,10 @@ library(CalibrationCurves); val.prob.ci.2(new$p_recal, new$y)   # check the curv
     <p class="point">Monthly performance bounces around; a control chart accumulates small, persistent deviations and raises an alarm only when they add up to more than noise would.</p>
 
     <div class="facets">
-      <p><strong>Statistical process control</strong>, borrowed from manufacturing. A <strong>CUSUM</strong> (cumulative sum) chart adds up each month’s standardised excess of observed over expected events, minus an allowance, and resets at zero. An <strong>EWMA</strong> chart tracks an exponentially weighted moving average, which forgets old months gradually.</p>
-      <p><strong class="lead">Why it matters.</strong> Testing each month at p &lt; 0.05 gives a false alarm every 20 months and is slow to see a small shift. CUSUM sees small persistent shifts quickly while keeping false alarms rare.</p>
-      <p><strong class="lead">How to read it.</strong> The allowance \(k\) is about half the shift you care about, in standard-deviation units (0.5 targets a 1-SD shift). The limit \(h\) sets the false-alarm rate: 4–5 is typical. The chart says <em>when</em> the change began: look back to where the sum started climbing.</p>
-      <p><strong class="lead">When it changes.</strong> Lowering \(h\) from 5 to 3 catches drift sooner but trips more often on noise. Choose it by how costly a false alarm is compared with a missed drift.</p>
+      <p><strong>Statistical process control</strong> is borrowed from manufacturing. A <strong>CUSUM</strong> (cumulative sum) chart adds up each month’s standardised excess of observed over expected events, minus an allowance, and resets at zero. An <strong>EWMA</strong> chart tracks an exponentially weighted moving average, which forgets old months gradually.</p>
+      <p>The alternative is worse than it looks. Testing each month at p &lt; 0.05 gives a false alarm every 20 months and is slow to see a small shift. CUSUM sees small persistent shifts quickly while keeping false alarms rare.</p>
+      <p>Two settings control it. The allowance \(k\) is about half the shift you care about, in standard-deviation units (0.5 targets a 1-SD shift). The limit \(h\) sets the false-alarm rate: 4–5 is typical. When the chart signals, it also says <em>when</em> the change began: look back to where the sum started climbing.</p>
+      <p>Setting \(h\) is a trade. Lowering it from 5 to 3 catches drift sooner but trips more often on noise, so choose it by how costly a false alarm is compared with a missed drift.</p>
     </div>
 
     \[ S_t = \max\!\left(0,\; S_{t-1} + z_t - k\right) \]
@@ -253,10 +253,9 @@ m$month[which(m$cusum &gt; h)[1]]     # first alarm (NA if none)</code></pre>
     <p class="point">If flagged patients are treated and their events prevented, the data now say those patients were low risk; the model’s success hides its own signal.</p>
 
     <div class="facets">
-      <p>A prediction that changes the outcome it predicts. In ML this is <strong>performative prediction</strong>. Lenert and colleagues put it bluntly: prognostic models will be victims of their own success.</p>
-      <p><strong class="lead">Why it matters.</strong> Two things go wrong. Monitoring sees PPV fall and calls the model broken when it is working. Retraining on post-deployment data learns that high-risk features predict few events, so the next model stops flagging the people who most need it.</p>
-      <p><strong class="lead">How to read it.</strong> If observed risk falls mainly among flagged patients, suspect the intervention, not decay. Compare flagged patients’ outcomes with what the model predicted for them <em>without</em> intervention, which needs a comparison group.</p>
-      <p><strong class="lead">When it changes.</strong> An intervention that halves risk among flagged patients halves the observed PPV. A PPV drop from 40% to 20% can mean the model is doing exactly what it was meant to do.</p>
+      <p>Sometimes a prediction changes the outcome it predicts. In ML this is <strong>performative prediction</strong>. Lenert and colleagues put it bluntly: prognostic models will be victims of their own success.</p>
+      <p>Two things go wrong. Monitoring sees PPV fall and calls the model broken when it is working. Retraining on post-deployment data learns that high-risk features predict few events, so the next model stops flagging the people who most need it.</p>
+      <p>The arithmetic is stark. An intervention that halves risk among flagged patients halves the observed PPV, so a PPV drop from 40% to 20% can mean the model is doing exactly what it was meant to do. If observed risk falls mainly among flagged patients, suspect the intervention, not decay. To tell them apart, compare flagged patients’ outcomes with what the model predicted for them <em>without</em> intervention, which needs a comparison group.</p>
     </div>
 
     <div class="widget" data-widget="feedback-loop">
@@ -282,9 +281,8 @@ m$month[which(m$cusum &gt; h)[1]]     # first alarm (NA if none)</code></pre>
     <p class="point">Drift rarely hits everyone equally, so monitor calibration, alert rates and actions in each group the tool serves, not just overall.</p>
 
     <div class="facets">
-      <p>Running the same monitoring by subgroup: sex, age, nationality, region, insurance or payer. Check calibration in each group (are risks right?), alert and action rates (who gets flagged, who gets treated), and outcomes.</p>
-      <p><strong class="lead">Why it matters.</strong> A model can be well calibrated overall and badly miscalibrated in a minority group, whose share of the data is too small to move the overall numbers.</p>
-      <p><strong class="lead">How to read it.</strong> Equal AUC across groups does not mean equal treatment: a group can be ranked well yet systematically under-predicted, so fewer of its members cross the alert threshold.</p>
+      <p>Equity monitoring runs the same monitoring by subgroup: sex, age, nationality, region, insurance or payer. Check calibration in each group (are risks right?), alert and action rates (who gets flagged, who gets treated), and outcomes.</p>
+      <p>The overall numbers can hide a problem. A model can be well calibrated overall and badly miscalibrated in a minority group, whose share of the data is too small to move the overall numbers. Equal AUC across groups does not mean equal treatment either: a group can be ranked well yet systematically under-predicted, so fewer of its members cross the alert threshold.</p>
     </div>
 
     <div class="callout example">
@@ -309,9 +307,9 @@ m$month[which(m$cusum &gt; h)[1]]     # first alarm (NA if none)</code></pre>
     <p class="point">A monitoring dashboard that nobody owns is decoration; write down before go-live who watches, what triggers action, and who may pause the tool.</p>
 
     <div class="facets">
-      <p>A monitoring plan with a named owner, the metrics and their limits, the cadence, the actions allowed (recalibrate, retrain, pause, roll back to the last version) and who signs each one off. Every update is versioned, and clinicians are told what changed.</p>
-      <p><strong class="lead">Why it matters.</strong> Regulators increasingly expect it. In the US, planned model updates go through a predetermined change control plan (Lecture 5.14). In Saudi Arabia, the SFDA’s guidance on AI/ML-enabled medical devices (MDS-G010, first issued January 2023) asks manufacturers for a post-market surveillance plan and continuous monitoring of safety, effectiveness and performance, because these devices can keep learning.</p>
-      <p><strong class="lead">How to read it.</strong> A good plan answers: who gets the alarm, within what time they must respond, and what happens to clinical use while they diagnose.</p>
+      <p>Governance means a monitoring plan with a named owner, the metrics and their limits, the cadence, the actions allowed (recalibrate, retrain, pause, roll back to the last version) and who signs each one off. Every update is versioned, and clinicians are told what changed.</p>
+      <p>Regulators increasingly expect it. In the US, planned model updates go through a predetermined change control plan (Lecture 5.14). In Saudi Arabia, the SFDA’s guidance on AI/ML-enabled medical devices (MDS-G010, first issued January 2023) asks manufacturers for a post-market surveillance plan and continuous monitoring of safety, effectiveness and performance, because these devices can keep learning.</p>
+      <p>A good plan answers three questions: who gets the alarm, within what time they must respond, and what happens to clinical use while they diagnose.</p>
     </div>
 
     <div class="callout example">

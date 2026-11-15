@@ -58,9 +58,9 @@
 
     <div class="facets">
       <p>Lecture 2.16 introduced <em>confounding by indication</em>. In practice it comes in three forms. <strong>Severity</strong>: sicker patients with the same diagnosis get more (or different) treatment. <strong>Contraindication and frailty</strong>: patients judged too fragile, too close to death or at high bleeding risk are not treated. <strong>Channelling</strong>: a new drug is steered towards a particular kind of patient, often those who did badly on older drugs.</p>
-      <p><strong class="lead">Why it matters.</strong> No statistical method adjusts for a reason that is not in the data. A propensity score balances only what you put into it. Design does more work than analysis: an active comparator (Lecture 5.2) removes most of the indication before any model runs.</p>
-      <p><strong class="lead">How to read it.</strong> For each study, write down why a clinician would choose treatment A over B in this patient, then check that each reason has a measured proxy before time zero. If the most important reason has no proxy, expect bias in a predictable direction.</p>
-      <p><strong class="lead">When it changes.</strong> If adding a crude severity proxy (say, vasopressor use) moves the hazard ratio from 0.70 to 0.85, the finer severity you could not measure would probably move it further. The direction of each adjustment step is informative.</p>
+      <p>No statistical method adjusts for a reason that is not in the data, and a propensity score balances only what you put into it. That is why design does more work than analysis: an active comparator (Lecture 5.2) removes most of the indication before any model runs.</p>
+      <p>So for each study, write down why a clinician would choose treatment A over B in this patient, then check that each reason has a measured proxy before time zero. If the most important reason has no proxy, expect bias in a predictable direction.</p>
+      <p>Watch which way each adjustment step moves the estimate, because the direction is informative. If adding a crude severity proxy (say, vasopressor use) moves the hazard ratio from 0.70 to 0.85, the finer severity you could not measure would probably move it further.</p>
     </div>
 
     <div class="callout example">
@@ -86,9 +86,8 @@
 
     <div class="facets">
       <p>The propensity score is each patient's probability of receiving treatment given measured covariates. Patients with the same score have, on average, the same covariate distribution in both groups (Rosenbaum and Rubin). You then compare like with like by matching, stratifying or weighting on it. Lecture 4.1 defined the estimands; Lecture 4.3 showed why weighting works.</p>
-      <p><strong class="lead">Why it matters.</strong> Each method reweights the cohort to resemble a different <em>target population</em>. The average treatment effect (ATE) is about everyone. The effect in the treated (ATT) is about patients like those who were treated. The effect in the overlap population (ATO) is about patients for whom treatment was a genuine toss-up.</p>
-      <p><strong class="lead">How to read it.</strong> A methods section should name the estimand in words ("the effect of anticoagulation among patients like those who received it"). If it names only the method, work out the estimand from the table below.</p>
-      <p><strong class="lead">When it changes.</strong> If the ATE and ATT differ a lot, the treatment effect varies with the patient's profile. That is a finding, not a failure.</p>
+      <p>The choice between those methods is not just technical. Each one reweights the cohort to resemble a different <em>target population</em>. The average treatment effect (ATE) is about everyone. The effect in the treated (ATT) is about patients like those who were treated. The effect in the overlap population (ATO) is about patients for whom treatment was a genuine toss-up.</p>
+      <p>So a methods section should name the estimand in words ("the effect of anticoagulation among patients like those who received it"). If it names only the method, work out the estimand from the table below. And if the ATE and ATT differ a lot, the treatment effect varies with the patient's profile. That is a finding, not a failure.</p>
     </div>
 
     <div class="table-wrap">
@@ -132,9 +131,8 @@ bal.tab(m_att, thresholds = c(m = 0.1))</code></pre>
 
     <div class="facets">
       <p>The <strong>standardised mean difference</strong> (SMD) is the difference in a covariate's mean between groups, divided by the pooled standard deviation. It does not depend on sample size, unlike a p-value. A <strong>love plot</strong> shows every covariate's SMD before and after adjustment on one chart.</p>
-      <p><strong class="lead">Why it matters.</strong> Balance is the checkable implication of the PS working. If a covariate is still imbalanced after weighting, the PS model is wrong (a missing interaction, a non-linear term) or the groups barely overlap.</p>
-      <p><strong class="lead">How to read it.</strong> An absolute SMD below 0.1 is the usual rule of thumb for adequate balance (Austin). Also check variance ratios (near 1) for continuous covariates; means can balance while spreads do not.</p>
-      <p><strong class="lead">When it changes.</strong> An SMD of 0.5 for SOFA before weighting means the treated and untreated groups differ by half a standard deviation of illness severity. Dropping to 0.03 after weighting means the weighted groups are as similar on SOFA as a randomised trial would usually be.</p>
+      <p>Balance is the checkable implication of the PS working. If a covariate is still imbalanced after weighting, the PS model is wrong (a missing interaction, a non-linear term) or the groups barely overlap.</p>
+      <p>An absolute SMD below 0.1 is the usual rule of thumb for adequate balance (Austin). For a sense of scale, an SMD of 0.5 for SOFA before weighting means the treated and untreated groups differ by half a standard deviation of illness severity; dropping to 0.03 after weighting means the weighted groups are as similar on SOFA as a randomised trial would usually be. Check variance ratios (near 1) for continuous covariates too, because means can balance while spreads do not.</p>
     </div>
 
     <div class="widget" data-widget="love-plot">
@@ -156,9 +154,9 @@ bal.tab(m_att, thresholds = c(m = 0.1))</code></pre>
 
     <div class="facets">
       <p>Extreme weights arise when some patients were almost certain to get, or not get, treatment. Three fixes: <strong>trimming</strong> (drop patients outside, say, 0.1–0.9, as Crump and colleagues proposed), <strong>truncation</strong> (cap weights at a percentile), and <strong>overlap weights</strong>, which give each patient the probability of the treatment they did <em>not</em> receive.</p>
-      <p><strong class="lead">Why it matters.</strong> Extreme weights signal a near-violation of <em>positivity</em> (Lecture 4.1): some patients effectively had no chance of the other treatment. Their effect is not identified by the data, only by extrapolation.</p>
-      <p><strong class="lead">How to read it.</strong> Report the weight range and the <strong>effective sample size</strong> (ESS): how many equally weighted patients the weighted sample is worth. An ESS of 300 from 1,000 untreated patients means you lost 70% of your information to weighting.</p>
-      <p><strong class="lead">When it changes.</strong> Every fix changes the estimand. After trimming, you estimate the effect in patients with scores between 0.1 and 0.9, not in everyone. That is often the more honest question, but you must say so.</p>
+      <p>Extreme weights are a warning, not just a nuisance. They signal a near-violation of <em>positivity</em> (Lecture 4.1): some patients effectively had no chance of the other treatment. Their effect is not identified by the data, only by extrapolation.</p>
+      <p>So report the weight range and the <strong>effective sample size</strong> (ESS): how many equally weighted patients the weighted sample is worth. An ESS of 300 from 1,000 untreated patients means you lost 70% of your information to weighting.</p>
+      <p>Every fix also changes the estimand. After trimming, you estimate the effect in patients with scores between 0.1 and 0.9, not in everyone. That is often the more honest question, but you must say so.</p>
     </div>
 
     <div class="widget" data-widget="weights-extreme">
@@ -189,8 +187,8 @@ bal.tab(m_att, thresholds = c(m = 0.1))</code></pre>
 
     <div class="facets">
       <p>Schneeweiss and colleagues (2009) proposed an automated way to add empirical covariates to a PS. Each code in the baseline period (a diagnosis, a procedure, a drug) may act as a proxy for frailty, severity or health-seeking behaviour. A code for "home oxygen" or "wheelchair" says a lot about a patient's health that no investigator would list in advance.</p>
-      <p><strong class="lead">Why it matters.</strong> In claims data the investigator-specified covariates often miss important confounding. Adding hundreds of proxies can recover some of it, without the analyst hand-picking which.</p>
-      <p><strong class="lead">How to read it.</strong> Prioritisation uses Bross's formula: a code can cause a lot of bias if it is much more common in one treatment group <em>and</em> strongly linked to the outcome. Codes that fail either test fall down the list.</p>
+      <p>This matters most in claims data, where the investigator-specified covariates often miss important confounding. Adding hundreds of proxies can recover some of it, without the analyst hand-picking which.</p>
+      <p>The codes are ranked with Bross's formula: a code can cause a lot of bias if it is much more common in one treatment group <em>and</em> strongly linked to the outcome. Codes that fail either test fall down the list.</p>
     </div>
 
     \[ \text{Bias}_M = \frac{P_{C1}\,(RR_{CD}-1)+1}{P_{C0}\,(RR_{CD}-1)+1} \]
@@ -275,9 +273,9 @@ bal.tab(m_att, thresholds = c(m = 0.1))</code></pre>
 
     <div class="facets">
       <p>Instead of ranking codes one at a time as hdPS does, fit a LASSO logistic model on every baseline covariate and let the penalty pick. Franklin and colleagues found this performed similarly to hdPS in claims data. The OHDSI <code>CohortMethod</code> package fits such "large-scale propensity scores" by default (Tian, Schuemie and Suchard).</p>
-      <p><strong class="lead">Why it matters.</strong> It scales to data models with thousands of concepts (Lecture 5.6) and removes analyst discretion over covariate choice, which makes studies more reproducible across databases.</p>
-      <p><strong class="lead">How to read it.</strong> Check balance on all covariates, not only the ones the model kept. A good large-scale PS leaves every covariate below an SMD of 0.1, and the paper reports how many exceeded it.</p>
-      <p><strong class="lead">When it changes.</strong> Flexible learners (random forests, boosting, Super Learner) capture non-linear treatment assignment but tend to push scores towards 0 and 1. Paired with IPTW, that inflates weights; paired with doubly robust estimators and cross-fitting (Lecture 4.4), it is far safer.</p>
+      <p>The appeal is scale and reproducibility. It scales to data models with thousands of concepts (Lecture 5.6) and removes analyst discretion over covariate choice, which makes studies more reproducible across databases.</p>
+      <p>Because the model does the choosing, check balance on all covariates, not only the ones it kept. A good large-scale PS leaves every covariate below an SMD of 0.1, and the paper reports how many exceeded it.</p>
+      <p>More flexible learners bring a different risk. Random forests, boosting and Super Learner capture non-linear treatment assignment but tend to push scores towards 0 and 1. Paired with IPTW, that inflates weights; paired with doubly robust estimators and cross-fitting (Lecture 4.4), it is far safer.</p>
     </div>
 
     <div class="callout trap">
@@ -294,8 +292,8 @@ bal.tab(m_att, thresholds = c(m = 0.1))</code></pre>
 
     <div class="facets">
       <p>A <strong>negative control outcome</strong> shares the confounders of your real outcome but cannot be caused by the treatment. A <strong>negative control exposure</strong> shares the confounders of your real exposure but cannot cause the outcome (Lipsitch, Tchetgen Tchetgen and Cohen).</p>
-      <p><strong class="lead">Why it matters.</strong> Balance diagnostics only check measured covariates. Negative controls are one of the few empirical checks on <em>unmeasured</em> ones. Large network studies now run dozens of them and use the spread of their estimates to recalibrate confidence intervals (<em>empirical calibration</em>, Schuemie and colleagues).</p>
-      <p><strong class="lead">How to read it.</strong> A negative control estimate near 1 is reassuring but not proof: the control may not share all the confounders. An estimate far from 1 is strong evidence of bias, and its direction tells you which way your main result is likely pushed.</p>
+      <p>They fill the gap balance diagnostics leave, because those only check measured covariates. Negative controls are one of the few empirical checks on <em>unmeasured</em> ones. Large network studies now run dozens of them and use the spread of their estimates to recalibrate confidence intervals (<em>empirical calibration</em>, Schuemie and colleagues).</p>
+      <p>Read the two possible results differently. A negative control estimate near 1 is reassuring but not proof: the control may not share all the confounders. An estimate far from 1 is strong evidence of bias, and its direction tells you which way your main result is likely pushed.</p>
     </div>
 
     <figure class="diagram">

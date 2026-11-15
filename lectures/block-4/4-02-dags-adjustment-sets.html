@@ -58,9 +58,8 @@
 
     <div class="facets">
       <p>A <strong>path</strong> is any sequence of edges joining two variables, ignoring arrow direction. Two variables are <strong>d-separated</strong> by a set \(Z\) when every path between them is blocked. A path is blocked if it passes through a non-collider that is in \(Z\), or through a collider that is not in \(Z\) and has no descendant in \(Z\).</p>
-      <p><strong class="lead">Why it matters.</strong> d-separation is the bridge from a drawing to the data: if the DAG is right, d-separated variables are independent given \(Z\). That is what makes “adjusting for \(Z\) removes confounding” a checkable claim about the graph rather than a hope.</p>
-      <p><strong class="lead">How to read it.</strong> Walk each path node by node. At a chain (→ M →) or fork (← C →), the path is open unless you condition on the middle node. At a collider (→ K ←), it is closed unless you condition on K or anything K causes.</p>
-      <p><strong class="lead">When it changes.</strong> Adding one variable to \(Z\) can close some paths and open others at the same time. That is why “adjust for more” is not a monotone improvement.</p>
+      <p>In practice you walk each path node by node. At a chain (→ M →) or fork (← C →), the path is open unless you condition on the middle node. At a collider (→ K ←), it is closed unless you condition on K or anything K causes.</p>
+      <p>This is the bridge from a drawing to the data: if the DAG is right, d-separated variables are independent given \(Z\). That is what makes “adjusting for \(Z\) removes confounding” a checkable claim about the graph rather than a hope. It also explains why “adjust for more” is not a monotone improvement: adding one variable to \(Z\) can close some paths and open others at the same time.</p>
     </div>
 
     <div class="table-wrap">
@@ -88,9 +87,9 @@
 
     <div class="facets">
       <p>A <strong>backdoor path</strong> starts with an arrow <em>into</em> the treatment. The <strong>backdoor criterion</strong> says a set \(Z\) is sufficient for the total effect of A on Y if (1) no member of \(Z\) is a descendant of A, and (2) \(Z\) blocks every backdoor path. A <strong>minimal sufficient set</strong> is a sufficient set from which no variable can be removed.</p>
-      <p><strong class="lead">Why it matters.</strong> It turns “which confounders?” into a question with an answer, given the DAG. It also shows there is often more than one valid answer, so you can choose the set whose variables are best measured, least missing or cheapest to collect.</p>
-      <p><strong class="lead">How to read it.</strong> Sufficiency is a property of the whole set, not of single variables. A variable can be needed in one set and unnecessary in another. If a minimal set contains a variable you did not measure, look for an alternative set that avoids it before giving up.</p>
-      <p><strong class="lead">When it changes.</strong> Adding a pure cause of the outcome to a sufficient set keeps it sufficient and usually improves precision. Adding a pure cause of the treatment keeps it sufficient but costs precision (section 4).</p>
+      <p>This turns “which confounders?” into a question with an answer, given the DAG. It also shows there is often more than one valid answer, so you can choose the set whose variables are best measured, least missing or cheapest to collect.</p>
+      <p>Sufficiency is a property of the whole set, not of single variables, so a variable can be needed in one set and unnecessary in another. If a minimal set contains a variable you did not measure, look for an alternative set that avoids it before giving up.</p>
+      <p>Extra variables are not all equal. Adding a pure cause of the outcome to a sufficient set keeps it sufficient and usually improves precision. Adding a pure cause of the treatment keeps it sufficient but costs precision (section 4).</p>
     </div>
 
     <div class="widget" data-widget="dag-adjustment">
@@ -129,9 +128,8 @@ impliedConditionalIndependencies(g)    # what the data should show if g is right
 
     <div class="facets">
       <p>A <strong>mediator</strong> lies on a causal path (Anticoag → Major bleed → Death). A <strong>descendant of treatment</strong> is anything downstream of it, including variables that are also caused by other factors (Transfusion, caused by bleeding and by severity). Conditioning on such a variable can open a collider path between treatment and an outcome cause.</p>
-      <p><strong class="lead">Why it matters.</strong> In clinical data, post-treatment variables look like ordinary covariates: day-3 creatinine, transfusion, length of stay. Adjusting for them “to account for how sick patients became” is one of the commonest errors in EHR studies, and it can push an estimate in either direction.</p>
-      <p><strong class="lead">How to read it.</strong> For each covariate, ask: could the treatment have changed it? If yes, and you want the total effect, leave it out. If you want a direct effect, that is a different estimand with its own assumptions (Lecture 4.10).</p>
-      <p><strong class="lead">When it changes.</strong> An estimate that moves towards the null when you add a post-treatment variable is not “more conservative”; it answers a different, usually ill-defined, question.</p>
+      <p>The danger is that in clinical data, post-treatment variables look like ordinary covariates: day-3 creatinine, transfusion, length of stay. Adjusting for them “to account for how sick patients became” is one of the commonest errors in EHR studies, and it can push an estimate in either direction.</p>
+      <p>So for each covariate, ask: could the treatment have changed it? If yes, and you want the total effect, leave it out. If you want a direct effect, that is a different estimand with its own assumptions (Lecture 4.10). And an estimate that moves towards the null when you add a post-treatment variable is not “more conservative”; it answers a different, usually ill-defined, question.</p>
     </div>
 
     <div class="callout trap">
@@ -152,9 +150,8 @@ impliedConditionalIndependencies(g)    # what the data should show if g is right
 
     <div class="facets">
       <p><strong>M-bias</strong>: a pre-treatment variable that is a collider between an unmeasured cause of treatment and an unmeasured cause of the outcome; adjusting for it opens a path. An <strong>instrument</strong> affects the outcome only through treatment (prescriber preference, distance to a specialist centre). Adjusting for an instrument closes no backdoor path, increases variance, and amplifies any confounding that remains: <strong>bias amplification</strong>.</p>
-      <p><strong class="lead">Why it matters.</strong> The two traps pull in opposite directions from the advice “adjust for all pre-treatment variables”. Knowing when they matter stops you from both over-adjusting and using them as an excuse to drop real confounders.</p>
-      <p><strong class="lead">How to read it.</strong> Greenland (2003) and Ding and Miratrix (2015) showed M-bias is usually small unless the links are very strong, and that when the M-variable is also a confounder (the “butterfly”), adjusting usually leaves less bias. Bias amplification grows with the instrument’s strength and with how much confounding is left unmeasured (Myers and colleagues, 2011).</p>
-      <p><strong class="lead">When it changes.</strong> If adding a strong predictor of treatment that has no plausible link to the outcome moves your estimate a lot, suspect amplification of residual confounding, not newly removed bias.</p>
+      <p>The two traps pull in opposite directions from the advice “adjust for all pre-treatment variables”. Knowing when they matter stops you from over-adjusting, and also from using them as an excuse to drop real confounders.</p>
+      <p>Their size is what decides it. Greenland (2003) and Ding and Miratrix (2015) showed M-bias is usually small unless the links are very strong, and that when the M-variable is also a confounder (the “butterfly”), adjusting usually leaves less bias. Bias amplification grows with the instrument’s strength and with how much confounding is left unmeasured (Myers and colleagues, 2011). So if adding a strong predictor of treatment that has no plausible link to the outcome moves your estimate a lot, suspect amplification of residual confounding, not newly removed bias.</p>
     </div>
 
     <figure class="diagram">
@@ -265,8 +262,7 @@ impliedConditionalIndependencies(g)    # what the data should show if g is right
 
     <div class="facets">
       <p>Pearl’s <strong>front-door criterion</strong>: if a mediator M intercepts every causal path from A to Y, nothing unmeasured confounds A and M, and every backdoor path from M to Y is blocked by A, then you can estimate A → M, then M → Y adjusting for A, and chain them. Pearl’s textbook example is smoking → tar in the lungs → cancer, with unmeasured genotype confounding smoking and cancer.</p>
-      <p><strong class="lead">Why it matters.</strong> It shows identification is not only “adjust for confounders”: a different set of assumptions about the graph can identify an effect that the backdoor route cannot.</p>
-      <p><strong class="lead">How to read it.</strong> Its conditions are strong and rarely all believable in epidemiology: the treatment must have no effect except through M, and M must be unconfounded with Y. Treat front-door claims with the same scrutiny as an instrument (Lecture 4.9).</p>
+      <p>The idea shows that identification is not only “adjust for confounders”: a different set of assumptions about the graph can identify an effect that the backdoor route cannot. But its conditions are strong and rarely all believable in epidemiology: the treatment must have no effect except through M, and M must be unconfounded with Y. Treat front-door claims with the same scrutiny as an instrument (Lecture 4.9).</p>
     </div>
 
     <div class="callout trap">
@@ -282,12 +278,13 @@ impliedConditionalIndependencies(g)    # what the data should show if g is right
 
     <div class="facets">
       <p>Treatment is decided repeatedly (A0, A1, …), and a time-varying covariate L1 sits between decisions: A0 affects L1, and L1 affects both A1 and the outcome. This is <strong>treatment–confounder feedback</strong>. Adjusting for L1 blocks part of A0’s effect and can open a collider path through unmeasured causes of L1; not adjusting leaves A1 confounded.</p>
-      <p><strong class="lead">Why it matters.</strong> It is the normal situation in ICU and chronic-disease data. In Project 5A, daily anticoagulation decisions depend on platelet count and bleeding signs, which are themselves affected by earlier heparin. A Cox model with time-varying platelets cannot give the effect of “anticoagulate throughout”.</p>
-      <p><strong class="lead">How to read it.</strong> Look for any covariate measured after baseline that both drives later treatment and could have been changed by earlier treatment. If you find one, the analysis needs inverse probability weighting of a marginal structural model or the g-formula (Lecture 4.3), or a design that fixes treatment at baseline (Lecture 4.5).</p>
+      <p>This is the normal situation in ICU and chronic-disease data. In Project 5A, daily anticoagulation decisions depend on platelet count and bleeding signs, which are themselves affected by earlier heparin. A Cox model with time-varying platelets cannot give the effect of “anticoagulate throughout”.</p>
+      <p>So look for any covariate measured after baseline that both drives later treatment and could have been changed by earlier treatment. If you find one, the analysis needs inverse probability weighting of a marginal structural model or the g-formula (Lecture 4.3), or a design that fixes treatment at baseline (Lecture 4.5).</p>
     </div>
 
     <div class="facets">
-      <p><strong class="lead">SWIGs.</strong> <strong>Single-world intervention graphs</strong> (Richardson and Robins, 2013) split each treatment node into what was observed and what is set by the intervention, so potential outcomes appear on the graph. You can then read conditions such as “\(Y(a)\) is independent of A given L” straight off it by d-separation. They are most useful for time-varying and dynamic strategies (“start anticoagulation if platelets stay above a threshold”).</p>
+      <p><strong>Single-world intervention graphs</strong> (SWIGs; Richardson and Robins, 2013) split each treatment node into what was observed and what is set by the intervention, so potential outcomes appear on the graph.</p>
+      <p>You can then read conditions such as “\(Y(a)\) is independent of A given L” straight off it by d-separation. That makes them most useful for time-varying and dynamic strategies (“start anticoagulation if platelets stay above a threshold”).</p>
     </div>
 
     <div class="callout trap">
@@ -303,9 +300,8 @@ impliedConditionalIndependencies(g)    # what the data should show if g is right
 
     <div class="facets">
       <p>Start from treatment and outcome. Add every common cause of any two variables already on the graph, measured or not; a causal DAG must include them. Order variables in time. Then use the graph to find adjustment sets, and the data only to check the independencies it implies.</p>
-      <p><strong class="lead">Why it matters.</strong> Tennant and colleagues (2021) reviewed 234 health studies that used DAGs: only 62% showed at least one DAG, about half reported the adjustment set it implied, and about a fifth stated their estimand. A DAG in the supplement with a matching adjustment set is a reasonable reviewer request.</p>
-      <p><strong class="lead">How to read it.</strong> The missing arrows are the claims. Every pair of nodes with no arrow asserts no direct effect. Check the ones a clinician would dispute. If you are unsure about an arrow, draw both versions and see whether the adjustment set changes; often it does not.</p>
-      <p><strong class="lead">When it changes.</strong> If <code>localTests</code> shows a strong dependence the DAG says should not exist, an arrow or a common cause is missing. Fix the graph from subject knowledge, not by deleting the test.</p>
+      <p>When you read a DAG, remember that the missing arrows are the claims. Every pair of nodes with no arrow asserts no direct effect, so check the ones a clinician would dispute. If you are unsure about an arrow, draw both versions and see whether the adjustment set changes; often it does not. And if <code>localTests</code> shows a strong dependence the DAG says should not exist, an arrow or a common cause is missing. Fix the graph from subject knowledge, not by deleting the test.</p>
+      <p>Few papers do this well yet. Tennant and colleagues (2021) reviewed 234 health studies that used DAGs: only 62% showed at least one DAG, about half reported the adjustment set it implied, and about a fifth stated their estimand. A DAG in the supplement with a matching adjustment set is a reasonable reviewer request.</p>
     </div>
 
     <div class="callout gulf">

@@ -57,9 +57,9 @@
     <p class="point">Three design features each break a different part of a naive analysis: weights affect the estimate, clusters and strata affect its standard error.</p>
 
     <div class="facets">
-      <p>Most national surveys use a <strong>multistage</strong> design: divide the country into <strong>strata</strong> (regions, urban/rural), pick a few <strong>primary sampling units</strong> (PSUs, such as counties or census blocks) in each, then households within PSUs, then people within households. Some groups are deliberately sampled more (oversampling) so they can be studied on their own.</p>
-      <p><strong class="lead">Why it matters.</strong> Visiting a few areas is far cheaper than scattering interviews across the country, and oversampling buys precision for small groups. The price is that people are no longer equally likely to be chosen, nor independent of each other.</p>
-      <p><strong class="lead">How to read it.</strong> In a survey paper’s methods, look for the words “weighted”, “accounting for strata and clusters” and the software (R survey, Stata <code>svy</code>, SAS <code>PROC SURVEY</code>). Missing any of the three is a reviewer comment.</p>
+      <p>Most national surveys use a <strong>multistage</strong> design. They divide the country into <strong>strata</strong> (regions, urban/rural), pick a few <strong>primary sampling units</strong> (PSUs, such as counties or census blocks) in each, then households within PSUs, then people within households. Some groups are deliberately sampled more (oversampling) so they can be studied on their own.</p>
+      <p>The design is a trade. Visiting a few areas is far cheaper than scattering interviews across the country, and oversampling buys precision for small groups. The price is that people are no longer equally likely to be chosen, nor independent of each other.</p>
+      <p>So in a survey paper’s methods, look for the words “weighted”, “accounting for strata and clusters” and the software (R survey, Stata <code>svy</code>, SAS <code>PROC SURVEY</code>). Missing any of the three is a reviewer comment.</p>
     </div>
 
     <div class="table-wrap">
@@ -164,10 +164,9 @@
     <p class="point">A person’s weight is the number of people in the population they stand for; it undoes unequal selection and non-response.</p>
 
     <div class="facets">
-      <p>Three layers multiplied together. <strong>Design weight</strong>: 1 / probability of selection. <strong>Non-response adjustment</strong>: inflate the weights of respondents who resemble the non-respondents. <strong>Post-stratification</strong> (or calibration): scale weights so totals by age, sex and ethnicity match the census.</p>
-      <p><strong class="lead">Why it matters.</strong> Oversampled groups are over-represented in the raw data. If they differ on the outcome, any unweighted mean or prevalence drifts towards them.</p>
-      <p><strong class="lead">How to read it.</strong> Weights sum to the population size. A weight of 20,000 means this person represents 20,000 people. The more the weights vary, the more precision you lose: the weighting design effect is about 1 + (coefficient of variation of the weights)².</p>
-      <p><strong class="lead">When it changes.</strong> If weighted and unweighted means differ a lot, the oversampled groups differ on the outcome, and the weights are doing real work. If they barely differ, weights cost precision but change little.</p>
+      <p>A survey weight is three layers multiplied together. The <strong>design weight</strong> is 1 / probability of selection. The <strong>non-response adjustment</strong> inflates the weights of respondents who resemble the non-respondents. <strong>Post-stratification</strong> (or calibration) scales weights so totals by age, sex and ethnicity match the census.</p>
+      <p>Weights sum to the population size, so a weight of 20,000 means this person represents 20,000 people. Without them, oversampled groups are over-represented in the raw data, and if they differ on the outcome, any unweighted mean or prevalence drifts towards them.</p>
+      <p>Weighting has a cost, though. The more the weights vary, the more precision you lose: the weighting design effect is about 1 + (coefficient of variation of the weights)². If weighted and unweighted means differ a lot, the oversampled groups differ on the outcome and the weights are doing real work. If they barely differ, weights cost precision but change little.</p>
     </div>
 
     <div class="widget" data-widget="survey-weights">
@@ -199,9 +198,8 @@
     <div class="facets">
       <p>The <strong>design effect</strong> (Deff) is the variance of an estimate under the actual design divided by its variance under a simple random sample of the same size. For cluster sampling with \(m\) people per cluster and intra-cluster correlation \(\rho\) (how alike people in the same cluster are, 0 to 1):
         \[ \text{Deff} \approx 1 + (m - 1)\,\rho \]</p>
-      <p><strong class="lead">Why it matters.</strong> The <strong>effective sample size</strong> is n / Deff. A survey of 6,000 people with Deff 3 carries the information of 2,000 independent ones. Standard errors grow by √Deff.</p>
-      <p><strong class="lead">How to read it.</strong> Deff near 1: little clustering. Deff of 1.5–3 is common in household health surveys. Even a tiny ρ matters with big clusters: ρ = 0.05 and 21 people per cluster gives Deff = 2.</p>
-      <p><strong class="lead">When it changes.</strong> Halving people per cluster (and doubling clusters) cuts Deff, which is why survey designers trade fieldwork cost against cluster size. Stratification works the other way, nudging Deff below what clustering alone would give.</p>
+      <p>It tells you how much information the sample really holds. The <strong>effective sample size</strong> is n / Deff, so a survey of 6,000 people with Deff 3 carries the information of 2,000 independent ones, and standard errors grow by √Deff. A Deff near 1 means little clustering; 1.5–3 is common in household health surveys. Even a tiny ρ matters with big clusters: ρ = 0.05 and 21 people per cluster gives Deff = 2.</p>
+      <p>That’s why survey designers trade fieldwork cost against cluster size: halving people per cluster (and doubling clusters) cuts Deff. Stratification works the other way, nudging Deff below what clustering alone would give.</p>
     </div>
 
     <div class="widget" data-widget="survey-deff">
@@ -233,9 +231,9 @@ svymean(~sbp, des, na.rm = TRUE, deff = TRUE)</code></pre>
     <p class="point">Two ways to get design-based standard errors: Taylor linearisation uses strata and PSUs directly; replicate weights re-estimate the statistic many times with PSUs dropped or reweighted.</p>
 
     <div class="facets">
-      <p><strong>Taylor linearisation</strong> approximates the statistic as a weighted sum and computes its variance from between-PSU variation within strata. It is the sandwich estimator of Lecture 3.3 applied to the design. <strong>Replicate weights</strong> (jackknife, balanced repeated replication, bootstrap) are columns of altered weights; the spread of the estimate across them is the variance.</p>
-      <p><strong class="lead">Why it matters.</strong> Some data providers release replicate weights instead of strata and PSUs, to protect confidentiality. Replicates also handle awkward statistics (medians, percentiles, ratios) without new formulas.</p>
-      <p><strong class="lead">How to read it.</strong> The two approaches usually agree closely. Use what the documentation recommends. The design degrees of freedom are roughly the number of PSUs minus the number of strata: for one two-year NHANES cycle that is about 15, not thousands, so intervals use t on few degrees of freedom.</p>
+      <p>There are two ways to get design-based variances. <strong>Taylor linearisation</strong> approximates the statistic as a weighted sum and computes its variance from between-PSU variation within strata. It is the sandwich estimator of Lecture 3.3 applied to the design. <strong>Replicate weights</strong> (jackknife, balanced repeated replication, bootstrap) are columns of altered weights; the spread of the estimate across them is the variance.</p>
+      <p>The two usually agree closely, so use what the documentation recommends. Some data providers release replicate weights instead of strata and PSUs, to protect confidentiality, and replicates also handle awkward statistics (medians, percentiles, ratios) without new formulas.</p>
+      <p>Either way, watch the degrees of freedom. The design degrees of freedom are roughly the number of PSUs minus the number of strata: for one two-year NHANES cycle that is about 15, not thousands, so intervals use t on few degrees of freedom.</p>
     </div>
 
 <pre><code>rep_des <- as.svrepdesign(des, type = "JKn")   # jackknife replicates from PSUs
@@ -261,8 +259,7 @@ svyquantile(~sbp, des, quantiles = c(0.5, 0.9), na.rm = TRUE)</code></pre>
 
     <div class="facets">
       <p>A <strong>domain</strong> (subpopulation) analysis keeps every PSU in the variance calculation and gives people outside the domain zero contribution. <code>subset(design, ...)</code> does this; filtering the data frame first does not.</p>
-      <p><strong class="lead">Why it matters.</strong> The number of people in a domain who land in the sample is itself random, and that randomness belongs in the standard error. Filtering first also drops PSUs that happen to have no domain members, which leaves strata with one PSU and breaks the variance formula.</p>
-      <p><strong class="lead">How to read it.</strong> Point estimates are identical either way; only the standard errors differ. If a paper says “we restricted the dataset to adults aged 20 and over and then applied survey weights”, ask how.</p>
+      <p>The difference is only in the standard errors; point estimates are identical either way. The number of people in a domain who land in the sample is itself random, and that randomness belongs in the standard error. Filtering first also drops PSUs that happen to have no domain members, which leaves strata with one PSU and breaks the variance formula. So if a paper says “we restricted the dataset to adults aged 20 and over and then applied survey weights”, ask how.</p>
     </div>
 
 <pre><code>adults <- subset(des, RIDAGEYR >= 20 & !is.na(nak_ratio))
@@ -282,8 +279,8 @@ svytable(~htn + RIAGENDR, adults)                       # weighted counts</code>
 
     <div class="facets">
       <p>NHANES releases several weights: interview (<code>WTINT2YR</code>), examination (<code>WTMEC2YR</code>), and subsample weights for fasting labs, dietary recalls or special urine tests. NCHS’s rule is the “least common denominator”: use the weight of the variable collected on the smallest number of people.</p>
-      <p><strong class="lead">Why it matters.</strong> Each weight is built for the people who took part in that component. Using the exam weight on a subsample variable misrepresents who the subsample stands for.</p>
-      <p><strong class="lead">How to read it.</strong> To pool two-year cycles from 2001–2002 on, divide each cycle’s two-year weight by the number of cycles. For analyses including 1999–2000, start from the four-year 1999–2002 weight (<code>WTMEC4YR</code>) and give it 2/n. The 2017–March 2020 pre-pandemic file covers 3.2 years, so combined with 2015–2016 the shares are 2/5.2 and 3.2/5.2. NCHS advises against pooling the August 2021–August 2023 cycle with earlier ones.</p>
+      <p>Each weight is built for the people who took part in that component, so using the exam weight on a subsample variable misrepresents who the subsample stands for.</p>
+      <p>Pooling cycles needs its own arithmetic. To pool two-year cycles from 2001–2002 on, divide each cycle’s two-year weight by the number of cycles. For analyses including 1999–2000, start from the four-year 1999–2002 weight (<code>WTMEC4YR</code>) and give it 2/n. The 2017–March 2020 pre-pandemic file covers 3.2 years, so combined with 2015–2016 the shares are 2/5.2 and 3.2/5.2. NCHS advises against pooling the August 2021–August 2023 cycle with earlier ones.</p>
     </div>
 
 <pre><code>pooled <- bind_rows(n1516, n17p) |>
@@ -307,8 +304,8 @@ des <- svydesign(ids = ~SDMVPSU, strata = ~SDMVSTRA, weights = ~wt,
 
     <div class="facets">
       <p><code>svyglm</code> and <code>svycoxph</code> fit GLMs and Cox models with design-based standard errors. Use <code>quasibinomial()</code> or <code>quasipoisson()</code> families, since weighted data are not counts.</p>
-      <p><strong class="lead">Why it matters.</strong> For descriptive estimates, weighting is not optional. For associations it is debated: an unweighted model adjusted for the design variables can be more precise, but only if it is correctly specified. Weighting targets the population-average association even when it is not.</p>
-      <p><strong class="lead">How to read it.</strong> If weighted and unweighted coefficients differ markedly, the effect probably varies across the oversampled groups; look for an interaction (DuMouchel and Duncan’s point). Use Wald tests (<code>regTermTest</code>) rather than AIC or ordinary likelihood-ratio tests, which do not apply to weighted pseudo-likelihoods.</p>
+      <p>For descriptive estimates, weighting is not optional. For associations it is debated: an unweighted model adjusted for the design variables can be more precise, but only if it is correctly specified. Weighting targets the population-average association even when it is not.</p>
+      <p>So if weighted and unweighted coefficients differ markedly, the effect probably varies across the oversampled groups, and you should look for an interaction (DuMouchel and Duncan’s point). For tests, use Wald tests (<code>regTermTest</code>) rather than AIC or ordinary likelihood-ratio tests, which do not apply to weighted pseudo-likelihoods.</p>
     </div>
 
 <pre><code>fit <- svyglm(htn ~ nak_q + RIDAGEYR + RIAGENDR, design = adults,

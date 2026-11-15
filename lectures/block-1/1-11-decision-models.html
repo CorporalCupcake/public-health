@@ -56,9 +56,9 @@
     <p class="point">A decision model links what we know (intake, blood pressure effects, disease rates, costs) to what we want to know (deaths, DALYs and costs averted over a lifetime) when no single study can measure it.</p>
 
     <div class="facets">
-      <p>A simplified map of how people move between health states, with costs and health values attached to each state. You run the population through it twice, with and without the intervention, and take the difference.</p>
-      <p><strong class="lead">Why it matters.</strong> Trials are short, small and in selected people. Policy needs lifetime outcomes, the whole population, every relevant comparator and all the evidence at once. A model is the only place those come together.</p>
-      <p><strong class="lead">How to tell a good one.</strong> It is as simple as the decision allows, every input has a source, and the structure follows the disease rather than whichever data were easy to find.</p>
+      <p>A decision model is a simplified map of how people move between health states, with costs and health values attached to each state. You run the population through it twice, with and without the intervention, and take the difference.</p>
+      <p>Trials can’t do this job alone. They are short, small and in selected people, while policy needs lifetime outcomes, the whole population, every relevant comparator and all the evidence at once. A model is the only place those come together.</p>
+      <p>A good one is as simple as the decision allows, every input has a source, and the structure follows the disease rather than whichever data were easy to find.</p>
     </div>
 
     <div class="callout trap">
@@ -74,9 +74,9 @@
     <p class="point">A decision tree lays out each option, the chance events that follow it and the final outcome of each path, then averages the paths by their probabilities.</p>
 
     <div class="facets">
-      <p>Three kinds of node: a <strong>decision</strong> (which option), <strong>chance</strong> (what happens, with probabilities) and <strong>terminal</strong> (the cost and health at the end). The expected value of each option is the probability-weighted average of its paths.</p>
-      <p><strong class="lead">Why it matters.</strong> It is transparent and fast. It suits short horizons and one-off events, such as whether to test, how accurate the test is, and what treatment follows.</p>
-      <p><strong class="lead">Where it breaks.</strong> Time and repeated events. A chronic disease where people can have a stroke, recover, have another and die, year after year, makes the tree branch without end.</p>
+      <p>A tree has three kinds of node: a <strong>decision</strong> (which option), <strong>chance</strong> (what happens, with probabilities) and <strong>terminal</strong> (the cost and health at the end). The expected value of each option is the probability-weighted average of its paths.</p>
+      <p>That makes it transparent and fast. It suits short horizons and one-off events, such as whether to test, how accurate the test is, and what treatment follows.</p>
+      <p>It breaks on time and repeated events. A chronic disease where people can have a stroke, recover, have another and die, year after year, makes the tree branch without end.</p>
     </div>
 
     <figure class="diagram">
@@ -139,9 +139,9 @@
 
     <div class="facets">
       <p>Each cycle, a share of the cohort moves along each arrow. Each state carries a cost and a health weight per cycle. Adding these up over all cycles, and discounting (Lecture 1.10), gives lifetime costs and QALYs or DALYs.</p>
-      <p><strong class="lead">Why it matters.</strong> It handles time, ageing and repeated events with a small, readable structure. It is the workhorse of health technology assessment.</p>
-      <p><strong class="lead">How to read it.</strong> Draw the state diagram first; a reviewer should be able to follow every arrow. Transition probabilities usually depend on age, so the model reads from a table as the cohort gets older.</p>
-      <p><strong class="lead">When it changes.</strong> An intervention works by changing an arrow. Lowering the well-to-stroke probability by 10% keeps more of the cohort in “well”, where costs are low and health is high, for every remaining cycle.</p>
+      <p>This handles time, ageing and repeated events with a small, readable structure, which is why it is the workhorse of health technology assessment.</p>
+      <p>Draw the state diagram first; a reviewer should be able to follow every arrow. Transition probabilities usually depend on age, so the model reads from a table as the cohort gets older.</p>
+      <p>An intervention works by changing an arrow. Lowering the well-to-stroke probability by 10% keeps more of the cohort in “well”, where costs are low and health is high, for every remaining cycle.</p>
     </div>
 
     <div class="widget" data-widget="markov-cohort">
@@ -170,9 +170,9 @@
 
     <div class="facets">
       <p>Everyone in “post-stroke” is treated alike, whether their stroke was last month or ten years ago, or was their first or third. The model has no memory of history.</p>
-      <p><strong class="lead">Why it matters.</strong> Many risks depend on history. The risk of death or a repeat event is highest soon after a stroke or heart attack and falls with time. A memoryless model averages this out and gets timing wrong.</p>
-      <p><strong class="lead">How to fix it.</strong> Three standard fixes. <strong>Tunnel states</strong>: split “post-stroke” into “first year after stroke” and “later years”. <strong>Time-varying transitions</strong>: let probabilities depend on age or model time. <strong>Microsimulation</strong>: simulate individuals, who can carry their history.</p>
-      <p><strong class="lead">When it changes.</strong> Adding a tunnel state for the high-risk first year usually moves deaths earlier. That changes discounted results, even if total deaths barely change.</p>
+      <p>That is a problem, because many risks depend on history. The risk of death or a repeat event is highest soon after a stroke or heart attack and falls with time. A memoryless model averages this out and gets timing wrong.</p>
+      <p>There are three standard fixes. <strong>Tunnel states</strong> split “post-stroke” into “first year after stroke” and “later years”. <strong>Time-varying transitions</strong> let probabilities depend on age or model time. <strong>Microsimulation</strong> simulates individuals, who can carry their history.</p>
+      <p>The fix can matter even when totals don’t. Adding a tunnel state for the high-risk first year usually moves deaths earlier, and that changes discounted results, even if total deaths barely change.</p>
     </div>
 
     <div class="callout trap">
@@ -198,9 +198,9 @@
 
     <div class="facets">
       <p>A <strong>main life table</strong> (Lecture 1.5) follows each sex and age cohort to death, tracking all-cause mortality and illness. Beside it run <strong>disease life tables</strong>, one per disease (stroke, heart disease and so on), each a three-state Markov model: well, diseased, dead from the disease. An intervention lowers disease incidence through a potential impact fraction (Lecture 1.7). Fewer cases mean fewer disease deaths and less illness, and these changes flow into the main table.</p>
-      <p><strong class="lead">Why it matters.</strong> It models a whole population and many diseases at once, from the inputs GBD already provides (incidence, prevalence, case fatality, disability weights). That fits risk-factor policies like salt, which shift a whole distribution and affect several diseases. Salt-policy models from New Zealand (the BODE3 programme) and Australia (ACE-Prevention) use this design.</p>
-      <p><strong class="lead">Why “proportional”.</strong> Diseases are treated as independent: the chance of having stroke doesn’t change your chance of having heart disease, beyond what both share through age. This lets each disease be modelled separately and keeps the model small.</p>
-      <p><strong class="lead">How to read the output.</strong> Differences between the intervention and business-as-usual runs: deaths averted, life-years and health-adjusted life-years (HALYs, a QALY-like measure from disability weights) gained, and health care costs averted, by sex, age and year.</p>
+      <p>The design is called “proportional” because diseases are treated as independent: the chance of having stroke doesn’t change your chance of having heart disease, beyond what both share through age. This lets each disease be modelled separately and keeps the model small.</p>
+      <p>So it can model a whole population and many diseases at once, from the inputs GBD already provides (incidence, prevalence, case fatality, disability weights). That fits risk-factor policies like salt, which shift a whole distribution and affect several diseases. Salt-policy models from New Zealand (the BODE3 programme) and Australia (ACE-Prevention) use this design.</p>
+      <p>The output is the difference between the intervention and business-as-usual runs: deaths averted, life-years and health-adjusted life-years (HALYs, a QALY-like measure from disability weights) gained, and health care costs averted, by sex, age and year.</p>
     </div>
 
     <figure class="diagram">
@@ -291,8 +291,8 @@
     </div>
 
     <div class="facets">
-      <p><strong class="lead">Why it matters.</strong> Reviewers and decision-makers trust a model only as far as its validation goes. Good practice guidance (ISPOR–SMDM) expects you to report what was done.</p>
-      <p><strong class="lead">How to read it.</strong> Business-as-usual should reproduce the baseline: the model’s life expectancy and cardiovascular deaths for Saudi Arabia should match the official or GBD figures it started from. Large gaps mean a bug or inconsistent inputs.</p>
+      <p>Reviewers and decision-makers trust a model only as far as its validation goes, and good practice guidance (ISPOR–SMDM) expects you to report what was done.</p>
+      <p>The basic check is that business-as-usual reproduces the baseline: the model’s life expectancy and cardiovascular deaths for Saudi Arabia should match the official or GBD figures it started from. Large gaps mean a bug or inconsistent inputs.</p>
     </div>
 
     <div class="callout trap">

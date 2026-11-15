@@ -56,9 +56,9 @@
     <p class="point">A drug is licensed on evidence from a few thousand carefully chosen people; it is then used by millions of people who are older, sicker and on other drugs.</p>
 
     <div class="facets">
-      <p>Post-marketing (phase IV) research: studies of a medicine’s benefits and harms after approval, in routine use. It covers rare and delayed adverse effects, effects in groups the trials excluded, drug interactions, and how the drug is actually prescribed.</p>
-      <p><strong class="lead">Why it matters.</strong> Pre-approval trials are too <em>small</em> to see rare harms, too <em>short</em> to see late ones, and too <em>selective</em>: they often exclude the elderly, pregnant women and people with several conditions. Those are the people most likely to be harmed.</p>
-      <p><strong class="lead">How to read it.</strong> If a trial of <em>n</em> people saw no cases of a harm, the upper 95% limit for its risk is roughly 3/<em>n</em> (the “rule of three”). Three thousand patients with no liver failure still leaves a risk of up to 1 in 1,000 compatible with the data.</p>
+      <p>Post-marketing (phase IV) research studies a medicine’s benefits and harms after approval, in routine use. It covers rare and delayed adverse effects, effects in groups the trials excluded, drug interactions, and how the drug is actually prescribed.</p>
+      <p>It exists because pre-approval trials are too <em>small</em> to see rare harms, too <em>short</em> to see late ones, and too <em>selective</em>: they often exclude the elderly, pregnant women and people with several conditions. Those are the people most likely to be harmed.</p>
+      <p>A clean safety record in a trial is weaker than it looks. If a trial of <em>n</em> people saw no cases of a harm, the upper 95% limit for its risk is roughly 3/<em>n</em> (the “rule of three”). So three thousand patients with no liver failure still leaves a risk of up to 1 in 1,000 compatible with the data.</p>
     </div>
 
     <div class="callout trap">
@@ -106,10 +106,9 @@
     <p class="point">Doctors prescribe for reasons, and those reasons usually predict the outcome too, so treated and untreated patients differ before the drug does anything.</p>
 
     <div class="facets">
-      <p>Confounding where the confounder is the indication for treatment, or its severity. Its mirror image is <em>confounding by contraindication</em>: patients who are too frail or at high bleeding risk are not prescribed the drug.</p>
-      <p><strong class="lead">Why it matters.</strong> It is the main threat to every observational drug study, and it can push either way. Drugs given to sicker patients look harmful; drugs withheld from frail patients look protective.</p>
-      <p><strong class="lead">How to read it.</strong> Ask why patients got the drug, and whether that reason is recorded in the data well enough to adjust for. Severity and frailty usually are not.</p>
-      <p><strong class="lead">When it changes.</strong> Comparing two drugs for the same indication (an <em>active comparator</em>) makes the groups far more alike than comparing users with non-users, because both groups had the indication and a doctor decided to treat it.</p>
+      <p>This is confounding where the confounder is the indication for treatment, or its severity. Its mirror image is <em>confounding by contraindication</em>: patients who are too frail or at high bleeding risk are not prescribed the drug. It is the main threat to every observational drug study, and it can push either way. Drugs given to sicker patients look harmful; drugs withheld from frail patients look protective.</p>
+      <p>So ask why patients got the drug, and whether that reason is recorded in the data well enough to adjust for. Severity and frailty usually are not.</p>
+      <p>The comparison group is the strongest lever. Comparing two drugs for the same indication (an <em>active comparator</em>) makes the groups far more alike than comparing users with non-users, because both groups had the indication and a doctor decided to treat it.</p>
     </div>
 
     <div class="callout example">
@@ -130,10 +129,9 @@
     <p class="point">Start the clock when patients first start a drug, and compare them with patients who start an alternative drug for the same condition.</p>
 
     <div class="facets">
-      <p>Include only <strong>new users</strong>: people with no use of either drug during a lookback (washout) period. Set the index date, time zero, at the first prescription. Measure covariates before it. Compare with new users of an <strong>active comparator</strong>, a drug used for the same indication.</p>
-      <p><strong class="lead">Why it matters.</strong> It deals with three problems at once. New users capture the early period when many adverse effects occur. Covariates measured before the drug cannot have been changed by it. An active comparator narrows confounding by indication.</p>
-      <p><strong class="lead">How to read it.</strong> A good pharmacoepidemiology paper states its time zero, washout, comparator and the reason follow-up ends. If you cannot find those, be cautious.</p>
-      <p><strong class="lead">When it changes.</strong> Including <em>prevalent users</em>, people already on the drug for some time, adds sample size but brings in survivors. Those who had early harms or stopped the drug have already left.</p>
+      <p>Include only <strong>new users</strong>: people with no use of either drug during a lookback (washout) period. Set the index date, time zero, at the first prescription, and measure covariates before it. Compare with new users of an <strong>active comparator</strong>, a drug used for the same indication.</p>
+      <p>The design deals with three problems at once. New users capture the early period when many adverse effects occur. Covariates measured before the drug cannot have been changed by it. An active comparator narrows confounding by indication. That’s why a good pharmacoepidemiology paper states its time zero, washout, comparator and the reason follow-up ends. If you cannot find those, be cautious.</p>
+      <p>The tempting shortcut is to include <em>prevalent users</em>, people already on the drug for some time. That adds sample size but brings in survivors: those who had early harms or stopped the drug have already left.</p>
     </div>
 
     <figure class="diagram">
@@ -205,10 +203,9 @@
     <p class="point">If being classed as “treated” requires surviving long enough to get the treatment, the treated group gets free survival time and the drug looks protective.</p>
 
     <div class="facets">
-      <p>A period of follow-up during which, by the way exposure is defined, the outcome cannot occur. The classic case defines users as anyone who receives the drug at any time during follow-up, while follow-up starts earlier for everyone. You met it in Lecture 2.2 as a cohort design error.</p>
-      <p><strong class="lead">Why it matters.</strong> It can make a useless drug look strongly protective. Suissa found it in several published drug studies that had reported large benefits.</p>
-      <p><strong class="lead">How to read it.</strong> Check that eligibility, treatment assignment and the start of follow-up happen at the same moment. If “exposed” is defined using information from after time zero, look for immortal time.</p>
-      <p><strong class="lead">When it changes.</strong> The fixes: treat exposure as time-varying (unexposed until the first dose, exposed after), or emulate a trial with a clear time zero and a grace period. Lectures 5.3 and 5.9 cover both.</p>
+      <p>Immortal time is a period of follow-up during which, by the way exposure is defined, the outcome cannot occur. The classic case defines users as anyone who receives the drug at any time during follow-up, while follow-up starts earlier for everyone. You met it in Lecture 2.2 as a cohort design error.</p>
+      <p>It can make a useless drug look strongly protective, and Suissa found it in several published drug studies that had reported large benefits. So check that eligibility, treatment assignment and the start of follow-up happen at the same moment. If “exposed” is defined using information from after time zero, look for immortal time.</p>
+      <p>There are two fixes: treat exposure as time-varying (unexposed until the first dose, exposed after), or emulate a trial with a clear time zero and a grace period. Lectures 5.3 and 5.9 cover both.</p>
     </div>
 
     <div class="callout example">
@@ -228,9 +225,8 @@
     <p class="point">Spontaneous reports have no denominator, so pharmacovigilance asks a narrower question: is this event reported for this drug more often than for other drugs?</p>
 
     <div class="facets">
-      <p>Put the reports in a 2×2 table: drug of interest or not, event of interest or not. The <strong>proportional reporting ratio</strong> (PRR) compares the share of the drug’s reports that mention the event with the same share for all other drugs. The <strong>reporting odds ratio</strong> (ROR) is the odds-ratio version.</p>
-      <p><strong class="lead">Why it matters.</strong> It is how regulators scan millions of reports for drug–event pairs worth a closer look, often years before a formal study.</p>
-      <p><strong class="lead">How to read it.</strong> A PRR of 3 means the event makes up three times as large a share of this drug’s reports. It does not mean the drug triples the risk. One widely used screen (Evans and colleagues, developed on UK Yellow Card data) flags a pair when the PRR is at least 2, χ² at least 4 and there are at least 3 reports.</p>
+      <p>Put the reports in a 2×2 table: drug of interest or not, event of interest or not. The <strong>proportional reporting ratio</strong> (PRR) compares the share of the drug’s reports that mention the event with the same share for all other drugs. The <strong>reporting odds ratio</strong> (ROR) is the odds-ratio version. This is how regulators scan millions of reports for drug–event pairs worth a closer look, often years before a formal study.</p>
+      <p>Read the number for what it is. A PRR of 3 means the event makes up three times as large a share of this drug’s reports. It does not mean the drug triples the risk. One widely used screen (Evans and colleagues, developed on UK Yellow Card data) flags a pair when the PRR is at least 2, χ² at least 4 and there are at least 3 reports.</p>
     </div>
 
     \[ PRR = \frac{a/(a+b)}{c/(c+d)} \]

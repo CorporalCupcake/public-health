@@ -28,7 +28,7 @@ Open `index.html` in a browser. Each lecture has collapsible exercise answers, a
 
 ## Lecture style
 
-- **Intuition first.** For each idea: what it is, why it matters, how to read a value (good, bad, typical), and what a change means. Write these as plain paragraphs in `<div class="facets">`: the definition first, then short bold lead-ins ("Why it matters.", "How to read it.", "When it changes."), as in the template.
+- **Intuition first.** For each idea: what it is, why it matters, how to read a value (good, bad, typical), and what a change means. Write these as two to four connected paragraphs of natural prose in `<div class="facets">`, with no labels. Lecture 1.4 is the model.
 - **Every idea gets its trap**, one concrete example, and an everyday analogy where it helps.
 - **No derivations or proofs.** Each formula becomes one or two plain sentences. Keep at most one or two short formulas per lecture, and only ones used day to day.
 - **Lead with the point.** Short sentences and plain words. Define jargon on first use. Use bullets or small tables for parallel items, and keep lists to the top 3.

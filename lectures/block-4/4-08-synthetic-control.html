@@ -57,10 +57,9 @@
     <p class="point">Synthetic control replaces “find a comparison country” with “build one”: weights on donor countries that make the weighted average follow the treated country’s path before the policy.</p>
 
     <div class="facets">
-      <p>A treated unit, a <strong>donor pool</strong> of untreated units, and weights (non-negative, summing to one) chosen so the weighted donors match the treated unit’s pre-period outcomes and key predictors. The weighted donors are the <strong>synthetic control</strong>. The effect in each post year is the treated value minus the synthetic value.</p>
-      <p><strong class="lead">Why it matters.</strong> DiD (Lecture 4.6) needs a comparison whose trend runs parallel; synthetic control searches for one that matches level and trend, and makes the choice data-driven and visible. Matching a long pre-period path also matches, roughly, the unobserved factors that drive it, which is the method’s core argument.</p>
-      <p><strong class="lead">How to read it.</strong> Look at three things: the weights (which donors, how much), the pre-period fit (do the lines overlap?), and the post-period gap. A credible study shows close pre-period tracking over many years, then a gap that opens at the policy date and not before.</p>
-      <p><strong class="lead">When it changes.</strong> A gap that opens at the policy date and widens is the signature of a growing effect. A gap that was already opening a year or two before points to anticipation or poor fit, not to the policy.</p>
+      <p>The ingredients are a treated unit, a <strong>donor pool</strong> of untreated units, and weights (non-negative, summing to one) chosen so the weighted donors match the treated unit’s pre-period outcomes and key predictors. The weighted donors are the <strong>synthetic control</strong>. The effect in each post year is the treated value minus the synthetic value.</p>
+      <p>DiD (Lecture 4.6) needs a comparison whose trend runs parallel; synthetic control searches for one that matches level and trend, and makes the choice data-driven and visible. Matching a long pre-period path also matches, roughly, the unobserved factors that drive it, which is the method’s core argument.</p>
+      <p>So look at three things: the weights (which donors, how much), the pre-period fit (do the lines overlap?), and the post-period gap. A credible study shows close pre-period tracking over many years, then a gap that opens at the policy date and not before. A gap that opens there and widens is the signature of a growing effect. A gap that was already opening a year or two before points to anticipation or poor fit, not to the policy.</p>
     </div>
 
     <div class="callout example">
@@ -81,9 +80,8 @@
 
     <div class="facets">
       <p>A <strong>convex combination</strong> is a weighted average with weights between 0 and 1 that sum to 1. The set of all such combinations of the donors is their <strong>convex hull</strong>: picture the shape formed by stretching a rubber band around the donors’ points.</p>
-      <p><strong class="lead">Why it matters.</strong> Regression can produce a counterfactual far outside the data (extrapolation) without warning. Convex weights forbid that: the synthetic unit is built only from what donors actually did. The weights are also usually sparse, a handful of donors, so a reader can judge whether the mix is plausible.</p>
-      <p><strong class="lead">How to read it.</strong> Check that the treated unit sits inside the donors’ range on the pre-period outcome and the main predictors. If it is above or below every donor, the fit will be poor, and the method is telling you so.</p>
-      <p><strong class="lead">When it changes.</strong> If dropping one donor moves the treated unit from inside to outside the hull, the result depends on that donor; leave-one-out checks (section 5) catch this.</p>
+      <p>That restriction is a safeguard. Regression can produce a counterfactual far outside the data (extrapolation) without warning. Convex weights forbid that: the synthetic unit is built only from what donors actually did. The weights are also usually sparse, a handful of donors, so a reader can judge whether the mix is plausible.</p>
+      <p>The flip side is that the treated unit must sit inside the donors’ range on the pre-period outcome and the main predictors. If it is above or below every donor, the fit will be poor, and the method is telling you so. And if dropping one donor moves the treated unit from inside to outside the hull, the result depends on that donor; leave-one-out checks (section 5) catch this.</p>
     </div>
 
     <figure class="diagram">
@@ -153,9 +151,8 @@
 
     <div class="facets">
       <p>The <strong>pre-period RMSPE</strong> (root mean squared prediction error) is the typical gap between the treated unit and its synthetic version before the policy, in the outcome’s units. It is training error.</p>
-      <p><strong class="lead">Why it matters.</strong> The method’s justification is that matching a long pre-period also matches the hidden factors behind it. Abadie (2021) stresses that this needs a long pre-period, and warns that with short ones, close fit can come from chance. Seven annual points with thirty donors is a short pre-period.</p>
-      <p><strong class="lead">How to read it.</strong> Compare the pre-RMSPE with the size of the effect you hope to detect and with the year-to-year noise in the series. Illustrative numbers: a pre-RMSPE of 0.3 kg is reassuring for an effect of 4 kg; 2 kg is not.</p>
-      <p><strong class="lead">When it changes.</strong> Holding out the last pre-years and fitting on the earlier ones (a placebo in time) tests whether the fit generalises. If the fit is good on the training years and poor on the held-out years, you were fitting noise.</p>
+      <p>Judge it against the size of the effect you hope to detect and the year-to-year noise in the series. Illustrative numbers: a pre-RMSPE of 0.3 kg is reassuring for an effect of 4 kg; 2 kg is not.</p>
+      <p>But a small error is not enough on its own. The method’s justification is that matching a long pre-period also matches the hidden factors behind it. Abadie (2021) stresses that this needs a long pre-period, and warns that with short ones, close fit can come from chance. Seven annual points with thirty donors is a short pre-period. That’s why it helps to hold out the last pre-years and fit on the earlier ones (a placebo in time). If the fit is good on the training years and poor on the held-out years, you were fitting noise.</p>
     </div>
 
     <div class="widget" data-widget="sc-playground">
@@ -190,10 +187,9 @@ plot(sc)       # gap by year</code></pre>
     \[ p = \frac{\text{number of units with post/pre ratio} \ge \text{the treated unit's}}{J + 1} \]
 
     <div class="facets">
-      <p><strong>Placebo in space</strong>: rerun the method with each of the \(J\) donors as the “treated” unit and the others as its donors. <strong>Placebo in time</strong>: pretend the policy started earlier and check that no gap appears. The <strong>post/pre RMSPE ratio</strong> scales each post-period gap by how well that unit was fitted before, so poorly fitted placebos do not look like big effects.</p>
-      <p><strong class="lead">Why it matters.</strong> With one treated unit there is no sampling distribution in the usual sense. The placebo distribution asks: if the policy had been assigned to a random unit, how often would we see a ratio this large?</p>
-      <p><strong class="lead">How to read it.</strong> In Proposition 99, California’s post-period MSPE was about 130 times its pre-period MSPE, larger than for any of the 38 placebo states, giving p = 1/39 ≈ 0.026. With \(J\) donors the smallest possible p is \(1/(J+1)\): with 6 donors you can never get below 0.14.</p>
-      <p><strong class="lead">When it changes.</strong> Moving from rank 1 to rank 3 out of 20 changes p from 0.05 to 0.15. These p-values are coarse; report the rank and the placebo plot, not just p.</p>
+      <p>A <strong>placebo in space</strong> reruns the method with each of the \(J\) donors as the “treated” unit and the others as its donors. A <strong>placebo in time</strong> pretends the policy started earlier and checks that no gap appears. The <strong>post/pre RMSPE ratio</strong> scales each post-period gap by how well that unit was fitted before, so poorly fitted placebos do not look like big effects.</p>
+      <p>With one treated unit there is no sampling distribution in the usual sense, so the placebo distribution stands in for one. It asks: if the policy had been assigned to a random unit, how often would we see a ratio this large? In Proposition 99, California’s post-period MSPE was about 130 times its pre-period MSPE, larger than for any of the 38 placebo states, giving p = 1/39 ≈ 0.026.</p>
+      <p>These p-values are coarse. With \(J\) donors the smallest possible p is \(1/(J+1)\): with 6 donors you can never get below 0.14. Moving from rank 1 to rank 3 out of 20 changes p from 0.05 to 0.15. So report the rank and the placebo plot, not just p.</p>
     </div>
 
     <div class="widget" data-widget="sc-placebo">
@@ -219,9 +215,8 @@ plot(sc)       # gap by year</code></pre>
 
     <div class="facets">
       <p>Abadie (2021) sets out three exclusion rules, the first of which the Proposition 99 study applied: drop units with a similar intervention during the study period, units hit by large idiosyncratic shocks, and units the policy may have affected (spillovers). Prefer units similar on the outcome’s drivers, which limits interpolation bias.</p>
-      <p><strong class="lead">Why it matters.</strong> A contaminated donor biases the synthetic counterfactual. A donor that adopted its own sugary-drink tax pulls the synthetic line down and shrinks the estimated effect. A donor affected by cross-border shopping pulls it up and inflates it.</p>
-      <p><strong class="lead">How to read it.</strong> The protocol should list every candidate donor and the reason for each exclusion. <strong>Leave-one-out</strong>: drop each donor with positive weight in turn and refit. If the effect survives every omission, it does not rest on one country.</p>
-      <p><strong class="lead">When it changes.</strong> If dropping one donor halves the effect, report that prominently and explain what is special about it.</p>
+      <p>A contaminated donor biases the synthetic counterfactual. A donor that adopted its own sugary-drink tax pulls the synthetic line down and shrinks the estimated effect. A donor affected by cross-border shopping pulls it up and inflates it.</p>
+      <p>So the protocol should list every candidate donor and the reason for each exclusion. Then run a <strong>leave-one-out</strong> check: drop each donor with positive weight in turn and refit. If the effect survives every omission, it does not rest on one country. If dropping one donor halves the effect, report that prominently and explain what is special about it.</p>
     </div>
 
     <div class="callout gulf">
@@ -259,9 +254,8 @@ plot(sc)       # gap by year</code></pre>
 
     <div class="facets">
       <p><strong>Augmented SC</strong> estimates the bias left by imperfect fit with a ridge regression of outcomes on pre-period outcomes, and subtracts it. <strong>Synthetic DiD</strong> chooses unit weights so that donors move like the treated unit (not necessarily at the same level), and time weights that emphasise pre-years most like the post-period, then takes a weighted DiD.</p>
-      <p><strong class="lead">Why it matters.</strong> They rescue cases where classic SC fails narrowly, and synthetic DiD links Lectures 4.6 and 4.8: DiD with equal weights and synthetic control without intercepts are its two extremes.</p>
-      <p><strong class="lead">How to read it.</strong> If classic SC, augmented SC and synthetic DiD agree, the result does not depend on the method. If only the augmented version shows an effect, look at how much extrapolation the correction did.</p>
-      <p><strong class="lead">When it changes.</strong> A large augmentation correction (the estimate moves a lot) means the classic fit was poor and the answer now leans on the ridge model, which is extrapolation again, only regularised.</p>
+      <p>Both rescue cases where classic SC fails narrowly, and synthetic DiD links Lectures 4.6 and 4.8: DiD with equal weights and synthetic control without intercepts are its two extremes.</p>
+      <p>If classic SC, augmented SC and synthetic DiD agree, the result does not depend on the method. If only the augmented version shows an effect, look at how much extrapolation the correction did. A large augmentation correction (the estimate moves a lot) means the classic fit was poor and the answer now leans on the ridge model, which is extrapolation again, only regularised.</p>
     </div>
 
     <pre><code>library(synthdid)
@@ -285,10 +279,9 @@ augsynth(sugar ~ taxed, country, year, p4_sa, progfunc = "Ridge", scm = TRUE)</c
     <p class="point">Synthetic control fails openly when pre-period fit is poor, and quietly when the pre-period is short, the donors are contaminated, or something else changed in the treated unit at the policy date.</p>
 
     <div class="facets">
-      <p>The main failure modes: the treated unit lies outside the donors’ hull, so the fit is poor; the pre-period is too short for fit to mean much; the donor pool is contaminated by similar policies or spillovers; and a co-intervention in the treated unit (VAT in January 2018) is absorbed into the gap.</p>
-      <p><strong class="lead">Why it matters.</strong> Synthetic control controls for <em>shared</em> shocks through its donors, not for shocks specific to the treated unit. Like ITS (Lecture 4.7), it cannot separate the policy from anything else that happened only there.</p>
-      <p><strong class="lead">How to read it.</strong> Abadie (2021) advises against using synthetic control when the pre-period fit is poor or the pre-period is short. A good fit is the price of admission, not the conclusion.</p>
-      <p><strong class="lead">When it changes.</strong> Switching from levels to an index (2016 = 100) or demeaning changes the question from “match the level” to “match the path”. That can rescue an extreme unit, but it is a different assumption, closer to DiD.</p>
+      <p>Synthetic control fails in a few typical ways: the treated unit lies outside the donors’ hull, so the fit is poor; the pre-period is too short for fit to mean much; the donor pool is contaminated by similar policies or spillovers; and a co-intervention in the treated unit (VAT in January 2018) is absorbed into the gap.</p>
+      <p>The last one has no technical fix. Synthetic control controls for <em>shared</em> shocks through its donors, not for shocks specific to the treated unit. Like ITS (Lecture 4.7), it cannot separate the policy from anything else that happened only there.</p>
+      <p>For the others, Abadie (2021) advises against using synthetic control when the pre-period fit is poor or the pre-period is short. A good fit is the price of admission, not the conclusion. Switching from levels to an index (2016 = 100) or demeaning changes the question from “match the level” to “match the path”. That can rescue an extreme unit, but it is a different assumption, closer to DiD.</p>
     </div>
 
     <div class="callout gulf">

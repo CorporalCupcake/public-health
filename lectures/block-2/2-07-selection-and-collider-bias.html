@@ -57,8 +57,8 @@
 
     <div class="facets">
       <p>Two different problems share the word “selection”. <strong>Generalisability</strong> (external validity) asks whether the result applies to other people. <strong>Selection bias</strong> (an internal-validity problem) means the association among those studied differs from the association in the population they came from.</p>
-      <p><strong class="lead">Why it matters.</strong> Prevalence and averages need a representative sample. Exposure–outcome associations often don’t, as long as who takes part doesn’t depend jointly on exposure and outcome. Mixing the two leads to dismissing good cohorts and trusting bad ones.</p>
-      <p><strong class="lead">How to read it.</strong> For a prevalence estimate (as in Project 2’s salt intake), ask “who was sampled, and who responded?” For an association, ask “could entry or retention depend on the exposure <em>and</em> on the outcome or its causes?”</p>
+      <p>Keeping them apart saves you from dismissing good cohorts and trusting bad ones. Prevalence and averages need a representative sample. Exposure–outcome associations often don’t, as long as who takes part doesn’t depend jointly on exposure and outcome.</p>
+      <p>So the question depends on the estimate. For a prevalence estimate (as in Project 2’s salt intake), ask “who was sampled, and who responded?” For an association, ask “could entry or retention depend on the exposure <em>and</em> on the outcome or its causes?”</p>
     </div>
 
     <div class="callout example">
@@ -79,9 +79,8 @@
 
     <div class="facets">
       <p>A <strong>collider</strong> is a common effect of two variables. <em>Conditioning</em> means restricting to one level of it, stratifying on it or adjusting for it in a model. Selection into a study is conditioning: the analysis contains only people with “selected = yes”. In a DAG this is drawn as a box around the selection node.</p>
-      <p><strong class="lead">Why it matters.</strong> It is the opposite of confounding. Confounding paths are open until you adjust; collider paths are closed until you adjust. Adjusting for the wrong variable creates bias where there was none.</p>
-      <p><strong class="lead">How to read it.</strong> Trace every path between exposure and outcome. A path with a collider on it carries no association, unless you have conditioned on the collider or on something it causes.</p>
-      <p><strong class="lead">When it changes.</strong> The stronger both causes drive selection, and the stricter the selection, the larger the spurious association.</p>
+      <p>This is the opposite of confounding. Confounding paths are open until you adjust; collider paths are closed until you adjust. So adjusting for the wrong variable creates bias where there was none.</p>
+      <p>To check a study, trace every path between exposure and outcome. A path with a collider on it carries no association, unless you have conditioned on the collider or on something it causes. The stronger both causes drive selection, and the stricter the selection, the larger the spurious association.</p>
     </div>
 
     <figure class="diagram">
@@ -141,8 +140,8 @@
 
     <div class="facets">
       <p>Berkson (1946) showed that if two conditions each raise the chance of admission, they become associated among inpatients even when independent in the community. The same holds for any filter that both variables pass through: referral to a specialist centre, being tested, joining a registry.</p>
-      <p><strong class="lead">Why it matters.</strong> Hospital-based case-control studies, clinic cohorts and most EHR data are selected this way. Lecture 2.3’s rule, controls must come from the population that produced the cases, is the defence.</p>
-      <p><strong class="lead">How to read it.</strong> Ask what determined entry into the data. If entry depends on the exposure and on the outcome (or its causes), expect bias; its direction depends on how they combine.</p>
+      <p>Hospital-based case-control studies, clinic cohorts and most EHR data are selected this way. Lecture 2.3’s rule, controls must come from the population that produced the cases, is the defence.</p>
+      <p>So ask what determined entry into the data. If entry depends on the exposure and on the outcome (or its causes), expect bias; its direction depends on how they combine.</p>
     </div>
 
     <div class="widget" data-widget="berkson-collider">
@@ -167,9 +166,8 @@
     <p class="point">Studying only people who already have a disease conditions on a collider, and can make a known risk factor look harmless or even protective.</p>
 
     <div class="facets">
-      <p><strong>Index event bias</strong>: in studies of recurrence or prognosis, everyone has had a first event (the index event). If the exposure and some other cause both lead to that first event, then among patients, those without the exposure tend to have more of the other cause. If that other cause also affects the outcome, the exposure’s effect is distorted, usually toward the null and sometimes past it.</p>
-      <p><strong class="lead">Why it matters.</strong> Many famous “paradoxes” follow this pattern: the obesity paradox in heart failure, the birth-weight paradox, and paradoxes in recurrent stroke and venous thrombosis.</p>
-      <p><strong class="lead">How to read it.</strong> When a well-established risk factor looks protective among patients with the disease it causes, suspect selection before biology.</p>
+      <p><strong>Index event bias</strong> arises in studies of recurrence or prognosis, where everyone has had a first event (the index event). If the exposure and some other cause both lead to that first event, then among patients, those without the exposure tend to have more of the other cause. If that other cause also affects the outcome, the exposure’s effect is distorted, usually toward the null and sometimes past it.</p>
+      <p>Many famous “paradoxes” follow this pattern: the obesity paradox in heart failure, the birth-weight paradox, and paradoxes in recurrent stroke and venous thrombosis. So when a well-established risk factor looks protective among patients with the disease it causes, suspect selection before biology.</p>
     </div>
 
     <figure class="diagram">
@@ -219,9 +217,9 @@
     <p class="point">Selection doesn’t stop at entry: who drops out, who stays employed and who stays in the country are selection too.</p>
 
     <div class="facets">
-      <p><strong>Loss to follow-up</strong> biases a cohort when leaving depends on exposure and on outcome risk, for example sicker exposed people dropping out. The <strong>healthy worker effect</strong>: employed people are healthier than the general population, because illness pushes people out of work. The <strong>healthy volunteer effect</strong>: people who join studies are healthier and more health-conscious.</p>
-      <p><strong class="lead">Why it matters.</strong> A cohort that loses 20% of people can still be unbiased if losses are unrelated to exposure and outcome; one that loses 5% can be badly biased if all of them were the sickest exposed people.</p>
-      <p><strong class="lead">How to read it.</strong> Compare those lost with those kept on baseline exposure and risk factors. Similar profiles are reassuring, not proof. Comparing workers with the general population is unfair; compare workers with other workers.</p>
+      <p><strong>Loss to follow-up</strong> biases a cohort when leaving depends on exposure and on outcome risk, for example sicker exposed people dropping out. The <strong>healthy worker effect</strong> is the same idea at entry: employed people are healthier than the general population, because illness pushes people out of work. The <strong>healthy volunteer effect</strong> is its cousin: people who join studies are healthier and more health-conscious.</p>
+      <p>What matters is who leaves, not how many. A cohort that loses 20% of people can still be unbiased if losses are unrelated to exposure and outcome; one that loses 5% can be badly biased if all of them were the sickest exposed people.</p>
+      <p>So compare those lost with those kept on baseline exposure and risk factors. Similar profiles are reassuring, not proof. And comparing workers with the general population is unfair; compare workers with other workers.</p>
     </div>
 
     <div class="callout gulf">
@@ -252,8 +250,8 @@
     </div>
 
     <div class="facets">
-      <p><strong class="lead">Why it matters.</strong> Weighting works only if you measured the variables that drive selection. If selection depends on something unrecorded, no analysis recovers the population.</p>
-      <p><strong class="lead">How to read it.</strong> In Project 2’s risk-of-bias assessment, ask for each study: how were participants sampled, what was the response rate, how many 24-hour urine collections were incomplete and excluded, and could exclusion relate to salt intake?</p>
+      <p>Weighting works only if you measured the variables that drive selection. If selection depends on something unrecorded, no analysis recovers the population.</p>
+      <p>That makes the questions practical. In Project 2’s risk-of-bias assessment, ask for each study: how were participants sampled, what was the response rate, how many 24-hour urine collections were incomplete and excluded, and could exclusion relate to salt intake?</p>
     </div>
 
     <div class="callout trap">

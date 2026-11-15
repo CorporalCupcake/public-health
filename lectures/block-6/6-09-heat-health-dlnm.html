@@ -57,10 +57,9 @@
     <p class="point">Heat–health studies compare a city with itself on hotter and cooler days, so everything that changes slowly (age structure, smoking, health care) cancels out; what must be removed is season, long-term trend and day of the week.</p>
 
     <div class="facets">
-      <p>A <em>time-series regression</em> (Lecture 3.9): daily death counts in one city over many years, modelled with quasi-Poisson regression (Lecture 3.3, which allows for overdispersion) on temperature, a smooth function of time for season and trend, and day of week. The <em>time-stratified case-crossover</em> (Lectures 2.4 and 5.5) compares each death's temperature on the day it happened with the same weekdays in the same month.</p>
-      <p><strong class="lead">Why it matters.</strong> The two designs give the same answer: a conditional Poisson model with one stratum per year–month–weekday is mathematically equivalent to the conditional logistic case-crossover (Lu and Zeger 2007; Armstrong, Gasparrini and Tobias 2014). Choose whichever is easier to explain.</p>
-      <p><strong class="lead">How to read it.</strong> The season-and-trend spline usually has about 7 or 8 degrees of freedom per year. Too few and summer itself is confounded with heat; too many and the spline starts absorbing the heatwaves you want to study.</p>
-      <p><strong class="lead">When it changes.</strong> If the heat effect halves when you raise the time spline from 4 to 8 df per year, seasonal confounding was driving part of it. Show that sensitivity analysis.</p>
+      <p>A <strong>time-series regression</strong> (Lecture 3.9) takes daily death counts in one city over many years and models them with quasi-Poisson regression (Lecture 3.3, which allows for overdispersion) on temperature, a smooth function of time for season and trend, and day of week. The <strong>time-stratified case-crossover</strong> (Lectures 2.4 and 5.5) compares each death's temperature on the day it happened with the same weekdays in the same month.</p>
+      <p>The two designs give the same answer. A conditional Poisson model with one stratum per year–month–weekday is mathematically equivalent to the conditional logistic case-crossover (Lu and Zeger 2007; Armstrong, Gasparrini and Tobias 2014), so choose whichever is easier to explain.</p>
+      <p>The setting that needs care is the season-and-trend spline, which usually has about 7 or 8 degrees of freedom per year. Too few and summer itself is confounded with heat. Too many and the spline starts absorbing the heatwaves you want to study. If the heat effect halves when you raise the time spline from 4 to 8 df per year, seasonal confounding was driving part of it. Show that sensitivity analysis.</p>
     </div>
 
     <figure class="diagram">
@@ -157,10 +156,9 @@
     <p class="point">Mortality is lowest at a city-specific "comfortable" temperature and rises on both sides: slowly into the cold, steeply into the heat.</p>
 
     <div class="facets">
-      <p>The cumulative exposure–response curve plots relative risk of death against daily temperature. Its lowest point is the <em>minimum-mortality temperature</em> (MMT), and all relative risks are reported against it.</p>
-      <p><strong class="lead">Why it matters.</strong> The MMT tracks local climate: populations are adapted to what they usually experience. In a 13-country study of 384 locations, the MMT sat at about the 60th percentile of local temperature in tropical places and the 80th to 90th in temperate ones (Gasparrini and colleagues 2015). An MMT is meaningful as a percentile, not as a universal number of degrees.</p>
-      <p><strong class="lead">How to read it.</strong> A relative risk of 1.3 at the 99th percentile means 30% more deaths on such days than on days at the MMT. Curves are steep near the hot end, so confidence intervals there are wide: few days are that hot.</p>
-      <p><strong class="lead">When it changes.</strong> An MMT that rises over decades, or a heat curve that flattens, is the signature of adaptation (section 6).</p>
+      <p>The cumulative exposure–response curve plots relative risk of death against daily temperature. Its lowest point is the <strong>minimum-mortality temperature</strong> (MMT), and all relative risks are reported against it. A relative risk of 1.3 at the 99th percentile means 30% more deaths on such days than on days at the MMT. Curves are steep near the hot end, so confidence intervals there are wide: few days are that hot.</p>
+      <p>The MMT tracks local climate, because populations are adapted to what they usually experience. In a 13-country study of 384 locations, the MMT sat at about the 60th percentile of local temperature in tropical places and the 80th to 90th in temperate ones (Gasparrini and colleagues 2015). So an MMT is meaningful as a percentile, not as a universal number of degrees.</p>
+      <p>That also makes the curve a record of adaptation. An MMT that rises over decades, or a heat curve that flattens, is its signature (section 6).</p>
     </div>
 
     <div class="callout trap">
@@ -180,10 +178,9 @@
     <p class="point">A hot day raises deaths that day and the next, and then deaths can dip below normal because some of the people who died were already close to death; cold raises deaths modestly but for two to three weeks.</p>
 
     <div class="facets">
-      <p>The <em>lag–response</em> curve shows the extra risk on each of the following days after one day at a given temperature. <em>Harvesting</em> (mortality displacement) is the dip after the early peak: deaths brought forward by days or weeks, not lives shortened by years.</p>
-      <p><strong class="lead">Why it matters.</strong> Looking only at lag 0 overstates heat effects if there is harvesting and badly understates cold effects. The quantity that matters is the <em>cumulative</em> effect summed over enough lags, commonly 21 days, to capture both.</p>
-      <p><strong class="lead">How to read it.</strong> If the cumulative heat effect over 21 days is much smaller than over 0–2 days, much of the early excess was displacement. If it stays near the short-lag value, the deaths were not merely brought forward.</p>
-      <p><strong class="lead">When it changes.</strong> Cold effects built through respiratory infection and cardiovascular strain take days to appear; cutting the lag at 3 days can make cold look harmless.</p>
+      <p>The <strong>lag–response</strong> curve shows the extra risk on each of the following days after one day at a given temperature. <strong>Harvesting</strong> (mortality displacement) is the dip after the early peak: deaths brought forward by days or weeks, not lives shortened by years.</p>
+      <p>Heat and cold behave differently here. Looking only at lag 0 overstates heat effects if there is harvesting, and badly understates cold effects. Cold effects built through respiratory infection and cardiovascular strain take days to appear, so cutting the lag at 3 days can make cold look harmless. The quantity that matters is the <strong>cumulative</strong> effect summed over enough lags, commonly 21 days, to capture both.</p>
+      <p>Comparing lag windows tells you how much was displacement. If the cumulative heat effect over 21 days is much smaller than over 0–2 days, much of the early excess was displacement. If it stays near the short-lag value, the deaths were not merely brought forward.</p>
     </div>
 
     <div class="widget" data-widget="lag-explorer">
@@ -203,9 +200,8 @@
     <p class="point">A DLNM describes the risk surface over temperature and lag with a flexible basis in each direction, crossed, and estimates it as ordinary regression coefficients.</p>
 
     <div class="facets">
-      <p>A <em>cross-basis</em> (Gasparrini, Armstrong and Kenward 2010) combines a spline in temperature (the exposure–response shape) with a spline in lag (the lag–response shape). The model has a few dozen coefficients but describes a smooth surface over every temperature and every lag up to the maximum.</p>
-      <p><strong class="lead">Why it matters.</strong> It lets heat and cold have different lag shapes in one model, and it gives three summaries: the full surface, the lag–response at a chosen temperature, and the cumulative exposure–response over all lags.</p>
-      <p><strong class="lead">How to read it.</strong> Read the surface as slices. A horizontal slice at 36 °C is the lag–response for a very hot day; a vertical slice at lag 0 is the same-day exposure–response; summing along lags gives the J-curve of section 2.</p>
+      <p>A <strong>cross-basis</strong> (Gasparrini, Armstrong and Kenward 2010) combines a spline in temperature (the exposure–response shape) with a spline in lag (the lag–response shape). The model has a few dozen coefficients but describes a smooth surface over every temperature and every lag up to the maximum.</p>
+      <p>This lets heat and cold have different lag shapes in one model, and it gives three summaries: the full surface, the lag–response at a chosen temperature, and the cumulative exposure–response over all lags. Read the surface as slices. A horizontal slice at 36 °C is the lag–response for a very hot day, a vertical slice at lag 0 is the same-day exposure–response, and summing along lags gives the J-curve of section 2.</p>
     </div>
 
     <figure class="diagram">
@@ -278,10 +274,9 @@ plot(pred, "slices", var = 36)                       # lag-response at 36 °C</c
     \[ \text{AN}_t = \text{deaths}_t \times \left(1 - \frac{1}{\text{RR}_t}\right) \]
 
     <div class="facets">
-      <p>Summing AN over days gives total attributable deaths; dividing by total deaths gives the attributable fraction (AF). Splitting days at the MMT separates heat from cold, and at the 2.5th and 97.5th percentiles separates extreme from moderate temperatures.</p>
-      <p><strong class="lead">Why it matters.</strong> Relative risks are steepest for heat, but impact depends on how many days fall in each part of the curve. Across 384 locations, 7.71% of deaths were attributable to non-optimal temperature: 7.29% to cold and 0.42% to heat, and only 0.86% to extreme days of either kind (Gasparrini and colleagues 2015). Most of the burden comes from many moderately cold days, not from rare extremes.</p>
-      <p><strong class="lead">How to read it.</strong> An AF of 5% for heat in a city means 1 in 20 deaths would not have happened (at that time) had every hot day been at the MMT. Read it with its uncertainty interval, which is estimated by simulation.</p>
-      <p><strong class="lead">When it changes.</strong> Moving the MMT changes the AN a lot, because it moves the boundary between "attributable" and "baseline" for many days. Report the MMT and its uncertainty with every AF.</p>
+      <p>Summing AN over days gives total <strong>attributable deaths</strong>, and dividing by total deaths gives the <strong>attributable fraction</strong> (AF). Splitting days at the MMT separates heat from cold, and splitting at the 2.5th and 97.5th percentiles separates extreme from moderate temperatures. An AF of 5% for heat in a city means 1 in 20 deaths would not have happened (at that time) had every hot day been at the MMT. Read it with its uncertainty interval, which is estimated by simulation.</p>
+      <p>Relative risks are steepest for heat, but impact depends on how many days fall in each part of the curve. Across 384 locations, 7.71% of deaths were attributable to non-optimal temperature: 7.29% to cold and 0.42% to heat, and only 0.86% to extreme days of either kind (Gasparrini and colleagues 2015). Most of the burden comes from many moderately cold days, not from rare extremes.</p>
+      <p>The MMT is the hinge of all this. Moving it changes the AN a lot, because it moves the boundary between "attributable" and "baseline" for many days. So report the MMT and its uncertainty with every AF.</p>
     </div>
 
     <div class="widget" data-widget="attrib-curve">
@@ -301,9 +296,9 @@ plot(pred, "slices", var = 36)                       # lag-response at 36 °C</c
     <p class="point">The same temperature harms some groups far more than others, and the heat curve can flatten over time; both decide who a heat policy should protect.</p>
 
     <div class="facets">
-      <p><em>Effect modification</em> of the exposure–response curve by age, sex, nationality, occupation, chronic disease or housing. <em>Adaptation</em> is the curve changing over time, through physiology, behaviour, air conditioning, warning systems and work rules.</p>
-      <p><strong class="lead">Why it matters.</strong> In 105 US cities from 1987 to 2005, excess deaths per 1,000 deaths for a 10 °F hotter day fell from 51 to 19; the rise in air conditioning did not explain the fall (Bobb and colleagues 2014). Curves are not fixed constants of nature.</p>
-      <p><strong class="lead">How to read it.</strong> Fit the DLNM separately by subgroup (or with interactions) and compare cumulative relative risks at the same percentile, such as the 99th versus the MMT.</p>
+      <p><strong>Effect modification</strong> is the exposure–response curve differing by age, sex, nationality, occupation, chronic disease or housing. <strong>Adaptation</strong> is the curve changing over time, through physiology, behaviour, air conditioning, warning systems and work rules.</p>
+      <p>Curves are not fixed constants of nature. In 105 US cities from 1987 to 2005, excess deaths per 1,000 deaths for a 10 °F hotter day fell from 51 to 19, and the rise in air conditioning did not explain the fall (Bobb and colleagues 2014).</p>
+      <p>To compare groups, fit the DLNM separately by subgroup (or with interactions) and compare cumulative relative risks at the same percentile, such as the 99th versus the MMT.</p>
     </div>
 
     <div class="callout gulf">
@@ -334,9 +329,8 @@ plot(pred, "slices", var = 36)                       # lag-response at 36 °C</c
     </div>
 
     <div class="facets">
-      <p>A health impact assessment: combine an exposure series, an exposure–response curve and a baseline rate to estimate attributable cases under the observed climate and under counterfactuals (no ban, a ban triggered by WBGT instead of the clock).</p>
-      <p><strong class="lead">Why it matters.</strong> It turns "hours above the limit" into a number policy-makers recognise. But AN needs a baseline death or illness rate for workers, which GCC sources rarely publish by occupation.</p>
-      <p><strong class="lead">How to read it.</strong> Present results as scenarios with the assumptions in the title ("if workers had the Kuwaiti non-national curve…"), with wide uncertainty, and with a sensitivity analysis over at least two curves.</p>
+      <p>A <strong>health impact assessment</strong> combines an exposure series, an exposure–response curve and a baseline rate to estimate attributable cases under the observed climate and under counterfactuals (no ban, a ban triggered by WBGT instead of the clock).</p>
+      <p>It turns "hours above the limit" into a number policy-makers recognise. But AN needs a baseline death or illness rate for workers, which GCC sources rarely publish by occupation. So present results as scenarios with the assumptions in the title ("if workers had the Kuwaiti non-national curve…"), with wide uncertainty, and with a sensitivity analysis over at least two curves.</p>
     </div>
 
     <div class="callout trap">

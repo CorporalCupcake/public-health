@@ -63,9 +63,9 @@
     \[ p_{\text{recorded}} = \text{Se} \times p_{\text{true}} \;+\; (1 - \text{Sp}) \times (1 - p_{\text{true}}) \]
 
     <div class="facets">
-      <p><strong class="lead">Why it matters.</strong> This one line drives everything in this lecture. Plug in Se and Sp for cases and controls (or exposed and unexposed) and you can see what misclassification does to any table. It is the core of quantitative bias analysis (Lecture 2.13).</p>
-      <p><strong class="lead">How to read it.</strong> Above about 0.9 for both is good for self-report. For a rare exposure, specificity matters most: a 5% false-positive rate among the many unexposed can swamp the true exposed. For a common exposure, sensitivity matters more.</p>
-      <p><strong class="lead">When it changes.</strong> With 10% truly exposed, Se 0.8 and Sp 0.95, the recorded prevalence is 12.5%, and over a third of those recorded as exposed are not.</p>
+      <p>This one line drives everything in this lecture. Plug in Se and Sp for cases and controls (or exposed and unexposed) and you can see what misclassification does to any table. It is the core of quantitative bias analysis (Lecture 2.13).</p>
+      <p>Values above about 0.9 for both are good for self-report. Which one matters more depends on prevalence. For a rare exposure, specificity matters most, because a 5% false-positive rate among the many unexposed can swamp the true exposed. For a common exposure, sensitivity matters more.</p>
+      <p>A quick example shows the scale. With 10% truly exposed, Se 0.8 and Sp 0.95, the recorded prevalence is 12.5%, and over a third of those recorded as exposed are not.</p>
     </div>
 
     <figure class="diagram">
@@ -140,8 +140,8 @@
     </div>
 
     <div class="facets">
-      <p><strong class="lead">Why it matters.</strong> Non-differential error is the price of a crude tool; differential error is a flaw in design. Case-control studies that ask about past exposures after diagnosis are most at risk of the second.</p>
-      <p><strong class="lead">How to read it.</strong> Ask when and how each variable was measured, and whether whoever measured it knew the other. Exposure recorded before the outcome happened (prospectively, or from old records) is usually non-differential. Exposure recalled after diagnosis may not be.</p>
+      <p>Non-differential error is the price of a crude tool; differential error is a flaw in design. Case-control studies that ask about past exposures after diagnosis are most at risk of the second.</p>
+      <p>So ask when and how each variable was measured, and whether whoever measured it knew the other. Exposure recorded before the outcome happened (prospectively, or from old records) is usually non-differential. Exposure recalled after diagnosis may not be.</p>
     </div>
 
     <div class="callout analogy">
@@ -157,9 +157,8 @@
 
     <div class="facets">
       <p>Misclassification mixes the groups. The “exposed” group now contains some unexposed people with lower risk; the “unexposed” group contains some exposed people with higher risk. The contrast shrinks toward no effect (RR or OR toward 1).</p>
-      <p><strong class="lead">Why it matters.</strong> Weak associations measured with crude tools may hide strong true ones. A null result from a poor measure is weak evidence of no effect (Lecture 2.5).</p>
-      <p><strong class="lead">How to read it.</strong> Poor specificity hurts more than poor sensitivity when the exposure is rare. With Se + Sp = 1 the measurement is no better than a coin toss and any association vanishes.</p>
-      <p><strong class="lead">When it changes.</strong> In the default setting below, Se 0.8 and Sp 0.9 in everyone turn a true OR of 2.67 into an observed OR of about 1.9: over a third of the excess odds disappears.</p>
+      <p>In the default setting below, Se 0.8 and Sp 0.9 in everyone turn a true OR of 2.67 into an observed OR of about 1.9: over a third of the excess odds disappears. Poor specificity hurts more than poor sensitivity when the exposure is rare, and with Se + Sp = 1 the measurement is no better than a coin toss and any association vanishes.</p>
+      <p>This is why weak associations measured with crude tools may hide strong true ones, and why a null result from a poor measure is weak evidence of no effect (Lecture 2.5).</p>
     </div>
 
     <div class="widget" data-widget="misclass-2x2">
@@ -191,8 +190,8 @@
     </div>
 
     <div class="facets">
-      <p><strong class="lead">Why it matters.</strong> Authors often wave away measurement error as “conservative”. That claim needs the conditions to hold, and the reader should check them.</p>
-      <p><strong class="lead">How to read it.</strong> Ask: is the exposure binary? Were exposure and outcome measured independently? Were the confounders measured well? If any answer is no, the direction of bias is open.</p>
+      <p>Authors often wave away measurement error as “conservative”. That claim needs the conditions to hold, and the reader should check them.</p>
+      <p>Is the exposure binary? Were exposure and outcome measured independently? Were the confounders measured well? If any answer is no, the direction of bias is open.</p>
     </div>
   </section>
 
@@ -202,9 +201,9 @@
     <p class="point">The commonest differential errors come from asking about the past after the outcome, and from looking harder for disease in the exposed.</p>
 
     <div class="facets">
-      <p><strong>Recall bias</strong>: cases, searching for an explanation of their illness, remember or report past exposures differently from controls. <strong>Interviewer bias</strong>: interviewers who know who is a case probe harder. <strong>Detection bias</strong>: exposed people are examined more often, so their disease is found more often (differential outcome misclassification).</p>
-      <p><strong class="lead">Why it matters.</strong> These biases usually inflate associations, and they look exactly like real effects. Reported odds ratios of 1.5–2 from interview-based case-control studies deserve a hard look at how exposure was assessed.</p>
-      <p><strong class="lead">How to read it.</strong> Look for defences: exposure taken from records made before the outcome; blinded interviewers; structured questions; controls with a different illness (so both groups have a reason to search their memory); outcome assessment blind to exposure.</p>
+      <p>In <strong>recall bias</strong>, cases searching for an explanation of their illness remember or report past exposures differently from controls. In <strong>interviewer bias</strong>, interviewers who know who is a case probe harder. In <strong>detection bias</strong>, exposed people are examined more often, so their disease is found more often (differential outcome misclassification).</p>
+      <p>These biases usually inflate associations, and they look exactly like real effects. That’s why reported odds ratios of 1.5–2 from interview-based case-control studies deserve a hard look at how exposure was assessed.</p>
+      <p>Good studies build in defences: exposure taken from records made before the outcome; blinded interviewers; structured questions; controls with a different illness (so both groups have a reason to search their memory); outcome assessment blind to exposure.</p>
     </div>
 
     <div class="callout example">
@@ -224,9 +223,9 @@
     <p class="point">For outcomes, specificity is usually what matters: missing some cases equally in all groups leaves a risk ratio unbiased, but false cases dilute it.</p>
 
     <div class="facets">
-      <p>Outcomes recorded wrongly: deaths coded to the wrong cause, events identified from billing codes, self-reported diagnoses. A useful rule: if specificity is perfect and sensitivity is the same in exposed and unexposed, the <em>risk ratio</em> is unbiased (both risks shrink by the same factor), though the risk difference shrinks.</p>
-      <p><strong class="lead">Why it matters.</strong> Administrative and EHR studies define outcomes by codes. Choosing a strict definition (high specificity, e.g. a principal diagnosis code plus a confirming test) often protects the ratio better than a broad one, even though it misses cases.</p>
-      <p><strong class="lead">How to read it.</strong> Look for a validation study of the outcome definition and its <em>positive predictive value</em> (the share of coded cases that are real). Below about 80% for a rare outcome, expect noticeable dilution of ratio measures.</p>
+      <p>Outcomes can be recorded wrongly too: deaths coded to the wrong cause, events identified from billing codes, self-reported diagnoses. A useful rule: if specificity is perfect and sensitivity is the same in exposed and unexposed, the <em>risk ratio</em> is unbiased (both risks shrink by the same factor), though the risk difference shrinks.</p>
+      <p>This matters most in administrative and EHR studies, which define outcomes by codes. Choosing a strict definition (high specificity, e.g. a principal diagnosis code plus a confirming test) often protects the ratio better than a broad one, even though it misses cases.</p>
+      <p>So look for a validation study of the outcome definition and its <em>positive predictive value</em> (the share of coded cases that are real). Below about 80% for a rare outcome, expect noticeable dilution of ratio measures.</p>
     </div>
 
     <div class="callout gulf">
@@ -243,9 +242,8 @@
 
     <div class="facets">
       <p>Lecture 1.8 showed it for salt: one 24-hour urine is a noisy measure of usual intake, so the slope of risk on intake is flattened toward zero. The same happens with a single blood pressure reading or one dietary recall.</p>
-      <p><strong class="lead">Why it matters.</strong> Uncorrected slopes understate how much risk would change if the usual exposure changed, which is what policy models (Project 1) need. Repeat measures on a subsample allow a correction.</p>
-      <p><strong class="lead">How to read it.</strong> The attenuation depends on the share of the measured variance that is real between-person difference. If half the variance is day-to-day noise, the observed slope is about half the true one.</p>
-      <p><strong class="lead">When it changes.</strong> Categorising a noisy continuous exposure into thirds or fifths doesn’t remove the problem; it adds the multi-category issues of section 4.</p>
+      <p>The flattening has a simple size. It depends on the share of the measured variance that is real between-person difference: if half the variance is day-to-day noise, the observed slope is about half the true one. And categorising a noisy continuous exposure into thirds or fifths doesn’t remove the problem; it adds the multi-category issues of section 4.</p>
+      <p>Uncorrected slopes understate how much risk would change if the usual exposure changed, which is what policy models (Project 1) need. Repeat measures on a subsample allow a correction.</p>
     </div>
 
     <div class="callout trap">

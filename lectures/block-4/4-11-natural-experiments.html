@@ -56,10 +56,9 @@
     <p class="point">A natural experiment is an event the researcher did not control that splits people into exposed and unexposed groups in a way unrelated to their outcomes; “natural” describes who assigned the exposure, not how good the evidence is.</p>
 
     <div class="facets">
-      <p>Exposure is set by a law, a start date, a boundary, an eligibility rule or a supply shock rather than by individual choice. The question is always the same: <strong>what process decided who was exposed, and when?</strong> If that process is unrelated to the outcome’s other causes, the comparison behaves like a trial.</p>
-      <p><strong class="lead">Why it matters.</strong> Population policies (taxes, bans, labelling rules) cannot be randomised, and their effects per person are small but spread over millions. The UK Medical Research Council’s guidance (Craig and colleagues, 2012) argues natural experiments are worth evaluating when the population affected is large, the likely effect is important, and there is real uncertainty about its size.</p>
-      <p><strong class="lead">How to read it.</strong> A strong study describes the assignment process in detail, shows why it is unrelated to outcomes, and tests that claim. A weak one says “we used a natural experiment” and then runs a before–after comparison.</p>
-      <p><strong class="lead">When it changes.</strong> Moving from “admissions fell after the ban” to “admissions fell 2.4% more than the pre-ban trend predicted” is the move from description to a counterfactual design. Most of the drop in a raw before–after number is often trend.</p>
+      <p>In a natural experiment, exposure is set by a law, a start date, a boundary, an eligibility rule or a supply shock rather than by individual choice. The question is always the same: <strong>what process decided who was exposed, and when?</strong> If that process is unrelated to the outcome’s other causes, the comparison behaves like a trial.</p>
+      <p>For population policy this is often the only evidence on offer. Taxes, bans and labelling rules cannot be randomised, and their effects per person are small but spread over millions. The UK Medical Research Council’s guidance (Craig and colleagues, 2012) argues natural experiments are worth evaluating when the population affected is large, the likely effect is important, and there is real uncertainty about its size.</p>
+      <p>The label alone guarantees nothing. A strong study describes the assignment process in detail, shows why it is unrelated to outcomes, and tests that claim. A weak one says “we used a natural experiment” and then runs a before–after comparison. Moving from “admissions fell after the ban” to “admissions fell 2.4% more than the pre-ban trend predicted” is the move from description to a counterfactual design, and it matters, because most of the drop in a raw before–after number is often trend.</p>
     </div>
 
     <p>The MRC guidance (2012) set out when and how to use natural experiments. The same team’s 2017 review (Craig, Katikireddi, Leyland and Popham) set out the design menu used in this lecture, from regression adjustment and propensity scores to DiD, ITS, synthetic control, IV and RD. A full MRC/NIHR framework updated the guidance in 2025 (Craig and colleagues). It adds a broader definition, a design-by-design assessment of likely biases, and a role for qualitative, mixed-methods and economic evaluation.</p>
@@ -82,8 +81,8 @@
 
     <div class="facets">
       <p>A cut-off gives RD. Something that nudges uptake gives IV. Unexposed comparison units give DiD, or synthetic control when there are only one or a few exposed units and a long pre-period. A single exposed series with a long history gives ITS.</p>
-      <p><strong class="lead">Why it matters.</strong> Every design swaps the untestable “no unmeasured confounding” for a different untestable assumption. Choosing the design means choosing which assumption you can best defend for <em>this</em> policy.</p>
-      <p><strong class="lead">How to read it.</strong> In a paper, check that the design fits the assignment. An ITS of a policy that started on different dates in different regions throws away its best variation; a DiD with one treated country and clustered standard errors overstates its precision.</p>
+      <p>None of these is assumption-free. Every design swaps the untestable “no unmeasured confounding” for a different untestable assumption, so choosing the design means choosing which assumption you can best defend for <em>this</em> policy.</p>
+      <p>When reading a paper, check that the design fits the assignment. An ITS of a policy that started on different dates in different regions throws away its best variation. A DiD with one treated country and clustered standard errors overstates its precision.</p>
     </div>
 
     <figure class="diagram">
@@ -184,9 +183,9 @@
     <p class="point">The best-known public health natural experiments show that the design and data source change the size of the answer, and that even strong evaluations get revised.</p>
 
     <div class="facets">
-      <p><strong class="lead">Smoke-free laws.</strong> After Scotland’s smoke-free law (March 2006), Pell and colleagues (2008) found admissions for acute coronary syndrome fell 17% in nine hospitals, against 4% in England, which had no law yet. When England’s law came in (July 2007), Sims and colleagues (2010) ran an ITS on national hospital data with five years of pre-law trend. They found a 2.4% fall in emergency heart-attack admissions, about 1,200 fewer in the first year.</p>
-      <p><strong class="lead">Why the gap.</strong> A before–after comparison in selected hospitals versus a national series that models the existing downward trend and seasonality. The authors also pointed to lower second-hand smoke exposure in England before its law. Both found a benefit; the national ITS is the more conservative design.</p>
-      <p><strong class="lead">UK Soft Drinks Industry Levy.</strong> Announced in March 2016, in force from April 2018, charged on drinks with at least 5 g of sugar per 100 mL, with a higher rate from 8 g. A controlled ITS (Scarborough and colleagues, 2020) showed manufacturers cut sugar to get under the bands. ITS studies then linked the levy to an 8% relative fall in obesity in girls aged 10–11 (none in boys or younger children) and a 12% fall in hospital admissions for children’s tooth extractions for decay (Rogers and colleagues).</p>
+      <p>The <strong>smoke-free laws</strong> are the classic case. After Scotland’s smoke-free law (March 2006), Pell and colleagues (2008) found admissions for acute coronary syndrome fell 17% in nine hospitals, against 4% in England, which had no law yet. When England’s law came in (July 2007), Sims and colleagues (2010) ran an ITS on national hospital data with five years of pre-law trend. They found a 2.4% fall in emergency heart-attack admissions, about 1,200 fewer in the first year.</p>
+      <p>The gap comes mostly from design: a before–after comparison in selected hospitals versus a national series that models the existing downward trend and seasonality. The authors also pointed to lower second-hand smoke exposure in England before its law. Both found a benefit, but the national ITS is the more conservative design.</p>
+      <p>The <strong>UK Soft Drinks Industry Levy</strong> was announced in March 2016 and in force from April 2018. It is charged on drinks with at least 5 g of sugar per 100 mL, with a higher rate from 8 g. A controlled ITS (Scarborough and colleagues, 2020) showed manufacturers cut sugar to get under the bands. ITS studies then linked the levy to an 8% relative fall in obesity in girls aged 10–11 (none in boys or younger children) and a 12% fall in hospital admissions for children’s tooth extractions for decay (Rogers and colleagues).</p>
     </div>
 
     <div class="callout example">
@@ -217,8 +216,8 @@
     </div>
 
     <div class="facets">
-      <p><strong class="lead">Why it matters.</strong> Earlier evaluations of the GCC drink taxes mostly compared year-on-year growth in proprietary industry sales data, with no counterfactual. Saudi Arabia’s 50% tax on carbonated drinks was described as among the largest sugary-drink taxes anywhere, so a credible estimate would matter well beyond the region.</p>
-      <p><strong class="lead">How to read it.</strong> For calorie labelling, the published evidence is thin: one early study compared intake a few months before and after enforcement and found no significant change, and a 2023 audit found 43% of “healthy food” restaurants on a delivery app were not complying. Short before–after windows and partial compliance both bias towards finding nothing.</p>
+      <p>The GCC drink taxes are an open opportunity. Earlier evaluations mostly compared year-on-year growth in proprietary industry sales data, with no counterfactual. Saudi Arabia’s 50% tax on carbonated drinks was described as among the largest sugary-drink taxes anywhere, so a credible estimate would matter well beyond the region.</p>
+      <p>Calorie labelling is in worse shape. The published evidence is thin: one early study compared intake a few months before and after enforcement and found no significant change, and a 2023 audit found 43% of “healthy food” restaurants on a delivery app were not complying. Short before–after windows and partial compliance both bias towards finding nothing.</p>
     </div>
 
     <div class="callout gulf">
@@ -238,9 +237,9 @@
     <p class="point">A policy starts affecting behaviour when people learn about it, not when it legally starts, so the “intervention date” is a choice you must justify and fix before seeing the results.</p>
 
     <div class="facets">
-      <p><strong>Anticipation</strong>: firms reformulate, consumers stockpile or retailers change prices between announcement and start. Placing the break at the start date then either misses the effect or counts it as part of the pre-trend, biasing towards zero.</p>
-      <p><strong class="lead">Why it matters.</strong> For the SDIL, an analysis of sales data found most of the fall in sugar from reformulation happened in the two years between announcement and start (Dickson and colleagues, 2023). An ITS with the break at April 2018 would see little.</p>
-      <p><strong class="lead">How to read it.</strong> Good studies define the announcement and start dates in advance, model both (or exclude the window between them), and show event-study leads (Lecture 4.6). A dip in the leads is anticipation, or a sign the comparison is wrong.</p>
+      <p><strong>Anticipation</strong> is what happens between announcement and start: firms reformulate, consumers stockpile or retailers change prices. Placing the break at the start date then either misses the effect or counts it as part of the pre-trend, biasing towards zero.</p>
+      <p>The SDIL shows how much this matters. An analysis of sales data found most of the fall in sugar from reformulation happened in the two years between announcement and start (Dickson and colleagues, 2023), so an ITS with the break at April 2018 would see little.</p>
+      <p>Good studies define the announcement and start dates in advance, model both (or exclude the window between them), and show event-study leads (Lecture 4.6). A dip in the leads is anticipation, or a sign the comparison is wrong.</p>
     </div>
 
     <figure class="diagram">
@@ -277,7 +276,7 @@ summary(fit)   # level and slope changes at each date</code></pre>
     <p>A segmented ITS (Lecture 4.7) with two breaks: <code>ann</code> and <code>start</code> give level changes, the <code>I(...)</code> terms give slope changes after each date, and calendar-month dummies absorb seasonality. Fix both dates in your protocol before fitting.</p>
 
     <div class="facets">
-      <p><strong class="lead">Pre-registration.</strong> Write down, before looking at post-policy outcomes, the dates, outcomes, comparison or donor units, and the main model, and post it (for example on OSF). Public data already exist, so it isn’t blinding; it limits the choices you could make after seeing results (the “garden of forking paths” of Lecture 3.1). For Project 4, register before downloading post-2017 outcomes.</p>
+      <p>The defence is <strong>pre-registration</strong>. Write down, before looking at post-policy outcomes, the dates, outcomes, comparison or donor units, and the main model, and post it (for example on OSF). Public data already exist, so it isn’t blinding, but it limits the choices you could make after seeing results (the “garden of forking paths” of Lecture 3.1). For Project 4, register before downloading post-2017 outcomes.</p>
     </div>
 
     <div class="callout trap">
@@ -292,9 +291,9 @@ summary(fit)   # level and slope changes at each date</code></pre>
     <p class="point">The three threats that sink most policy evaluations are effects leaking into the comparison group, other changes at the same time, and trusting a single design; triangulation across designs is the main defence.</p>
 
     <div class="facets">
-      <p><strong class="lead">Spillovers.</strong> The policy changes the comparison units too: shoppers cross a border to buy untaxed drinks, firms reformulate for a whole region, a national media debate reaches untaxed neighbours. Spillovers break the “no interference” part of consistency (Lecture 4.1) and usually bias towards zero, or double-count if comparison sales rise.</p>
-      <p><strong class="lead">Co-interventions.</strong> Policies come in packages. A single-series ITS cannot separate a tax from a simultaneous VAT rise or campaign; a comparison unit exposed to the other change but not the policy can. <strong>Negative-control outcomes</strong> help: an outcome the policy can’t affect but the co-intervention or confounding would (for example, untaxed food sales).</p>
-      <p><strong class="lead">Triangulation.</strong> Run designs whose biases point in different directions or come from different sources: DiD against Kuwait, synthetic control from non-GCC donors, ITS within each country, and different outcomes (supply, imports). If they agree, no single bias is likely to explain them all (Lawlor, Tilling and Davey Smith, 2016).</p>
+      <p><strong>Spillovers</strong> happen when the policy changes the comparison units too: shoppers cross a border to buy untaxed drinks, firms reformulate for a whole region, a national media debate reaches untaxed neighbours. They break the “no interference” part of consistency (Lecture 4.1) and usually bias towards zero, or double-count if comparison sales rise.</p>
+      <p><strong>Co-interventions</strong> are the second threat, because policies come in packages. A single-series ITS cannot separate a tax from a simultaneous VAT rise or campaign, but a comparison unit exposed to the other change and not the policy can. <strong>Negative-control outcomes</strong> help too: an outcome the policy can’t affect but the co-intervention or confounding would (for example, untaxed food sales).</p>
+      <p>The main defence against both is <strong>triangulation</strong>. Run designs whose biases point in different directions or come from different sources: DiD against Kuwait, synthetic control from non-GCC donors, ITS within each country, and different outcomes (supply, imports). If they agree, no single bias is likely to explain them all (Lawlor, Tilling and Davey Smith, 2016).</p>
     </div>
 
     <div class="table-wrap">

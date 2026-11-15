@@ -56,10 +56,9 @@
     <p class="point">An SEIR model is four boxes and three arrows; each arrow is a rate, and only one of them, infection, depends on how many people are in another box.</p>
 
     <div class="facets">
-      <p>Everyone is in one box. <em>S</em> (susceptible) can be infected. <em>E</em> (exposed) is infected but not yet infectious, the latent period of Lecture 6.1. <em>I</em> is infectious. <em>R</em> is recovered (or removed: immune, isolated or dead). SIR drops the E box. Each arrow has a rate: \(\beta\) for transmission, \(\sigma\) for leaving E, \(\gamma\) for leaving I.</p>
-      <p><strong class="lead">Why it matters.</strong> The rates are interpretable. One over \(\sigma\) is the mean latent period; one over \(\gamma\) is the mean infectious period. Interventions map onto them: distancing lowers \(\beta\), faster isolation raises \(\gamma\), vaccination moves people from S to R without infection.</p>
-      <p><strong class="lead">How to read it.</strong> The infection flow is \(\beta\) times S times the infectious fraction: new infections need both susceptibles and infectious people. That single product is what makes epidemics rise and fall on their own. The reproduction number is transmission rate times days infectious.</p>
-      <p><strong class="lead">When it changes.</strong> Doubling the infectious period from 5 to 10 days at the same \(\beta\) doubles \(R_0\). Doubling the latent period leaves \(R_0\) unchanged but slows the epidemic, because each generation takes longer.</p>
+      <p>In a compartmental model, everyone is in one box. <em>S</em> (<strong>susceptible</strong>) can be infected. <em>E</em> (<strong>exposed</strong>) is infected but not yet infectious, the latent period of Lecture 6.1. <em>I</em> is <strong>infectious</strong>. <em>R</em> is <strong>recovered</strong> (or removed: immune, isolated or dead). SIR drops the E box. Each arrow has a rate: \(\beta\) for transmission, \(\sigma\) for leaving E, \(\gamma\) for leaving I.</p>
+      <p>The rates mean something. One over \(\sigma\) is the mean latent period, and one over \(\gamma\) is the mean infectious period. The infection flow is \(\beta\) times S times the infectious fraction, so new infections need both susceptibles and infectious people. That single product is what makes epidemics rise and fall on their own. The reproduction number is transmission rate times days infectious.</p>
+      <p>Because the rates are interpretable, interventions map straight onto them. Distancing lowers \(\beta\), faster isolation raises \(\gamma\), and vaccination moves people from S to R without infection. The rates also behave differently when they change. Doubling the infectious period from 5 to 10 days at the same \(\beta\) doubles \(R_0\). Doubling the latent period leaves \(R_0\) unchanged but slows the epidemic, because each generation takes longer.</p>
     </div>
 
     \[ R_0 = \frac{\beta}{\gamma} = \beta \times \text{mean infectious period} \]
@@ -115,10 +114,9 @@
     <p class="point">An unchecked epidemic peaks when the susceptible share falls to 1/R0, then keeps going: the final size overshoots the herd-immunity threshold by a wide margin.</p>
 
     <div class="facets">
-      <p>The <em>peak</em> is the day with the most people infectious. The <em>final size</em> (attack rate) is the share ever infected when the epidemic ends. Both follow from the model without fitting anything.</p>
-      <p><strong class="lead">Why it matters.</strong> Hospital planning needs the peak; the total burden needs the final size. Interventions trade them: a temporary measure can lower and delay the peak, yet leave the final size almost unchanged once it lifts.</p>
-      <p><strong class="lead">How to read it.</strong> In the simple model, incidence turns down when the susceptible share drops below \(1/R_0\), because each case then infects fewer than one. But many people are infectious at that moment, so infections continue. With \(R_0 = 2\), the threshold is 50% but about 80% are eventually infected; with \(R_0 = 1.5\), about 58%; with \(R_0 = 3\), about 94%.</p>
-      <p><strong class="lead">When it changes.</strong> Cutting transmission by 40% for 60 days near the start mostly delays the epidemic. The same cut started shortly before the uncontrolled peak reduces the overshoot and so the final size: in the default simulator, from about 89% to about 73% infected.</p>
+      <p>The <strong>peak</strong> is the day with the most people infectious. The <strong>final size</strong> (attack rate) is the share ever infected when the epidemic ends. Both follow from the model without fitting anything, and they serve different plans: hospital planning needs the peak, and the total burden needs the final size.</p>
+      <p>The two are linked by overshoot. In the simple model, incidence turns down when the susceptible share drops below \(1/R_0\), because each case then infects fewer than one. But many people are infectious at that moment, so infections continue. With \(R_0 = 2\), the threshold is 50% but about 80% are eventually infected; with \(R_0 = 1.5\), about 58%; with \(R_0 = 3\), about 94%.</p>
+      <p>So interventions trade peak against final size, and timing decides which one moves. A temporary measure can lower and delay the peak, yet leave the final size almost unchanged once it lifts. Cutting transmission by 40% for 60 days near the start mostly delays the epidemic. The same cut started shortly before the uncontrolled peak reduces the overshoot and so the final size: in the default simulator, from about 89% to about 73% infected.</p>
     </div>
 
     <div class="widget" data-widget="seir-sim">
@@ -158,9 +156,8 @@ plot(out)</code></pre>
     <p class="point">Deterministic models give the average path of a large epidemic; when numbers are small, chance dominates and you need a stochastic model.</p>
 
     <div class="facets">
-      <p>A <em>deterministic</em> model solves the flow equations: one input, one output, fractions of people allowed. A <em>stochastic</em> model draws each infection and recovery at random, so the same inputs give a spread of outcomes, including fade-out.</p>
-      <p><strong class="lead">Why it matters.</strong> Early in an outbreak, in a hospital ward, or for a rare imported infection, there are few cases. The deterministic model cannot die out and cannot tell you the chance of a large outbreak; the stochastic one can (the branching process of Lecture 6.1 is the simplest example).</p>
-      <p><strong class="lead">How to read it.</strong> When dozens or more are infectious, the two agree on the average. Report stochastic results as a distribution: the chance of fade-out, and a range for peak timing and size.</p>
+      <p>A <strong>deterministic</strong> model solves the flow equations: one input, one output, fractions of people allowed. A <strong>stochastic</strong> model draws each infection and recovery at random, so the same inputs give a spread of outcomes, including fade-out.</p>
+      <p>The difference only matters when cases are few: early in an outbreak, in a hospital ward, or for a rare imported infection. There the deterministic model cannot die out and cannot tell you the chance of a large outbreak, but the stochastic one can (the branching process of Lecture 6.1 is the simplest example). Once dozens or more are infectious, the two agree on the average. Report stochastic results as a distribution: the chance of fade-out, and a range for peak timing and size.</p>
     </div>
 
     <div class="callout trap">
@@ -180,10 +177,9 @@ plot(out)</code></pre>
     <p class="point">The early part of an epidemic curve tells you one number well, the growth rate; R0, the infectious period and the share of infections reported can trade off against each other and fit equally well.</p>
 
     <div class="facets">
-      <p>Fitting means choosing parameters so the model’s predicted reported cases match the observed counts, usually by maximum likelihood or Bayesian inference with a negative binomial observation model (Lecture 3.3). A parameter is <em>identifiable</em> if the data pin it down; if different values fit equally well, it is not.</p>
-      <p><strong class="lead">Why it matters.</strong> During exponential growth the curve has two features: its level and its slope. Many parameter sets share them. A longer infectious period with lower daily transmission gives the same slope but a higher \(R_0\). A lower reporting fraction gives the same reported curve but more true infections, so an earlier peak. The forecasts diverge sharply even though the fits are identical.</p>
-      <p><strong class="lead">How to read it.</strong> Fix what you can from other data: the latent and infectious periods from clinical and contact-tracing studies (Lecture 6.1), the reporting fraction from serosurveys. Report how forecasts change across plausible values. A fitted model with narrow intervals and no external information on these parameters is overconfident.</p>
-      <p><strong class="lead">When it changes.</strong> As the epidemic bends (susceptibles deplete, behaviour changes), the data start to separate the parameter sets. Identifiability improves with time, which is little comfort when decisions are needed in week three.</p>
+      <p>Fitting means choosing parameters so the model’s predicted reported cases match the observed counts, usually by maximum likelihood or Bayesian inference with a negative binomial observation model (Lecture 3.3). A parameter is <strong>identifiable</strong> if the data pin it down. If different values fit equally well, it is not.</p>
+      <p>Early data identify very little. During exponential growth the curve has two features, its level and its slope, and many parameter sets share them. A longer infectious period with lower daily transmission gives the same slope but a higher \(R_0\). A lower reporting fraction gives the same reported curve but more true infections, so an earlier peak. The forecasts diverge sharply even though the fits are identical.</p>
+      <p>The answer is to fix what you can from other data: the latent and infectious periods from clinical and contact-tracing studies (Lecture 6.1), the reporting fraction from serosurveys. Then report how forecasts change across plausible values. A fitted model with narrow intervals and no external information on these parameters is overconfident. As the epidemic bends (susceptibles deplete, behaviour changes), the data start to separate the parameter sets, so identifiability improves with time. That is little comfort when decisions are needed in week three.</p>
     </div>
 
     <div class="widget" data-widget="seir-fit">
@@ -209,9 +205,8 @@ plot(out)</code></pre>
 
     <div class="facets">
       <p>\(R_t\) is estimated as today’s new infections divided by a weighted sum of recent infections, weighted by how infectious each past day’s cases are now (the generation interval). <code>EpiEstim</code> (Cori et al. 2013) does this with cases and a serial interval. <code>EpiNow2</code> first works back from reported cases to infections, accounting for the incubation period and reporting delays, then estimates \(R_t\).</p>
-      <p><strong class="lead">Why it matters.</strong> \(R_t\) answers the question decision-makers ask: is it growing or shrinking now, and did the last measure work? It needs no full model, only the generation interval.</p>
-      <p><strong class="lead">How to read it.</strong> Look at the interval, not the point: an \(R_t\) of 1.1 with a 95% interval of 0.8–1.4 does not say growth. The estimate refers to when people were <em>infected</em>, which is one to two weeks before their cases are reported.</p>
-      <p><strong class="lead">When it changes.</strong> \(R_t\) falling from 1.3 to 0.9 after a measure is encouraging only if the timing fits: the drop should appear in infections dated after the measure, not in reports dated a few days after it.</p>
+      <p>This answers the question decision-makers ask: is it growing or shrinking now, and did the last measure work? And it needs no full model, only the generation interval. Look at the interval, not the point: an \(R_t\) of 1.1 with a 95% interval of 0.8–1.4 does not say growth.</p>
+      <p>Timing is the other thing to check. The estimate refers to when people were <em>infected</em>, which is one to two weeks before their cases are reported. So \(R_t\) falling from 1.3 to 0.9 after a measure is encouraging only if the drop appears in infections dated after the measure, not in reports dated a few days after it.</p>
     </div>
 
     <figure class="diagram">
@@ -266,9 +261,9 @@ plot(est)                                          # infections, reports and R_t
     <p class="point">Use a mechanistic model when you need to ask “what if we do X?”; use a statistical or machine-learning forecaster when you need the next few weeks; and judge each by the job it was built for.</p>
 
     <div class="facets">
-      <p>A <em>mechanistic</em> model (SEIR and its relatives) encodes how transmission works; its parameters mean something. A <em>black-box</em> or statistical forecaster (ARIMA, gradient boosting, neural networks; Lecture 3.9) learns patterns in past counts without a theory of transmission.</p>
-      <p><strong class="lead">Why it matters.</strong> Only the mechanistic model can run a counterfactual: close schools, vaccinate 60%, add a booster. A black box trained on the past has never seen the intervention. For short-term forecasts, though, flexible statistical models and ensembles often match or beat mechanistic ones.</p>
-      <p><strong class="lead">How to read it.</strong> Scenario projections answer “what if”, conditional on assumptions; they are not predictions and should not be scored as if they were. Forecasts answer “what next”, and should be scored on genuinely future data against a simple baseline.</p>
+      <p>A <strong>mechanistic</strong> model (SEIR and its relatives) encodes how transmission works, so its parameters mean something. A <strong>black-box</strong> or statistical forecaster (ARIMA, gradient boosting, neural networks; Lecture 3.9) learns patterns in past counts without a theory of transmission.</p>
+      <p>Only the mechanistic model can run a counterfactual: close schools, vaccinate 60%, add a booster. A black box trained on the past has never seen the intervention. For short-term forecasts, though, flexible statistical models and ensembles often match or beat mechanistic ones.</p>
+      <p>That split also tells you how to judge the output. Scenario projections answer “what if”, conditional on assumptions. They are not predictions and should not be scored as if they were. Forecasts answer “what next”, and should be scored on genuinely future data against a simple baseline.</p>
     </div>
 
     <div class="callout example">

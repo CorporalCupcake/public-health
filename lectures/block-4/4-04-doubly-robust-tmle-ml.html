@@ -59,9 +59,8 @@
 
     <div class="facets">
       <p>The <strong>outcome model</strong> \(\mu_a(X) = E[Y \mid A=a, X]\) predicts the outcome from treatment and confounders; the g-formula (Lecture 4.3) averages its predictions with everyone set to treated, then to untreated. The <strong>propensity-score model</strong> \(e(X) = P(A=1 \mid X)\) predicts treatment; IPW reweights people by its inverse. Both are called <strong>nuisance models</strong>: you need them, but you do not care about their coefficients.</p>
-      <p><strong class="lead">Why it matters.</strong> Each estimator is only as good as its one model. If the outcome model misses a curve or an interaction, the g-formula is biased. If the PS model misses one, the weights fail to balance the confounders and IPW is biased. Adding more people does not shrink these biases.</p>
-      <p><strong class="lead">How to read it.</strong> A paper that reports one estimator from one parametric model has made a bet it rarely states. When the g-formula and IPW agree, you have mild reassurance that neither model is badly wrong. When they disagree, at least one is, and you do not know which.</p>
-      <p><strong class="lead">When it changes.</strong> An estimate that moves from HR 0.80 to 0.95 when you add a spline for age in the PS model is telling you the linear-age model was not balancing age. Treat that sensitivity as a finding, not noise.</p>
+      <p>The weakness is that each estimator is only as good as its one model. If the outcome model misses a curve or an interaction, the g-formula is biased. If the PS model misses one, the weights fail to balance the confounders and IPW is biased. Adding more people does not shrink these biases.</p>
+      <p>So a paper that reports one estimator from one parametric model has made a bet it rarely states. When the g-formula and IPW agree, you have mild reassurance that neither model is badly wrong. When they disagree, at least one is, and you do not know which. Watch for sensitivity too: an estimate that moves from HR 0.80 to 0.95 when you add a spline for age in the PS model is telling you the linear-age model was not balancing age. Treat that sensitivity as a finding, not noise.</p>
     </div>
 
     <div class="callout trap">
@@ -84,9 +83,9 @@
 
     <div class="facets">
       <p>In words: take the g-formula estimate, then add the weighted average of the outcome model’s residuals in the treated and the untreated. If the outcome model is right, residuals average to zero and the correction vanishes, whatever the weights. If the PS model is right, the weighted residuals exactly undo the outcome model’s bias.</p>
-      <p><strong class="lead">Why it matters.</strong> You get two chances instead of one. When both models are right, AIPW also has the smallest variance any estimator can have without extra assumptions (it is <strong>semiparametrically efficient</strong>), so you pay little for the insurance.</p>
-      <p><strong class="lead">How to read it.</strong> Report AIPW with its influence-function standard error (the per-person bracket above, whose variance gives the SE directly, no bootstrap needed). Compare it with the g-formula and IPW: if all three agree, good; if AIPW sits with one of them, the other model is probably the misspecified one.</p>
-      <p><strong class="lead">When it changes.</strong> A large correction term (AIPW far from the g-formula estimate) means the outcome model was leaving systematic residuals in one group. Find out where: which confounder, which range.</p>
+      <p>So you get two chances instead of one. And when both models are right, AIPW also has the smallest variance any estimator can have without extra assumptions (it is <strong>semiparametrically efficient</strong>), so you pay little for the insurance.</p>
+      <p>Report AIPW with its influence-function standard error (the per-person bracket above, whose variance gives the SE directly, no bootstrap needed). Compare it with the g-formula and IPW: if all three agree, good; if AIPW sits with one of them, the other model is probably the misspecified one.</p>
+      <p>The size of the correction is a diagnostic in its own right. A large correction term (AIPW far from the g-formula estimate) means the outcome model was leaving systematic residuals in one group. Find out where: which confounder, which range.</p>
     </div>
 
     <div class="widget" data-widget="dr-misspec">
@@ -111,10 +110,10 @@
     <p class="point">TMLE fits an outcome model, then nudges its predictions just enough, in the direction the propensity score points, to remove the bias for the one effect you care about.</p>
 
     <div class="facets">
-      <p><strong>Targeted maximum likelihood estimation</strong> (van der Laan and Rubin, 2006). Step 1: an initial outcome model. Step 2: a small regression of the outcome on a “clever covariate” built from the propensity score, using the initial predictions as a fixed offset; this shifts the predictions. Step 3: plug the updated predictions into the g-formula. The update is <em>targeted</em> because it is chosen to fix bias for the treatment effect only, not to improve prediction in general.</p>
-      <p><strong class="lead">Why it matters.</strong> It is doubly robust and efficient, like AIPW. Because it ends as a plug-in g-formula estimate, it respects the outcome’s range: risks stay between 0 and 1, which AIPW’s correction term can break when weights are large.</p>
-      <p><strong class="lead">How to read it.</strong> In practice AIPW and TMLE usually give very similar answers. TMLE tends to be steadier with rare binary outcomes and near-violations of positivity. Report one as primary and say so in advance; reporting whichever looks better is p-hacking.</p>
-      <p><strong class="lead">When it changes.</strong> If the targeting step moves the estimate a lot (initial g-formula 0.06 risk difference, targeted 0.02), the initial outcome model was biased for this contrast. As with AIPW, that is a diagnostic about your outcome model.</p>
+      <p><strong>Targeted maximum likelihood estimation</strong> (van der Laan and Rubin, 2006) works in three steps. Step 1: an initial outcome model. Step 2: a small regression of the outcome on a “clever covariate” built from the propensity score, using the initial predictions as a fixed offset; this shifts the predictions. Step 3: plug the updated predictions into the g-formula. The update is <em>targeted</em> because it is chosen to fix bias for the treatment effect only, not to improve prediction in general.</p>
+      <p>Like AIPW, it is doubly robust and efficient. But because it ends as a plug-in g-formula estimate, it respects the outcome’s range: risks stay between 0 and 1, which AIPW’s correction term can break when weights are large.</p>
+      <p>In practice AIPW and TMLE usually give very similar answers, and TMLE tends to be steadier with rare binary outcomes and near-violations of positivity. Report one as primary and say so in advance; reporting whichever looks better is p-hacking.</p>
+      <p>Watch how far the targeting step moves things. If it moves the estimate a lot (initial g-formula 0.06 risk difference, targeted 0.02), the initial outcome model was biased for this contrast. As with AIPW, that is a diagnostic about your outcome model.</p>
     </div>
 
     <pre><code>library(tmle); library(SuperLearner)
@@ -139,9 +138,9 @@ summary(res$g$g1W)     # estimated propensity scores: check the extremes</code><
 
     <div class="facets">
       <p><strong>SuperLearner</strong> (van der Laan, Polley and Hubbard, 2007) is cross-validated stacking: you list candidate learners (logistic regression, lasso, random forest, boosting, splines), it estimates each one’s out-of-fold predictions, and finds the weighted combination with the lowest cross-validated loss. In large samples it does about as well as the best candidate in the list.</p>
-      <p><strong class="lead">Why it matters.</strong> The usual misspecification is not a wrong variable but a wrong shape: linear age, no interaction between severity and renal function. Flexible learners catch those without you guessing them in advance.</p>
-      <p><strong class="lead">How to read it.</strong> Always include simple learners (main-terms GLM, even the mean) in the library, so the ensemble can fall back to them. Look at the SuperLearner weights: if all weight goes to one random forest, check overlap and overfitting. Report the library in the methods.</p>
-      <p><strong class="lead">When it changes.</strong> If swapping a GLM for a SuperLearner moves your estimate substantially, the parametric model was missing structure that matters for confounding. If it changes nothing, that is reassuring evidence of robustness, worth one sentence in the paper.</p>
+      <p>That helps because the usual misspecification is not a wrong variable but a wrong shape: linear age, no interaction between severity and renal function. Flexible learners catch those without you guessing them in advance.</p>
+      <p>Always include simple learners (main-terms GLM, even the mean) in the library, so the ensemble can fall back to them. Then look at the SuperLearner weights: if all weight goes to one random forest, check overlap and overfitting. Report the library in the methods.</p>
+      <p>Comparing it with a plain GLM is informative either way. If swapping a GLM for a SuperLearner moves your estimate substantially, the parametric model was missing structure that matters for confounding. If it changes nothing, that is reassuring evidence of robustness, worth one sentence in the paper.</p>
     </div>
 
     <div class="callout trap">
@@ -158,9 +157,8 @@ summary(res$g$g1W)     # estimated propensity scores: check the extremes</code><
 
     <div class="facets">
       <p><strong>Cross-fitting</strong>: split the data into K folds. For each fold, fit the outcome and PS models on the other folds, predict for this fold, and compute the AIPW contributions there. Pool all contributions into one estimate. <strong>Double/debiased machine learning</strong> (DML; Chernozhukov and colleagues, 2018) is this recipe plus an estimating equation that is <strong>Neyman orthogonal</strong>: small errors in the nuisance models have no first-order effect on the answer. AIPW’s equation already has this property.</p>
-      <p><strong class="lead">Why it matters.</strong> A random forest fitted to all the data can nearly memorise each person’s outcome, so in-sample residuals are too small and the correction term too timid. Cross-fitting removes that own-observation bias. Orthogonality means the two nuisance errors enter as a product, so each model only has to be moderately good, not perfect.</p>
-      <p><strong class="lead">How to read it.</strong> K = 5 or 10 is typical. Results depend a little on the random split; good practice repeats the cross-fitting with several seeds and reports the median estimate. Zivich and Breskin (2021) found that flexible learners without cross-fitting gave confidence intervals that covered the truth too rarely, and cross-fit estimators repaired this.</p>
-      <p><strong class="lead">When it changes.</strong> If estimates swing noticeably between seeds, the nuisance models are unstable, usually because of small samples, rare outcomes or extreme propensities. Fix that before reporting a single number.</p>
+      <p>Both pieces solve a real problem. A random forest fitted to all the data can nearly memorise each person’s outcome, so in-sample residuals are too small and the correction term too timid. Cross-fitting removes that own-observation bias. Orthogonality means the two nuisance errors enter as a product, so each model only has to be moderately good, not perfect.</p>
+      <p>K = 5 or 10 is typical. Results depend a little on the random split, so good practice repeats the cross-fitting with several seeds and reports the median estimate. If estimates swing noticeably between seeds, the nuisance models are unstable, usually because of small samples, rare outcomes or extreme propensities; fix that before reporting a single number. Zivich and Breskin (2021) found that flexible learners without cross-fitting gave confidence intervals that covered the truth too rarely, and cross-fit estimators repaired this.</p>
     </div>
 
     <figure class="diagram">
@@ -231,9 +229,9 @@ aipw$plot.p_score()                   # overlap of propensity scores by group</c
 
     <div class="facets">
       <p>Positivity (Lecture 4.1): at every confounder pattern, both treatments must be possible. In practice the threat is <strong>near-violation</strong>: groups with propensities like 0.01 or 0.99, where a few people get enormous weights.</p>
-      <p><strong class="lead">Why it matters.</strong> AIPW and TMLE divide by the propensity, so they inherit IPW’s instability there. The outcome model’s predictions in those regions are pure extrapolation. Double robustness assumes positivity; it does not supply it.</p>
-      <p><strong class="lead">How to read it.</strong> Plot the propensity distributions by group before any effect estimate. Report the largest weights and the effective sample size. Options when overlap is poor: <strong>truncate</strong> the propensities (bias for variance), <strong>trim</strong> people outside a range such as 0.1–0.9 (Crump and colleagues, 2009), or use <strong>overlap weights</strong>. Trimming and overlap weights change the estimand to “the effect in people for whom both options were realistic”; say so.</p>
-      <p><strong class="lead">When it changes.</strong> If truncating at 0.01 versus 0.05 moves the estimate a lot, the answer is being driven by a handful of people in the tails. Report the effect for the overlap population and be honest that the whole-population effect is not identified by these data.</p>
+      <p>AIPW and TMLE divide by the propensity, so they inherit IPW’s instability there, and the outcome model’s predictions in those regions are pure extrapolation. Double robustness assumes positivity; it does not supply it.</p>
+      <p>So plot the propensity distributions by group before any effect estimate, and report the largest weights and the effective sample size. When overlap is poor you have options: <strong>truncate</strong> the propensities (bias for variance), <strong>trim</strong> people outside a range such as 0.1–0.9 (Crump and colleagues, 2009), or use <strong>overlap weights</strong>. Trimming and overlap weights change the estimand to “the effect in people for whom both options were realistic”; say so.</p>
+      <p>If truncating at 0.01 versus 0.05 moves the estimate a lot, the answer is being driven by a handful of people in the tails. Report the effect for the overlap population and be honest that the whole-population effect is not identified by these data.</p>
     </div>
 
     <div class="callout example">
@@ -254,9 +252,9 @@ aipw$plot.p_score()                   # overlap of propensity scores by group</c
 
     <div class="facets">
       <p>The <strong>CATE</strong> \(\tau(x)\) is the average effect among people with covariates \(x\). <strong>Causal forests</strong> (Wager and Athey, 2018; the <code>grf</code> package) grow trees that split where the treatment effect differs, using <strong>honest</strong> splitting: one subsample chooses splits, another estimates effects in the leaves. Meta-learners (T-, S-, X-, R-, DR-learners) build CATEs from ordinary prediction models.</p>
-      <p><strong class="lead">Why it matters.</strong> An average benefit can hide harm in a subgroup, which is the real question in anticoagulation: high stroke risk versus high bleeding risk. CATE estimates can suggest who to treat, but they are hypotheses for confirmation, not clinical rules.</p>
-      <p><strong class="lead">How to read it.</strong> Do not read a forest’s individual CATEs as personal effects. Test whether heterogeneity exists at all (<code>test_calibration</code>), rank people by predicted benefit and check whether the top-ranked group really gains more (rank-weighted average treatment effect, RATE), and summarise along a few pre-specified variables (<code>best_linear_projection</code>).</p>
-      <p><strong class="lead">When it changes.</strong> CATEs ranging from −5 to +10 points across patients sound like strong heterogeneity, but if the calibration test finds none, that spread is mostly noise. Real heterogeneity shows as a stable gradient across ranked groups.</p>
+      <p>An average benefit can hide harm in a subgroup, and that is the real question in anticoagulation: high stroke risk versus high bleeding risk. CATE estimates can suggest who to treat, but they are hypotheses for confirmation, not clinical rules.</p>
+      <p>So do not read a forest’s individual CATEs as personal effects. Test whether heterogeneity exists at all (<code>test_calibration</code>), rank people by predicted benefit and check whether the top-ranked group really gains more (rank-weighted average treatment effect, RATE), and summarise along a few pre-specified variables (<code>best_linear_projection</code>).</p>
+      <p>A wide spread is not proof of heterogeneity. CATEs ranging from −5 to +10 points across patients sound like strong heterogeneity, but if the calibration test finds none, that spread is mostly noise. Real heterogeneity shows as a stable gradient across ranked groups.</p>
     </div>
 
     <pre><code>library(grf)

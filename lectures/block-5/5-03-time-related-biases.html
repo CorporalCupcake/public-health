@@ -145,9 +145,9 @@
 
     <div class="facets">
       <p>You met immortal time in Lectures 2.2 and 2.16. Suissa distinguished two forms. <strong>Misclassified</strong> immortal time: the waiting time before the first dose is counted as treated. <strong>Excluded</strong> immortal time: the waiting time is dropped from the treated group, but untreated patients keep all their time, including those who died early before they could have been treated.</p>
-      <p><strong class="lead">Why it matters.</strong> Both make treatment look protective, the misclassified form more strongly. The bias grows with the length and variability of the wait, so ICU and post-discharge studies, where treatment starts hours to weeks after time zero, are especially exposed.</p>
-      <p><strong class="lead">How to read it.</strong> A useful test: does the estimate get stronger as the window for “becoming exposed” gets longer? In Suissa’s 2003 study of inhaled corticosteroids after a COPD admission, the time-fixed rate ratio fell from 0.98 to 0.51 as that window grew from 15 to 365 days; the time-dependent estimate stayed near 1.</p>
-      <p><strong class="lead">When it changes.</strong> In the same study, the time-fixed rate ratio for corticosteroid use within 90 days was 0.69; analysed with time-dependent exposure, it was 1.00. A 31% “benefit” was entirely produced by the analysis.</p>
+      <p>Both make treatment look protective, the misclassified form more strongly. The bias grows with the length and variability of the wait, so ICU and post-discharge studies, where treatment starts hours to weeks after time zero, are especially exposed.</p>
+      <p>That gives a useful test: does the estimate get stronger as the window for “becoming exposed” gets longer? In Suissa’s 2003 study of inhaled corticosteroids after a COPD admission, the time-fixed rate ratio fell from 0.98 to 0.51 as that window grew from 15 to 365 days; the time-dependent estimate stayed near 1.</p>
+      <p>The same study shows how much the analysis alone can do. The time-fixed rate ratio for corticosteroid use within 90 days was 0.69; analysed with time-dependent exposure, it was 1.00. A 31% “benefit” was entirely produced by the analysis.</p>
     </div>
 
     <div class="widget" data-widget="immortal-icu">
@@ -185,9 +185,8 @@ coxph(Surv(t_end - 48, died) ~ ac48 + age + sofa0, data = lm)</code></pre>
 
     <div class="facets">
       <p><strong>Time-window bias</strong> (Suissa and colleagues, 2011) arises in case-control studies when exposure is measured over windows of different length: a case’s window runs from cohort entry to diagnosis, while a control’s runs to the end of follow-up. Controls have more time to start the drug. <strong>Time-lag bias</strong> arises when a drug used early in a disease is compared with one used later, when the disease is more advanced and outcomes worse.</p>
-      <p><strong class="lead">Why it matters.</strong> Both can produce large spurious benefits. Suissa and Azoulay (2012) reviewed observational studies of metformin and cancer: 13 had immortal time bias, 9 had not considered time-window bias, and others compared first-line metformin with second- or third-line drugs. The studies that avoided these biases found no effect of metformin on cancer incidence.</p>
-      <p><strong class="lead">How to read it.</strong> In a case-control paper, check that controls were sampled from the risk set at the case’s event time (incidence density sampling, Lecture 2.3) and that exposure is measured over the same window before that date. In a comparative cohort, check that both drugs are at the same line of therapy.</p>
-      <p><strong class="lead">When it changes.</strong> The bias is roughly proportional to how unequal the windows are. Doubling the control window relative to the case window roughly doubles the chance a control looks exposed when exposure accrues steadily over time.</p>
+      <p>Both can produce large spurious benefits. Suissa and Azoulay (2012) reviewed observational studies of metformin and cancer: 13 had immortal time bias, 9 had not considered time-window bias, and others compared first-line metformin with second- or third-line drugs. The studies that avoided these biases found no effect of metformin on cancer incidence.</p>
+      <p>Time-window bias is roughly proportional to how unequal the windows are: doubling the control window relative to the case window roughly doubles the chance a control looks exposed when exposure accrues steadily over time. So in a case-control paper, check that controls were sampled from the risk set at the case’s event time (incidence density sampling, Lecture 2.3) and that exposure is measured over the same window before that date. In a comparative cohort, check that both drugs are at the same line of therapy.</p>
     </div>
 
     <div class="callout example">
@@ -213,9 +212,8 @@ coxph(Surv(t_end - 48, died) ~ ac48 + age + sofa0, data = lm)</code></pre>
 
     <div class="facets">
       <p><strong>Protopathic bias</strong> (Horwitz and Feinstein, 1980): exposure starts, stops or changes because of an early manifestation of the outcome before it is diagnosed. It is reverse causation driven by the prodrome, the period when disease causes symptoms but has no label yet. A <strong>lag window</strong> discards exposure in a set period before the event (or, in a cohort, the first months after starting the drug).</p>
-      <p><strong class="lead">Why it matters.</strong> It creates harms that do not exist, usually for cancers and other diseases with a slow, symptomatic onset. Classic case: proton pump inhibitors (PPIs) and gastric cancer. Early gastric cancer causes dyspepsia, dyspepsia is treated with PPIs, so PPI starts cluster in the months before diagnosis.</p>
-      <p><strong class="lead">How to read it.</strong> The signature is an association that is strongest in the first months after starting and fades with longer use, the opposite of what a carcinogen would do. Look for results by time since initiation and with lag windows of, say, 6, 12 and 24 months.</p>
-      <p><strong class="lead">When it changes.</strong> An odds ratio that falls from 2.4 with no lag to near 1 with a 12-month lag says the association lived in the recent exposure: protopathic bias, not a cause. If it stays raised with long lags and grows with duration, a real effect becomes more plausible.</p>
+      <p>It creates harms that do not exist, usually for cancers and other diseases with a slow, symptomatic onset. The classic case is proton pump inhibitors (PPIs) and gastric cancer. Early gastric cancer causes dyspepsia, dyspepsia is treated with PPIs, so PPI starts cluster in the months before diagnosis.</p>
+      <p>That gives it a signature: an association that is strongest in the first months after starting and fades with longer use, the opposite of what a carcinogen would do. So look for results by time since initiation and with lag windows of, say, 6, 12 and 24 months. An odds ratio that falls from 2.4 with no lag to near 1 with a 12-month lag says the association lived in the recent exposure: protopathic bias, not a cause. If it stays raised with long lags and grows with duration, a real effect becomes more plausible.</p>
     </div>
 
     <div class="widget" data-widget="protopathic-lag">
@@ -241,9 +239,8 @@ coxph(Surv(t_end - 48, died) ~ ac48 + age + sofa0, data = lm)</code></pre>
 
     <div class="facets">
       <p>The outcome, or its early phase, changes exposure. Drugs are stopped when a bleed begins, when a patient becomes too unwell to swallow, or when care moves to comfort measures. In an as-treated analysis the event is then recorded as “off drug”.</p>
-      <p><strong class="lead">Why it matters.</strong> It can make a drug look protective (deaths happen after it is stopped) or harmful (drugs started as the patient worsens). It also inflates the apparent harm of stopping a drug: a raised death rate after people stop a statin partly reflects people stopping statins because they were already dying.</p>
-      <p><strong class="lead">How to read it.</strong> Be suspicious of large differences between current and recent-past users, with recent-past users at the highest risk. Ask why people stopped.</p>
-      <p><strong class="lead">When it changes.</strong> Extending exposure for a period after stopping (attributing events within, say, 7 days to the drug) should barely change a real effect. If it changes the estimate a lot, events just after stopping were driving it.</p>
+      <p>This can push either way. It can make a drug look protective (deaths happen after it is stopped) or harmful (drugs started as the patient worsens). It also inflates the apparent harm of stopping a drug: a raised death rate after people stop a statin partly reflects people stopping statins because they were already dying.</p>
+      <p>So be suspicious of large differences between current and recent-past users, with recent-past users at the highest risk, and ask why people stopped. A simple check is to extend exposure for a period after stopping (attributing events within, say, 7 days to the drug). That should barely change a real effect. If it changes the estimate a lot, events just after stopping were driving it.</p>
     </div>
 
     <div class="callout example">
@@ -277,8 +274,8 @@ coxph(Surv(t_end - 48, died) ~ ac48 + age + sofa0, data = lm)</code></pre>
     </div>
 
     <div class="facets">
-      <p><strong class="lead">Why it matters.</strong> Hernán and colleagues (2016) showed that many famous discrepancies between observational studies and trials came from misaligned time zero, not unmeasured confounding. That is good news: design fixes it. But a target trial emulation that has been specified carefully can still be confounded, and reviewers will ask how you dealt with what design cannot reach.</p>
-      <p><strong class="lead">How to read it.</strong> A good emulation paper has a protocol table with eligibility, strategies, assignment, time zero, follow-up and the causal contrast, and states explicitly how protopathic bias and reverse causation were handled. Lecture 4.5 built the Project 5A version.</p>
+      <p>Hernán and colleagues (2016) showed that many famous discrepancies between observational studies and trials came from misaligned time zero, not unmeasured confounding. That is good news, because design fixes it. But a target trial emulation that has been specified carefully can still be confounded, and reviewers will ask how you dealt with what design cannot reach.</p>
+      <p>A good emulation paper has a protocol table with eligibility, strategies, assignment, time zero, follow-up and the causal contrast, and states explicitly how protopathic bias and reverse causation were handled. Lecture 4.5 built the Project 5A version.</p>
     </div>
 
     <div class="callout example">

@@ -57,9 +57,8 @@
 
     <div class="facets">
       <p>QBA is a set of methods that estimate what a result would have been without a named bias: unmeasured confounding (Lecture 2.6), selection bias (Lecture 2.7) or misclassification (Lecture 2.8). You state how big the bias might be, and the method gives you a bias-adjusted estimate.</p>
-      <p><strong class="lead">Why it matters.</strong> In large observational studies, systematic error usually dwarfs random error. An EHR study of 200,000 patients has a tight interval, but its main uncertainty is whether the comparison groups were comparable. QBA is how you show a reviewer that you have thought about the bias in numbers, not adjectives.</p>
-      <p><strong class="lead">How to read it.</strong> The output is a conditional statement: “<em>if</em> the bias parameters are these, the estimate would be this.” It is not a corrected truth. A result that survives plausible bias is robust; one that flips under mild bias is fragile.</p>
-      <p><strong class="lead">When it changes.</strong> If modest, realistic bias moves a risk ratio from 1.4 to 1.05, the original finding was mostly bias-sensitive. If it takes implausibly strong bias to move it below 1.2, the finding is robust to that bias, though not to others you did not model.</p>
+      <p>You need it because, in large observational studies, systematic error usually dwarfs random error. An EHR study of 200,000 patients has a tight interval, but its main uncertainty is whether the comparison groups were comparable. QBA is how you show a reviewer that you have thought about the bias in numbers, not adjectives.</p>
+      <p>The output is a conditional statement: “<em>if</em> the bias parameters are these, the estimate would be this.” It is not a corrected truth. A result that survives plausible bias is robust; one that flips under mild bias is fragile. So if modest, realistic bias moves a risk ratio from 1.4 to 1.05, the original finding was mostly bias-sensitive. If it takes implausibly strong bias to move it below 1.2, the finding is robust to that bias, though not to others you did not model.</p>
     </div>
 
     <div class="callout trap">
@@ -79,9 +78,8 @@
     <p class="point">Every bias analysis needs a few numbers that describe the bias, called bias parameters, and the analysis is only as good as where those numbers come from.</p>
 
     <div class="facets">
-      <p>Bias parameters are the quantities the data cannot tell you but the bias depends on. Each bias has its own set.</p>
-      <p><strong class="lead">Why it matters.</strong> Choosing them is the real work. The arithmetic afterwards is mechanical.</p>
-      <p><strong class="lead">Where they come from.</strong> In order of preference: a validation substudy in your own data; published validation studies in similar settings; and only then structured expert judgement, stated openly.</p>
+      <p>Bias parameters are the quantities the data cannot tell you but the bias depends on. Each bias has its own set, and choosing them is the real work. The arithmetic afterwards is mechanical.</p>
+      <p>So the source matters. In order of preference, take them from a validation substudy in your own data; then from published validation studies in similar settings; and only then from structured expert judgement, stated openly.</p>
     </div>
 
     <div class="table-wrap">
@@ -118,10 +116,9 @@
     \[ RR_{\text{adj}} = \frac{RR_{\text{obs}}}{\dfrac{p_1(RR_{UD}-1)+1}{p_0(RR_{UD}-1)+1}} \]
 
     <div class="facets">
-      <p><strong class="lead">In words.</strong> \(p_1\) and \(p_0\) are the confounder’s prevalence in the exposed and unexposed; \(RR_{UD}\) is how much it raises the outcome risk. If the confounder is equally common in both groups, the bias factor is 1 and nothing changes.</p>
-      <p><strong class="lead">Why it matters.</strong> It turns “we could not adjust for frailty” into “if frailty were half as common among treated patients and doubled mortality, our risk ratio of 0.80 would become 0.93.”</p>
-      <p><strong class="lead">Misclassification and selection.</strong> Same idea, different arithmetic. For misclassification, use sensitivity and specificity to back-calculate the counts you would have seen with perfect classification, then recompute the ratio. For selection, divide the odds ratio by a factor built from the four selection probabilities.</p>
-      <p><strong class="lead">When it changes.</strong> The bias factor grows with both the imbalance between groups and the confounder’s effect. A strong confounder that is equally common in both groups does nothing; a weak one that is very unequally spread does little.</p>
+      <p>Here \(p_1\) and \(p_0\) are the confounder’s prevalence in the exposed and unexposed, and \(RR_{UD}\) is how much it raises the outcome risk. If the confounder is equally common in both groups, the bias factor is 1 and nothing changes. More generally, the bias factor grows with both the imbalance between groups and the confounder’s effect. A strong confounder that is equally common in both groups does nothing; a weak one that is very unequally spread does little.</p>
+      <p>The payoff is a sentence a reader can weigh. It turns “we could not adjust for frailty” into “if frailty were half as common among treated patients and doubled mortality, our risk ratio of 0.80 would become 0.93.”</p>
+      <p>Misclassification and selection work on the same idea with different arithmetic. For misclassification, use sensitivity and specificity to back-calculate the counts you would have seen with perfect classification, then recompute the ratio. For selection, divide the odds ratio by a factor built from the four selection probabilities.</p>
     </div>
 
     <div class="widget" data-widget="confounder-adjust">
@@ -146,10 +143,9 @@
     <p class="point">When you are unsure of the bias parameters, which is nearly always, vary them: first across a grid, then across whole distributions.</p>
 
     <div class="facets">
-      <p><strong class="lead">Multidimensional.</strong> Repeat the simple analysis over a grid of values, for example confounder prevalence 10–40% and strength 1.5–4. The output is a table. It shows which parameters matter and where the result flips.</p>
-      <p><strong class="lead">Probabilistic.</strong> Give each parameter a distribution, draw values thousands of times, and compute a bias-adjusted estimate each time. The output is a distribution, summarised by its median and a 95% <em>simulation interval</em>. You can add random error too, so the interval reflects both kinds of uncertainty.</p>
-      <p><strong class="lead">How to read it.</strong> A probabilistic interval wider than the conventional CI is normal and honest. If it is centred far from the original estimate, the bias you modelled matters more than chance does.</p>
-      <p><strong class="lead">When it changes.</strong> Widening a parameter’s distribution widens the simulation interval. If that barely changes the answer, the result is insensitive to that parameter and you can stop worrying about it.</p>
+      <p>A <strong>multidimensional</strong> analysis repeats the simple analysis over a grid of values, for example confounder prevalence 10–40% and strength 1.5–4. The output is a table, and it shows which parameters matter and where the result flips.</p>
+      <p>A <strong>probabilistic</strong> analysis goes further. Give each parameter a distribution, draw values thousands of times, and compute a bias-adjusted estimate each time. The output is a distribution, summarised by its median and a 95% <em>simulation interval</em>. You can add random error too, so the interval reflects both kinds of uncertainty.</p>
+      <p>A probabilistic interval wider than the conventional CI is normal and honest. What matters is where it sits: if it is centred far from the original estimate, the bias you modelled matters more than chance does. Widening a parameter’s distribution widens the simulation interval, and if that barely changes the answer, the result is insensitive to that parameter and you can stop worrying about it.</p>
     </div>
 
     <figure class="diagram">
@@ -214,10 +210,9 @@
     <p class="point">The E-value is the minimum strength of association an unmeasured confounder would need with both the exposure and the outcome to fully explain away an observed risk ratio.</p>
 
     <div class="facets">
-      <p>A single number on the risk ratio scale, from VanderWeele and Ding (2017). It needs no bias parameters, only the estimate: \( E = RR + \sqrt{RR\,(RR-1)} \), with protective ratios inverted first. Compute it for the confidence limit nearer 1 as well.</p>
-      <p><strong class="lead">Why it matters.</strong> It is quick, assumption-light and now common in journals. It answers “how strong would confounding have to be?” when you have no idea what the confounder is.</p>
-      <p><strong class="lead">How to read it.</strong> RR 2.0 gives E = 3.41: a confounder that tripled both the chance of exposure and the risk of the outcome, beyond the measured covariates, could just explain it away; weaker confounding could not. RR 1.1 gives E = 1.43, which many unmeasured factors could reach. An E-value of 1 for the CI limit means the interval already includes 1.</p>
-      <p><strong class="lead">When it changes.</strong> E-values grow roughly in line with the risk ratio. Going from RR 1.3 (E = 1.92) to RR 2 (E = 3.41) nearly doubles the confounding needed, which is why strong associations are harder to explain away.</p>
+      <p>The E-value is a single number on the risk ratio scale, from VanderWeele and Ding (2017). It needs no bias parameters, only the estimate: \( E = RR + \sqrt{RR\,(RR-1)} \), with protective ratios inverted first. Compute it for the confidence limit nearer 1 as well. It is quick, assumption-light and now common in journals, and it answers “how strong would confounding have to be?” when you have no idea what the confounder is.</p>
+      <p>RR 2.0 gives E = 3.41: a confounder that tripled both the chance of exposure and the risk of the outcome, beyond the measured covariates, could just explain it away; weaker confounding could not. RR 1.1 gives E = 1.43, which many unmeasured factors could reach. An E-value of 1 for the CI limit means the interval already includes 1.</p>
+      <p>E-values grow roughly in line with the risk ratio. Going from RR 1.3 (E = 1.92) to RR 2 (E = 3.41) nearly doubles the confounding needed, which is why strong associations are harder to explain away.</p>
     </div>
 
     <div class="widget" data-widget="evalue-curve">
@@ -258,9 +253,8 @@
     </div>
 
     <div class="facets">
-      <p><strong class="lead">Why it matters.</strong> This is the approach in Lash, Fox and colleagues’ textbook and their 2014 “good practices” paper. Reviewers at pharmacoepidemiology journals increasingly expect it.</p>
-      <p><strong class="lead">Order of biases.</strong> When you model several biases, apply corrections in the reverse order of how they arose: misclassification first, then selection, then confounding.</p>
-      <p><strong class="lead">When it changes.</strong> If the bias-adjusted interval still excludes the null under realistic assumptions, say so. If it does not, that is a finding too: the data cannot rule out bias as the explanation.</p>
+      <p>This is the approach in Lash, Fox and colleagues’ textbook and their 2014 “good practices” paper, and reviewers at pharmacoepidemiology journals increasingly expect it. When you model several biases, apply corrections in the reverse order of how they arose: misclassification first, then selection, then confounding.</p>
+      <p>Report the answer either way. If the bias-adjusted interval still excludes the null under realistic assumptions, say so. If it does not, that is a finding too: the data cannot rule out bias as the explanation.</p>
     </div>
 
     <div class="callout trap">

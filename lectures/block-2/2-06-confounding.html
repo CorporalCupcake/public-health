@@ -56,10 +56,9 @@
     <p class="point">A confounder is a common cause of the exposure and the outcome; it opens a non-causal “backdoor” path that makes them move together.</p>
 
     <div class="facets">
-      <p>The exposed and unexposed differ in some other way that also affects the outcome, so the crude comparison mixes the exposure’s effect with that other factor’s effect. In a <strong>causal diagram</strong> (a DAG: directed acyclic graph, arrows mean “causes”), a confounder sends arrows into both the exposure and the outcome.</p>
-      <p><strong class="lead">Why it matters.</strong> It is the main reason observational associations differ from what trials find. Randomisation works because it breaks every arrow into the exposure, so no common cause can remain, measured or not.</p>
-      <p><strong class="lead">How to read it.</strong> Compare the crude estimate with the adjusted one. If they differ, the adjustment variable was mixing effects (assuming it really is a confounder). The direction can go either way: confounding can create, hide, exaggerate or even reverse an effect.</p>
-      <p><strong class="lead">When it changes.</strong> A crude RR of 1.8 that falls to 1.1 after adjusting for smoking means most of the apparent effect was smoking. An RR that rises after adjustment means the confounder was masking a real effect.</p>
+      <p>Confounding happens when the exposed and unexposed differ in some other way that also affects the outcome, so the crude comparison mixes the exposure’s effect with that other factor’s effect. In a <strong>causal diagram</strong> (a DAG: directed acyclic graph, arrows mean “causes”), a confounder sends arrows into both the exposure and the outcome.</p>
+      <p>It is the main reason observational associations differ from what trials find. Randomisation works because it breaks every arrow into the exposure, so no common cause can remain, measured or not.</p>
+      <p>To see it in a paper, compare the crude estimate with the adjusted one. If they differ, the adjustment variable was mixing effects (assuming it really is a confounder). The direction can go either way: confounding can create, hide, exaggerate or even reverse an effect. A crude RR of 1.8 that falls to 1.1 after adjusting for smoking means most of the apparent effect was smoking. An RR that rises after adjustment means the confounder was masking a real effect.</p>
     </div>
 
     <figure class="diagram">
@@ -106,8 +105,8 @@
 
     <div class="facets">
       <p>The textbook checklist says a confounder must (1) be associated with the exposure, (2) affect the outcome independently of the exposure, and (3) not lie on the causal path from exposure to outcome. The third condition is about causal order, which data alone cannot reveal. A DAG makes all three explicit.</p>
-      <p><strong class="lead">Why it matters.</strong> Variables that pass the first two tests can be mediators or colliders, and adjusting for them adds bias (section 6). Purely data-driven selection, such as stepwise regression or “keep anything with p &lt; 0.2”, cannot tell these apart.</p>
-      <p><strong class="lead">How to read it.</strong> A good methods section names its adjustment set and justifies it, ideally with a DAG. The “change-in-estimate” rule (keep a variable if it moves the estimate by more than about 10%) is a rough screen among variables you have already judged to be possible confounders, not a way to find them.</p>
+      <p>That gap is dangerous. Variables that pass the first two tests can be mediators or colliders, and adjusting for them adds bias (section 6). Purely data-driven selection, such as stepwise regression or “keep anything with p &lt; 0.2”, cannot tell these apart.</p>
+      <p>A good methods section names its adjustment set and justifies it, ideally with a DAG. The “change-in-estimate” rule (keep a variable if it moves the estimate by more than about 10%) is a rough screen among variables you have already judged to be possible confounders, not a way to find them.</p>
     </div>
 
     <div class="callout trap">
@@ -135,9 +134,9 @@
     </div>
 
     <div class="facets">
-      <p><strong class="lead">Why it matters.</strong> All four only remove confounding by variables you measured, and measured well. Propensity scores and g-methods (Block 4) extend the same idea; they do not escape that limit.</p>
-      <p><strong class="lead">How to read it.</strong> If stratum-specific estimates are similar, a single adjusted estimate summarises them well. If they differ a lot, the exposure’s effect depends on the third variable: that is effect modification (Lecture 2.9), and you should report the strata separately.</p>
-      <p><strong class="lead">When it changes.</strong> In the extreme, the crude association can point the opposite way from every stratum. This is <strong>Simpson’s paradox</strong>, and it is just strong confounding.</p>
+      <p>All four only remove confounding by variables you measured, and measured well. Propensity scores and g-methods (Block 4) extend the same idea; they do not escape that limit.</p>
+      <p>Stratifying also shows you something. If stratum-specific estimates are similar, a single adjusted estimate summarises them well. If they differ a lot, the exposure’s effect depends on the third variable: that is effect modification (Lecture 2.9), and you should report the strata separately.</p>
+      <p>In the extreme, the crude association can point the opposite way from every stratum. This is <strong>Simpson’s paradox</strong>, and it is just strong confounding.</p>
     </div>
 
     <div class="widget" data-widget="confounding-strata">
@@ -162,10 +161,9 @@
     <p class="point">Adjustment removes only the confounding you measured accurately; what is left over is residual confounding, and it biases most observational studies a little and some a lot.</p>
 
     <div class="facets">
-      <p>Three sources: confounders never measured; confounders measured crudely (smoking as yes/no; income as three bands); and categories too broad to make people within them comparable.</p>
-      <p><strong class="lead">Why it matters.</strong> It is the usual explanation when an observational benefit vanishes in a trial. Effects of the size typical in nutrition and lifestyle epidemiology (RR 0.8–1.2) can be produced by residual confounding alone.</p>
-      <p><strong class="lead">How to read it.</strong> Ask how well the main confounders were measured, not just whether they appear in the model. Ask how big an unmeasured confounder would have to be to explain the result away; Lecture 2.13 turns this into numbers (for example the E-value).</p>
-      <p><strong class="lead">When it changes.</strong> If adjusting for a crude version of a confounder moves the estimate a lot, a better-measured version would probably move it further. The adjusted estimate is a waypoint, not the destination.</p>
+      <p>Residual confounding has three sources: confounders never measured; confounders measured crudely (smoking as yes/no; income as three bands); and categories too broad to make people within them comparable.</p>
+      <p>It is the usual explanation when an observational benefit vanishes in a trial. Effects of the size typical in nutrition and lifestyle epidemiology (RR 0.8–1.2) can be produced by residual confounding alone.</p>
+      <p>So ask how well the main confounders were measured, not just whether they appear in the model, and how big an unmeasured confounder would have to be to explain the result away; Lecture 2.13 turns this into numbers (for example the E-value). One clue is in the paper itself. If adjusting for a crude version of a confounder moves the estimate a lot, a better-measured version would probably move it further. The adjusted estimate is a waypoint, not the destination.</p>
     </div>
 
     <div class="callout example">
@@ -191,8 +189,7 @@
 
     <div class="facets">
       <p>The <em>indication</em> (why the treatment was given), or its absence, is a common cause of treatment and outcome. Sicker patients get more treatment and die more, so treatments look harmful. Patients too frail for a treatment are left untreated and die more, so the treatment looks miraculous.</p>
-      <p><strong class="lead">Why it matters.</strong> It is the central problem in pharmacoepidemiology (Lecture 2.16, Block 5) and in any analysis of electronic health records, where treatment is never random.</p>
-      <p><strong class="lead">How to read it.</strong> Be suspicious of drug effects that are much larger than in trials, in either direction. Better designs compare active treatments given for the same indication, and new users with new users.</p>
+      <p>This is the central problem in pharmacoepidemiology (Lecture 2.16, Block 5) and in any analysis of electronic health records, where treatment is never random. So be suspicious of drug effects that are much larger than in trials, in either direction. Better designs compare active treatments given for the same indication, and new users with new users.</p>
     </div>
 
     <div class="callout example">
@@ -209,8 +206,8 @@
 
     <div class="facets">
       <p>A <strong>mediator</strong> lies on the path from exposure to outcome. Adjusting for it removes the part of the effect that flows through it, leaving only the “direct” remainder. A <strong>collider</strong> is caused by both exposure and outcome (or their causes); adjusting for it creates an association that isn’t there (Lecture 2.7). Both are forms of <em>overadjustment</em>.</p>
-      <p><strong class="lead">Why it matters.</strong> Overadjustment is common and silent: the model runs, the interval may even narrow, and the effect shrinks towards the null or shifts. Reviewers and journals rarely catch it without a DAG.</p>
-      <p><strong class="lead">How to read it.</strong> For each covariate, ask: could the exposure have caused it? If yes, it is a mediator or a descendant of the exposure; leave it out of a total-effect model. Only the exposure’s coefficient is meant to be causal; the confounders’ coefficients usually aren’t (the “Table 2 fallacy”).</p>
+      <p>Overadjustment is common and silent. The model runs, the interval may even narrow, and the effect shrinks towards the null or shifts. Reviewers and journals rarely catch it without a DAG.</p>
+      <p>The defence is one question per covariate: could the exposure have caused it? If yes, it is a mediator or a descendant of the exposure, so leave it out of a total-effect model. And remember that only the exposure’s coefficient is meant to be causal; the confounders’ coefficients usually aren’t (the “Table 2 fallacy”).</p>
     </div>
 
     <figure class="diagram">

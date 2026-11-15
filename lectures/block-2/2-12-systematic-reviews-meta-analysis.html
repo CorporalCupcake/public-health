@@ -57,9 +57,8 @@
     <p class="point">A review is only as good as its question, and the question must be fixed, with its methods, before you look at the studies.</p>
 
     <div class="facets">
-      <p>For effects, frame the question as <strong>PICO</strong> (Population, Intervention, Comparator, Outcome) or <strong>PECO</strong> (E for exposure). For prevalence or average levels, JBI’s <strong>CoCoPop</strong> fits better: Condition, Context, Population. The <em>protocol</em> states the question, eligibility criteria, search, risk-of-bias tool and analysis plan. Register it on <strong>PROSPERO</strong> before screening starts.</p>
-      <p><strong class="lead">Why it matters.</strong> Every later decision (which study counts, which estimate to extract, which subgroup to report) can be bent, consciously or not, once you have seen the results. A dated, public protocol is your defence, and reviewers and journals check it.</p>
-      <p><strong class="lead">How to read it.</strong> A good question is narrow enough to answer and broad enough to matter. Too narrow, and you find two studies; too broad, and you pool things that should never be averaged.</p>
+      <p>For effects, frame the question as <strong>PICO</strong> (Population, Intervention, Comparator, Outcome) or <strong>PECO</strong> (E for exposure). For prevalence or average levels, JBI’s <strong>CoCoPop</strong> fits better: Condition, Context, Population. A good question is narrow enough to answer and broad enough to matter. Too narrow, and you find two studies; too broad, and you pool things that should never be averaged.</p>
+      <p>The <em>protocol</em> then states the question, eligibility criteria, search, risk-of-bias tool and analysis plan, and you register it on <strong>PROSPERO</strong> before screening starts. The reason is that every later decision (which study counts, which estimate to extract, which subgroup to report) can be bent, consciously or not, once you have seen the results. A dated, public protocol is your defence, and reviewers and journals check it.</p>
     </div>
 
     <div class="table-wrap">
@@ -86,9 +85,9 @@
     <p class="point">Find every eligible study, not just the easy ones, and have two people independently decide which ones count.</p>
 
     <div class="facets">
-      <p>Build the search from concept blocks: synonyms joined with OR within a block, blocks joined with AND (salt terms AND urine terms AND GCC country terms). Run it in several databases, then add citation searching and grey literature. Two reviewers screen titles and abstracts, then full texts, independently, and resolve disagreements by discussion or a third person.</p>
-      <p><strong class="lead">Why it matters.</strong> Studies that are hard to find differ from easy ones: smaller, non-English, unpublished, or with less exciting results. Single screening misses eligible studies; dual screening is the PRISMA and Cochrane expectation, which is why Project 2 needs a second screener.</p>
-      <p><strong class="lead">How to read it.</strong> Report the agreement between screeners (kappa, Lecture 2.14) and the full PRISMA flow. A flow diagram with suspiciously round numbers or no reasons for exclusion is a warning sign.</p>
+      <p>Build the search from concept blocks: synonyms joined with OR within a block, blocks joined with AND (salt terms AND urine terms AND GCC country terms). Run it in several databases, then add citation searching and grey literature. All that effort is needed because studies that are hard to find differ from easy ones: smaller, non-English, unpublished, or with less exciting results.</p>
+      <p>Two reviewers then screen titles and abstracts, then full texts, independently, and resolve disagreements by discussion or a third person. Single screening misses eligible studies, so dual screening is the PRISMA and Cochrane expectation, which is why Project 2 needs a second screener.</p>
+      <p>A good review shows its working. It reports the agreement between screeners (kappa, Lecture 2.14) and the full PRISMA flow. A flow diagram with suspiciously round numbers or no reasons for exclusion is a warning sign.</p>
     </div>
 
     <figure class="diagram">
@@ -171,9 +170,8 @@
     <p class="point">Extract the same numbers from every study using a piloted form, and judge each study’s risk of bias with a tool built for its design.</p>
 
     <div class="facets">
-      <p><strong>Data extraction</strong>: two people independently record design, setting, sample, measurement method and results on a form tested on a few studies first. <strong>Risk of bias</strong>: a structured judgement, domain by domain, of whether a study’s result is likely to be systematically wrong.</p>
-      <p><strong class="lead">Why it matters.</strong> Pooling biased studies gives a precise, biased answer. Risk of bias judgements feed sensitivity analyses (does the pooled mean change if you drop high-risk studies?) and the GRADE certainty rating.</p>
-      <p><strong class="lead">How to read it.</strong> Use domain-level judgements (low, some concerns, high), not a single quality score. Summary scores add up unrelated items and hide which bias matters.</p>
+      <p>In <strong>data extraction</strong>, two people independently record design, setting, sample, measurement method and results on a form tested on a few studies first. <strong>Risk of bias</strong> is a structured judgement, domain by domain, of whether a study’s result is likely to be systematically wrong.</p>
+      <p>This step matters because pooling biased studies gives a precise, biased answer. Risk of bias judgements feed sensitivity analyses (does the pooled mean change if you drop high-risk studies?) and the GRADE certainty rating. Use domain-level judgements (low, some concerns, high), not a single quality score. Summary scores add up unrelated items and hide which bias matters.</p>
     </div>
 
     <div class="table-wrap">
@@ -211,9 +209,8 @@
     \[ w_i = \frac{1}{SE_i^2 + \tau^2} \]
 
     <div class="facets">
-      <p><strong class="lead">Why it matters.</strong> With \(\tau = 0\) this is the fixed-effect weight. As \(\tau\) grows, it dominates every study’s variance and the weights become more equal: small studies gain influence and the confidence interval widens. For salt intake across six countries, true means surely differ, so random effects is the honest default.</p>
-      <p><strong class="lead">How to read it.</strong> Look at the forest plot before the diamond. If the studies’ intervals barely overlap, the pooled mean is an average of different things, and you should say so.</p>
-      <p><strong class="lead">When it changes.</strong> If the random-effects mean moves well away from the fixed-effect mean, small studies disagree with large ones. Find out why before reporting either.</p>
+      <p>With \(\tau = 0\) this is the fixed-effect weight. As \(\tau\) grows, it dominates every study’s variance and the weights become more equal: small studies gain influence and the confidence interval widens. For salt intake across six countries, true means surely differ, so random effects is the honest default.</p>
+      <p>Look at the forest plot before the diamond. If the studies’ intervals barely overlap, the pooled mean is an average of different things, and you should say so. And if the random-effects mean moves well away from the fixed-effect mean, small studies disagree with large ones. Find out why before reporting either.</p>
     </div>
 
     <div class="widget" data-widget="forest-re">
@@ -233,10 +230,9 @@
     <p class="point">I² tells you what share of the spread is real, τ tells you how big the real spread is, and the prediction interval tells you where a new setting’s value is likely to fall.</p>
 
     <div class="facets">
-      <p><strong>I²</strong>: the percentage of the variation between study results that is due to real differences rather than chance. <strong>τ</strong>: the standard deviation of true values across studies, in the outcome’s own units (g/day). <strong>Prediction interval</strong>: the range in which the true value for a new, similar study or country is expected to lie, about the mean ± 2τ when you have many studies.</p>
-      <p><strong class="lead">Why it matters.</strong> The confidence interval for the mean shrinks as studies accumulate; the prediction interval does not, because real spread is not noise. For Project 1, “what is intake in Saudi Arabia?” is closer to a prediction question than to “what is the GCC average?”.</p>
-      <p><strong class="lead">How to read it.</strong> I² depends on study size: big, precise studies push it towards 100% even when true differences are small. Reviews of means and prevalences routinely show I² above 90%. So read τ for size, and the prediction interval for meaning.</p>
-      <p><strong class="lead">When it changes.</strong> A τ going from 0.5 to 2 g/day means countries’ true averages differ by a few grams rather than a fraction of one: big enough to make a single GCC figure misleading for policy.</p>
+      <p>Three numbers describe the spread. <strong>I²</strong> is the percentage of the variation between study results that is due to real differences rather than chance. <strong>τ</strong> is the standard deviation of true values across studies, in the outcome’s own units (g/day). The <strong>prediction interval</strong> is the range in which the true value for a new, similar study or country is expected to lie, about the mean ± 2τ when you have many studies.</p>
+      <p>They are not equally useful. I² depends on study size: big, precise studies push it towards 100% even when true differences are small, and reviews of means and prevalences routinely show I² above 90%. So read τ for size, and the prediction interval for meaning. A τ going from 0.5 to 2 g/day means countries’ true averages differ by a few grams rather than a fraction of one: big enough to make a single GCC figure misleading for policy.</p>
+      <p>The prediction interval is the one people forget. The confidence interval for the mean shrinks as studies accumulate; the prediction interval does not, because real spread is not noise. For Project 1, “what is intake in Saudi Arabia?” is closer to a prediction question than to “what is the GCC average?”.</p>
     </div>
 
     <div class="callout trap">
@@ -256,9 +252,9 @@
     <p class="point">If small studies with disappointing results stay unpublished, the published ones overstate the effect, and a funnel plot can reveal the gap.</p>
 
     <div class="facets">
-      <p>A <strong>funnel plot</strong> shows each study’s estimate against its precision. Without bias, small studies scatter widely and symmetrically around the pooled value; large ones cluster tightly. A missing corner (small studies with null or unfavourable results) suggests <em>publication bias</em>, though other causes of small-study effects exist.</p>
-      <p><strong class="lead">Why it matters.</strong> The pooled estimate inherits whatever selection the publishing process applied. Lost null results inflate effects, sometimes enough to create one from nothing.</p>
-      <p><strong class="lead">How to read it.</strong> Only with about 10 or more studies; fewer cannot show a shape. Asymmetry is a prompt to investigate, not proof: small studies can differ for real reasons (different populations, more intensive interventions) or have more bias.</p>
+      <p>A <strong>funnel plot</strong> shows each study’s estimate against its precision. Without bias, small studies scatter widely and symmetrically around the pooled value, and large ones cluster tightly. A missing corner (small studies with null or unfavourable results) suggests <em>publication bias</em>, though other causes of small-study effects exist.</p>
+      <p>This matters because the pooled estimate inherits whatever selection the publishing process applied. Lost null results inflate effects, sometimes enough to create one from nothing.</p>
+      <p>But read the plot only with about 10 or more studies; fewer cannot show a shape. Even then, asymmetry is a prompt to investigate, not proof: small studies can differ for real reasons (different populations, more intensive interventions) or have more bias.</p>
     </div>
 
     <div class="widget" data-widget="funnel">
@@ -283,9 +279,9 @@
     <p class="point">GRADE rates how much to trust the pooled answer; PRISMA makes sure a reader can see exactly how you got it.</p>
 
     <div class="facets">
-      <p><strong class="lead">GRADE.</strong> Rates the certainty of a body of evidence as high, moderate, low or very low. For effects, randomised evidence starts high and observational evidence starts low. You then rate down for five problems: <strong>risk of bias</strong>, <strong>inconsistency</strong> (unexplained heterogeneity), <strong>indirectness</strong> (wrong population or measure), <strong>imprecision</strong> and <strong>publication bias</strong>. Observational evidence can be rated up for large effects or a dose–response.</p>
-      <p><strong class="lead">PRISMA 2020.</strong> The reporting guideline for systematic reviews: a 27-item checklist plus the flow diagram. Follow it from the protocol stage, as the project rules require, not as a final formatting step. PRISMA-P covers the protocol itself.</p>
-      <p><strong class="lead">How to read it.</strong> “Low-certainty evidence” is not “no effect”. It means the true value may be substantially different from the estimate.</p>
+      <p><strong>GRADE</strong> rates the certainty of a body of evidence as high, moderate, low or very low. For effects, randomised evidence starts high and observational evidence starts low. You then rate down for five problems: <strong>risk of bias</strong>, <strong>inconsistency</strong> (unexplained heterogeneity), <strong>indirectness</strong> (wrong population or measure), <strong>imprecision</strong> and <strong>publication bias</strong>. Observational evidence can be rated up for large effects or a dose–response.</p>
+      <p>Read the rating carefully. “Low-certainty evidence” is not “no effect”. It means the true value may be substantially different from the estimate.</p>
+      <p><strong>PRISMA 2020</strong> is the reporting guideline for systematic reviews: a 27-item checklist plus the flow diagram. Follow it from the protocol stage, as the project rules require, not as a final formatting step. PRISMA-P covers the protocol itself.</p>
     </div>
 
     <div class="callout example">

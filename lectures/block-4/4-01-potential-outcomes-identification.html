@@ -57,10 +57,10 @@
     <p class="point">Write down the question, the estimand that answers it and the assumptions that link it to data before you pick a method. Most errors in causal papers are made before the first model is fitted.</p>
 
     <div class="facets">
-      <p>A chain of five steps, the <strong>identification ladder</strong>: causal question → causal estimand → identifying assumptions → statistical estimand → estimator. The first three steps are causal: you argue for them from subject knowledge. The last two are statistical: data and modelling choices help there.</p>
-      <p><strong class="lead">Why it matters.</strong> A method estimates whatever its estimand is, whether or not that matches your question. If you never said which estimand you wanted, nobody can tell whether IPW with trimming answered your question or a nearby one. Confounders are only defined relative to a causal question, so without one, “adjusted for” has no standard to meet.</p>
-      <p><strong class="lead">How to read it.</strong> A good methods section names the intervention, the population, the comparison, the outcome, the time horizon and the scale (difference or ratio). A paper that says “associated with” throughout, then recommends a treatment in the discussion, is making a causal claim without defending it.</p>
-      <p><strong class="lead">When it changes.</strong> Changing one step changes every step below it. Moving from “all eligible patients” to “patients like those who were treated” turns the ATE into the ATT, which changes the positivity requirement and the weights.</p>
+      <p>The <strong>identification ladder</strong> is a chain of five steps: causal question → causal estimand → identifying assumptions → statistical estimand → estimator. The first three steps are causal, so you argue for them from subject knowledge. The last two are statistical, and that is where data and modelling choices help.</p>
+      <p>Skipping the top rungs is costly, because a method estimates whatever its estimand is, whether or not that matches your question. If you never said which estimand you wanted, nobody can tell whether IPW with trimming answered your question or a nearby one. Confounders, too, are only defined relative to a causal question, so without one, “adjusted for” has no standard to meet.</p>
+      <p>You can see the ladder, or its absence, in a methods section. A good one names the intervention, the population, the comparison, the outcome, the time horizon and the scale (difference or ratio). A paper that says “associated with” throughout, then recommends a treatment in the discussion, is making a causal claim without defending it.</p>
+      <p>The rungs are also linked, so changing one step changes every step below it. Moving from “all eligible patients” to “patients like those who were treated” turns the ATE into the ATT, which changes the positivity requirement and the weights.</p>
     </div>
 
     <figure class="diagram">
@@ -132,9 +132,9 @@
 
     <div class="facets">
       <p>The <strong>ATE</strong> (average treatment effect) averages over everyone in the target population. The <strong>ATT</strong> averages over those who were actually treated; the <strong>ATU</strong> (also called ATC) over those who were not. Each can be <strong>marginal</strong> (averaged over the whole group) or <strong>conditional</strong> (within a stratum, such as patients over 75), and on a difference or a ratio scale.</p>
-      <p><strong class="lead">Why it matters.</strong> Each answers a different decision. “Should we treat everyone eligible?” is the ATE. “Did current practice help the people it reached?” is the ATT. “Would extending treatment to the untreated help them?” is the ATU. They also need different amounts of overlap (section 6).</p>
-      <p><strong class="lead">How to read it.</strong> If clinicians give treatment to those with most to gain, the ATT is larger than the ATU. Heterogeneity depends on the scale: a constant risk ratio across patients with different baseline risks means the risk difference varies, so the ATT and ATE differ on the difference scale but not on the ratio scale.</p>
-      <p><strong class="lead">When it changes.</strong> An ATT of −6 percentage points next to an ATU of −2 means current practice already reaches the patients who gain most; extending treatment to the rest would help, but much less per person treated.</p>
+      <p>Each one answers a different decision. “Should we treat everyone eligible?” is the ATE. “Did current practice help the people it reached?” is the ATT. “Would extending treatment to the untreated help them?” is the ATU. They also need different amounts of overlap (section 6).</p>
+      <p>They come apart when treatment is targeted. If clinicians give treatment to those with most to gain, the ATT is larger than the ATU. So an ATT of −6 percentage points next to an ATU of −2 means current practice already reaches the patients who gain most; extending treatment to the rest would help, but much less per person treated.</p>
+      <p>Whether they differ also depends on the scale. A constant risk ratio across patients with different baseline risks means the risk difference varies, so the ATT and ATE differ on the difference scale but not on the ratio scale.</p>
     </div>
 
     <div class="widget" data-widget="estimands-targeting">
@@ -156,9 +156,8 @@
 
     <div class="facets">
       <p>Potential outcomes are partly unobserved, so a causal estimand is not directly a feature of the data. Under consistency, conditional exchangeability given covariates \(L\), and positivity, the counterfactual risk equals an <strong>observed</strong> quantity: the outcome risk among people who got treatment \(a\), averaged over the covariate distribution of the target population. That observed-data expression is the <strong>statistical estimand</strong>.</p>
-      <p><strong class="lead">Why it matters.</strong> No sample size, model or algorithm rescues an estimand that is not identified. Conversely, a correct identification argument can be ruined by a bad estimator: a misspecified model, extreme weights, or a coefficient that targets a different quantity.</p>
-      <p><strong class="lead">How to read it.</strong> Keep the two apart in your write-up: “under these assumptions the ATE equals this expression; we estimated it with this method.” Two analyses with the same assumptions and different estimators should agree up to modelling error. If they disagree badly, look for an estimation problem (often poor overlap).</p>
-      <p><strong class="lead">When it changes.</strong> Adding a variable to \(L\) changes the identification argument. Switching from IPW to the g-formula changes only the estimator.</p>
+      <p>The two steps fail in different ways. No sample size, model or algorithm rescues an estimand that is not identified. But a correct identification argument can still be ruined by a bad estimator: a misspecified model, extreme weights, or a coefficient that targets a different quantity.</p>
+      <p>So keep them apart in your write-up: “under these assumptions the ATE equals this expression; we estimated it with this method.” That also tells you which step a change touches. Adding a variable to \(L\) changes the identification argument; switching from IPW to the g-formula changes only the estimator. Two analyses with the same assumptions and different estimators should agree up to modelling error, so if they disagree badly, look for an estimation problem (often poor overlap).</p>
     </div>
 
     \[ \Pr[Y(a)=1] = \sum_{l} \Pr[Y=1 \mid A=a, L=l]\,\Pr[L=l] \]
@@ -182,9 +181,9 @@
 
     <div class="facets">
       <p><strong>Consistency</strong>: if you were treated, your observed outcome equals \(Y(1)\). It fails in practice when there are several <strong>versions of treatment</strong> with different effects. <strong>No interference</strong>: one person’s treatment does not change another person’s outcome. Together these are often called SUTVA (the stable unit treatment value assumption).</p>
-      <p><strong class="lead">Why it matters.</strong> With several versions, the estimate is an average over whatever mix of versions happened in your data, which may match no policy anyone could adopt. With interference, “treated versus untreated” is not even well defined for an individual: their outcome depends on who else was treated.</p>
-      <p><strong class="lead">How to read it.</strong> Ask: “what would we do to make someone exposed?” If the honest answer lists several very different procedures, the exposure is ill-defined. Expect interference with vaccines and infections, household or school exposures, and policies whose effects spill across borders.</p>
-      <p><strong class="lead">When it changes.</strong> Narrowing “anticoagulation” to “therapeutic heparin started within 48 hours of AF onset” makes consistency more plausible, but shrinks the eligible population and the number of events. That trade-off is part of the protocol in target trial emulation (Lecture 4.5).</p>
+      <p>Both failures blur what your estimate means. With several versions, the estimate is an average over whatever mix of versions happened in your data, which may match no policy anyone could adopt. With interference, “treated versus untreated” is not even well defined for an individual, because their outcome depends on who else was treated.</p>
+      <p>A quick test for consistency is to ask: “what would we do to make someone exposed?” If the honest answer lists several very different procedures, the exposure is ill-defined. Interference is easier to spot from the setting: expect it with vaccines and infections, household or school exposures, and policies whose effects spill across borders.</p>
+      <p>Tightening the definition has a price. Narrowing “anticoagulation” to “therapeutic heparin started within 48 hours of AF onset” makes consistency more plausible, but shrinks the eligible population and the number of events. That trade-off is part of the protocol in target trial emulation (Lecture 4.5).</p>
     </div>
 
     <div class="callout example">
@@ -210,9 +209,9 @@
 
     <div class="facets">
       <p>Within each stratum of \(L\), the treated and untreated would have had the same risk under either treatment. A randomised trial gives exchangeability by design; a trial stratified on \(L\) gives it conditionally. In observational data it is an assumption, also called no unmeasured confounding, ignorability or unconfoundedness.</p>
-      <p><strong class="lead">Why it matters.</strong> It is what confounder adjustment (Lecture 2.6) and DAGs (Lecture 4.2) are trying to secure. It fails when something that drove the treatment decision and affects the outcome is missing from \(L\), or is measured too crudely.</p>
-      <p><strong class="lead">How to read it.</strong> Ask what the decision-maker knew at the moment of deciding. If clinicians used information that is not in your data, exchangeability is doubtful. You can probe it, not prove it: negative control outcomes, E-values (Lecture 2.13), and checking that your design reproduces a known trial result (Lecture 5.9).</p>
-      <p><strong class="lead">When it changes.</strong> An estimate that moves a lot as you add each new confounder is a warning: the next unmeasured one might move it as much again. An estimate that is stable across sensible adjustment sets is reassuring, but still conditional on the DAG.</p>
+      <p>This is what confounder adjustment (Lecture 2.6) and DAGs (Lecture 4.2) are trying to secure. It fails when something that drove the treatment decision and affects the outcome is missing from \(L\), or is measured too crudely.</p>
+      <p>So the question to ask is what the decision-maker knew at the moment of deciding. If clinicians used information that is not in your data, exchangeability is doubtful. You can probe it but not prove it: negative control outcomes, E-values (Lecture 2.13), and checking that your design reproduces a known trial result (Lecture 5.9).</p>
+      <p>Watch how the estimate behaves as you adjust. One that moves a lot as you add each new confounder is a warning: the next unmeasured one might move it as much again. One that is stable across sensible adjustment sets is reassuring, but still conditional on the DAG.</p>
     </div>
 
     <div class="callout trap">
@@ -234,9 +233,9 @@
 
     <div class="facets">
       <p>For every covariate pattern that occurs, the probability of each treatment is above zero. A <strong>structural</strong> violation means some people can never get a treatment: a contraindication, a rule, an eligibility criterion. A <strong>random</strong> (practical) violation means treatment was possible, but by chance nobody with that pattern got it in your sample, usually because strata are small or there are many covariates.</p>
-      <p><strong class="lead">Why it matters.</strong> Inverse probability weights become huge or infinite. Outcome models extrapolate quietly into regions with no data. Standard errors do not show the problem, because they assume the model is right where there is no data to check it.</p>
-      <p><strong class="lead">How to read it.</strong> Plot the propensity score (probability of treatment given covariates) by treatment group. Look at the share of people with scores near 0 or 1 (0.05 and 0.95 are common screening lines, not rules), the largest weights, and the effective sample size after weighting.</p>
-      <p><strong class="lead">When it changes.</strong> As one covariate drives the decision more strongly, the groups separate and only a thin middle band of patients has look-alikes in the other group. The ATT needs untreated look-alikes for the treated; the ATU needs treated look-alikes for the untreated; the ATE needs both.</p>
+      <p>Either way, inverse probability weights become huge or infinite, and outcome models extrapolate quietly into regions with no data. Standard errors do not show the problem, because they assume the model is right where there is no data to check it.</p>
+      <p>So check overlap directly. Plot the propensity score (probability of treatment given covariates) by treatment group. Look at the share of people with scores near 0 or 1 (0.05 and 0.95 are common screening lines, not rules), the largest weights, and the effective sample size after weighting.</p>
+      <p>The problem grows as one covariate drives the decision more strongly. The groups separate, and only a thin middle band of patients has look-alikes in the other group. Which look-alikes you need depends on the estimand: the ATT needs untreated look-alikes for the treated, the ATU needs treated look-alikes for the untreated, and the ATE needs both.</p>
     </div>
 
     <div class="widget" data-widget="positivity-explorer">
@@ -295,8 +294,8 @@ ggplot(d, aes(ps, fill = factor(anticoag))) +
     </div>
 
     <div class="facets">
-      <p><strong class="lead">Why it matters.</strong> Each later lecture swaps in different identifying assumptions: parallel trends in difference-in-differences (4.6), a valid instrument in IV (4.9), continuity at a threshold in regression discontinuity (4.9). The structure is always the same: name the estimand, state what makes it equal to an observed quantity, and say why that is believable here.</p>
-      <p><strong class="lead">How to read it.</strong> Assumptions argued from the design (a randomised lottery, a sharp eligibility rule) are stronger than assumptions argued from a list of covariates. The weakest condition sets the credibility of the whole paper.</p>
+      <p>Every later lecture follows this structure and only swaps in different identifying assumptions: parallel trends in difference-in-differences (4.6), a valid instrument in IV (4.9), continuity at a threshold in regression discontinuity (4.9). Each time, you name the estimand, state what makes it equal to an observed quantity, and say why that is believable here.</p>
+      <p>That last step is where papers differ most. Assumptions argued from the design (a randomised lottery, a sharp eligibility rule) are stronger than assumptions argued from a list of covariates, and the weakest condition sets the credibility of the whole paper.</p>
     </div>
 
     <div class="callout key">

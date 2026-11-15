@@ -57,10 +57,9 @@
     <p class="point">Small areas have few cases, so their rates swing wildly by chance; on a raw map, both the highest and the lowest rates belong to the smallest places.</p>
 
     <div class="facets">
-      <p>The usual mapped quantity is the <em>standardised mortality (or morbidity) ratio</em>, \( \text{SMR} = O/E \): observed cases divided by the cases expected if the area had the reference population's age- and sex-specific rates (indirect standardisation). An SMR of 1.3 means 30% more cases than expected for its age structure.</p>
-      <p><strong class="lead">Why it matters.</strong> The variance of an SMR is roughly SMR/E. An area expecting 2 cases that sees 4 has an SMR of 2.0 by bad luck alone; an area expecting 200 cannot reach 2.0 without a real cause. The colour scale treats them the same.</p>
-      <p><strong class="lead">How to read it.</strong> Always look at E next to the SMR. With E below about 10, an SMR between 0.5 and 2 is compatible with no difference at all. A funnel plot (SMR against E, with control limits that narrow as E grows) shows which areas are genuinely unusual.</p>
-      <p><strong class="lead">When it changes.</strong> A small area's SMR jumping from 0.8 to 1.6 between years is usually noise; the same jump in a large city is news.</p>
+      <p>The usual mapped quantity is the <strong>standardised mortality (or morbidity) ratio</strong>, \( \text{SMR} = O/E \): observed cases divided by the cases expected if the area had the reference population's age- and sex-specific rates (indirect standardisation). An SMR of 1.3 means 30% more cases than expected for its age structure.</p>
+      <p>The trouble is that small areas are noisy. The variance of an SMR is roughly SMR/E. An area expecting 2 cases that sees 4 has an SMR of 2.0 by bad luck alone, while an area expecting 200 cannot reach 2.0 without a real cause. The colour scale treats them the same.</p>
+      <p>So always look at E next to the SMR. With E below about 10, an SMR between 0.5 and 2 is compatible with no difference at all. A funnel plot (SMR against E, with control limits that narrow as E grows) shows which areas are genuinely unusual. The same logic applies over time: a small area's SMR jumping from 0.8 to 1.6 between years is usually noise, but the same jump in a large city is news.</p>
     </div>
 
     <div class="callout example">
@@ -80,10 +79,9 @@
     <p class="point">Smoothing pulls each area's estimate toward a mean, by more when the area has little data; spatial models make that mean the area's neighbours rather than the whole country.</p>
 
     <div class="facets">
-      <p><em>Empirical Bayes</em> (Clayton and Kaldor 1987) shrinks each SMR toward the overall mean, with a weight set by how much real between-area variation the data show. The <em>BYM model</em> (Besag, York and Mollié 1991) gives each area two random effects: an unstructured one (pure heterogeneity) and a spatially structured one that is pulled toward the average of its neighbours. <em>BYM2</em> (Riebler and colleagues 2016) rewrites BYM with one variance and a mixing parameter for the share that is spatial, which makes priors sensible.</p>
-      <p><strong class="lead">Why it matters.</strong> It is Lecture 3.8's partial pooling: areas are clusters, and a small area borrows strength from others. It turns a speckled raw map into one where the remaining pattern is more likely to be real.</p>
-      <p><strong class="lead">How to read it.</strong> Large areas keep almost their raw SMR; small areas move most. Report the posterior probability that each area's relative risk exceeds 1 (above 0.8 or 0.9 is a common flag), not just the smoothed value.</p>
-      <p><strong class="lead">When it changes.</strong> A BYM2 mixing parameter near 1 means most of the extra variation is spatially structured (neighbours resemble each other); near 0 means it is unstructured noise between areas.</p>
+      <p><strong>Empirical Bayes</strong> (Clayton and Kaldor 1987) shrinks each SMR toward the overall mean, with a weight set by how much real between-area variation the data show. The <strong>BYM model</strong> (Besag, York and Mollié 1991) gives each area two random effects: an unstructured one (pure heterogeneity) and a spatially structured one that is pulled toward the average of its neighbours. <strong>BYM2</strong> (Riebler and colleagues 2016) rewrites BYM with one variance and a mixing parameter for the share that is spatial, which makes priors sensible.</p>
+      <p>This is Lecture 3.8's partial pooling: areas are clusters, and a small area borrows strength from others. It turns a speckled raw map into one where the remaining pattern is more likely to be real. Large areas keep almost their raw SMR, and small areas move most.</p>
+      <p>Report the posterior probability that each area's relative risk exceeds 1 (above 0.8 or 0.9 is a common flag), not just the smoothed value. The BYM2 mixing parameter is worth reading too. Near 1, most of the extra variation is spatially structured (neighbours resemble each other). Near 0, it is unstructured noise between areas.</p>
     </div>
 
     <div class="widget" data-widget="smr-smooth">
@@ -119,10 +117,9 @@ summary(fit)$hyperpar                        # "Phi": the spatial share</code></
     <p class="point">Nearby places resemble each other; Moran's I measures how much, and its residual version tells you whether your model has explained the spatial pattern.</p>
 
     <div class="facets">
-      <p>Moran's I is a correlation between each area's value and the average of its neighbours' values. It runs from about −1 (a checkerboard: neighbours opposite) through about 0 (no pattern) to about +1 (smooth clusters).</p>
-      <p><strong class="lead">Why it matters.</strong> Spatially autocorrelated residuals break the independence assumption, just as autocorrelated residuals in time do (Lecture 3.9): standard errors come out too small and "significant" area-level predictors multiply.</p>
-      <p><strong class="lead">How to read it.</strong> There is no universal cut-off: a value of 0.2 can be highly significant across 2,000 small areas and meaningless across 13 regions. Test it against a permutation distribution (shuffle the values across areas many times), and compute it on model residuals, not only on raw rates.</p>
-      <p><strong class="lead">When it changes.</strong> If Moran's I on rates is 0.5 but on residuals after adding deprivation is 0.05, deprivation explains the spatial pattern. If residual I stays high, something spatial is missing from the model.</p>
+      <p><strong>Moran's I</strong> is a correlation between each area's value and the average of its neighbours' values. It runs from about −1 (a checkerboard: neighbours opposite) through about 0 (no pattern) to about +1 (smooth clusters).</p>
+      <p>Spatially autocorrelated residuals break the independence assumption, just as autocorrelated residuals in time do (Lecture 3.9). Standard errors come out too small and "significant" area-level predictors multiply.</p>
+      <p>There is no universal cut-off. A value of 0.2 can be highly significant across 2,000 small areas and meaningless across 13 regions. So test it against a permutation distribution (shuffle the values across areas many times), and compute it on model residuals, not only on raw rates. The comparison is informative. If Moran's I on rates is 0.5 but on residuals after adding deprivation is 0.05, deprivation explains the spatial pattern. If residual I stays high, something spatial is missing from the model.</p>
     </div>
 
     <figure class="diagram">
@@ -178,10 +175,9 @@ summary(fit)$hyperpar                        # "Phi": the spatial share</code></
     <p class="point">If you look at enough places and shapes, some will look like clusters by chance; a valid cluster test accounts for every window it could have looked at.</p>
 
     <div class="facets">
-      <p>Kulldorff's spatial scan statistic slides circles (or ellipses, or space–time cylinders) of every size across the map, finds the window whose cases most exceed expectation by likelihood ratio, and gets a p-value by repeating the search on many random relabellings of the data. The free SaTScan software implements it.</p>
-      <p><strong class="lead">Why it matters.</strong> The Monte Carlo p-value is for the <em>most extreme</em> window found anywhere, so it builds in the multiple testing that a naive area-by-area test ignores. It is the standard tool for surveillance of disease clusters, from cancer registries to outbreak detection (Lecture 6.3).</p>
-      <p><strong class="lead">How to read it.</strong> A scan p-value of 0.01 means a window this extreme appeared in only 1% of random maps. Secondary clusters are reported with conservative p-values; read them with caution.</p>
-      <p><strong class="lead">When it changes.</strong> Testing 200 areas separately at 5% gives about 10 false "clusters" even when nothing is going on. The scan statistic keeps the chance of any false cluster near 5% across the whole map.</p>
+      <p><strong>Kulldorff's spatial scan statistic</strong> slides circles (or ellipses, or space–time cylinders) of every size across the map, finds the window whose cases most exceed expectation by likelihood ratio, and gets a p-value by repeating the search on many random relabellings of the data. The free SaTScan software implements it.</p>
+      <p>The Monte Carlo p-value is for the <em>most extreme</em> window found anywhere, so it builds in the multiple testing that a naive area-by-area test ignores. Testing 200 areas separately at 5% gives about 10 false "clusters" even when nothing is going on. The scan statistic keeps the chance of any false cluster near 5% across the whole map. That is why it is the standard tool for surveillance of disease clusters, from cancer registries to outbreak detection (Lecture 6.3).</p>
+      <p>A scan p-value of 0.01 means a window this extreme appeared in only 1% of random maps. Secondary clusters are reported with conservative p-values, so read them with caution.</p>
     </div>
 
     <div class="callout example">
@@ -201,9 +197,9 @@ summary(fit)$hyperpar                        # "Phi": the spatial share</code></
     <p class="point">The same individual data can show a strong pattern, no pattern or the reverse, depending on how you draw and size the areas; and no area-level pattern licenses a claim about individuals.</p>
 
     <div class="facets">
-      <p>The <em>modifiable areal unit problem</em> (MAUP; Openshaw 1984) has two parts: the <em>scale</em> effect (results change as areas get bigger) and the <em>zoning</em> effect (results change when areas of the same size are drawn differently). The <em>ecological fallacy</em> (Lecture 2.4) is inferring individual risk from area-level associations.</p>
-      <p><strong class="lead">Why it matters.</strong> Administrative boundaries are drawn for governance, not for health. Region-level correlations in the GCC, where each region mixes cities, oases and desert, can say little about any one place or person in it.</p>
-      <p><strong class="lead">How to read it.</strong> Correlations between area-level variables usually get stronger as areas get bigger, because averaging removes within-area noise. Treat a strong correlation across a few large regions as a description, not a dose–response.</p>
+      <p>The <strong>modifiable areal unit problem</strong> (MAUP; Openshaw 1984) has two parts: the <strong>scale</strong> effect (results change as areas get bigger) and the <strong>zoning</strong> effect (results change when areas of the same size are drawn differently). The <strong>ecological fallacy</strong> (Lecture 2.4) is inferring individual risk from area-level associations.</p>
+      <p>Both bite because administrative boundaries are drawn for governance, not for health. Region-level correlations in the GCC, where each region mixes cities, oases and desert, can say little about any one place or person in it.</p>
+      <p>Correlations between area-level variables usually get stronger as areas get bigger, because averaging removes within-area noise. So treat a strong correlation across a few large regions as a description, not a dose–response.</p>
     </div>
 
     <figure class="diagram">
@@ -270,9 +266,9 @@ summary(fit)$hyperpar                        # "Phi": the spatial share</code></
     </div>
 
     <div class="facets">
-      <p>Fay and Herriot (1979) is the area-level version of empirical Bayes: a weighted average of the direct survey estimate and a model prediction, with weights from their relative precision. MRP (multilevel regression and poststratification) models individuals, then rebuilds each area from its census make-up.</p>
-      <p><strong class="lead">Why it matters.</strong> Local health planning needs local numbers, and surveys are designed for national ones. Model-based estimates fill the gap, provided the covariates carry real information about the outcome.</p>
-      <p><strong class="lead">How to read it.</strong> Ask for the model, the covariates and a validation (model estimates vs direct estimates where samples are large). An area estimate that is almost entirely the regression prediction tells you about the covariates, not about the area.</p>
+      <p><strong>Fay and Herriot</strong> (1979) is the area-level version of empirical Bayes: a weighted average of the direct survey estimate and a model prediction, with weights from their relative precision. <strong>MRP</strong> (multilevel regression and poststratification) models individuals, then rebuilds each area from its census make-up.</p>
+      <p>Local health planning needs local numbers, but surveys are designed for national ones. Model-based estimates fill the gap, provided the covariates carry real information about the outcome.</p>
+      <p>So ask for the model, the covariates and a validation (model estimates vs direct estimates where samples are large). An area estimate that is almost entirely the regression prediction tells you about the covariates, not about the area.</p>
     </div>
 
     <div class="callout gulf">
@@ -292,10 +288,9 @@ summary(fit)$hyperpar                        # "Phi": the spatial share</code></
     <p class="point">Project 6 maps exposure, not disease: ERA5 is already smooth, so the spatial problems are which cells represent workers, and how to test thousands of correlated cell-level trends honestly.</p>
 
     <div class="facets">
-      <p>For each ERA5 cell and year, compute hours of WBGT above each workload limit (Lecture 6.7), then the trend. Map the trend; summarise by city using the cell or cells covering it.</p>
-      <p><strong class="lead">Why it matters.</strong> Heat stress varies more between coastal and inland places than air temperature suggests, because coastal humidity drives the wet bulb. A GCC-wide average would hide that the humid coast and the dry interior may need different ban hours.</p>
-      <p><strong class="lead">How to read it.</strong> Cell-level trend p-values are spatially autocorrelated, so many "significant" cells next to each other are not many independent findings. Control the false discovery rate, or test "field significance" with resampling that preserves the spatial pattern.</p>
-      <p><strong class="lead">When it changes.</strong> A trend of +40 hours per decade above the moderate-work limit in a coastal cell means about one more working week of hazardous hours each summer than a generation ago.</p>
+      <p>For each ERA5 cell and year, compute hours of WBGT above each workload limit (Lecture 6.7), then the trend. Map the trend, and summarise by city using the cell or cells covering it. A trend of +40 hours per decade above the moderate-work limit in a coastal cell means about one more working week of hazardous hours each summer than a generation ago.</p>
+      <p>The map matters because heat stress varies more between coastal and inland places than air temperature suggests, since coastal humidity drives the wet bulb. A GCC-wide average would hide that the humid coast and the dry interior may need different ban hours.</p>
+      <p>Be careful with significance. Cell-level trend p-values are spatially autocorrelated, so many "significant" cells next to each other are not many independent findings. Control the false discovery rate, or test "field significance" with resampling that preserves the spatial pattern.</p>
     </div>
 
     <div class="callout trap">

@@ -57,9 +57,8 @@
 
     <div class="facets">
       <p><strong>Random error</strong> is the chance variation you would see if you repeated the same study on new samples. <strong>Precision</strong> is its opposite: little scatter. <strong>Validity</strong> means the estimate is aimed at the right target, free of confounding, selection and measurement bias (Lectures 2.6–2.8). Lecture 1.8’s bullseye showed the same split for a single measurement.</p>
-      <p><strong class="lead">Why it matters.</strong> Confidence intervals and p-values describe random error only. They assume the study is otherwise unbiased. A tight interval around a biased estimate is confidently wrong.</p>
-      <p><strong class="lead">How to read it.</strong> Precision comes from information: for a ratio measure, mainly the number of outcome <em>events</em>, not the number of people. A cohort of 100,000 with 40 deaths is imprecise.</p>
-      <p><strong class="lead">When it changes.</strong> The standard error shrinks with the square root of the information. Quadrupling the events roughly halves the width of the interval. Doubling them narrows it by only about 30%.</p>
+      <p>The split matters because confidence intervals and p-values describe random error only. They assume the study is otherwise unbiased, so a tight interval around a biased estimate is confidently wrong.</p>
+      <p>Precision comes from information: for a ratio measure, mainly the number of outcome <em>events</em>, not the number of people. A cohort of 100,000 with 40 deaths is imprecise. And the gains slow down, because the standard error shrinks with the square root of the information. Quadrupling the events roughly halves the width of the interval; doubling them narrows it by only about 30%.</p>
     </div>
 
     <div class="callout trap">
@@ -81,9 +80,9 @@
     \[ \text{95\% CI} \;=\; \text{estimate} \;\pm\; 1.96 \times \text{SE} \quad(\text{on the log scale for ratios}) \]
 
     <div class="facets">
-      <p><strong class="lead">Why it matters.</strong> It carries both pieces of information a reader needs: how big the effect might be (where the interval sits) and how sure we are (its width). A p-value carries neither on its own.</p>
-      <p><strong class="lead">How to read it.</strong> Read both ends. An RR of 1.30 (1.05–1.61) is compatible with a small harm and with a fairly large one. For ratios, the ratio of upper to lower limit is a quick precision score: about 1.5 is precise, above 4 is very imprecise.</p>
-      <p><strong class="lead">When it changes.</strong> Moving from 95% to 99% widens the interval; the data haven’t changed, only how often you are willing to miss. Adding studies in a meta-analysis (Lecture 2.12) narrows it.</p>
+      <p>A confidence interval carries both pieces of information a reader needs: how big the effect might be (where the interval sits) and how sure we are (its width). A p-value carries neither on its own.</p>
+      <p>Read both ends. An RR of 1.30 (1.05–1.61) is compatible with a small harm and with a fairly large one. For ratios, the ratio of upper to lower limit is a quick precision score: about 1.5 is precise, above 4 is very imprecise.</p>
+      <p>The width can move for two very different reasons. Moving from 95% to 99% widens the interval, but the data haven’t changed, only how often you are willing to miss. Adding studies in a meta-analysis (Lecture 2.12) narrows it.</p>
     </div>
 
     <div class="widget" data-widget="ci-coverage">
@@ -113,10 +112,9 @@
     <p class="point">A p-value measures how surprising your data would be if the null hypothesis and every other assumption of the model were true; it is not the probability that the null is true.</p>
 
     <div class="facets">
-      <p>The probability, under the null model, of getting a result at least as extreme as the one observed. Small p means the data fit the null model poorly. It does not say which part of the model is wrong: the null, or an assumption such as no bias.</p>
-      <p><strong class="lead">Why it matters.</strong> Journals, regulators and news stories still sort findings at p = 0.05. In 2016 the American Statistical Association issued a formal statement to correct the most common misreadings, and many statisticians now argue for dropping the word “significant” altogether.</p>
-      <p><strong class="lead">How to read it.</strong> As a continuous measure of compatibility with the null. p = 0.04 and p = 0.06 are nearly the same evidence. p = 0.001 says the data fit “no effect” badly; it says nothing about whether the effect is large.</p>
-      <p><strong class="lead">When it changes.</strong> For a fixed effect, p falls as the study grows. So p mixes two things you want kept apart: effect size and sample size. Report both separately, as an estimate and an interval.</p>
+      <p>A p-value is the probability, under the null model, of getting a result at least as extreme as the one observed. Small p means the data fit the null model poorly. It does not say which part of the model is wrong: the null, or an assumption such as no bias.</p>
+      <p>It still carries a lot of weight. Journals, regulators and news stories sort findings at p = 0.05. In 2016 the American Statistical Association issued a formal statement to correct the most common misreadings, and many statisticians now argue for dropping the word “significant” altogether.</p>
+      <p>Read it as a continuous measure of compatibility with the null. p = 0.04 and p = 0.06 are nearly the same evidence. p = 0.001 says the data fit “no effect” badly; it says nothing about whether the effect is large. That’s because, for a fixed effect, p falls as the study grows. So p mixes two things you want kept apart, effect size and sample size. Report them separately, as an estimate and an interval.</p>
     </div>
 
     <div class="table-wrap">
@@ -144,9 +142,8 @@
 
     <div class="facets">
       <p>“Absence of evidence is not evidence of absence” (Altman and Bland). A study can fail to reach p &lt; 0.05 because the effect is small or because the study is small. The interval tells you which.</p>
-      <p><strong class="lead">Why it matters.</strong> Many “null” findings in the literature are just underpowered. Calling them evidence of safety or of no benefit can stop good policies and hide real harms.</p>
-      <p><strong class="lead">How to read it.</strong> Ask: what is the smallest effect that would matter? If the whole interval sits below it, the study shows no important effect. If the interval stretches well past it, the study is inconclusive, whatever the p-value.</p>
-      <p><strong class="lead">When it changes.</strong> Two results with the same p-value can mean very different things, and two results on opposite sides of 0.05 can agree almost perfectly.</p>
+      <p>Many “null” findings in the literature are just underpowered. Calling them evidence of safety or of no benefit can stop good policies and hide real harms.</p>
+      <p>The test is to ask what the smallest effect is that would matter. If the whole interval sits below it, the study shows no important effect. If the interval stretches well past it, the study is inconclusive, whatever the p-value. This is why two results with the same p-value can mean very different things, and two results on opposite sides of 0.05 can agree almost perfectly.</p>
     </div>
 
     <figure class="diagram">
@@ -209,9 +206,8 @@
 
     <div class="facets">
       <p><strong>Power</strong> is the chance a study reaches significance if a stated true effect exists. The convention is to plan for 80% power at the smallest effect worth detecting. A <strong>sample size calculation</strong> runs this in reverse: given the effect, the event rate and the power wanted, how many people?</p>
-      <p><strong class="lead">Why it matters.</strong> When power is low, a significant result must have landed far from the truth to clear the bar. Filter the literature on significance and you filter in overestimates. Gelman and Carlin call the size of the overestimate a <em>type M</em> (magnitude) error and the chance of a significant result with the wrong sign a <em>type S</em> error.</p>
-      <p><strong class="lead">How to read it.</strong> Around 80% power, significant estimates are only mildly inflated. Below about 30%, expect significant estimates to overstate the true log RR by half or more. At very low power, even the direction becomes unreliable.</p>
-      <p><strong class="lead">When it changes.</strong> Halving the effect you want to detect roughly quadruples the sample size needed. That is why small true effects, the usual case in epidemiology, need large studies.</p>
+      <p>Low power does more than miss effects. When power is low, a significant result must have landed far from the truth to clear the bar, so filtering the literature on significance filters in overestimates. Gelman and Carlin call the size of the overestimate a <em>type M</em> (magnitude) error and the chance of a significant result with the wrong sign a <em>type S</em> error.</p>
+      <p>Around 80% power, significant estimates are only mildly inflated. Below about 30%, expect significant estimates to overstate the true log RR by half or more, and at very low power even the direction becomes unreliable. Small effects are costly to detect: halving the effect you want to detect roughly quadruples the sample size needed. That is why small true effects, the usual case in epidemiology, need large studies.</p>
     </div>
 
     <div class="widget" data-widget="winners-curse">
@@ -238,8 +234,8 @@
 
     <div class="facets">
       <p>At p &lt; 0.05, each test of a true null has a 1 in 20 chance of a false alarm. With 20 independent tests of true nulls, the chance of at least one false alarm is about 64%. The same happens, less visibly, through many analysis choices: subgroups, cut-points, outcomes, covariate sets. Gelman and Loken call this the “garden of forking paths”.</p>
-      <p><strong class="lead">Why it matters.</strong> Exploratory analyses are fine; presenting them as if they were the one planned test is not. This is why Project 2 will be registered on PROSPERO and why trials register their primary outcome in advance.</p>
-      <p><strong class="lead">How to read it.</strong> Ask how many comparisons were possible and whether the reported one was pre-specified. A single significant subgroup among a dozen is weak evidence. Formal corrections (Bonferroni, false discovery rate) exist; transparency matters more.</p>
+      <p>Exploratory analyses are fine; presenting them as if they were the one planned test is not. This is why Project 2 will be registered on PROSPERO and why trials register their primary outcome in advance.</p>
+      <p>So ask how many comparisons were possible and whether the reported one was pre-specified. A single significant subgroup among a dozen is weak evidence. Formal corrections (Bonferroni, false discovery rate) exist, but transparency matters more.</p>
     </div>
 
     <div class="callout trap">

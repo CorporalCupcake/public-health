@@ -57,10 +57,9 @@
     <p class="point">Environmental exposures are shared, involuntary and continuous, with small relative risks spread over whole populations, so the burden is large even when each estimate looks unimpressive.</p>
 
     <div class="facets">
-      <p>The study of how the physical environment affects health: air pollution, heat and cold, water, noise, dust. The exposure is usually measured for a place and a time (a city-day, a grid cell, a home address), not for a person.</p>
-      <p><strong class="lead">Why it matters.</strong> Because everyone breathes the air, a rate ratio of 1.01 per 10 µg/m³ of fine particles (PM2.5, particles under 2.5 micrometres) translates into many deaths. This is the prevention paradox (Lecture 1.2) in its purest form.</p>
-      <p><strong class="lead">How to read it.</strong> Effects are reported per fixed increment: per 10 µg/m³ of PM2.5, per 1 °C, or for a high percentile against the optimum. A short-term rate ratio of 1.005 to 1.02 per 10 µg/m³ is typical for daily mortality; long-term cohort estimates are several times larger.</p>
-      <p><strong class="lead">When it changes.</strong> An estimate moving from 1.01 to 1.02 per 10 µg/m³ doubles the attributable burden. Small numbers matter here, so the measurement error that nudges them matters too.</p>
+      <p><strong>Environmental epidemiology</strong> is the study of how the physical environment affects health: air pollution, heat and cold, water, noise, dust. The exposure is usually measured for a place and a time (a city-day, a grid cell, a home address), not for a person.</p>
+      <p>Effects are reported per fixed increment: per 10 µg/m³ of fine particles (PM2.5, particles under 2.5 micrometres), per 1 °C, or for a high percentile against the optimum. A short-term rate ratio of 1.005 to 1.02 per 10 µg/m³ is typical for daily mortality, and long-term cohort estimates are several times larger.</p>
+      <p>Those numbers look tiny, but everyone breathes the air, so a rate ratio of 1.01 per 10 µg/m³ translates into many deaths. This is the prevention paradox (Lecture 1.2) in its purest form. It also means an estimate moving from 1.01 to 1.02 per 10 µg/m³ doubles the attributable burden. Small numbers matter here, so the measurement error that nudges them matters too.</p>
     </div>
 
     <div class="callout gulf">
@@ -92,10 +91,9 @@
     </div>
 
     <div class="facets">
-      <p>Exposure assessment assigns each unit of analysis (a person, a city-day, a grid cell-hour) a value for the exposure. Land-use regression (LUR) is a regression of monitor readings on mapped predictors such as road length within 100 m, then used to predict at addresses with no monitor.</p>
-      <p><strong class="lead">Why it matters.</strong> The method decides which <em>contrast</em> you can study. Daily monitor data give contrasts over time within a city (short-term designs); LUR and satellites give contrasts between places (long-term designs). Personal monitors validate both.</p>
-      <p><strong class="lead">How to read it.</strong> Ask two questions of any exposure: at what resolution in space and time, and how well does it agree with a better measure? For a model, ask for its cross-validated R² against monitors it never saw: higher is better, and a model that explains little of the spatial contrast mostly adds noise.</p>
-      <p><strong class="lead">When it changes.</strong> Moving from one city monitor to a 1 km model changes the question you can answer, from "do high-pollution days raise deaths?" to "do people living in more polluted neighbourhoods die earlier?".</p>
+      <p><strong>Exposure assessment</strong> assigns each unit of analysis (a person, a city-day, a grid cell-hour) a value for the exposure. <strong>Land-use regression</strong> (LUR) is a regression of monitor readings on mapped predictors such as road length within 100 m, then used to predict at addresses with no monitor.</p>
+      <p>The method decides which <em>contrast</em> you can study. Daily monitor data give contrasts over time within a city (short-term designs), while LUR and satellites give contrasts between places (long-term designs). Personal monitors validate both. So moving from one city monitor to a 1 km model changes the question you can answer, from "do high-pollution days raise deaths?" to "do people living in more polluted neighbourhoods die earlier?".</p>
+      <p>Ask two questions of any exposure: at what resolution in space and time, and how well does it agree with a better measure? For a model, ask for its cross-validated R² against monitors it never saw. Higher is better, and a model that explains little of the spatial contrast mostly adds noise.</p>
     </div>
 
     <div class="callout trap">
@@ -110,10 +108,9 @@
     <p class="point">If your measure scatters around the truth, the slope is flattened (classical error); if the truth scatters around your measure, the slope is roughly right but less precise (Berkson error).</p>
 
     <div class="facets">
-      <p><em>Classical error</em>: measured = true + noise, as with a faulty personal sensor or one spot reading. <em>Berkson error</em>: true = assigned + noise. Everyone in a group gets the same assigned value (the city monitor, the grid-cell mean), and individuals scatter around it. Lecture 2.8 covered the classical case as regression dilution.</p>
-      <p><strong class="lead">Why it matters.</strong> They do opposite things. Classical error biases a linear slope toward zero by the factor below. Berkson error leaves a linear slope nearly unbiased but adds variance, so confidence intervals widen. Most environmental exposures contain both.</p>
-      <p><strong class="lead">How to read it.</strong> Ask how the value was produced. A group-level value assigned to individuals (monitor, grid cell, area average) is mainly Berkson. A noisy instrument or a single short measurement of each person is mainly classical. A model prediction is a mix.</p>
-      <p><strong class="lead">When it changes.</strong> If classical noise has the same variance as the true exposure, the attenuation factor is 0.5: a true slope of −0.50 is estimated near −0.25.</p>
+      <p><strong>Classical error</strong> means measured = true + noise, as with a faulty personal sensor or one spot reading. <strong>Berkson error</strong> means true = assigned + noise. Everyone in a group gets the same assigned value (the city monitor, the grid-cell mean), and individuals scatter around it. Lecture 2.8 covered the classical case as regression dilution.</p>
+      <p>The two do opposite things. Classical error biases a linear slope toward zero by the factor below. If classical noise has the same variance as the true exposure, the attenuation factor is 0.5, so a true slope of −0.50 is estimated near −0.25. Berkson error leaves a linear slope nearly unbiased but adds variance, so confidence intervals widen.</p>
+      <p>Most environmental exposures contain both, and the way to tell which dominates is to ask how the value was produced. A group-level value assigned to individuals (monitor, grid cell, area average) is mainly Berkson. A noisy instrument or a single short measurement of each person is mainly classical. A model prediction is a mix.</p>
     </div>
 
     \[ \text{attenuation factor} = \frac{\operatorname{var}(\text{true exposure})}{\operatorname{var}(\text{true exposure}) + \operatorname{var}(\text{noise})} \]
@@ -158,8 +155,8 @@
 
     <div class="facets">
       <p>In a time series, each city is its own control, so things that differ between people but are stable over weeks (smoking, income) cannot confound. In a cohort, the comparison is between people, so those things must be measured and adjusted.</p>
-      <p><strong class="lead">Why it matters.</strong> The long-term estimate captures chronic disease built over years; the short-term one captures acute events, part of which may be deaths brought forward by days (harvesting, Lecture 6.9). Policy impact models use long-term estimates.</p>
-      <p><strong class="lead">How to read it.</strong> A larger cohort estimate is expected, not a contradiction. A short-term estimate that vanishes when temperature is adjusted was probably confounded by it.</p>
+      <p>The two designs also capture different effects. The long-term estimate captures chronic disease built over years. The short-term one captures acute events, part of which may be deaths brought forward by days (harvesting, Lecture 6.9). Policy impact models use long-term estimates.</p>
+      <p>So a larger cohort estimate is expected, not a contradiction. But a short-term estimate that vanishes when temperature is adjusted was probably confounded by it.</p>
     </div>
 
     <div class="callout example">
@@ -179,10 +176,9 @@
     <p class="point">A reanalysis is a weather model run backwards over history, constantly corrected by observations; it gives every place and hour a value, but each value is an average over a large grid cell.</p>
 
     <div class="facets">
-      <p>ERA5, produced by ECMWF for the Copernicus Climate Change Service, combines a weather model with millions of observations to give hourly fields (temperature, dewpoint, wind, radiation) on a 0.25° grid, about 31 km, from 1940 to the present. ERA5-Land reruns the land surface at 0.1° (about 9 km) from 1950.</p>
-      <p><strong class="lead">Why it matters.</strong> It removes the GCC's main data problem: few long weather records, and almost none with humidity, wind and radiation together. Project 6 uses it to compute WBGT for every city and hour since 1980 with no health records at all.</p>
-      <p><strong class="lead">How to read it.</strong> Treat an ERA5 value as the grid-cell average in open, flat conditions. It is good for day-to-day and year-to-year variation and long trends, weaker for the absolute level at any one street or worksite.</p>
-      <p><strong class="lead">When it changes.</strong> A 1 °C bias that is constant over time does not affect a trend, but it does change the count of hours above a fixed threshold. That is why Project 6 must sanity-check levels against on-site measurements, such as those of Al-Bouwarthan and colleagues.</p>
+      <p><strong>ERA5</strong>, produced by ECMWF for the Copernicus Climate Change Service, combines a weather model with millions of observations to give hourly fields (temperature, dewpoint, wind, radiation) on a 0.25° grid, about 31 km, from 1940 to the present. ERA5-Land reruns the land surface at 0.1° (about 9 km) from 1950.</p>
+      <p>It removes the GCC's main data problem: few long weather records, and almost none with humidity, wind and radiation together. Project 6 uses it to compute WBGT for every city and hour since 1980 with no health records at all.</p>
+      <p>Treat an ERA5 value as the grid-cell average in open, flat conditions. It is good for day-to-day and year-to-year variation and long trends, but weaker for the absolute level at any one street or worksite. That difference matters for thresholds. A 1 °C bias that is constant over time does not affect a trend, but it does change the count of hours above a fixed threshold. That is why Project 6 must sanity-check levels against on-site measurements, such as those of Al-Bouwarthan and colleagues.</p>
     </div>
 
     <figure class="diagram">
@@ -247,10 +243,9 @@ ta  &lt;- extract(t2m, vect(cbind(46.7, 24.7), crs = "EPSG:4326"))  # Riyadh's c
     <p class="point">Wet-bulb globe temperature combines air temperature, humidity, radiant heat and wind into one index of how hard the body must work to shed heat, which is why it, not air temperature, is the occupational standard.</p>
 
     <div class="facets">
-      <p>A weighted average of three thermometer readings. The <em>natural wet bulb</em> is a wetted, unshielded thermometer that cools by evaporation, so it senses humidity and wind. The <em>black globe</em> is a thermometer inside a black sphere that absorbs radiant heat from the sun and hot surfaces. The <em>dry bulb</em> is ordinary air temperature.</p>
-      <p><strong class="lead">Why it matters.</strong> Sweat only cools if it evaporates. At 40 °C and 10% humidity sweat evaporates fast; at 35 °C and 60% it barely does. Air temperature calls the first day hotter; WBGT can rank them the other way, and so does the body.</p>
-      <p><strong class="lead">How to read it.</strong> WBGT values run far below air temperature: 28 °C WBGT is already the limit for acclimatised workers doing moderate work. Outdoors in sun, a hot humid Gulf afternoon can reach the low 30s °C WBGT.</p>
-      <p><strong class="lead">When it changes.</strong> Because the wet bulb carries 70% of the weight, a rise in humidity moves WBGT more than the same rise in air temperature. That is why humid coastal cities can exceed limits on days when the inland capital, with higher air temperatures, does not.</p>
+      <p><strong>WBGT</strong> is a weighted average of three thermometer readings. The <strong>natural wet bulb</strong> is a wetted, unshielded thermometer that cools by evaporation, so it senses humidity and wind. The <strong>black globe</strong> is a thermometer inside a black sphere that absorbs radiant heat from the sun and hot surfaces. The <strong>dry bulb</strong> is ordinary air temperature.</p>
+      <p>The point is that sweat only cools if it evaporates. At 40 °C and 10% humidity sweat evaporates fast, but at 35 °C and 60% it barely does. Air temperature calls the first day hotter. WBGT can rank them the other way, and so does the body. Because the wet bulb carries 70% of the weight, a rise in humidity moves WBGT more than the same rise in air temperature. That is why humid coastal cities can exceed limits on days when the inland capital, with higher air temperatures, does not.</p>
+      <p>Expect WBGT values to run far below air temperature. 28 °C WBGT is already the limit for acclimatised workers doing moderate work, and outdoors in sun, a hot humid Gulf afternoon can reach the low 30s °C WBGT.</p>
     </div>
 
     <figure class="diagram">
@@ -289,7 +284,7 @@ ta  &lt;- extract(t2m, vect(cbind(46.7, 24.7), crs = "EPSG:4326"))  # Riyadh's c
     </figure>
 
     <div class="facets">
-      <p><strong class="lead">From ERA5 to WBGT.</strong> The reference method is Liljegren and colleagues' (2008) heat- and mass-transfer model, which computes Tnwb and Tg from standard weather variables plus solar radiation; US OSHA's outdoor WBGT calculator uses it. Brimicombe and colleagues (2023) built a global WBGT dataset from ERA5, with globe temperature derived from mean radiant temperature, found it tracked the Liljegren method in three heatwave case studies, and found the simple temperature-and-humidity approximation inadequate.</p>
+      <p>To get from ERA5 to WBGT, the reference method is Liljegren and colleagues' (2008) heat- and mass-transfer model, which computes Tnwb and Tg from standard weather variables plus solar radiation; US OSHA's outdoor WBGT calculator uses it. Brimicombe and colleagues (2023) built a global WBGT dataset from ERA5, with globe temperature derived from mean radiant temperature. They found it tracked the Liljegren method in three heatwave case studies, and found the simple temperature-and-humidity approximation inadequate.</p>
     </div>
 
     <div class="callout trap">
@@ -310,9 +305,8 @@ ta  &lt;- extract(t2m, vect(cbind(46.7, 24.7), crs = "EPSG:4326"))  # Riyadh's c
 
     <div class="facets">
       <p>Occupational limits (ISO 7243, the ACGIH threshold limit values and the US NIOSH recommended limits) give a maximum WBGT for each metabolic rate. Harder work makes more internal heat, so the limit falls. Unacclimatised workers, in their first one to two weeks of heat, get a lower "action" or "alert" limit.</p>
-      <p><strong class="lead">Why it matters.</strong> It converts a WBGT series into the Project 6 outcome: hours per year above the limit for a given workload, and how many of those hours fall outside the legal ban window.</p>
-      <p><strong class="lead">How to read it.</strong> For acclimatised workers doing continuous work, NIOSH's limit is about 31 °C WBGT for light work (about 180 W), 28 °C for moderate (300 W), 26.5 °C for heavy (415 W) and 25.5 °C for very heavy (520 W). Unacclimatised limits are about 3 °C lower. ACGIH values are close.</p>
-      <p><strong class="lead">When it changes.</strong> Moving from moderate to heavy work cuts the limit by about 1.5 °C. On a Gulf summer day that adds hours, not minutes, above the limit.</p>
+      <p>For acclimatised workers doing continuous work, NIOSH's limit is about 31 °C WBGT for light work (about 180 W), 28 °C for moderate (300 W), 26.5 °C for heavy (415 W) and 25.5 °C for very heavy (520 W). Unacclimatised limits are about 3 °C lower, and ACGIH values are close. So moving from moderate to heavy work cuts the limit by about 1.5 °C, and on a Gulf summer day that adds hours, not minutes, above the limit.</p>
+      <p>These limits turn a WBGT series into the Project 6 outcome: hours per year above the limit for a given workload, and how many of those hours fall outside the legal ban window.</p>
     </div>
 
     <div class="table-wrap">

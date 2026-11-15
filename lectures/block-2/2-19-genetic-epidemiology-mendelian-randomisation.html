@@ -56,10 +56,9 @@
     <p class="point">Heritability is the share of the <em>variation</em> in a trait, in one population at one time, that is associated with genetic differences; it says nothing about how fixed the trait is in a person.</p>
 
     <div class="facets">
-      <p>A ratio of variances, usually estimated by comparing identical and non-identical twins, or from genome-wide data in unrelated people. Height’s heritability is around 80% in twin studies of well-fed populations.</p>
-      <p><strong class="lead">Why it matters.</strong> It sets a ceiling on how much a genetic predictor could ever explain, and it is constantly misquoted in the press as “X% genetic”.</p>
-      <p><strong class="lead">How to read it.</strong> High heritability means that, in this environment, people differ mostly because of their genes. It does not mean the trait cannot change, or that the population average is genetically set.</p>
-      <p><strong class="lead">When it changes.</strong> Heritability rises when the environment becomes more equal, because less of the remaining variation is environmental. Equalising nutrition can make height <em>more</em> heritable.</p>
+      <p><strong>Heritability</strong> is a ratio of variances, usually estimated by comparing identical and non-identical twins, or from genome-wide data in unrelated people. Height’s heritability is around 80% in twin studies of well-fed populations. It sets a ceiling on how much a genetic predictor could ever explain, and it is constantly misquoted in the press as “X% genetic”.</p>
+      <p>High heritability means that, in this environment, people differ mostly because of their genes. It does not mean the trait cannot change, or that the population average is genetically set.</p>
+      <p>In fact the environment moves the number. Heritability rises when the environment becomes more equal, because less of the remaining variation is environmental. Equalising nutrition can make height <em>more</em> heritable.</p>
     </div>
 
     <div class="callout trap">
@@ -80,9 +79,8 @@
 
     <div class="facets">
       <p>A <strong>genome-wide association study</strong> (GWAS) tests millions of single-letter variants (SNPs) one at a time for association with a trait, using a very strict significance threshold (5 × 10⁻⁸) because of the multiple testing. A <strong>polygenic score</strong> (PGS) is a weighted sum of a person’s risk alleles, with weights taken from a GWAS.</p>
-      <p><strong class="lead">Why it matters.</strong> For coronary disease, people in the top few percent of a polygenic score can carry risk comparable to a single strong monogenic variant. That has led to proposals to add scores to clinical risk tools (Lecture 2.17).</p>
-      <p><strong class="lead">How to read it.</strong> Each GWAS hit is usually tiny (odds ratios of 1.05–1.2 per allele) and marks a region, not necessarily the causal gene. A PGS is judged like any prediction model: how much it adds to discrimination and calibration over age, sex and standard risk factors. The added C-statistic for heart disease is usually small.</p>
-      <p><strong class="lead">When it changes.</strong> Larger GWAS find more hits and better weights. Height now has more than 12,000 independent signals from about 5 million people (Yengo and colleagues, 2022), and its score explains far more variation than a decade ago, in European-ancestry people.</p>
+      <p>Each GWAS hit is usually tiny (odds ratios of 1.05–1.2 per allele) and marks a region, not necessarily the causal gene. The score is where they add up. For coronary disease, people in the top few percent of a polygenic score can carry risk comparable to a single strong monogenic variant, which has led to proposals to add scores to clinical risk tools (Lecture 2.17). But a PGS is judged like any prediction model: how much it adds to discrimination and calibration over age, sex and standard risk factors. The added C-statistic for heart disease is usually small.</p>
+      <p>Scores improve as GWAS grow, because larger studies find more hits and better weights. Height now has more than 12,000 independent signals from about 5 million people (Yengo and colleagues, 2022), and its score explains far more variation than a decade ago, in European-ancestry people.</p>
     </div>
 
     <div class="callout trap">
@@ -102,15 +100,15 @@
     <p class="point">Because alleles are dealt out at conception, a variant that changes an exposure splits people into groups that differ in that exposure but, ideally, in nothing else; comparing their outcomes estimates the exposure’s causal effect.</p>
 
     <div class="facets">
-      <p>An instrumental variable (IV) analysis with genetic variants as the instrument. Carriers of an LDL-lowering variant have had lower LDL since birth. If LDL causes heart disease, carriers should have less of it, by an amount proportional to their LDL difference.</p>
-      <p><strong class="lead">Why it matters.</strong> Observational associations are confounded by lifestyle and wealth (Lecture 2.6), and reverse causation is common. Genes are fixed at conception, so disease cannot change them, and they are largely unrelated to social factors.</p>
-      <p><strong class="lead">How to read it.</strong> The basic estimate, the <strong>Wald ratio</strong>, scales the variant’s effect on the outcome by its effect on the exposure:</p>
+      <p>Mendelian randomisation is an instrumental variable (IV) analysis with genetic variants as the instrument. Carriers of an LDL-lowering variant have had lower LDL since birth. If LDL causes heart disease, carriers should have less of it, by an amount proportional to their LDL difference.</p>
+      <p>The appeal is what genes escape. Observational associations are confounded by lifestyle and wealth (Lecture 2.6), and reverse causation is common. Genes are fixed at conception, so disease cannot change them, and they are largely unrelated to social factors.</p>
+      <p>The basic estimate, the <strong>Wald ratio</strong>, scales the variant’s effect on the outcome by its effect on the exposure:</p>
     </div>
 
     \[ \hat\beta_{\text{MR}} = \frac{\text{effect of variant on outcome}}{\text{effect of variant on exposure}} \]
 
     <div class="facets">
-      <p><strong class="lead">When it changes.</strong> If a variant lowers LDL by 0.1 mmol/L and heart disease odds by 5%, the implied effect is about 40% lower odds per mmol/L of lifelong LDL. With many variants, the ratios are combined by <strong>inverse-variance weighting</strong> (IVW). Most MR now uses <em>two-sample</em> designs: variant–exposure effects from one published GWAS, variant–outcome effects from another.</p>
+      <p>So if a variant lowers LDL by 0.1 mmol/L and heart disease odds by 5%, the implied effect is about 40% lower odds per mmol/L of lifelong LDL. With many variants, the ratios are combined by <strong>inverse-variance weighting</strong> (IVW). Most MR now uses <em>two-sample</em> designs: variant–exposure effects from one published GWAS, variant–outcome effects from another.</p>
     </div>
 
     <figure class="diagram">
@@ -178,9 +176,8 @@
     </div>
 
     <div class="facets">
-      <p><strong class="lead">Why it matters.</strong> Unlike a trial, nothing guarantees these assumptions. Assumptions 2 and 3 cannot be proven from data, only made more or less plausible.</p>
-      <p><strong class="lead">How to read it.</strong> The best instruments sit in or near a gene whose protein directly sets the exposure, such as <em>HMGCR</em> (the statin target) or <em>PCSK9</em> for LDL. Scores of hundreds of SNPs from a GWAS are stronger but more likely to include pleiotropic ones.</p>
-      <p><strong class="lead">When it changes.</strong> Weak instruments bias a two-sample estimate towards the null, and a one-sample estimate towards the confounded observational answer. A low F-statistic is a warning in both directions.</p>
+      <p>Unlike a trial, nothing guarantees these assumptions. Assumptions 2 and 3 cannot be proven from data, only made more or less plausible. So the choice of instrument carries a lot of weight. The best instruments sit in or near a gene whose protein directly sets the exposure, such as <em>HMGCR</em> (the statin target) or <em>PCSK9</em> for LDL. Scores of hundreds of SNPs from a GWAS are stronger but more likely to include pleiotropic ones.</p>
+      <p>Strength matters too. Weak instruments bias a two-sample estimate towards the null, and a one-sample estimate towards the confounded observational answer, so a low F-statistic is a warning in both directions.</p>
     </div>
 
     <div class="callout trap">
@@ -195,9 +192,8 @@
     <p class="point">Pleiotropy, when a variant affects the outcome through another route, is the main threat to MR; sensitivity methods trade some precision for robustness to it.</p>
 
     <div class="facets">
-      <p><strong>Horizontal pleiotropy</strong>: the variant affects the outcome by a path that bypasses the exposure (breaks assumption 3). <em>Vertical</em> pleiotropy, where the variant’s other effects lie downstream of the exposure, is harmless. If pleiotropic effects average zero (<em>balanced</em>), IVW is noisy but roughly unbiased. If they lean one way (<em>directional</em>), IVW is biased.</p>
-      <p><strong class="lead">Why it matters.</strong> With hundreds of SNPs, some are almost certainly pleiotropic. A credible MR paper shows that its answer survives methods with different assumptions.</p>
-      <p><strong class="lead">How to read it.</strong> Plot each SNP’s effect on the outcome against its effect on the exposure. If all SNPs are valid, the points fall along a line through the origin whose slope is the causal effect.</p>
+      <p><strong>Horizontal pleiotropy</strong> is when the variant affects the outcome by a path that bypasses the exposure, which breaks assumption 3. <em>Vertical</em> pleiotropy, where the variant’s other effects lie downstream of the exposure, is harmless. If pleiotropic effects average zero (<em>balanced</em>), IVW is noisy but roughly unbiased. If they lean one way (<em>directional</em>), IVW is biased.</p>
+      <p>With hundreds of SNPs, some are almost certainly pleiotropic, so a credible MR paper shows that its answer survives methods with different assumptions. The picture behind them all is simple: plot each SNP’s effect on the outcome against its effect on the exposure. If all SNPs are valid, the points fall along a line through the origin whose slope is the causal effect.</p>
     </div>
 
     <div class="table-wrap">
@@ -249,8 +245,8 @@
     </div>
 
     <div class="facets">
-      <p><strong class="lead">How to read an MR paper.</strong> Check, in order: (1) instrument source and strength; (2) whether exposure and outcome GWAS are from the same ancestry and do not overlap heavily; (3) the biology of the main variants; (4) agreement across IVW, Egger and weighted median; (5) whether the exposure is something you could actually change. STROBE-MR is the reporting checklist (Lecture 2.20).</p>
-      <p><strong class="lead">When it changes.</strong> A causal MR result for a biomarker makes it a plausible drug target. A null MR result for a well-measured, strongly instrumented exposure is strong evidence against causation, as for HDL.</p>
+      <p>When you read an MR paper, check, in order: (1) instrument source and strength; (2) whether exposure and outcome GWAS are from the same ancestry and do not overlap heavily; (3) the biology of the main variants; (4) agreement across IVW, Egger and weighted median; (5) whether the exposure is something you could actually change. STROBE-MR is the reporting checklist (Lecture 2.20).</p>
+      <p>The result then tells you where to go next. A causal MR result for a biomarker makes it a plausible drug target. A null MR result for a well-measured, strongly instrumented exposure is strong evidence against causation, as for HDL.</p>
     </div>
 
     <div class="callout gulf">

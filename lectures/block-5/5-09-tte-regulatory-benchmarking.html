@@ -56,9 +56,9 @@
     <p class="point">Regulators accept real-world evidence case by case, and they judge it on three things: whether the data are fit for the question, whether the design was fixed before the results were seen, and whether the analysis can be reproduced.</p>
 
     <div class="facets">
-      <p>A set of guidances, mostly from 2023 to 2026, that move real-world evidence from “supportive at best” to “acceptable when fit for purpose”. Several now name target trial emulation explicitly as the design framework for causal questions from routine data.</p>
-      <p><strong class="lead">Why it matters.</strong> The same emulation can be published in a journal and still fail as regulatory evidence, because the bar is not “plausible” but “decision-grade”. Knowing what reviewers ask lets you build the study to answer it.</p>
-      <p><strong class="lead">How to read it.</strong> Look for three recurring demands: early engagement with the agency, a protocol and analysis plan submitted <em>before</em> the analysis, and the agency’s ability to access or re-run the data.</p>
+      <p>A set of guidances, most issued between 2023 and 2026, has moved real-world evidence from “supportive at best” to “acceptable when fit for purpose”. Several now name target trial emulation explicitly as the design framework for causal questions from routine data.</p>
+      <p>That does not mean every good emulation counts. The same study can be published in a journal and still fail as regulatory evidence, because the bar is not “plausible” but “decision-grade”. So it pays to know what reviewers ask, and to build the study to answer it from the start.</p>
+      <p>Three demands come up again and again: early engagement with the agency, a protocol and analysis plan submitted <em>before</em> the analysis, and the agency’s ability to access or re-run the data. If a guidance asks for those three, it is speaking the same language as the rest.</p>
     </div>
 
     <div class="table-wrap">
@@ -90,10 +90,9 @@
     <p class="point">The most direct test of a method is to aim it at questions whose answers are known from randomised trials, before the trial results are seen, and count how often it agrees.</p>
 
     <div class="facets">
-      <p>RCT-DUPLICATE (Wang, Schneeweiss and colleagues, <em>JAMA</em> 2023) emulated 32 cardiovascular, diabetes and other drug trials in US claims databases (Optum, MarketScan, Medicare), each with a protocol registered before the analysis. Two trials were still running when the emulation was done, so their results were genuinely unknown.</p>
-      <p><strong class="lead">Why it matters.</strong> It turned a debate (“can observational data replace trials?”) into numbers, and showed that the answer depends mainly on how closely the trial design can be emulated.</p>
-      <p><strong class="lead">How to read it.</strong> Agreement was measured three ways: <strong>significance agreement</strong> (same conclusion about the null), <strong>estimate agreement</strong> (the real-world point estimate inside the trial’s 95% CI) and <strong>standardised difference agreement</strong> (the gap between estimates is within chance). Across all 32: correlation 0.82, significance agreement 75%, estimate agreement 66%, standardised difference agreement 75%.</p>
-      <p><strong class="lead">When it changes.</strong> In the 16 trials judged, after the fact, to be closely emulable, correlation rose to 0.93 and agreement to 94%, 88% and 88%. In the 16 less closely emulated it fell to 0.53, with 56%, 50% and 69%. Both ongoing trials (CAROLINA and PRONOUNCE) were closely emulated and agreed on all three measures.</p>
+      <p>RCT-DUPLICATE (Wang, Schneeweiss and colleagues, <em>JAMA</em> 2023) emulated 32 cardiovascular, diabetes and other drug trials in US claims databases (Optum, MarketScan, Medicare), each with a protocol registered before the analysis. Two trials were still running when the emulation was done, so their results were genuinely unknown. That turned a debate (“can observational data replace trials?”) into numbers.</p>
+      <p>Agreement was measured three ways. <strong>Significance agreement</strong> asks whether both reach the same conclusion about the null. <strong>Estimate agreement</strong> asks whether the real-world point estimate falls inside the trial’s 95% CI. <strong>Standardised difference agreement</strong> asks whether the gap between estimates is within chance. Across all 32, the correlation was 0.82, significance agreement 75%, estimate agreement 66% and standardised difference agreement 75%.</p>
+      <p>The headline is in the split. In the 16 trials judged, after the fact, to be closely emulable, correlation rose to 0.93 and agreement to 94%, 88% and 88%. In the 16 less closely emulated it fell to 0.53, with 56%, 50% and 69%. Both ongoing trials (CAROLINA and PRONOUNCE) were closely emulated and agreed on all three measures. So whether observational data match a trial depends mainly on how closely the trial design can be emulated.</p>
     </div>
 
     <div class="widget" data-widget="benchmark-agreement">
@@ -114,10 +113,9 @@
     <p class="point">Most disagreements trace to features of the trial that routine data cannot copy, so the gap is often a different question, not a wrong answer.</p>
 
     <div class="facets">
-      <p>RCT-DUPLICATE listed the <strong>emulation differences</strong> for each trial. The top three: a placebo comparator replaced by an active drug thought unrelated to the outcome (there is no “placebo” in claims data); trial features such as run-in periods, loading doses or titration that practice does not reproduce; and outcomes measured differently (adjudicated in the trial, coded in claims).</p>
-      <p><strong class="lead">Why it matters.</strong> Each difference changes the estimand. A run-in period removes early non-adherers and early adverse events before randomisation; a claims cohort keeps them. Trials of stopping maintenance therapy at randomisation have no clean real-world equivalent.</p>
-      <p><strong class="lead">How to read it.</strong> For every row of your protocol table (Lecture 4.5), write the ideal trial element, your emulation of it and the direction of bias the difference could cause. Reviewers look for that column.</p>
-      <p><strong class="lead">When it changes.</strong> Time-varying effects are a quiet source of divergence: in some trials the benefit appears after two or three years, while patients in routine data stay on the drug for months. An emulation can be correct and still show no effect because follow-up never reaches the window where the effect lives.</p>
+      <p>RCT-DUPLICATE listed the <strong>emulation differences</strong> for each trial. The top three were a placebo comparator replaced by an active drug thought unrelated to the outcome (there is no “placebo” in claims data); trial features such as run-in periods, loading doses or titration that practice does not reproduce; and outcomes measured differently (adjudicated in the trial, coded in claims).</p>
+      <p>Each of these changes the estimand. A run-in period removes early non-adherers and early adverse events before randomisation, while a claims cohort keeps them. Trials of stopping maintenance therapy at randomisation have no clean real-world equivalent at all. That is why, for every row of your protocol table (Lecture 4.5), you should write the ideal trial element, your emulation of it and the direction of bias the difference could cause. Reviewers look for that column.</p>
+      <p>Time-varying effects are a quieter source of divergence. In some trials the benefit appears after two or three years, while patients in routine data stay on the drug for months. So an emulation can be correct and still show no effect, because follow-up never reaches the window where the effect lives.</p>
     </div>
 
     <div class="callout example">
@@ -137,9 +135,9 @@
     <p class="point">Disagreement has three sources: a different question, bias, and chance. Only bias is a failure of the method.</p>
 
     <div class="facets">
-      <p>A decomposition to keep in mind whenever you compare an emulation with a trial: the gap between the two estimates is the sum of the difference in what they estimate (population, comparator, follow-up, estimand), the bias in the observational estimate, and sampling error in both.</p>
-      <p><strong class="lead">Why it matters.</strong> An emulation in older, frailer patients from routine care <em>should</em> sometimes differ from a trial in selected volunteers; that difference is often the reason to do it. Agreement on a mismatched question can even hide two errors cancelling.</p>
-      <p><strong class="lead">How to read it.</strong> Benchmark first on a question you can emulate closely, in the same data, with the same pipeline. If it agrees there, a later divergence on a new question is more credibly a real difference in population or practice.</p>
+      <p>Keep one decomposition in mind whenever you compare an emulation with a trial. The gap between the two estimates is the sum of three things: the difference in what they estimate (population, comparator, follow-up, estimand), the bias in the observational estimate, and sampling error in both.</p>
+      <p>Only the middle term is a failure. An emulation in older, frailer patients from routine care <em>should</em> sometimes differ from a trial in selected volunteers, and that difference is often the reason to do it. Agreement on a mismatched question can even hide two errors cancelling.</p>
+      <p>So benchmark first on a question you can emulate closely, in the same data, with the same pipeline. If it agrees there, a later divergence on a new question is more credibly a real difference in population or practice.</p>
     </div>
 
     <figure class="diagram">
@@ -204,8 +202,8 @@
 
     <div class="facets">
       <p>A <strong>negative control outcome</strong> shares the confounding structure of the real outcome but cannot plausibly be caused by the treatment (Lipsitch and colleagues, 2010). A <strong>positive control</strong> is an effect known to exist. <strong>Empirical calibration</strong> (Schuemie and colleagues, 2014) fits the distribution of estimates across many negative controls and widens the p-value and confidence interval of the main result to account for that systematic error.</p>
-      <p><strong class="lead">Why it matters.</strong> In observational data, standard 95% CIs cover only random error. If negative controls show hazard ratios of 1.3 on average, your main estimate probably carries similar bias.</p>
-      <p><strong class="lead">How to read it.</strong> Negative controls centred near 1 with little spread are reassuring. A shifted or wide null distribution is a warning that confounding or measurement problems remain. A positive control that fails to appear suggests the design cannot detect real effects.</p>
+      <p>This fills a real gap. In observational data, standard 95% CIs cover only random error. If negative controls show hazard ratios of 1.3 on average, your main estimate probably carries similar bias.</p>
+      <p>Negative controls centred near 1 with little spread are reassuring. A shifted or wide null distribution is a warning that confounding or measurement problems remain. And a positive control that fails to appear suggests the design cannot detect real effects.</p>
     </div>
 
     <pre><code>library(EmpiricalCalibration)
@@ -222,8 +220,8 @@ plotCalibrationEffect(nc$logRr, nc$seLogRr, log(0.85), 0.08, null)</code></pre>
     </div>
 
     <div class="facets">
-      <p><strong class="lead">Pre-registration.</strong> Register the protocol and analysis plan before touching outcome data: ClinicalTrials.gov (used by RCT-DUPLICATE), the HMA-EMA RWD catalogue (which replaced the EU PAS Register in 2024) or OSF. Use the <strong>HARPER</strong> protocol template (ISPE/ISPOR, 2022) to structure it.</p>
-      <p><strong class="lead">Reporting.</strong> Report with <strong>TARGET</strong> (Transparent Reporting of Observational Studies Emulating a Target Trial, 2025): 21 items, including the target trial protocol and how each of its elements was emulated in the data.</p>
+      <p>Register the protocol and analysis plan before touching outcome data, on ClinicalTrials.gov (used by RCT-DUPLICATE), the HMA-EMA RWD catalogue (which replaced the EU PAS Register in 2024) or OSF. The <strong>HARPER</strong> protocol template (ISPE/ISPOR, 2022) gives it a structure.</p>
+      <p>When you write up, report with <strong>TARGET</strong> (Transparent Reporting of Observational Studies Emulating a Target Trial, 2025). Its 21 items include the target trial protocol and how each of its elements was emulated in the data.</p>
     </div>
   </section>
 
@@ -233,9 +231,9 @@ plotCalibrationEffect(nc$logRr, nc$seLogRr, log(0.85), 0.08, null)</code></pre>
     <p class="point">No randomised trial has tested anticoagulation for new-onset AF in critically ill patients, so 5A cannot be benchmarked directly; it earns credibility through a frozen protocol, honest emulation differences, controls and bias analysis.</p>
 
     <div class="facets">
-      <p>The same 5A question from Lecture 4.5, packaged as a regulator would want to read it: protocol table with an extra column for emulation differences and their likely direction of bias, pre-registration, a positive control (anticoagulation should increase major bleeding), negative control outcomes, and quantitative bias analysis for unmeasured confounding (Lecture 2.13).</p>
-      <p><strong class="lead">Why it matters.</strong> Where trials are unlikely (the patients are too sick, the window too short), well-built emulations are the best available evidence. That is exactly the setting where regulators and guideline panels need to know how far to trust them.</p>
-      <p><strong class="lead">How to read it.</strong> Work down the protocol elements and mark which ones MIMIC-IV can emulate closely and which carry high risk. The high-risk rows set your sensitivity analyses.</p>
+      <p>This is the same 5A question from Lecture 4.5, packaged as a regulator would want to read it: a protocol table with an extra column for emulation differences and their likely direction of bias, pre-registration, a positive control (anticoagulation should increase major bleeding), negative control outcomes, and quantitative bias analysis for unmeasured confounding (Lecture 2.13).</p>
+      <p>The effort is worth it here because trials are unlikely: the patients are too sick and the window too short. In that setting well-built emulations are the best available evidence, and that is exactly where regulators and guideline panels need to know how far to trust them.</p>
+      <p>Start by working down the protocol elements and marking which ones MIMIC-IV can emulate closely and which carry high risk. The high-risk rows set your sensitivity analyses.</p>
     </div>
 
     <figure class="diagram">

@@ -57,9 +57,8 @@
 
     <div class="facets">
       <p>A <strong>cohort</strong> is a group of people followed over time. Everyone starts free of the outcome. Exposure is measured at the start (and sometimes updated), and new cases are counted as they occur. The result is a risk or rate in each exposure group, compared as a ratio or difference (Lecture 2.1).</p>
-      <p><strong class="lead">Why it matters.</strong> Exposure is recorded before the outcome, so the time order is clear. You get absolute risks, not just ratios. One cohort can study many outcomes of the same exposure: the British Doctors Study looked at smoking and dozens of causes of death.</p>
-      <p><strong class="lead">How to tell a good one.</strong> A clear <strong>time zero</strong> (the moment follow-up starts, the same for exposed and unexposed), exposure measured well before outcomes, complete and equal follow-up in both groups, and outcomes ascertained the same way whatever the exposure.</p>
-      <p><strong class="lead">What it costs.</strong> Rare outcomes need very large cohorts; long latency needs long follow-up. That is why case-control designs exist (Lecture 2.3).</p>
+      <p>Because exposure is recorded before the outcome, the time order is clear. You also get absolute risks, not just ratios, and one cohort can study many outcomes of the same exposure: the British Doctors Study looked at smoking and dozens of causes of death.</p>
+      <p>A good cohort has a clear <strong>time zero</strong> (the moment follow-up starts, the same for exposed and unexposed), exposure measured well before outcomes, complete and equal follow-up in both groups, and outcomes ascertained the same way whatever the exposure. The price is size and time. Rare outcomes need very large cohorts, and long latency needs long follow-up. That is why case-control designs exist (Lecture 2.3).</p>
     </div>
 
     <div class="callout trap">
@@ -85,8 +84,8 @@
 
     <div class="facets">
       <p>In a <strong>prospective</strong> cohort the investigator measures exposure now and waits for outcomes. In a <strong>historical</strong> (retrospective) cohort the exposure and outcomes are already in records when the study begins: employment files, hospital records, a past survey linked to death registers. An <strong>ambidirectional</strong> cohort uses past exposure and keeps following into the future.</p>
-      <p><strong class="lead">Why it matters.</strong> Historical cohorts are fast and cheap, but you are stuck with what was recorded, for someone else’s purpose. Prospective cohorts let you measure exactly what you need (24-hour urine instead of a food questionnaire), at the price of years of waiting.</p>
-      <p><strong class="lead">How to read it.</strong> Judge a historical cohort by its records: was exposure recorded before anyone knew the outcome, the same way for everyone? If yes, it can be as valid as a prospective one.</p>
+      <p>The trade-off is speed against control. Historical cohorts are fast and cheap, but you are stuck with what was recorded, for someone else’s purpose. Prospective cohorts let you measure exactly what you need (24-hour urine instead of a food questionnaire), at the price of years of waiting.</p>
+      <p>So judge a historical cohort by its records. Was exposure recorded before anyone knew the outcome, the same way for everyone? If yes, it can be as valid as a prospective one.</p>
     </div>
 
     <figure class="diagram">
@@ -158,9 +157,9 @@
     </div>
 
     <div class="facets">
-      <p><strong class="lead">Why it matters.</strong> The membership rule decides the right measure. Computing a simple risk in an open cohort treats people who joined last month like people followed for years.</p>
-      <p><strong class="lead">How to read it.</strong> Most electronic health record (EHR) and registry studies are open cohorts. Look for person-time, rates and survival methods. If a paper reports a plain percentage for an open cohort, ask how long each person was followed.</p>
-      <p><strong class="lead">When it changes.</strong> A closed cohort ages as one block, so its rates change with age and time together. An open cohort can stay roughly steady in age as new people replace those who leave.</p>
+      <p>The membership rule decides the right measure. Computing a simple risk in an open cohort treats people who joined last month like people followed for years.</p>
+      <p>Most electronic health record (EHR) and registry studies are open cohorts, so look for person-time, rates and survival methods. If a paper reports a plain percentage for an open cohort, ask how long each person was followed.</p>
+      <p>The two also behave differently over time. A closed cohort ages as one block, so its rates change with age and time together. An open cohort can stay roughly steady in age as new people replace those who leave.</p>
     </div>
 
     <div class="callout gulf">
@@ -176,9 +175,8 @@
 
     <div class="facets">
       <p>An <strong>internal</strong> comparison uses unexposed people from the same cohort (non-smoking doctors). An <strong>external</strong> comparison uses rates from another population, usually the general population, summarised as a <strong>standardised mortality ratio</strong> (SMR: observed deaths ÷ deaths expected at general-population rates). Some studies use both.</p>
-      <p><strong class="lead">Why it matters.</strong> Every difference between the groups other than the exposure ends up in your estimate. Internal comparisons share recruitment, measurement and follow-up, so they usually differ less.</p>
-      <p><strong class="lead">How to read it.</strong> An SMR of 1 means deaths as expected for the general population. In a working population an SMR below 1 is normal and does not mean the job is healthy.</p>
-      <p><strong class="lead">When it changes.</strong> Switching from an external to an internal comparison often moves an occupational SMR from below 1 to above 1. The job didn’t change; the comparison did.</p>
+      <p>The choice matters because every difference between the groups other than the exposure ends up in your estimate. Internal comparisons share recruitment, measurement and follow-up, so they usually differ less.</p>
+      <p>An SMR of 1 means deaths as expected for the general population. In a working population an SMR below 1 is normal and does not mean the job is healthy. That’s why switching from an external to an internal comparison often moves an occupational SMR from below 1 to above 1. The job didn’t change; the comparison did.</p>
     </div>
 
     <div class="callout trap">
@@ -199,10 +197,9 @@
     <p class="point">Losing people costs precision; it causes bias only when who is lost depends on both exposure and outcome.</p>
 
     <div class="facets">
-      <p>People who move away, stop attending or leave the health system before the study ends. Their outcome after leaving is unknown. In a rate analysis they are <strong>censored</strong>: they contribute person-time up to the day they leave.</p>
-      <p><strong class="lead">Why it matters.</strong> Analyses assume that censored people would have had the same outcome rate as those who stayed (<strong>non-informative censoring</strong>). If sicker exposed people drop out more, the exposed group looks healthier than it is.</p>
-      <p><strong class="lead">How to read it.</strong> Look at how many were lost and, more importantly, whether loss differed by exposure. A common rule of thumb starts worrying above 20% lost; 5% differential loss with a strong link to the outcome can matter more than 20% balanced loss.</p>
-      <p><strong class="lead">When it changes.</strong> Equal loss of similar people in both groups mostly widens the confidence interval of a ratio, though each group’s absolute risk can still be off. Differential loss, where the lost people differ in risk, moves the ratio itself.</p>
+      <p>Some people move away, stop attending or leave the health system before the study ends, and their outcome after leaving is unknown. In a rate analysis they are <strong>censored</strong>: they contribute person-time up to the day they leave.</p>
+      <p>Analyses assume that censored people would have had the same outcome rate as those who stayed (<strong>non-informative censoring</strong>). If sicker exposed people drop out more, the exposed group looks healthier than it is.</p>
+      <p>So look at how many were lost and, more importantly, whether loss differed by exposure. A common rule of thumb starts worrying above 20% lost, but 5% differential loss with a strong link to the outcome can matter more than 20% balanced loss. Equal loss of similar people in both groups mostly widens the confidence interval of a ratio, though each group’s absolute risk can still be off. Differential loss, where the lost people differ in risk, moves the ratio itself.</p>
     </div>
 
     <div class="widget" data-widget="loss-followup">
@@ -227,10 +224,9 @@
     <p class="point">If people must survive for a while to be counted as exposed, and that waiting time is credited to the exposed group, a useless treatment looks protective.</p>
 
     <div class="facets">
-      <p><strong>Immortal time</strong> is follow-up during which, by the way the groups were defined, the outcome could not happen. Example: “users” are people who filled a prescription within a year of discharge. To fill it, they had to be alive. If follow-up starts at discharge and the whole time is labelled “user”, the users get a stretch of guaranteed survival that non-users don’t.</p>
-      <p><strong class="lead">Why it matters.</strong> It is the most common serious error in observational drug studies, and it always favours the treatment. EHR and claims studies (Project 5A, Block 5) are full of exposures that start after time zero.</p>
-      <p><strong class="lead">How to spot it.</strong> Ask: was exposure status decided using information from <em>after</em> follow-up began? If yes, check how the time before exposure was counted.</p>
-      <p><strong class="lead">How to fix it.</strong> Count the waiting time as unexposed (a time-varying exposure), start follow-up at a fixed landmark after which exposure is known, or emulate a trial with one shared time zero (Lecture 5.9). Lecture 5.3 covers this and the other time-related biases in depth.</p>
+      <p><strong>Immortal time</strong> is follow-up during which, by the way the groups were defined, the outcome could not happen. Say “users” are people who filled a prescription within a year of discharge. To fill it, they had to be alive. If follow-up starts at discharge and the whole time is labelled “user”, the users get a stretch of guaranteed survival that non-users don’t.</p>
+      <p>It is the most common serious error in observational drug studies, and it always favours the treatment. EHR and claims studies (Project 5A, Block 5) are full of exposures that start after time zero, so you will meet it often.</p>
+      <p>To spot it, ask whether exposure status was decided using information from <em>after</em> follow-up began. If it was, check how the time before exposure was counted. The fixes are to count the waiting time as unexposed (a time-varying exposure), start follow-up at a fixed landmark after which exposure is known, or emulate a trial with one shared time zero (Lecture 5.9). Lecture 5.3 covers this and the other time-related biases in depth.</p>
     </div>
 
     <div class="widget" data-widget="immortal-time">

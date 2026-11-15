@@ -57,9 +57,8 @@
 
     <div class="facets">
       <p><strong>Accuracy</strong> (discrimination and calibration, Lectures 2.15 and 5.13) compares the model’s output with the truth. <strong>Impact</strong> is a causal contrast (Lecture 4.1): outcomes when clinicians have the tool versus when they do not. Different estimand, different study.</p>
-      <p><strong class="lead">Why it matters.</strong> The links multiply. A model with an AUC of 0.90 that clinicians act on 20% of the time can prevent fewer events than a model with an AUC of 0.75 that slots into a pathway clinicians trust.</p>
-      <p><strong class="lead">How to read it.</strong> For any AI paper, ask which link its primary outcome measures: AUC (link 1), alerts opened (uptake), tests ordered or drugs started (decision change), or deaths and admissions (outcome). Most papers stop at link 1.</p>
-      <p><strong class="lead">When it changes.</strong> Because the links multiply, doubling adherence from 30% to 60% doubles events prevented. Raising sensitivity from 85% to 90% adds about 6%.</p>
+      <p>The gap between them comes from the fact that the links multiply. A model with an AUC of 0.90 that clinicians act on 20% of the time can prevent fewer events than a model with an AUC of 0.75 that slots into a pathway clinicians trust. That also tells you where the gains are: doubling adherence from 30% to 60% doubles events prevented, while raising sensitivity from 85% to 90% adds about 6%.</p>
+      <p>So for any AI paper, ask which link its primary outcome measures: AUC (link 1), alerts opened (uptake), tests ordered or drugs started (decision change), or deaths and admissions (outcome). Most papers stop at link 1.</p>
     </div>
 
     \[ \text{events prevented} \approx \text{cases} \times \text{sensitivity} \times \text{share new to clinicians} \times \text{adherence} \times \text{baseline risk} \times \text{RRR} \]
@@ -121,10 +120,9 @@
     <p class="point">Each rung answers a different question; only the upper rungs say whether patients are better off, and most AI tools never leave the bottom two.</p>
 
     <div class="facets">
-      <p>A ranking of designs by how directly they estimate the effect of deployment. <strong>Silent (shadow) deployment</strong> runs the model live on real patients but shows nobody the output: it tests accuracy in real time and real data pipes, not impact.</p>
-      <p><strong class="lead">Why it matters.</strong> Regulators clear many devices on accuracy alone (Lecture 5.14). Health systems buying a tool, and HTA bodies paying for it (Lecture 5.11), need the upper rungs.</p>
-      <p><strong class="lead">How to read it.</strong> Bottom two rungs: is the output right? Middle rungs: did things change when it went live, and was it the tool? Top rungs: randomisation makes the comparison fair.</p>
-      <p><strong class="lead">When it changes.</strong> Moving from retrospective to silent deployment catches data-pipeline and timing problems. Moving from before–after to a randomised design removes secular trends and co-interventions as explanations.</p>
+      <p>The ladder ranks designs by how directly they estimate the effect of deployment. The bottom two rungs ask whether the output is right. The middle rungs ask whether things changed when it went live, and whether it was the tool. On the top rungs, randomisation makes the comparison fair. <strong>Silent (shadow) deployment</strong> runs the model live on real patients but shows nobody the output: it tests accuracy in real time and real data pipes, not impact.</p>
+      <p>Each step up removes a specific doubt. Moving from retrospective to silent deployment catches data-pipeline and timing problems. Moving from before–after to a randomised design removes secular trends and co-interventions as explanations.</p>
+      <p>Who needs which rung differs. Regulators clear many devices on accuracy alone (Lecture 5.14). Health systems buying a tool, and HTA bodies paying for it (Lecture 5.11), need the upper rungs.</p>
     </div>
 
     <figure class="diagram">
@@ -199,9 +197,8 @@
 
     <div class="facets">
       <p>A <strong>cluster randomised trial</strong> assigns whole groups (care teams, wards, hospitals) to have the tool or not. Every patient in a cluster gets the same condition.</p>
-      <p><strong class="lead">Why it matters.</strong> <em>Contamination</em>: a clinician who sees AI alerts for half their patients starts ordering echoes for the other half too, which pulls the two arms together and biases the effect towards zero. Clusters also match how tools are switched on, site by site.</p>
-      <p><strong class="lead">How to read it.</strong> The price is the design effect you met in Lecture 3.8: patients in one cluster are alike, so they carry less information. Check that the paper reports the ICC, the number of clusters, and an analysis that accounts for clustering.</p>
-      <p><strong class="lead">When it changes.</strong> With an ICC of 0.02, going from 50 to 200 patients per cluster raises the design effect from about 2 to about 5. Adding clusters buys far more power than adding patients per cluster.</p>
+      <p>The main reason is <em>contamination</em>. A clinician who sees AI alerts for half their patients starts ordering echoes for the other half too, which pulls the two arms together and biases the effect towards zero. Clusters also match how tools are switched on, site by site.</p>
+      <p>The price is the design effect you met in Lecture 3.8: patients in one cluster are alike, so they carry less information. Check that the paper reports the ICC, the number of clusters, and an analysis that accounts for clustering. Bigger clusters do not fix this. With an ICC of 0.02, going from 50 to 200 patients per cluster raises the design effect from about 2 to about 5, so adding clusters buys far more power than adding patients per cluster.</p>
     </div>
 
     <div class="callout example">
@@ -226,10 +223,9 @@
     <p class="point">In a stepped-wedge trial every cluster starts without the tool and switches to it at a randomly chosen step, so the effect comes from comparing exposed and unexposed clusters in the same period.</p>
 
     <div class="facets">
-      <p>A cluster trial in which the <em>order</em> of rollout is randomised. At each step one or more clusters cross over; by the end, all have the tool. The standard analysis (Hussey and Hughes) is a mixed model with a fixed effect for each period and a random effect for each cluster.</p>
-      <p><strong class="lead">Why it matters.</strong> It fits the way health systems actually deploy AI: the decision to roll out is made, and resources only allow a few sites at a time. Nobody is permanently denied the tool, which makes it easier to approve.</p>
-      <p><strong class="lead">How to read it.</strong> Exposure is tied to calendar time: later periods have more exposed clusters. Any secular trend therefore looks like a treatment effect unless period is in the model. Check for period effects, a clustering term, and a CONSORT stepped-wedge flow diagram.</p>
-      <p><strong class="lead">When it changes.</strong> If outcomes are improving by 1 point per period anyway, a naive comparison of exposed and unexposed periods credits the tool with roughly the trend times the average time gap between them.</p>
+      <p>A stepped-wedge trial is a cluster trial in which the <em>order</em> of rollout is randomised. At each step one or more clusters cross over; by the end, all have the tool. The standard analysis (Hussey and Hughes) is a mixed model with a fixed effect for each period and a random effect for each cluster.</p>
+      <p>It fits the way health systems actually deploy AI: the decision to roll out is made, and resources only allow a few sites at a time. Nobody is permanently denied the tool, which makes it easier to approve.</p>
+      <p>The catch is that exposure is tied to calendar time: later periods have more exposed clusters. Any secular trend therefore looks like a treatment effect unless period is in the model. If outcomes are improving by 1 point per period anyway, a naive comparison of exposed and unexposed periods credits the tool with roughly the trend times the average time gap between them. So check for period effects, a clustering term, and a CONSORT stepped-wedge flow diagram.</p>
     </div>
 
     <div class="widget" data-widget="stepped-wedge">
@@ -263,9 +259,9 @@ exp(confint(fit, parm = "ai", method = "Wald"))</code></pre>
 
     <div class="facets">
       <p>A staggered rollout across sites is the setting for difference-in-differences with staggered adoption (Lecture 4.6): compare the change in outcomes at sites that switched on with the change at sites not yet switched on. With one site and a long series, use interrupted time series (Lecture 4.7).</p>
-      <p><strong class="lead">Why it matters.</strong> It is often the only impact evidence a health system can produce after the fact, and the design most real-world AI evaluations should use instead of before–after.</p>
-      <p><strong class="lead">How to read it.</strong> Look for an event-study plot: flat effects before go-live, a change after. Check that the estimator is built for staggered timing (for example Callaway and Sant’Anna), since two-way fixed effects can mislead when effects vary by site or time (Lecture 4.6).</p>
-      <p><strong class="lead">When it changes.</strong> If early adopters were the keenest sites, their improvement may be enthusiasm, not the tool. A pre-trend that slopes the right way before go-live is the warning sign.</p>
+      <p>This is often the only impact evidence a health system can produce after the fact, and the design most real-world AI evaluations should use instead of before–after.</p>
+      <p>A good analysis shows an event-study plot: flat effects before go-live, a change after. Check that the estimator is built for staggered timing (for example Callaway and Sant’Anna), since two-way fixed effects can mislead when effects vary by site or time (Lecture 4.6).</p>
+      <p>Be wary of who went first. If early adopters were the keenest sites, their improvement may be enthusiasm, not the tool. A pre-trend that slopes the right way before go-live is the warning sign.</p>
     </div>
 
     <pre><code>library(did)

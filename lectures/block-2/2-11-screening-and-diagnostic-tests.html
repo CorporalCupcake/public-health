@@ -55,10 +55,9 @@
     <p class="point">Sensitivity is how many of the sick a test catches; specificity is how many of the healthy it clears.</p>
 
     <div class="facets">
-      <p>Compare the test with a <em>reference standard</em> (the best available way of knowing who truly has the disease). <strong>Sensitivity</strong> = true positives ÷ everyone with the disease. <strong>Specificity</strong> = true negatives ÷ everyone without it.</p>
-      <p><strong class="lead">Why it matters.</strong> They are the closest thing a test has to fixed properties, so they are what guidelines, regulators and reviews report. They tell you what a test does to a group whose disease status you already know.</p>
-      <p><strong class="lead">How to read it.</strong> A highly sensitive test, when negative, rules disease <em>out</em> (few sick people test negative). A highly specific test, when positive, rules disease <em>in</em> (few healthy people test positive). Screening tests usually favour sensitivity; confirmatory tests favour specificity.</p>
-      <p><strong class="lead">When it changes.</strong> Specificity moving from 95% to 99% sounds small. In 100,000 healthy people screened it cuts false positives from 5,000 to 1,000: four thousand fewer people sent for follow-up tests.</p>
+      <p>To judge a test, compare it with a <em>reference standard</em>, the best available way of knowing who truly has the disease. <strong>Sensitivity</strong> = true positives ÷ everyone with the disease. <strong>Specificity</strong> = true negatives ÷ everyone without it. They are the closest thing a test has to fixed properties, which is why guidelines, regulators and reviews report them. But notice what they describe: what a test does to a group whose disease status you already know.</p>
+      <p>Each one earns its keep in a different direction. A highly sensitive test, when negative, rules disease <em>out</em>, because few sick people test negative. A highly specific test, when positive, rules disease <em>in</em>, because few healthy people test positive. That’s why screening tests usually favour sensitivity and confirmatory tests favour specificity.</p>
+      <p>Small-looking changes can be large in practice. Specificity moving from 95% to 99% sounds minor, but in 100,000 healthy people screened it cuts false positives from 5,000 to 1,000: four thousand fewer people sent for follow-up tests.</p>
     </div>
 
     <div class="table-wrap">
@@ -89,15 +88,15 @@
     <p class="point">When a disease is rare, most positive results are false, even from a good test.</p>
 
     <div class="facets">
-      <p>The <strong>positive predictive value</strong> (PPV) is the share of positive results that are true. The <strong>negative predictive value</strong> (NPV) is the share of negatives that are true. They answer the patient’s question: “I tested positive; do I have it?”</p>
+      <p>The <strong>positive predictive value</strong> (PPV) is the share of positive results that are true, and the <strong>negative predictive value</strong> (NPV) is the share of negatives that are true. Unlike sensitivity and specificity, they answer the patient’s question: “I tested positive; do I have it?”</p>
     </div>
 
     \[ \text{PPV} = \frac{\text{sens} \times p}{\text{sens} \times p + (1-\text{spec}) \times (1-p)} \]
 
     <div class="facets">
-      <p><strong class="lead">Why it matters.</strong> The same test gives very different PPVs in a screening population and a specialist clinic, because the prevalence \(p\) (the share who have the disease) differs. Rare disease means the large healthy group, times a small false-positive rate, swamps the small sick group.</p>
-      <p><strong class="lead">How to read it.</strong> Think in natural frequencies: per 1,000 people, how many are sick, how many of those test positive, and how many of the healthy also test positive? Then divide. It is much harder to get wrong than the formula.</p>
-      <p><strong class="lead">When it changes.</strong> With 90% sensitivity and 95% specificity, PPV is about 15% at 1% prevalence and about 89% at 30% prevalence. Same test, same lab; different population.</p>
+      <p>The catch is that the answer depends on who is being tested. The same test gives very different PPVs in a screening population and a specialist clinic, because the prevalence \(p\) (the share who have the disease) differs. When disease is rare, the large healthy group, times a small false-positive rate, swamps the small sick group.</p>
+      <p>The safest way to work it out is in natural frequencies: per 1,000 people, how many are sick, how many of those test positive, and how many of the healthy also test positive? Then divide. It is much harder to get wrong than the formula.</p>
+      <p>So when prevalence moves, PPV moves with it. With 90% sensitivity and 95% specificity, PPV is about 15% at 1% prevalence and about 89% at 30% prevalence. Same test, same lab; different population.</p>
     </div>
 
     <div class="widget" data-widget="ppv-icons">
@@ -118,10 +117,9 @@
     <p class="point">Most tests give a number, and the cut-off you choose trades sensitivity against specificity; the ROC curve shows every trade at once.</p>
 
     <div class="facets">
-      <p>Sick and healthy people have overlapping distributions of the test value. Moving the threshold down catches more sick people (sensitivity up) and flags more healthy ones (specificity down). The <strong>ROC curve</strong> plots sensitivity against 1 − specificity for every threshold. The <strong>area under it</strong> (AUC) is the chance that a randomly chosen sick person scores higher than a randomly chosen healthy one.</p>
-      <p><strong class="lead">Why it matters.</strong> AUC compares tests independent of threshold. But a programme runs at one threshold, chosen by weighing the harm of a missed case against the cost of a false alarm and the follow-up capacity.</p>
-      <p><strong class="lead">How to read it.</strong> AUC 0.5 is a coin toss; 0.7 is modest; 0.8 is good; above 0.9 is excellent for most clinical uses. The curve bowing towards the top-left is what you want.</p>
-      <p><strong class="lead">When it changes.</strong> An AUC rising from 0.75 to 0.80 is a real gain in ranking, but whether it changes decisions depends on the part of the curve near the threshold you will actually use.</p>
+      <p>Sick and healthy people have overlapping distributions of the test value, so any threshold is a trade. Moving it down catches more sick people (sensitivity up) and flags more healthy ones (specificity down). The <strong>ROC curve</strong> plots sensitivity against 1 − specificity for every threshold. The <strong>area under it</strong> (AUC) is the chance that a randomly chosen sick person scores higher than a randomly chosen healthy one.</p>
+      <p>You want the curve bowing towards the top-left. An AUC of 0.5 is a coin toss; 0.7 is modest; 0.8 is good; above 0.9 is excellent for most clinical uses. Because AUC covers every threshold, it lets you compare tests independent of threshold. But a programme runs at one threshold, chosen by weighing the harm of a missed case against the cost of a false alarm and the follow-up capacity.</p>
+      <p>That is also how to read an improvement. An AUC rising from 0.75 to 0.80 is a real gain in ranking, but whether it changes decisions depends on the part of the curve near the threshold you will actually use.</p>
     </div>
 
     <div class="widget" data-widget="roc-threshold">
@@ -142,10 +140,9 @@
     <p class="point">Screening always makes survival after diagnosis look better; only fewer deaths in the whole screened population shows it works.</p>
 
     <div class="facets">
-      <p><strong class="lead">Lead-time bias.</strong> Screening moves the date of diagnosis earlier. If death comes at the same age, survival “from diagnosis” grows by exactly the lead time, with no benefit at all.</p>
-      <p><strong class="lead">Length-time bias.</strong> Slow-growing disease spends longer in the detectable-but-silent phase, so periodic screening finds more of it. Screen-detected cases are therefore biased towards milder disease and look better than symptom-detected cases, whatever screening does.</p>
-      <p><strong class="lead">Overdiagnosis.</strong> The extreme of length time: detecting disease that would never have caused symptoms or death in the person’s lifetime. Each overdiagnosed person is counted as a “cure” while receiving treatment that can only harm them.</p>
-      <p><strong class="lead">How to read it.</strong> Rising incidence with flat mortality after screening starts is the fingerprint of overdiagnosis. Better five-year survival among screen-detected cases proves nothing on its own.</p>
+      <p>Screening moves the date of diagnosis earlier. If death comes at the same age, survival “from diagnosis” grows by exactly the lead time, with no benefit at all. That is <strong>lead-time bias</strong>.</p>
+      <p><strong>Length-time bias</strong> is subtler. Slow-growing disease spends longer in the detectable-but-silent phase, so periodic screening finds more of it. Screen-detected cases are therefore biased towards milder disease and look better than symptom-detected cases, whatever screening does. <strong>Overdiagnosis</strong> is the extreme of length time: detecting disease that would never have caused symptoms or death in the person’s lifetime. Each overdiagnosed person is counted as a “cure” while receiving treatment that can only harm them.</p>
+      <p>So better five-year survival among screen-detected cases proves nothing on its own. The pattern to look for is rising incidence with flat mortality after screening starts: that is the fingerprint of overdiagnosis.</p>
     </div>
 
     <figure class="diagram">
@@ -204,10 +201,9 @@
     <p class="point">A screening programme is a whole pathway, from invitation to treatment, and it is worth running only if the pathway as a whole does more good than harm at reasonable cost.</p>
 
     <div class="facets">
-      <p>Wilson and Jungner’s 1968 principles for WHO remain the starting point. The three that matter most: the condition is an important health problem with a detectable early stage; there is an acceptable, accurate test; and early treatment improves outcomes compared with treatment at symptoms.</p>
-      <p><strong class="lead">Why it matters.</strong> Screening invites healthy people, so the ethical bar is higher than for treating the sick. Every programme harms some people: false positives, anxiety, overdiagnosis, complications of follow-up tests.</p>
-      <p><strong class="lead">How to judge it.</strong> Look for randomised evidence of a mortality or morbidity benefit; numbers needed to screen and numbers overdiagnosed per death prevented; uptake, follow-up and quality assurance in the real programme; and cost-effectiveness (Lecture 1.10).</p>
-      <p><strong class="lead">When it changes.</strong> Extending screening to a lower-risk group lowers prevalence, so PPV falls, false positives per case found rise, and the balance of benefit and harm can flip even with the same test.</p>
+      <p>Wilson and Jungner’s 1968 principles for WHO remain the starting point. The three that matter most: the condition is an important health problem with a detectable early stage; there is an acceptable, accurate test; and early treatment improves outcomes compared with treatment at symptoms. The bar is high for a reason: screening invites healthy people, so the ethical standard is higher than for treating the sick. Every programme harms some people: false positives, anxiety, overdiagnosis, complications of follow-up tests.</p>
+      <p>The evidence to look for in a real programme is randomised evidence of a mortality or morbidity benefit; numbers needed to screen and numbers overdiagnosed per death prevented; uptake, follow-up and quality assurance in the real programme; and cost-effectiveness (Lecture 1.10).</p>
+      <p>Be wary when a programme widens. Extending screening to a lower-risk group lowers prevalence, so PPV falls, false positives per case found rise, and the balance of benefit and harm can flip even with the same test.</p>
     </div>
 
     <div class="callout gulf">
